@@ -60,7 +60,13 @@
       for (const e of pool) { r -= e.weight; if (r <= 0) { chosen = e; break; } }
       if (chosen) this.fire(chosen);
     }
-    fire(ev) { const g = this.game, res = ev.run(g) || {}; g.onEvent(ev.emoji, res.msg || ev.id, res.tone || ev.tone || 'info'); }
+    fire(ev) {
+      const g = this.game, res = ev.run(g) || {};
+      const tone = res.tone || ev.tone || 'info';
+      // Viral/chaotic news is itself a trend moment — stoke the Heat.
+      if (tone === 'good' || tone === 'chaos') g.addHeat(BR.CONST.HEAT_EVENT, true);
+      g.onEvent(ev.emoji, res.msg || ev.id, tone);
+    }
   }
   BR.EventSystem = EventSystem;
 

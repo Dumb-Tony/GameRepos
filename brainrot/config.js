@@ -20,11 +20,14 @@
     SPEED_LABELS: ['Paused', '1×', '2×', '3×'],
 
     // --- Spread (deliberately slow; a run should take many minutes) ---
-    INFECT_BASE: 0.017,     // master internal-spread coefficient (tuned via harness)
+    // v6 rebalance: slower spread + slower finisher + stronger Cure so the
+    // endgame is a genuine race (a clear seed -> go-viral -> finish arc)
+    // rather than a runaway snowball. Tuned via the headless balance harness.
+    INFECT_BASE: 0.012,     // master internal-spread coefficient (tuned via harness)
     INF_SCALE: 0.14,        // how strongly evolved Infectivity multiplies spread
     SEED_FLOOR: 0.05,       // minimum growth pressure in a seeded country
     MOMENTUM: 0.5,          // self-reinforcing S-curve strength (low = gradual, not bursty)
-    NECROSIS_BASE: 0.018,   // master lethality (infected -> terminal) coeff (fast finish)
+    NECROSIS_BASE: 0.010,   // master lethality (infected -> terminal) coeff — the finish is a race
     SEED_INFECT: 0.006,     // fraction infected in the chosen start country
 
     // --- Cross-border transmission (air / sea / land) -----------------
@@ -39,9 +42,25 @@
     BUBBLE_MIN: 7, BUBBLE_MAX: 22,      // seconds between virality bubbles
     VIRAL_BUBBLE_REWARD: [8, 28],
 
+    // --- Trend Heat (viral momentum) ----------------------------------
+    // A meter that spikes on viral moments (new regions catching on, bubbles,
+    // events, fresh evolutions) and decays fast. While you're HOT, virality
+    // income surges — but you're on everyone's radar, so the Cure researches
+    // faster. Ride the wave, cash in, then lie low before it burns you.
+    HEAT_MAX: 100,
+    HEAT_DECAY: 6.0,        // heat lost per game-second (fast — it's momentum)
+    HEAT_GAIN_INFECT: 0.06, // heat per million newly infected this step
+    HEAT_BUBBLE: 16,        // heat spike from tapping a viral bubble
+    HEAT_EVENT: 12,         // heat spike from a viral/chaos world event
+    HEAT_EVOLVE: 16,        // heat spike when you evolve a new upgrade ("a drop")
+    HEAT_INCOME_MULT: 1.15, // at full heat, income is +115%
+    HEAT_SPREAD: 0.55,      // at full heat, internal + cross-border spread +55%
+    HEAT_AWARE: 0.10,       // at full heat, +0.10 global awareness (feeds Cure)
+    HEAT_HOT: 62,           // threshold considered "trending hot" (UI cue)
+
     // --- The Cure ("Touch-Grass Campaign") — a real threat if you're loud
     CURE_MAX: 100,
-    CURE_BASE: 1.2,         // base research rate (× difficulty × research power)
+    CURE_BASE: 1.6,         // base research rate (× difficulty × research power)
     CURE_SEV_GAIN: 0.16,    // how much severity accelerates the cure
     CURE_BUBBLE_MIN: 11, CURE_BUBBLE_MAX: 24,
     CURE_BUBBLE_SETBACK: [3, 7],        // % knocked off the cure per bubble

@@ -31,7 +31,7 @@
     _buildMeters() {
       const host = $('meters'); host.innerHTML = '';
       const mk = (key, name, cls) => { const w = el('div', 'meter ' + cls, `<div class="meter-top"><span class="meter-name">${name}</span><span class="meter-val" id="mv-${key}"></span></div><div class="meter-bar"><div class="meter-fill" id="mf-${key}"></div></div>`); host.appendChild(w); };
-      mk('inf', '⚡ Infectivity', 'm-inf'); mk('sev', '🚨 Severity', 'm-sev'); mk('let', '☠️ Lethality', 'm-let'); mk('aware', '👁️ Awareness', 'm-aware');
+      mk('heat', '🔥 Trend Heat', 'm-heat'); mk('inf', '⚡ Infectivity', 'm-inf'); mk('sev', '🚨 Severity', 'm-sev'); mk('let', '☠️ Lethality', 'm-let'); mk('aware', '👁️ Awareness', 'm-aware');
     }
 
     // Plague-style tech tree: icon nodes laid out in prerequisite tiers,
@@ -350,6 +350,7 @@
       if (pct > 0.55) { const inten = (pct - 0.55) / 0.45; for (let i = 0; i < Math.floor(inten * 3); i++) { const yy = cy - ry + (Math.sin(t * 3 + i * 7) * 0.5 + 0.5) * ry * 2; ctx.globalAlpha = 0.16 * inten; ctx.fillStyle = i % 2 ? '#ff00e6' : '#00fff0'; ctx.fillRect(cx - rx, yy, rx * 2, 2); ctx.globalAlpha = 1; } }
     }
     onAchievement(a) { this.toast(a.emoji, `Achievement: <b>${a.name}</b>`, 'ach'); }
+    onHeatSpike() { const m = $('mf-heat'), meter = m && m.closest('.meter'); if (meter) { meter.classList.remove('spike'); void meter.offsetWidth; meter.classList.add('spike'); } }
     onWin() { this.game.fx && this.game.fx.confetti(this.cssW, this.cssH); this._showEnd(true); }
     onLose(reason) { this._showEnd(false, reason); }
     autoStart() { // ?auto — jump straight into a playable game (screenshots/demo)
@@ -367,6 +368,8 @@
       $('valTrend').textContent = g.trend || '—';
       const bp = $('brainPct'); if (bp) bp.textContent = BR.fmtPct(g.globalBrainrot());
 
+      this._meter('heat', g.heat, BR.CONST.HEAT_MAX, g.heatLabel());
+      const hm = $('mf-heat'), hmeter = hm && hm.closest('.meter'); if (hmeter) hmeter.classList.toggle('hot', g.heat >= BR.CONST.HEAT_HOT);
       this._meter('inf', g.infectivity(), MET.inf, g.infectivity().toFixed(1));
       this._meter('sev', g.severity(), MET.sev, g.severity().toFixed(1));
       this._meter('let', g.lethality(), MET.let, g.lethality().toFixed(1));

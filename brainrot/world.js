@@ -52,6 +52,7 @@
       const infS = Math.max(0, ev.inf);
       const sevS = Math.max(0, ev.sev);
       const letS = Math.max(0, ev.let);
+      const sm = ctx.spreadMult || 1;   // Trend Heat spread multiplier
       let newly = 0;
 
       for (const c of this.countries) {
@@ -59,7 +60,7 @@
         if (h > 0 && c.infected >= 0) {
           const susc = c.susceptibility(ev, diff.susc);
           const mult = 1 + infS * C.INF_SCALE;
-          const growth = C.INFECT_BASE * mult * susc * (C.SEED_FLOOR + C.MOMENTUM * c.infected) * h * dt;
+          const growth = C.INFECT_BASE * mult * sm * susc * (C.SEED_FLOOR + C.MOMENTUM * c.infected) * h * dt;
           const g = Math.min(h, growth);
           c.infected += g; newly += g * c.pop;
         }
@@ -82,7 +83,7 @@
       const chan = (open) => (open ? 1 : bp);
       for (const a of this.countries) {
         if (a.infected < 0.015) continue;
-        const push = (1 + infS) * a.infected * dt;
+        const push = (1 + infS) * sm * a.infected * dt;
         for (const b of a.landRefs) { const f = chan(a.landOpen) * chan(b.landOpen); if (f > 0) seed[b.id] += C.LINK_LAND * push * f * b.susceptibility(ev, diff.susc) * 0.5; }
         if (a.air) for (const b of this.airHubs) { if (b === a) continue; const f = chan(a.airOpen) * chan(b.airOpen); if (f > 0) seed[b.id] += C.LINK_AIR * push * f * b.susceptibility(ev, diff.susc) * 0.35; }
         if (a.port) for (const b of this.seaHubs) { if (b === a) continue; const f = chan(a.seaOpen) * chan(b.seaOpen); if (f > 0) seed[b.id] += C.LINK_SEA * push * f * b.susceptibility(ev, diff.susc) * 0.35; }

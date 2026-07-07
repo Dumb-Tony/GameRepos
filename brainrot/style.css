@@ -356,6 +356,16 @@ body::before{
 .m-let .meter-fill{ background:linear-gradient(90deg,#b06cf0,#ff00e6); }
 .m-aware .meter-fill{ background:linear-gradient(90deg,#4ea1ff,#8a7ff0); }
 
+/* Trend Heat meter — momentum you ride for extra income */
+.m-heat .meter-fill{ background:linear-gradient(90deg,#ffd24a,#ff7a1a,#ff2d6f); box-shadow:0 0 8px rgba(255,120,30,.5); }
+.m-heat .meter-name{ color:#ffb86b; }
+.m-heat.hot .meter-name{ color:#ff9e4a; text-shadow:0 0 10px rgba(255,120,30,.6); }
+.m-heat.hot .meter-fill{ animation:heatGlow .9s ease-in-out infinite; }
+@keyframes heatGlow{ 50%{ box-shadow:0 0 16px rgba(255,80,40,.85); filter:brightness(1.12);} }
+.m-heat.spike .meter-val{ animation:heatSpike .5s ease; }
+@keyframes heatSpike{ 0%{ transform:scale(1.35); color:#fff; text-shadow:0 0 12px #ff7a1a;} 100%{} }
+.m-heat .meter-val{ color:#ffb86b; font-weight:800; display:inline-block; }
+
 /* tree blurb + effect badges + de-evolve */
 .tree-blurb{ font-size:10.5px; color:var(--dim); background:var(--panel2); border:1px solid var(--line); border-radius:9px; padding:7px 9px; margin-bottom:8px; line-height:1.35; }
 .node-fx{ display:flex; flex-wrap:wrap; gap:3px; margin-top:4px; }
