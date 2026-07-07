@@ -20,14 +20,15 @@
     SPEED_LABELS: ['Paused', '1×', '2×', '3×'],
 
     // --- Spread (deliberately slow; a run should take many minutes) ---
-    // v6 rebalance: slower spread + slower finisher + stronger Cure so the
-    // endgame is a genuine race (a clear seed -> go-viral -> finish arc)
-    // rather than a runaway snowball. Tuned via the headless balance harness.
-    INFECT_BASE: 0.012,     // master internal-spread coefficient (tuned via harness)
+    // v7 rebalance: markedly slower spread + slower finisher + stronger, income
+    // starved economy so a run is a long, deliberate race the Cure can win.
+    // Good play still wins Normal — but by a hair (Cure ~90%); Brutal is a wall.
+    // Tuned via the headless balance harness (see scratchpad/balance.js).
+    INFECT_BASE: 0.006,     // master internal-spread coefficient (tuned via harness)
     INF_SCALE: 0.14,        // how strongly evolved Infectivity multiplies spread
     SEED_FLOOR: 0.05,       // minimum growth pressure in a seeded country
     MOMENTUM: 0.5,          // self-reinforcing S-curve strength (low = gradual, not bursty)
-    NECROSIS_BASE: 0.010,   // master lethality (infected -> terminal) coeff — the finish is a race
+    NECROSIS_BASE: 0.006,   // master lethality (infected -> terminal) coeff — the finish is a race
     SEED_INFECT: 0.006,     // fraction infected in the chosen start country
 
     // --- Cross-border transmission (air / sea / land) -----------------
@@ -37,7 +38,7 @@
 
     // --- Economy (Virality = DNA) -------------------------------------
     START_VIRALITY: 8,
-    VIR_INFECT: 0.055,      // per million newly infected
+    VIR_INFECT: 0.040,      // per million newly infected (income-starved: evolve deliberately)
     VIR_SEVERITY: 0.001,    // passive trickle scaled by severity × infected
     BUBBLE_MIN: 7, BUBBLE_MAX: 22,      // seconds between virality bubbles
     VIRAL_BUBBLE_REWARD: [8, 28],
@@ -60,7 +61,7 @@
 
     // --- The Cure ("Touch-Grass Campaign") — a real threat if you're loud
     CURE_MAX: 100,
-    CURE_BASE: 1.6,         // base research rate (× difficulty × research power)
+    CURE_BASE: 1.7,         // base research rate (× difficulty × research power)
     CURE_SEV_GAIN: 0.16,    // how much severity accelerates the cure
     CURE_BUBBLE_MIN: 11, CURE_BUBBLE_MAX: 24,
     CURE_BUBBLE_SETBACK: [3, 7],        // % knocked off the cure per bubble
