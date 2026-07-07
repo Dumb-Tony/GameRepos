@@ -243,6 +243,20 @@
       else if (e.key === 'Escape') ['menuModal', 'statsModal', 'awardsModal'].forEach((m) => this._closeModal(m));
     }
 
+    // Insets for the map projection so the whole world sits between the floating
+    // HUD panels (top bar/cure, bottom bars, left & right cards) — nothing hidden.
+    _mapInsets() {
+      const mr = this.mapWrap.getBoundingClientRect();
+      const rect = (id) => { const e = $(id); if (!e) return null; const r = e.getBoundingClientRect(); return (r.width > 2 && r.height > 2) ? r : null; };
+      let left = 12, right = 12, top = 12, bottom = 12;
+      const cure = rect('curebar'); if (cure) top = cure.bottom - mr.top + 10;
+      const log = rect('logbar'), stat = rect('statusbar');
+      const bt = log ? log.top : (stat ? stat.top : mr.bottom);
+      bottom = mr.bottom - bt + 10;
+      const lc = rect('left'); if (lc) left = lc.right - mr.left + 14;
+      const rc = rect('right'); if (rc) right = mr.right - rc.left + 14;
+      return { left, right, top, bottom };
+    }
     // Convert a client (screen) point into map/layout coordinates, undoing pan+zoom.
     _toMap(clientX, clientY) {
       const r = this.mapCanvas.getBoundingClientRect(), v = this.view;
@@ -554,7 +568,7 @@
       const w = this.mapWrap.clientWidth, h = this.mapWrap.clientHeight; if (w === this.cssW && h === this.cssH) return;
       const dpr = Math.min(2, window.devicePixelRatio || 1); this._dpr = dpr;
       [this.mapCanvas, this.fxCanvas].forEach((c) => { c.width = w * dpr; c.height = h * dpr; });
-      this.cssW = w; this.cssH = h; this.game.world.layout(w, h); this._clampView();
+      this.cssW = w; this.cssH = h; this.game.world.layout(w, h, this._mapInsets()); this._clampView();
       this._drawLines(this._activeTree());
       if (this.popupCountry) this._positionPopup();
     }

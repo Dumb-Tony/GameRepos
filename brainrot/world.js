@@ -122,12 +122,19 @@
       }
     }
 
-    layout(w, h) {
-      const padX = w * 0.03, padY = h * 0.05, iw = w - padX * 2, ih = h - padY * 2;
-      this._view = { w, h, padX, padY, iw, ih };
+    layout(w, h, ins) {
+      // Asymmetric insets keep the whole world projected into the area NOT
+      // covered by the floating HUD panels, so no country is hidden.
+      ins = ins || {};
+      const padL = ins.left != null ? ins.left : w * 0.03;
+      const padR = ins.right != null ? ins.right : w * 0.03;
+      const padT = ins.top != null ? ins.top : h * 0.05;
+      const padB = ins.bottom != null ? ins.bottom : h * 0.05;
+      const iw = Math.max(60, w - padL - padR), ih = Math.max(60, h - padT - padB);
+      this._view = { w, h, padX: padL, padY: padT, iw, ih };
       if (!this._matched) { this._matchFeatures(); this._matched = true; }
       for (const c of this.countries) {
-        c.px = padX + c.mx * iw; c.py = padY + c.my * ih;
+        c.px = padL + c.mx * iw; c.py = padT + c.my * ih;
         c.r = 6 + Math.sqrt(c.pop) * 0.3;
         const rings = [];
         for (const f of c._features) for (const ring of f.r) rings.push(this._projFlat(ring));
@@ -176,28 +183,45 @@
         this._fill(ctx, c, c.stage().color, clamp(0.14 + total * 0.4, 0, 0.58));
         if (c.necrotic > 0.03) this._fill(ctx, c, '#8a2fd0', clamp(c.necrotic * 0.42, 0, 0.52));
       }
-      // Infection "spread dots" — bloom outward and take the region over as % rises.
+      // Infection "spread dots" — creep out from the epicenter and take the
+      // region over as % rises (bright magenta rot; necrotic cells go purple).
       for (const c of this.countries) {
-        const total = c.total(); if (total < 0.005 || !c.dots || !c.dots.length) continue;
-        const n = Math.max(1, Math.round(total * c.dots.length)), necN = Math.round(c.necrotic * c.dots.length), st = c.stage();
-        const rad = n < 4 ? 2.4 : 1.7;   // keep a lone patient-zero dot visible
-        // Additive blend gives a cheap "bloom" where dots overlap — far cheaper
-        // than per-dot shadowBlur, which tanked the framerate late-game.
+        const total = c.total(); if (total < 0.004 || !c.dots || !c.dots.length) continue;
+        const n = Math.max(1, Math.round(total * c.dots.length)), necN = Math.round(c.necrotic * c.dots.length);
+        const rad = n < 4 ? 2.8 : 2.2;   // keep a lone patient-zero dot visible
         ctx.globalAlpha = 0.95; ctx.globalCompositeOperation = 'lighter';
-        for (let i = 0; i < n; i++) { const d = c.dots[i]; if (!d) break; ctx.beginPath(); ctx.arc(d[0], d[1], rad, 0, Math.PI * 2); ctx.fillStyle = i < necN ? '#c05fe0' : st.color; ctx.fill(); }
+        for (let i = 0; i < n; i++) { const d = c.dots[i]; if (!d) break; ctx.beginPath(); ctx.arc(d[0], d[1], rad, 0, Math.PI * 2); ctx.fillStyle = i < necN ? '#c86bff' : '#ff4bd8'; ctx.fill(); }
         ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
       }
 
-      // Transmission links.
+      // Transmission links — faint base web, plus animated "spread beads" that
+      // travel from an infected country toward the ones it's seeding.
       for (const l of this.links) {
         const heat = (l.a.total() + l.b.total()) / 2;
         const closed = l.kind === 'land' ? (!l.a.landOpen || !l.b.landOpen) : (!l.a.airOpen || !l.b.airOpen);
         ctx.setLineDash(l.kind === 'air' ? [3, 5] : []);
-        ctx.strokeStyle = closed ? 'rgba(255,92,138,0.22)' : `rgba(255,75,216,${0.05 + heat * 0.4})`;
-        ctx.lineWidth = closed ? 0.7 : 0.7 + heat * 1.8;
+        ctx.strokeStyle = closed ? 'rgba(255,92,138,0.18)' : `rgba(255,75,216,${0.05 + heat * 0.3})`;
+        ctx.lineWidth = closed ? 0.6 : 0.7 + heat * 1.2;
         ctx.beginPath(); ctx.moveTo(l.a.px, l.a.py); ctx.lineTo(l.b.px, l.b.py); ctx.stroke();
       }
       ctx.setLineDash([]);
+      for (const l of this.links) {
+        const a = l.a, b = l.b, src = a.total() >= b.total() ? a : b, dst = src === a ? b : a;
+        if (src.total() < 0.05 || dst.total() > 0.92) continue;         // only active routes
+        const closed = l.kind === 'land' ? (!a.landOpen || !b.landOpen) : (!a.airOpen || !b.airOpen);
+        if (closed) continue;
+        ctx.strokeStyle = `rgba(255,120,235,${0.18 + src.total() * 0.3})`; ctx.lineWidth = 1 + src.total() * 1.4;
+        ctx.setLineDash(l.kind === 'air' ? [4, 6] : []); ctx.lineDashOffset = -t * 22;
+        ctx.beginPath(); ctx.moveTo(src.px, src.py); ctx.lineTo(dst.px, dst.py); ctx.stroke();
+        // a glowing bead travelling src -> dst
+        const ph = ((t * 0.28 + (a.id + b.id) * 0.17) % 1 + 1) % 1;
+        const bx = src.px + (dst.px - src.px) * ph, by = src.py + (dst.py - src.py) * ph;
+        ctx.setLineDash([]); ctx.globalAlpha = Math.sin(ph * Math.PI);
+        ctx.fillStyle = '#ffc4f2'; ctx.shadowColor = '#ff4bd8'; ctx.shadowBlur = 8;
+        ctx.beginPath(); ctx.arc(bx, by, 2.6, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowBlur = 0; ctx.globalAlpha = 1;
+      }
+      ctx.setLineDash([]); ctx.lineDashOffset = 0;
 
       // Selection / hover halos on the country shape.
       if (game.selected && game.selected.pxRings) { ctx.save(); ctx.lineWidth = 2; ctx.strokeStyle = '#5ffbe0'; ctx.shadowColor = '#5ffbe0'; ctx.shadowBlur = 10; this._path(ctx, game.selected.pxRings); ctx.stroke(); ctx.restore(); }
@@ -264,9 +288,13 @@
       let mnx = 1e9, mny = 1e9, mxx = -1e9, mxy = -1e9;
       for (const p of rings) for (let i = 0; i < p.length; i += 2) { if (p[i] < mnx) mnx = p[i]; if (p[i] > mxx) mxx = p[i]; if (p[i + 1] < mny) mny = p[i + 1]; if (p[i + 1] > mxy) mxy = p[i + 1]; }
       const rnd = BR.rng(9001 + c.id * 733);
-      const target = Math.round(clamp(Math.sqrt(c.pop) * 0.85, 12, 55));
+      const target = Math.round(clamp(Math.sqrt(c.pop) * 1.15, 22, 78));
       const dots = []; let tries = 0;
       while (dots.length < target && tries < target * 40) { tries++; const x = mnx + rnd() * (mxx - mnx), y = mny + rnd() * (mxy - mny); if (this._pointIn(x, y, rings)) dots.push([x, y]); }
+      // Reveal from the epicenter (country marker) outward, so the rot visibly
+      // creeps across the country as infection rises.
+      const ex = c.px, ey = c.py;
+      dots.sort((a, b) => ((a[0] - ex) ** 2 + (a[1] - ey) ** 2) - ((b[0] - ex) ** 2 + (b[1] - ey) ** 2));
       return dots;
     }
 
