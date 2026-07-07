@@ -1,0 +1,7 @@
+# Node tooling used only for local screenshotting / balance-testing the games
+node_modules/
+package.json
+package-lock.json
+
+# Scratch/working files (screenshots, harness scripts, etc.)
+scratchpad/

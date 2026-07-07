@@ -20,11 +20,14 @@
     SPEED_LABELS: ['Paused', '1×', '2×', '3×'],
 
     // --- Spread (deliberately slow; a run should take many minutes) ---
-    INFECT_BASE: 0.017,     // master internal-spread coefficient (tuned via harness)
+    // v6 rebalance: slower spread + slower finisher + stronger Cure so the
+    // endgame is a genuine race (a clear seed -> go-viral -> finish arc)
+    // rather than a runaway snowball. Tuned via the headless balance harness.
+    INFECT_BASE: 0.012,     // master internal-spread coefficient (tuned via harness)
     INF_SCALE: 0.14,        // how strongly evolved Infectivity multiplies spread
     SEED_FLOOR: 0.05,       // minimum growth pressure in a seeded country
     MOMENTUM: 0.5,          // self-reinforcing S-curve strength (low = gradual, not bursty)
-    NECROSIS_BASE: 0.018,   // master lethality (infected -> terminal) coeff (fast finish)
+    NECROSIS_BASE: 0.010,   // master lethality (infected -> terminal) coeff — the finish is a race
     SEED_INFECT: 0.006,     // fraction infected in the chosen start country
 
     // --- Cross-border transmission (air / sea / land) -----------------
@@ -39,9 +42,25 @@
     BUBBLE_MIN: 7, BUBBLE_MAX: 22,      // seconds between virality bubbles
     VIRAL_BUBBLE_REWARD: [8, 28],
 
+    // --- Trend Heat (viral momentum) ----------------------------------
+    // A meter that spikes on viral moments (new regions catching on, bubbles,
+    // events, fresh evolutions) and decays fast. While you're HOT, virality
+    // income surges — but you're on everyone's radar, so the Cure researches
+    // faster. Ride the wave, cash in, then lie low before it burns you.
+    HEAT_MAX: 100,
+    HEAT_DECAY: 6.0,        // heat lost per game-second (fast — it's momentum)
+    HEAT_GAIN_INFECT: 0.06, // heat per million newly infected this step
+    HEAT_BUBBLE: 16,        // heat spike from tapping a viral bubble
+    HEAT_EVENT: 12,         // heat spike from a viral/chaos world event
+    HEAT_EVOLVE: 16,        // heat spike when you evolve a new upgrade ("a drop")
+    HEAT_INCOME_MULT: 1.15, // at full heat, income is +115%
+    HEAT_SPREAD: 0.55,      // at full heat, internal + cross-border spread +55%
+    HEAT_AWARE: 0.10,       // at full heat, +0.10 global awareness (feeds Cure)
+    HEAT_HOT: 62,           // threshold considered "trending hot" (UI cue)
+
     // --- The Cure ("Touch-Grass Campaign") — a real threat if you're loud
     CURE_MAX: 100,
-    CURE_BASE: 1.2,         // base research rate (× difficulty × research power)
+    CURE_BASE: 1.6,         // base research rate (× difficulty × research power)
     CURE_SEV_GAIN: 0.16,    // how much severity accelerates the cure
     CURE_BUBBLE_MIN: 11, CURE_BUBBLE_MAX: 24,
     CURE_BUBBLE_SETBACK: [3, 7],        // % knocked off the cure per bubble
@@ -67,14 +86,28 @@
   // Difficulty presets scale the cure, hygiene (susceptibility), and how
   // fast the world locks down — mirroring the genre's difficulty tiers.
   BR.DIFFICULTIES = [
-    { id: 'casual',  name: 'Casual',  emoji: '😌', cure: 0.55, susc: 1.20, lockdown: 0.6, skeptic: 0.85,
+    { id: 'casual',  name: 'Casual',  emoji: '😌', cure: 0.55, susc: 1.20, lockdown: 0.6, skeptic: 0.85, chaos: 1.0,
       blurb: 'People barely notice. The cure crawls. Learn the ropes.' },
-    { id: 'normal',  name: 'Normal',  emoji: '🙂', cure: 1.00, susc: 1.00, lockdown: 1.0, skeptic: 1.00,
+    { id: 'normal',  name: 'Normal',  emoji: '🙂', cure: 1.00, susc: 1.00, lockdown: 1.0, skeptic: 1.00, chaos: 1.0,
       blurb: 'A fair fight between your memes and humanity’s attention span.' },
-    { id: 'brutal',  name: 'Brutal',  emoji: '😰', cure: 1.55, susc: 0.85, lockdown: 1.5, skeptic: 1.15,
+    { id: 'brutal',  name: 'Brutal',  emoji: '😰', cure: 1.55, susc: 0.85, lockdown: 1.5, skeptic: 1.15, chaos: 1.0,
       blurb: 'Fact-checkers are caffeinated. Borders slam shut. Good luck.' },
+    { id: 'chaos',   name: 'Chaos',   emoji: '🎲', cure: 1.10, susc: 1.05, lockdown: 1.0, skeptic: 1.00, chaos: 2.4,
+      blurb: 'Reality has left the chat. Events & mutations fire nonstop. Anything can happen.' },
   ];
   BR.difficultyById = (id) => BR.DIFFICULTIES.find((d) => d.id === id) || BR.DIFFICULTIES[1];
+
+  // Rotating strategy tips shown in the evolve panel's default state.
+  BR.EVO_TIPS = [
+    'Spread <b>quietly</b> first — high Severity feeds the Cure faster than it feeds you.',
+    'Buy <b>Transmission</b> before Symptoms. Reach the world, <i>then</i> turn up the rot.',
+    'Save loud symptoms &amp; <b>Terminal Brainrot</b> for last — evolve them once you\'re everywhere.',
+    'Symptoms are <b>de-evolvable</b>. If the Cure surges, refund your noisiest ones.',
+    'Abilities like <b>Deepfake Ambiguity</b> stall the Cure — pure defense, no visibility.',
+    'Tap 🔥 virality bubbles on the map for free income, and 🧪 cure bubbles to set it back.',
+    'Locked out by borders? <b>Cross-Platform Reposting</b> and border-pierce nodes slip through.',
+    'Combos (★) need every prerequisite — but pack a serious punch when they land.',
+  ];
 
   // ---- PRNG (mulberry32) — reproducible per seed ------------------------
   BR.rng = function (seed) {

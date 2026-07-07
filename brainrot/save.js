@@ -53,7 +53,7 @@
     serialize(game) {
       return {
         v: SAVE_VERSION, seed: game.seed, difficulty: game.difficulty.id, phase: game.phase,
-        elapsed: game.elapsed, virality: game.virality, totalVir: game.totalViralityEarned, cure: game.cure,
+        elapsed: game.elapsed, virality: game.virality, totalVir: game.totalViralityEarned, cure: game.cure, heat: game.heat,
         purchased: [...game.purchased], countries: game.world.countries.map((c) => c.snapshot()),
         won: game.won, lost: game.lost,
       };

@@ -34,6 +34,8 @@
       this.virality = C.START_VIRALITY;
       this.totalViralityEarned = 0;
       this.cure = 0;
+      this.heat = 0;                        // Trend Heat — viral momentum (0..100)
+      this.peakHeat = 0;
       this.awareness = 0;
       this.lockdownPressure = 0;
       this.elapsed = 0;
@@ -97,7 +99,7 @@
       const ev = BR.baseEv();
       this.purchased.forEach((id) => { const u = BR.UPGRADE_BY_ID[id]; if (u) BR.foldEffects(ev, u.fx); });
       ev.skepticScale = this.difficulty.skeptic;
-      ['borderPierce', 'moderationResist', 'languagePierce', 'offlineReach', 'cureSlow'].forEach((k) => (ev[k] = clamp(ev[k], 0, 1)));
+      ['borderPierce', 'moderationResist', 'languagePierce', 'offlineReach', 'cureSlow', 'heatDecayReduce'].forEach((k) => (ev[k] = clamp(ev[k], 0, 1)));
       this.ev = ev;
     }
     infectivity() { return Math.max(0, this.ev.inf); }
@@ -111,6 +113,7 @@
       const u = BR.UPGRADE_BY_ID[id];
       if (!u || !this.canBuy(u)) return false;
       this.virality -= u.cost; this.purchased.add(id); this.recomputeEv();
+      if (this.phase === 'play') this.addHeat(C.HEAT_EVOLVE, true);   // a fresh evolution = a viral drop
       this.save.stats.totalMemes++; this.save.saveStats();
       if (this.audio) this.audio.buy();
       if (this.ui) this.ui.onBuy(u);
@@ -142,26 +145,38 @@
       this.elapsed += dt;
       this.save.stats.playSeconds += dt;
 
-      // Global awareness + lockdown pressure.
+      // Trend Heat: fast-decaying viral momentum. Spikes elsewhere (bubbles,
+      // events, evolutions); here it decays and drives its two effects.
+      // Trend-Surfing abilities slow the decay so you stay viral longer.
+      this.heat = clamp(this.heat - C.HEAT_DECAY * (1 - this.ev.heatDecayReduce) * dt, 0, C.HEAT_MAX);
+      const heatFrac = this.heat / C.HEAT_MAX;
+
+      // Global awareness + lockdown pressure. Heat adds transient visibility.
       let detPop = 0;
       for (const c of this.world.countries) if (c.detected) detPop += c.pop;
       const detFrac = detPop / this.world.totalPop;
-      this.awareness = clamp(this.severity() * 0.014 + detFrac * 0.45 + (this.cure / 100) * 0.4, 0, 1);
+      this.awareness = clamp(this.severity() * 0.014 + detFrac * 0.45 + (this.cure / 100) * 0.4 + heatFrac * C.HEAT_AWARE, 0, 1);
       this.lockdownPressure = this.awareness > C.LOCKDOWN_START / 100 ? clamp((this.awareness - C.LOCKDOWN_START / 100) / 0.5, 0, 1) : 0;
 
       const res = this.world.simStep(dt, {
         ev: this.ev, diff: this.difficulty,
         globalAwareness: this.awareness, lockdownPressure: this.lockdownPressure, rnd: this.rnd,
+        spreadMult: 1 + heatFrac * C.HEAT_SPREAD,   // a hot trend spreads faster
       });
 
-      // Virality income: new infections + a severity-scaled trickle.
+      // New infections stoke the trend (a region catching on is a viral moment).
+      this.addHeat(res.newlyInfected * C.HEAT_GAIN_INFECT, false);
+
+      // Virality income: new infections + a severity trickle, amplified while
+      // you're trending. This is the payoff for riding a hot wave.
       let gain = res.newlyInfected * C.VIR_INFECT + this.severity() * this.world.infectedPeople() * C.VIR_SEVERITY * dt;
-      gain *= 1 + this.ev.virality;
+      gain *= (1 + this.ev.virality) * (1 + heatFrac * C.HEAT_INCOME_MULT);
       this.virality += gain; this.totalViralityEarned += gain; this.save.stats.totalVirality += gain;
 
-      // The Cure — only after the world has noticed the brainrot.
+      // The Cure — only after the world has noticed the brainrot. Heat makes
+      // the researchers work faster too (you're impossible to ignore).
       if (this.world.anyDetected()) {
-        let rate = C.CURE_BASE * this.difficulty.cure * res.research * (1 + this.severity() * C.CURE_SEV_GAIN);
+        let rate = C.CURE_BASE * this.difficulty.cure * res.research * (1 + this.severity() * C.CURE_SEV_GAIN) * (1 + heatFrac * 0.5);
         rate /= 1 + this.ev.cureSlow * 2.5;
         this.cure = clamp(this.cure + rate * dt, 0, C.CURE_MAX);
       }
@@ -190,7 +205,7 @@
       if (this.world.anyDetected()) { this._cureBubbleT -= dt; if (this._cureBubbleT <= 0) { this._cureBubbleT = this._roll(C.CURE_BUBBLE_MIN, C.CURE_BUBBLE_MAX); this.spawnCureBubble(); } }
       // Uncontrolled mutation (a random symptom evolves on its own).
       this._mutateT -= dt;
-      if (this._mutateT <= 0) { this._mutateT = this._roll(C.MUTATE_MIN, C.MUTATE_MAX); this._mutate(); }
+      if (this._mutateT <= 0) { this._mutateT = this._roll(C.MUTATE_MIN, C.MUTATE_MAX) / (this.difficulty.chaos || 1); this._mutate(); }
 
       const age = (arr) => { for (let i = arr.length - 1; i >= 0; i--) { arr[i].ttl -= dt; if (arr[i].ttl <= 0) arr.splice(i, 1); } };
       age(this.viralBubbles); age(this.cureBubbles);
@@ -227,6 +242,7 @@
     clickViral(m) {
       const i = this.viralBubbles.indexOf(m); if (i < 0) return; this.viralBubbles.splice(i, 1);
       const r = m.reward * (1 + this.ev.virality); this.virality += r; this.totalViralityEarned += r;
+      this.addHeat(C.HEAT_BUBBLE, true);
       if (this.fx) { this.fx.emojiPop(m.x, m.y, m.emoji); this.fx.floatText(m.x, m.y - 20, '+' + BR.fmt(r), '#f2c94c'); }
       if (this.audio) this.audio.viral();
     }
@@ -240,12 +256,18 @@
     // ---- event helper API (events.js) ---------------------------------
     get countries() { return this.world.countries; }
     addVirality(v) { this.virality += v; this.totalViralityEarned += v; }
+    // Stoke Trend Heat. `spike` marks discrete viral moments (bubbles, events,
+    // drops) so the UI can flash; passive infection heat passes spike=false.
+    addHeat(v, spike) { if (v <= 0) return; v *= 1 + (this.ev.heatGain || 0); this.heat = clamp(this.heat + v, 0, C.HEAT_MAX); if (this.heat > this.peakHeat) this.peakHeat = this.heat; if (spike && this.ui) this.ui.onHeatSpike && this.ui.onHeatSpike(); }
+    heatLabel() { const h = this.heat; return h < C.HEAT_HOT * 0.35 ? 'Cold' : h < C.HEAT_HOT ? 'Warming' : h < 88 ? '🔥 Trending' : '🔥 Viral!'; }
     reduceCure(v) { this.cure = clamp(this.cure - v, 0, C.CURE_MAX); }
     addCure(v) { this.cure = clamp(this.cure + v, 0, C.CURE_MAX); }
     boostCountry(c, amt) { const g = Math.min(c.healthy(), amt); c.infected += g; if (this.fx && c.px !== undefined) this.fx.burst(c.px, c.py, c.stage().color, 10); }
     closeLinks(c) { c.airOpen = false; c.seaOpen = false; c.detected = true; }
     randomInfected() { const cs = this.world.countries.filter((c) => c.infected > 0.01 && c.total() < 0.99); return cs.length ? cs[(this.rnd() * cs.length) | 0] : null; }
     randomHealthy() { const cs = this.world.countries.filter((c) => c.total() < 0.5); return cs.length ? cs[(this.rnd() * cs.length) | 0] : null; }
+    // Schedule a follow-up event to fire `delay` seconds later (story chains).
+    queueEvent(id, delay) { if (this.events) this.events.queued.push({ id, t: Math.max(0, delay || 0) }); }
     onEvent(emoji, msg, tone) {
       const e = { emoji, msg, tone, t: this.elapsed };
       this.log.unshift(e); if (this.log.length > 80) this.log.pop();
@@ -292,7 +314,7 @@
       this.phase = d.phase || 'play';
       (d.countries || []).forEach((s, i) => { if (this.world.countries[i]) this.world.countries[i].restore(s); });
       this.virality = d.virality; this.totalViralityEarned = d.totalVir || 0;
-      this.cure = d.cure || 0; this.elapsed = d.elapsed || 0;
+      this.cure = d.cure || 0; this.heat = d.heat || 0; this.peakHeat = d.heat || 0; this.elapsed = d.elapsed || 0;
       this.purchased = new Set(d.purchased || []); this.recomputeEv();
       this.won = !!d.won; this.lost = !!d.lost; this.ended = this.won || this.lost;
       this.viralBubbles = []; this.cureBubbles = []; this.startChoice = this.patientZero = null;
