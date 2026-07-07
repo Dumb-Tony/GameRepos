@@ -1,0 +1,336 @@
+/* =====================================================================
+ * game.js — orchestrator. Country-select → play → win/lose. Owns the
+ * Virality economy, evolved stats, the Cure race, lockdown pressure,
+ * viral/cure bubbles, random mutation, de-evolve, and the two loops.
+ * Runs headless (no DOM) for the test harness.
+ * =================================================================== */
+(function (G) {
+  'use strict';
+  const BR = (G.BR = G.BR || {});
+  const C = BR.CONST, clamp = BR.clamp;
+  const DAY = 24, TREND_ROTATE = 14;
+
+  class Game {
+    constructor(opts) {
+      opts = opts || {};
+      this.headless = !!opts.headless;
+      this.save = new BR.SaveSystem();
+      if (!this.headless) { this.audio = new BR.Audio(); this.fx = new BR.FX(); this.ui = new BR.UI(this); }
+      this._simTimer = null; this._raf = null; this._lastFrame = 0;
+      this.newGame(opts.seed, opts.difficulty);
+    }
+
+    // ---- lifecycle ----------------------------------------------------
+    newGame(seed, difficulty) {
+      this._detSeed = (this._detSeed || 0) + 1;
+      this.seed = (seed >>> 0) || (0x9e3779b9 ^ (this._detSeed * 2654435761)) >>> 0 || 12345;
+      this.rnd = BR.rng(this.seed);
+      this.world = new BR.World();
+
+      this.difficulty = BR.difficultyById(difficulty || 'normal');
+      this.phase = 'select';                // 'select' | 'play'
+      this.startChoice = null;              // chosen patient-zero country
+
+      this.virality = C.START_VIRALITY;
+      this.totalViralityEarned = 0;
+      this.cure = 0;
+      this.awareness = 0;
+      this.lockdownPressure = 0;
+      this.elapsed = 0;
+      this._lastAuto = 0;
+
+      this.purchased = new Set();
+      this.ev = BR.baseEv();
+      this.recomputeEv();
+
+      this.speed = 1;
+      this.paused = false;              // true while a news popup / evolve overlay is open
+      this.won = false; this.lost = false; this.ended = false; this.loseReason = null;
+      this.selected = null; this.hoverCountry = null;
+      this.viralBubbles = []; this.cureBubbles = [];
+      this.log = []; this.currentEvent = null;
+      this.trend = null; this.trendTimer = 0; this.trendIndex = 0;
+      this.newAchievements = [];
+
+      this._bubbleT = this._roll(C.BUBBLE_MIN, C.BUBBLE_MAX);
+      this._cureBubbleT = this._roll(C.CURE_BUBBLE_MIN, C.CURE_BUBBLE_MAX);
+      this._mutateT = this._roll(C.MUTATE_MIN, C.MUTATE_MAX);
+
+      this.events = new BR.EventSystem(this);
+      this.save.stats.gamesStarted++; this.save.saveStats();
+      if (this.ui) this.ui.onNewGame();
+    }
+
+    _roll(a, b) { return a + this.rnd() * (b - a); }
+    setDifficulty(id) { this.difficulty = BR.difficultyById(id); this.recomputeEv(); if (this.ui) this.ui.onDifficulty(); }
+
+    // Player picks patient-zero (called from UI select screen or harness).
+    chooseStart(country) { this.startChoice = country; this.selected = country; if (this.ui) this.ui.onChooseStart(); }
+
+    releaseBrainrot() {
+      if (this.phase !== 'select' || !this.startChoice) return false;
+      this.phase = 'play';
+      this.startChoice.seed(C.SEED_INFECT);
+      this.patientZero = this.startChoice;
+      this.onEvent('🦠', `Patient zero: ${this.patientZero.name}. The rot begins.`, 'good');
+      if (this.ui) this.ui.onRelease();
+      return true;
+    }
+
+    // Convenience: scripted start (harness).
+    startWith(countryId, difficultyId) {
+      this.setDifficulty(difficultyId || 'normal');
+      this.chooseStart(this.world.countries[countryId || 0]);
+      this.releaseBrainrot();
+    }
+
+    start() {
+      if (this._simTimer) return;
+      this._simTimer = setInterval(() => this._simFrame(), C.SIM_INTERVAL);
+      if (!this.headless) this._renderLoop();
+    }
+    stop() { if (this._simTimer) { clearInterval(this._simTimer); this._simTimer = null; } if (this._raf) { cancelAnimationFrame(this._raf); this._raf = null; } }
+    setSpeed(s) { this.speed = s; if (this.ui) this.ui.refreshSpeed(); }
+
+    // ---- evolved stats ------------------------------------------------
+    recomputeEv() {
+      const ev = BR.baseEv();
+      this.purchased.forEach((id) => { const u = BR.UPGRADE_BY_ID[id]; if (u) BR.foldEffects(ev, u.fx); });
+      ev.skepticScale = this.difficulty.skeptic;
+      ['borderPierce', 'moderationResist', 'languagePierce', 'offlineReach', 'cureSlow'].forEach((k) => (ev[k] = clamp(ev[k], 0, 1)));
+      this.ev = ev;
+    }
+    infectivity() { return Math.max(0, this.ev.inf); }
+    severity() { return Math.max(0, this.ev.sev); }
+    lethality() { return Math.max(0, this.ev.let); }
+
+    // ---- evolution economy --------------------------------------------
+    isUnlockable(u) { return u.req.every((r) => this.purchased.has(r)); }
+    canBuy(u) { return !this.purchased.has(u.id) && this.isUnlockable(u) && this.virality >= u.cost; }
+    buy(id) {
+      const u = BR.UPGRADE_BY_ID[id];
+      if (!u || !this.canBuy(u)) return false;
+      this.virality -= u.cost; this.purchased.add(id); this.recomputeEv();
+      this.save.stats.totalMemes++; this.save.saveStats();
+      if (this.audio) this.audio.buy();
+      if (this.ui) this.ui.onBuy(u);
+      this.checkAchievements();
+      return true;
+    }
+    // Symptoms can be de-evolved (partial refund) to cut Severity.
+    dependentsOwned(id) { return BR.UPGRADE_TREE.some((u) => this.purchased.has(u.id) && u.req.includes(id)); }
+    canDeEvolve(u) { return u && u.deEvolvable && this.purchased.has(u.id) && !this.dependentsOwned(u.id); }
+    deEvolve(id) {
+      const u = BR.UPGRADE_BY_ID[id];
+      if (!this.canDeEvolve(u)) return false;
+      this.purchased.delete(id); this.recomputeEv();
+      this.virality += Math.round(u.cost * C.DEEVOLVE_REFUND);
+      if (this.audio) this.audio.click();
+      if (this.ui) this.ui.onDeEvolve(u);
+      return true;
+    }
+
+    // ---- simulation frame ---------------------------------------------
+    _simFrame() {
+      if (this.speed <= 0 || this.paused || this.ended || this.phase !== 'play') { if (this.ui) this.ui.tickHud(); return; }
+      for (let i = 0; i < this.speed && !this.ended; i++) this.simStep(C.SIM_DT);
+      if (this.ui) this.ui.tickHud();
+    }
+
+    simStep(dt) {
+      if (this.ended || this.phase !== 'play') return;
+      this.elapsed += dt;
+      this.save.stats.playSeconds += dt;
+
+      // Global awareness + lockdown pressure.
+      let detPop = 0;
+      for (const c of this.world.countries) if (c.detected) detPop += c.pop;
+      const detFrac = detPop / this.world.totalPop;
+      this.awareness = clamp(this.severity() * 0.014 + detFrac * 0.45 + (this.cure / 100) * 0.4, 0, 1);
+      this.lockdownPressure = this.awareness > C.LOCKDOWN_START / 100 ? clamp((this.awareness - C.LOCKDOWN_START / 100) / 0.5, 0, 1) : 0;
+
+      const res = this.world.simStep(dt, {
+        ev: this.ev, diff: this.difficulty,
+        globalAwareness: this.awareness, lockdownPressure: this.lockdownPressure, rnd: this.rnd,
+      });
+
+      // Virality income: new infections + a severity-scaled trickle.
+      let gain = res.newlyInfected * C.VIR_INFECT + this.severity() * this.world.infectedPeople() * C.VIR_SEVERITY * dt;
+      gain *= 1 + this.ev.virality;
+      this.virality += gain; this.totalViralityEarned += gain; this.save.stats.totalVirality += gain;
+
+      // The Cure — only after the world has noticed the brainrot.
+      if (this.world.anyDetected()) {
+        let rate = C.CURE_BASE * this.difficulty.cure * res.research * (1 + this.severity() * C.CURE_SEV_GAIN);
+        rate /= 1 + this.ev.cureSlow * 2.5;
+        this.cure = clamp(this.cure + rate * dt, 0, C.CURE_MAX);
+      }
+
+      this._timers(dt);
+      this.events.update(dt);
+      this.checkAchievements();
+      this._checkEnd();
+
+      if (!this.headless && !this.ended && this.elapsed - this._lastAuto >= 15) {
+        this._lastAuto = this.elapsed; try { this.save.save('auto', this); } catch (e) {}
+      }
+    }
+
+    _timers(dt) {
+      // Trend ticker (from evolved slang symptoms).
+      const trends = [];
+      this.purchased.forEach((id) => { const u = BR.UPGRADE_BY_ID[id]; if (u && u.trend) trends.push(u.trend); });
+      if (trends.length) { this.trendTimer -= dt; if (this.trend === null || this.trendTimer <= 0 || trends.indexOf(this.trend) < 0) { this.trendIndex = (this.trendIndex + 1) % trends.length; this.trend = trends[this.trendIndex]; this.trendTimer = TREND_ROTATE; } }
+      else this.trend = null;
+
+      // Viral (income) bubbles.
+      this._bubbleT -= dt;
+      if (this._bubbleT <= 0) { this._bubbleT = this._roll(C.BUBBLE_MIN, C.BUBBLE_MAX); this.spawnViralBubble(); }
+      // Cure (setback) bubbles — only once the cure effort exists.
+      if (this.world.anyDetected()) { this._cureBubbleT -= dt; if (this._cureBubbleT <= 0) { this._cureBubbleT = this._roll(C.CURE_BUBBLE_MIN, C.CURE_BUBBLE_MAX); this.spawnCureBubble(); } }
+      // Uncontrolled mutation (a random symptom evolves on its own).
+      this._mutateT -= dt;
+      if (this._mutateT <= 0) { this._mutateT = this._roll(C.MUTATE_MIN, C.MUTATE_MAX); this._mutate(); }
+
+      const age = (arr) => { for (let i = arr.length - 1; i >= 0; i--) { arr[i].ttl -= dt; if (arr[i].ttl <= 0) arr.splice(i, 1); } };
+      age(this.viralBubbles); age(this.cureBubbles);
+    }
+
+    _mutate() {
+      const cands = BR.UPGRADE_TREE.filter((u) => u.tree === 'symptom' && !this.purchased.has(u.id) && this.isUnlockable(u));
+      if (!cands.length) return;
+      const u = cands[(this.rnd() * cands.length) | 0];
+      this.purchased.add(u.id); this.recomputeEv();
+      this.onEvent('🧬', `Mutation! "${u.name}" evolved on its own. (De-evolve it if it's raising the alarm.)`, 'chaos');
+      if (this.ui) this.ui.onBuy(u);
+    }
+
+    // ---- bubbles ------------------------------------------------------
+    _bubbleAt() {
+      const cs = this.world.countries.filter((c) => c.infected > 0.02);
+      const c = cs.length ? cs[(this.rnd() * cs.length) | 0] : this.world.countries[(this.rnd() * this.world.countries.length) | 0];
+      return { c, x: c.px !== undefined ? c.px + (this.rnd() - 0.5) * 26 : 0, y: c.py !== undefined ? c.py - c.r - 16 : 0 };
+    }
+    spawnViralBubble() {
+      const { c, x, y } = this._bubbleAt();
+      const e = ['🔥', '💯', '🤯', '💀', '🗿', '📈', '✨'][(this.rnd() * 7) | 0];
+      this.viralBubbles.push({ x, y, country: c, emoji: e, reward: C.VIRAL_BUBBLE_REWARD[0] + this.rnd() * (C.VIRAL_BUBBLE_REWARD[1] - C.VIRAL_BUBBLE_REWARD[0]), ttl: 6, maxTtl: 6 });
+      if (this.viralBubbles.length > 5) this.viralBubbles.shift();
+    }
+    spawnCureBubble() {
+      // Cure bubbles surface near wealthy, aware countries (the researchers).
+      const cs = this.world.countries.filter((c) => c.detected && c.wealth > 0.5);
+      const c = cs.length ? cs[(this.rnd() * cs.length) | 0] : this.world.countries[(this.rnd() * this.world.countries.length) | 0];
+      this.cureBubbles.push({ x: c.px !== undefined ? c.px + (this.rnd() - 0.5) * 26 : 0, y: c.py !== undefined ? c.py - c.r - 16 : 0, country: c, emoji: '🧪', setback: C.CURE_BUBBLE_SETBACK[0] + this.rnd() * (C.CURE_BUBBLE_SETBACK[1] - C.CURE_BUBBLE_SETBACK[0]), ttl: 7, maxTtl: 7 });
+      if (this.cureBubbles.length > 5) this.cureBubbles.shift();
+    }
+    clickViral(m) {
+      const i = this.viralBubbles.indexOf(m); if (i < 0) return; this.viralBubbles.splice(i, 1);
+      const r = m.reward * (1 + this.ev.virality); this.virality += r; this.totalViralityEarned += r;
+      if (this.fx) { this.fx.emojiPop(m.x, m.y, m.emoji); this.fx.floatText(m.x, m.y - 20, '+' + BR.fmt(r), '#f2c94c'); }
+      if (this.audio) this.audio.viral();
+    }
+    clickCure(m) {
+      const i = this.cureBubbles.indexOf(m); if (i < 0) return; this.cureBubbles.splice(i, 1);
+      this.cure = clamp(this.cure - m.setback, 0, C.CURE_MAX);
+      if (this.fx) { this.fx.emojiPop(m.x, m.y, '🧪'); this.fx.floatText(m.x, m.y - 20, '-' + m.setback.toFixed(1) + '% cure', '#4ea1ff'); }
+      if (this.audio) this.audio.pop();
+    }
+
+    // ---- event helper API (events.js) ---------------------------------
+    get countries() { return this.world.countries; }
+    addVirality(v) { this.virality += v; this.totalViralityEarned += v; }
+    reduceCure(v) { this.cure = clamp(this.cure - v, 0, C.CURE_MAX); }
+    addCure(v) { this.cure = clamp(this.cure + v, 0, C.CURE_MAX); }
+    boostCountry(c, amt) { const g = Math.min(c.healthy(), amt); c.infected += g; if (this.fx && c.px !== undefined) this.fx.burst(c.px, c.py, c.stage().color, 10); }
+    closeLinks(c) { c.airOpen = false; c.seaOpen = false; c.detected = true; }
+    randomInfected() { const cs = this.world.countries.filter((c) => c.infected > 0.01 && c.total() < 0.99); return cs.length ? cs[(this.rnd() * cs.length) | 0] : null; }
+    randomHealthy() { const cs = this.world.countries.filter((c) => c.total() < 0.5); return cs.length ? cs[(this.rnd() * cs.length) | 0] : null; }
+    onEvent(emoji, msg, tone) {
+      const e = { emoji, msg, tone, t: this.elapsed };
+      this.log.unshift(e); if (this.log.length > 80) this.log.pop();
+      this.currentEvent = e;
+      if (this.ui) this.ui.onEvent(e);
+      if (this.audio) this.audio.event(tone);
+    }
+
+    // ---- readouts -----------------------------------------------------
+    globalBrainrot() { return this.world.globalBrainrot(); }
+    infectedPeople() { return this.world.infectedPeople(); }
+    necroticPeople() { return this.world.necroticPeople(); }
+    healthyPeople() { return this.world.healthyPeople(); }
+    cureLabel() { const c = this.cure; return c < 1 ? 'Dormant' : c < 30 ? 'Researching' : c < 60 ? 'Trials' : c < 85 ? 'Rolling out' : 'Nearly cured!'; }
+
+    // ---- achievements & end -------------------------------------------
+    checkAchievements() {
+      for (const a of BR.ACHIEVEMENTS) if (!this.save.isUnlocked(a.id) && a.check(this)) {
+        if (this.save.unlock(a.id)) { this.newAchievements.push(a); if (this.ui) this.ui.onAchievement(a); if (this.audio) this.audio.pop(); }
+      }
+    }
+    _checkEnd() {
+      if (this.ended) return;
+      if (this.world.allTerminal()) {
+        this.won = true; this.ended = true; this.save.stats.gamesWon++;
+        if (this.save.stats.bestTime === null || this.elapsed < this.save.stats.bestTime) this.save.stats.bestTime = this.elapsed;
+        this.save.saveStats(); this.checkAchievements();
+        if (this.audio) this.audio.win(); if (this.ui) this.ui.onWin(); return;
+      }
+      if (this.cure >= C.CURE_MAX) {
+        this.lost = true; this.ended = true; this.loseReason = 'cured'; this.save.stats.gamesLost++; this.save.saveStats();
+        if (this.audio) this.audio.lose(); if (this.ui) this.ui.onLose('cured');
+      }
+    }
+
+    // ---- save / load --------------------------------------------------
+    saveGame(slot) { const d = this.save.save(slot, this); if (this.ui) this.ui.toast('💾', 'Saved to slot ' + slot, 'info'); return d; }
+    loadGame(slot) {
+      const d = this.save.load(slot); if (!d) return false;
+      this.stop();
+      this.seed = d.seed; this.rnd = BR.rng(this.seed);
+      this.world = new BR.World();
+      this.difficulty = BR.difficultyById(d.difficulty);
+      this.phase = d.phase || 'play';
+      (d.countries || []).forEach((s, i) => { if (this.world.countries[i]) this.world.countries[i].restore(s); });
+      this.virality = d.virality; this.totalViralityEarned = d.totalVir || 0;
+      this.cure = d.cure || 0; this.elapsed = d.elapsed || 0;
+      this.purchased = new Set(d.purchased || []); this.recomputeEv();
+      this.won = !!d.won; this.lost = !!d.lost; this.ended = this.won || this.lost;
+      this.viralBubbles = []; this.cureBubbles = []; this.startChoice = this.patientZero = null;
+      this.events = new BR.EventSystem(this);
+      if (this.ui) { this.ui.onNewGame(); this.ui.onRelease(); this.ui.toast('📂', 'Loaded slot ' + slot, 'info'); }
+      this.start();
+      return true;
+    }
+
+    // ---- render loop --------------------------------------------------
+    _renderLoop() {
+      const step = (ts) => {
+        this._raf = requestAnimationFrame(step);
+        const dt = this._lastFrame ? Math.min(0.05, (ts - this._lastFrame) / 1000) : 0.016;
+        this._lastFrame = ts;
+        if (this.ui) this.ui.render(ts / 1000, dt);
+      };
+      this._raf = requestAnimationFrame(step);
+    }
+  }
+  BR.Game = Game;
+
+  if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        const game = new BR.Game({});
+        window.GAME = game; game.ui.mount(); game.start();
+        const params = new URLSearchParams(location.search);
+        const auto = params.get('auto');
+        if (auto !== null) { const sp = parseInt(auto, 10); game.setSpeed(sp >= 0 && sp <= 3 ? sp : 1); if (game.ui.autoStart) game.ui.autoStart(); }
+        if (params.get('news')) { game.ui._autoDemo = false; setTimeout(() => game.events.fireRandom(), 250); }
+        if (params.get('evo')) { game.ui._openEvo(); const tb = document.querySelector('#evoTabs .etab[data-etab="transmission"]'); if (tb) tb.click(); }
+      } catch (e) {
+        const b = document.getElementById('crashBanner');
+        if (b) { b.style.display = 'block'; b.textContent = '💥 ' + (e && e.message || e); }
+        console.error(e);
+      }
+    });
+  }
+
+})(typeof window !== 'undefined' ? window : globalThis);
