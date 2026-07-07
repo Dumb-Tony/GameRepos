@@ -1522,16 +1522,17 @@ BR.WORLDMAP=[{"n":"Fiji","r":[[178.1,-17.5,178.4,-17.3,178.7,-17.6,178.6,-18.2,1
 
       // Light infection tint on real shapes; the spreading DOTS carry the look.
       for (const c of this.countries) {
-        const total = c.total(); if (total < 0.006) continue;
-        this._fill(ctx, c, c.stage().color, clamp(0.10 + total * 0.34, 0, 0.5));
+        const total = c.total(); if (total < 0.004) continue;
+        this._fill(ctx, c, c.stage().color, clamp(0.12 + total * 0.34, 0, 0.5));
         if (c.necrotic > 0.03) this._fill(ctx, c, '#5a2a90', clamp(c.necrotic * 0.4, 0, 0.5));
       }
       // Infection "spread dots" — bloom outward and take the region over as % rises.
       for (const c of this.countries) {
-        const total = c.total(); if (total < 0.01 || !c.dots || !c.dots.length) continue;
-        const n = Math.round(total * c.dots.length), necN = Math.round(c.necrotic * c.dots.length), st = c.stage();
+        const total = c.total(); if (total < 0.005 || !c.dots || !c.dots.length) continue;
+        const n = Math.max(1, Math.round(total * c.dots.length)), necN = Math.round(c.necrotic * c.dots.length), st = c.stage();
+        const rad = n < 4 ? 2.4 : 1.7;   // keep a lone patient-zero dot visible
         ctx.globalAlpha = 0.92;
-        for (let i = 0; i < n; i++) { const d = c.dots[i]; if (!d) break; ctx.beginPath(); ctx.arc(d[0], d[1], 1.7, 0, Math.PI * 2); ctx.fillStyle = i < necN ? '#a05fd8' : st.color; ctx.fill(); }
+        for (let i = 0; i < n; i++) { const d = c.dots[i]; if (!d) break; ctx.beginPath(); ctx.arc(d[0], d[1], rad, 0, Math.PI * 2); ctx.fillStyle = i < necN ? '#a05fd8' : st.color; ctx.fill(); }
         ctx.globalAlpha = 1;
       }
 
@@ -1985,6 +1986,9 @@ BR.WORLDMAP=[{"n":"Fiji","r":[[178.1,-17.5,178.4,-17.3,178.7,-17.6,178.6,-18.2,1
     _updatePause() { this.game.paused = !!(this._evoOpen || this._newsOpen); }
     _openEvo() {
       if (this.game.phase !== 'play' || this.game.ended) return;
+      // Clear any open news popup first so the two overlays can't stack their
+      // pause flags and leave the sim stuck paused after the overlay closes.
+      if (this._newsOpen) { this._newsOpen = false; this._newsQueue = []; this._closeModal('newsModal'); }
       this._evoOpen = true; this._updatePause();
       const ev = $('evoVir'); if (ev) ev.textContent = fmt(this.game.virality);
       this._renderOverview(); this._updateTree(); this._openModal('evoModal'); this._drawLines(this._activeTree());
