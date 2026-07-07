@@ -22,6 +22,7 @@
       this.mctx = this.mapCanvas.getContext('2d'); this.fctx = this.fxCanvas.getContext('2d');
       this.mapWrap = $('mapWrap');
       this.brainCanvas = $('brainCanvas'); this.bctx = this.brainCanvas ? this.brainCanvas.getContext('2d') : null;
+      this._pathogenCv = $('pathogenCanvas'); this._pathogenCtx = this._pathogenCv ? this._pathogenCv.getContext('2d') : null;
       this._newsQueue = []; this._newsOpen = false; this._evoOpen = false;
       this._buildMeters(); this._buildTrees(); this._buildDiffs(); this._initBrainImgs();
       this._wireTabs(); this._wireControls(); this._wireMap();
@@ -102,7 +103,7 @@
       this._renderNodeDetail();
     }
     _renderNodeDetail() {
-      const host = $('nodeDetail'); if (!host) return; const u = this.selectedNode;
+      const host = $('nodeDetailBody') || $('nodeDetail'); if (!host) return; const u = this.selectedNode;
       if (!u) { host.innerHTML = this._vitalsHtml(); return; }
       const g = this.game, owned = g.purchased.has(u.id), ok = g.isUnlockable(u), afford = g.virality >= u.cost;
       let action;
@@ -505,6 +506,49 @@
         this.game.fx.update(dt); this.game.fx.render(this.fctx);
       }
       this._drawBrain(t);
+      if (this._evoOpen) this._drawPathogen(t);
+    }
+
+    // Animated "meme pathogen": a spinning spiky virus that grows nastier
+    // (more spikes, more necrotic-purple) as Severity / Lethality rise.
+    _drawPathogen(t) {
+      const cv = this._pathogenCv, ctx = this._pathogenCtx; if (!cv || !ctx) return;
+      const w = cv.clientWidth || 260, h = cv.clientHeight || 150;
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      if (cv.width !== Math.round(w * dpr)) { cv.width = w * dpr; cv.height = h * dpr; }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+      const g = this.game, cx = w / 2, cy = h / 2, R = Math.min(w, h) * 0.24;
+      const sev = g.severity(), let_ = g.lethality(), rot = t * 0.6;
+      const N = 14 + Math.min(12, Math.round(sev * 1.2));           // spikier with severity
+      const lp = clamp(let_ / 6, 0, 1);                              // lethality -> purple
+      const core = `rgb(${Math.round(BR.lerp(255, 150, lp))},${Math.round(BR.lerp(75, 45, lp))},${Math.round(BR.lerp(200, 210, lp))})`;
+      const spike = lp > 0.5 ? '#c86bff' : '#ff6bd6';
+      ctx.save(); ctx.translate(cx, cy);
+      // receptor spikes radiating out, bobbing to fake a rotating sphere
+      ctx.strokeStyle = spike; ctx.fillStyle = spike;
+      for (let i = 0; i < N; i++) {
+        const a = (i / N) * Math.PI * 2 + rot, bob = 0.86 + 0.14 * Math.sin(a * 2 + rot);
+        const len = R * (0.34 + 0.1 * Math.sin(a * 3 + rot * 2));
+        const bx = Math.cos(a) * R * 0.92, by = Math.sin(a) * R * 0.92;
+        const ex = Math.cos(a) * (R + len) * bob, ey = Math.sin(a) * (R + len) * bob;
+        ctx.lineWidth = 2.4 * bob; ctx.globalAlpha = 0.55 + 0.45 * bob;
+        ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(ex, ey); ctx.stroke();
+        ctx.beginPath(); ctx.arc(ex, ey, 3 * bob, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      // glowing body
+      const grd = ctx.createRadialGradient(-R * 0.32, -R * 0.32, R * 0.15, 0, 0, R * 1.12);
+      grd.addColorStop(0, '#ffd0f4'); grd.addColorStop(0.42, core); grd.addColorStop(1, '#3a0e4a');
+      ctx.shadowColor = spike; ctx.shadowBlur = 22;
+      ctx.beginPath(); ctx.arc(0, 0, R, 0, Math.PI * 2); ctx.fillStyle = grd; ctx.fill();
+      ctx.shadowBlur = 0;
+      // surface blotches (rotate with the body)
+      const rnd = BR.rng(1234);
+      for (let i = 0; i < 6; i++) { const a = rnd() * Math.PI * 2 + rot, rr = rnd() * R * 0.6, bx = Math.cos(a) * rr, by = Math.sin(a) * rr; ctx.globalAlpha = 0.28; ctx.fillStyle = '#7a1e8a'; ctx.beginPath(); ctx.arc(bx, by, 2 + rnd() * 4, 0, Math.PI * 2); ctx.fill(); }
+      ctx.globalAlpha = 1;
+      // specular highlight
+      ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.beginPath(); ctx.arc(-R * 0.34, -R * 0.34, R * 0.16, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
     }
     _resize() {
       const w = this.mapWrap.clientWidth, h = this.mapWrap.clientHeight; if (w === this.cssW && h === this.cssH) return;

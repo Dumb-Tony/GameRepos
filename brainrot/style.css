@@ -600,7 +600,13 @@ body::after{
 @media (max-width:760px){ .evo-statbar{ gap:10px; } .esb .esb-lbl{ display:none; } }
 .etabpane{ display:none; }
 .etabpane.on{ display:block; }
-#evoModal #nodeDetail{ width:280px; flex:0 0 280px; border-left:1px solid var(--line); border-top:none; background:var(--panel); overflow-y:auto; }
+#evoModal #nodeDetail{ width:280px; flex:0 0 280px; border-left:1px solid var(--line); border-top:none; background:var(--panel); overflow-y:auto; padding:0; }
+/* spinning meme-pathogen panel at the top of the detail column */
+#pathogenPanel{ position:relative; height:150px; border-bottom:1px solid var(--line2); overflow:hidden;
+  background:radial-gradient(130px 100px at 50% 42%, #3a1560, #150a30 72%); }
+#pathogenCanvas{ display:block; width:100%; height:150px; }
+.pathogen-lbl{ position:absolute; bottom:6px; left:0; right:0; text-align:center; font-size:9px; font-weight:900; letter-spacing:1.6px; color:var(--dim); text-shadow:0 1px 3px #000; pointer-events:none; }
+#nodeDetailBody{ padding:10px 12px; }
 /* trees get more room inside the overlay */
 .evo-panes .tnode{ width:66px; height:60px; }
 .evo-panes .tn-ico{ font-size:23px; }
