@@ -145,8 +145,10 @@
       cv.width = Math.max(1, v.w * dpr); cv.height = Math.max(1, v.h * dpr);
       const cx = cv.getContext('2d'); if (!cx) return;
       cx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      // Vaporwave ocean — deep indigo fading to violet-black.
-      const bg = cx.createLinearGradient(0, 0, 0, v.h); bg.addColorStop(0, '#1a0f38'); bg.addColorStop(1, '#0b0620');
+      // Translucent vaporwave ocean — lets the sun/grid scene glow through
+      // from behind, so the map "floats" over the vaporwave backdrop.
+      cx.clearRect(0, 0, v.w, v.h);
+      const bg = cx.createLinearGradient(0, 0, 0, v.h); bg.addColorStop(0, 'rgba(26,15,56,0.46)'); bg.addColorStop(1, 'rgba(11,6,32,0.64)');
       cx.fillStyle = bg; cx.fillRect(0, 0, v.w, v.h);
       // Neon magenta graticule (the vaporwave grid).
       cx.strokeStyle = 'rgba(255,75,216,0.06)'; cx.lineWidth = 1;
@@ -165,7 +167,8 @@
 
     render(ctx, game, t) {
       const v = this._view; if (!v) return;
-      if (this._cache) ctx.drawImage(this._cache, 0, 0, v.w, v.h); else ctx.clearRect(0, 0, v.w, v.h);
+      ctx.clearRect(0, 0, v.w, v.h);
+      if (this._cache) ctx.drawImage(this._cache, 0, 0, v.w, v.h);
 
       // Light infection tint on real shapes; the spreading DOTS carry the look.
       for (const c of this.countries) {

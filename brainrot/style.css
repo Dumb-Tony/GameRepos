@@ -626,11 +626,11 @@ body::after{
 :root{ --hud-top:56px; --hud-cure:46px; --hud-bottom:64px; }
 body{ display:block; height:100vh; }
 
-/* Base layer: the map fills the entire viewport. */
+/* Base layer: the map fills the entire viewport, floating over the scene. */
 #mapWrap{
-  position:fixed; inset:0; z-index:0;
+  position:fixed; inset:0; z-index:2;
   border:none; border-radius:0; overflow:hidden;
-  background:#0a1120;
+  background:transparent;
 }
 #mapCanvas,#fxCanvas{ position:absolute; inset:0; width:100%; height:100%; }
 
@@ -721,37 +721,47 @@ body{ display:block; height:100vh; }
 /* meters lose the hard border inside the translucent card */
 #meters{ border-bottom:none; }
 
-/* ===== VAPORWAVE SCENE overlay (above the map, below the HUD) ============ */
-#vwScene{ position:fixed; inset:0; z-index:6; pointer-events:none; overflow:hidden; }
-/* chrome sunset sun glowing behind the top HUD */
+/* ===== VAPORWAVE SCENE — sits BEHIND the (translucent) map, so it glows
+ * through the ocean without ever blocking the continents. Cranked up. ====== */
+#vwScene{ position:fixed; inset:0; z-index:1; pointer-events:none; overflow:hidden; }
+/* big banded chrome sunset sun on the horizon */
 .vw-sun{
-  position:absolute; top:-160px; left:50%; transform:translateX(-50%);
-  width:520px; height:520px; border-radius:50%;
+  position:absolute; top:4vh; left:50%; transform:translateX(-50%);
+  width:min(760px,88vw); height:min(760px,88vw); border-radius:50%;
   background:
-    repeating-linear-gradient(180deg, transparent 0 26px, rgba(10,6,24,.55) 26px 32px),
-    radial-gradient(circle at 50% 45%, #ffe9a8 0%, #ff8fd6 34%, #ff4bd8 55%, rgba(161,92,255,.25) 74%, transparent 80%);
-  filter:blur(.4px); opacity:.55;
-  mask-image:radial-gradient(circle at 50% 45%, #000 60%, transparent 78%);
-  -webkit-mask-image:radial-gradient(circle at 50% 45%, #000 60%, transparent 78%);
+    repeating-linear-gradient(180deg, transparent 0 30px, rgba(8,4,20,.85) 30px 40px),
+    radial-gradient(circle at 50% 46%, #fff2c0 0%, #ffd66b 20%, #ff8fd6 42%, #ff4bd8 60%, rgba(161,92,255,.4) 78%, transparent 86%);
+  opacity:.8;
+  mask-image:radial-gradient(circle at 50% 46%, #000 62%, transparent 82%);
+  -webkit-mask-image:radial-gradient(circle at 50% 46%, #000 62%, transparent 82%);
+  animation:vwSunPulse 5s ease-in-out infinite;
 }
-/* neon wireframe grid receding to a horizon along the bottom */
+@keyframes vwSunPulse{ 50%{ opacity:1; filter:brightness(1.12); } }
+/* prominent neon wireframe grid floor receding to a horizon */
 .vw-grid{
-  position:absolute; left:-30%; right:-30%; bottom:0; height:40vh;
+  position:absolute; left:-40%; right:-40%; bottom:0; height:52vh;
   background:
-    repeating-linear-gradient(90deg, transparent 0 46px, rgba(255,75,216,.5) 46px 48px),
-    repeating-linear-gradient(0deg, transparent 0 42px, rgba(75,231,255,.42) 42px 44px);
-  transform:perspective(300px) rotateX(70deg); transform-origin:bottom center;
-  mask-image:linear-gradient(180deg, transparent 8%, #000 78%);
-  -webkit-mask-image:linear-gradient(180deg, transparent 8%, #000 78%);
-  opacity:.28; mix-blend-mode:screen;
-  animation:vwGridRoll 6s linear infinite;
+    repeating-linear-gradient(90deg, transparent 0 52px, rgba(255,75,216,.85) 52px 55px),
+    repeating-linear-gradient(0deg, transparent 0 46px, rgba(75,231,255,.7) 46px 49px);
+  transform:perspective(260px) rotateX(72deg); transform-origin:bottom center;
+  mask-image:linear-gradient(180deg, transparent 4%, #000 70%);
+  -webkit-mask-image:linear-gradient(180deg, transparent 4%, #000 70%);
+  opacity:.6; mix-blend-mode:screen;
+  animation:vwGridRoll 4.5s linear infinite;
 }
-@keyframes vwGridRoll{ to{ background-position:0 44px, 0 44px; } }
-.vw-spark{ position:absolute; color:#fff; text-shadow:0 0 8px #ff4bd8, 0 0 14px #4be7ff; font-size:16px; opacity:.8; animation:vwTwinkle 3.4s ease-in-out infinite; }
-.vw-spark.s1{ top:14%; left:22%; } .vw-spark.s2{ top:26%; left:74%; font-size:22px; animation-delay:.7s; }
-.vw-spark.s3{ top:62%; left:12%; font-size:13px; animation-delay:1.4s; } .vw-spark.s4{ top:70%; left:84%; font-size:20px; animation-delay:2s; }
-.vw-spark.s5{ top:40%; left:48%; font-size:12px; animation-delay:1s; }
-@keyframes vwTwinkle{ 0%,100%{ opacity:.2; transform:scale(.7) rotate(0deg);} 50%{ opacity:.95; transform:scale(1.15) rotate(20deg);} }
+@keyframes vwGridRoll{ to{ background-position:0 48px, 0 48px; } }
+/* a soft sunset wash so the whole backdrop reads as a vaporwave sky */
+#vwScene::before{
+  content:""; position:absolute; inset:0;
+  background:
+    radial-gradient(120% 70% at 50% 6%, rgba(255,75,216,.32), transparent 55%),
+    linear-gradient(180deg, #2a1156 0%, #180a38 46%, #0a0618 100%);
+}
+.vw-spark{ position:absolute; color:#fff; text-shadow:0 0 8px #ff4bd8, 0 0 16px #4be7ff; opacity:.85; animation:vwTwinkle 3.4s ease-in-out infinite; z-index:1; }
+.vw-spark.s1{ top:13%; left:16%; font-size:18px; } .vw-spark.s2{ top:22%; left:80%; font-size:24px; animation-delay:.7s; }
+.vw-spark.s3{ top:58%; left:9%; font-size:15px; animation-delay:1.4s; } .vw-spark.s4{ top:66%; left:88%; font-size:22px; animation-delay:2s; }
+.vw-spark.s5{ top:34%; left:52%; font-size:14px; animation-delay:1s; }
+@keyframes vwTwinkle{ 0%,100%{ opacity:.15; transform:scale(.6) rotate(0deg);} 50%{ opacity:1; transform:scale(1.2) rotate(25deg);} }
 
 /* Small screens: let the floating cards shrink and the map still show. */
 @media (max-width:900px){
@@ -762,3 +772,59 @@ body{ display:block; height:100vh; }
 @media (max-width:640px){
   #left,#right{ display:none; }   /* phones: map + top/bottom HUD + evolve only */
 }
+
+/* ===== RETRO Y2K WINDOW CHROME on modals ================================= */
+/* chrome bevel + magenta border on every popup card */
+.modal-card, #evoModal .evo-card, #newsModal .news-card{
+  border:1px solid rgba(140,80,220,.8) !important;
+  box-shadow:0 26px 70px rgba(20,0,40,.72),
+    inset 1px 1px 0 rgba(255,255,255,.32), inset -2px -2px 0 rgba(110,40,170,.55) !important;
+}
+/* retro gradient title bar shared look */
+.win-bar, .modal-head, .evo-top{
+  background:linear-gradient(90deg,#ff4bd8,#a15cff 68%,#6bdcff) !important;
+  color:#fff; box-shadow:inset 0 1px 0 rgba(255,255,255,.45), 0 1px 0 rgba(120,40,180,.6);
+  text-shadow:0 1px 2px rgba(90,0,90,.85);
+}
+/* menu / stats / awards already have .modal-head — make it a real title bar */
+.modal-head{
+  margin:-22px -22px 16px !important; padding:8px 12px !important;
+  border-radius:18px 18px 0 0; align-items:center;
+}
+.modal-head h3{ font-size:14px !important; letter-spacing:.6px; text-transform:uppercase; color:#fff; }
+.x{
+  background:rgba(255,255,255,.22) !important; border:1px solid rgba(255,255,255,.55) !important;
+  color:#fff !important; width:22px; height:22px; border-radius:4px; font-size:13px !important;
+  line-height:1; box-shadow:inset 1px 1px 0 rgba(255,255,255,.4);
+}
+.x:hover{ background:#ff5c8a !important; }
+/* intro + end cards get a fake .exe title bar */
+.start-card::before, .end-card::before{
+  content:"◼ BRAINROT.EXE"; display:block; text-align:left;
+  margin:-22px -22px 18px; padding:8px 12px; border-radius:18px 18px 0 0;
+  background:linear-gradient(90deg,#ff4bd8,#a15cff 68%,#6bdcff);
+  color:#fff; font-size:12px; font-weight:900; letter-spacing:1.2px;
+  text-shadow:0 1px 2px rgba(90,0,90,.85); box-shadow:inset 0 1px 0 rgba(255,255,255,.45);
+}
+.end-card::before{ content:"◼ GAME_OVER.EXE"; }
+/* evolve overlay top bar → retro title bar */
+.evo-top{ border-radius:16px 16px 0 0; }
+.evo-title{ color:#fff !important; text-shadow:0 1px 2px rgba(90,0,90,.85); }
+/* news bulletin gets a retro tag stripe */
+#newsModal .news-card{ padding-top:26px !important; position:relative; }
+#newsModal .news-card::before{
+  content:"◼ BREAKING.LOG"; position:absolute; top:0; left:0; right:0;
+  padding:4px 10px; font-size:10px; font-weight:900; letter-spacing:1px; color:#fff;
+  background:linear-gradient(90deg,#ff4bd8,#a15cff 68%,#6bdcff);
+  border-radius:14px 14px 0 0; text-shadow:0 1px 2px rgba(90,0,90,.85);
+}
+
+/* ===== CRANKED scanlines + chromatic shimmer over the whole app ========== */
+body::before{ opacity:.72; }
+/* a faint drifting RGB scan band for extra VHS feel */
+#vwScene::after{
+  content:""; position:absolute; inset:0; pointer-events:none; z-index:2; mix-blend-mode:screen;
+  background:linear-gradient(180deg, transparent 0, rgba(255,75,216,.06) 48%, rgba(75,231,255,.06) 52%, transparent 100%);
+  background-size:100% 220px; animation:vwScan 6s linear infinite;
+}
+@keyframes vwScan{ to{ background-position:0 220px; } }
