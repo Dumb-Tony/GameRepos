@@ -20,28 +20,33 @@
     SPEED_LABELS: ['Paused', '1×', '2×', '3×'],
 
     // --- Spread (deliberately slow; a run should take many minutes) ---
-    // v7 rebalance: markedly slower spread + slower finisher + stronger, income
-    // starved economy so a run is a long, deliberate race the Cure can win.
-    // Good play still wins Normal — but by a hair (Cure ~90%); Brutal is a wall.
-    // Tuned via the headless balance harness (see scratchpad/balance.js).
-    INFECT_BASE: 0.006,     // master internal-spread coefficient (tuned via harness)
+    // v8 rebalance: a slow, GRADUAL snowball (weak momentum + slow cross-border
+    // links so the world saturates over minutes, not in one burst) plus a scarce
+    // economy where income never covers the whole tree — so you commit to a
+    // build instead of buying everything. Tuned via scratchpad/econ.js.
+    INFECT_BASE: 0.0048,    // master internal-spread coefficient (tuned via harness)
     INF_SCALE: 0.14,        // how strongly evolved Infectivity multiplies spread
     SEED_FLOOR: 0.05,       // minimum growth pressure in a seeded country
-    MOMENTUM: 0.5,          // self-reinforcing S-curve strength (low = gradual, not bursty)
+    MOMENTUM: 0.28,         // self-reinforcing S-curve strength (low = gradual, not bursty)
     NECROSIS_BASE: 0.006,   // master lethality (infected -> terminal) coeff — the finish is a race
     SEED_INFECT: 0.006,     // fraction infected in the chosen start country
 
     // --- Cross-border transmission (air / sea / land) -----------------
-    LINK_AIR: 0.0012,       // per-step air-route seeding coefficient
-    LINK_SEA: 0.0008,       // sea-route seeding
-    LINK_LAND: 0.0025,      // land-border seeding (strongest)
+    // Slow, so regions light up one after another over minutes (no instant
+    // global snowball) — the single biggest lever on pacing.
+    LINK_AIR: 0.00054,      // per-step air-route seeding coefficient
+    LINK_SEA: 0.00036,      // sea-route seeding
+    LINK_LAND: 0.00112,     // land-border seeding (strongest)
 
     // --- Economy (Virality = DNA) -------------------------------------
-    START_VIRALITY: 8,
-    VIR_INFECT: 0.040,      // per million newly infected (income-starved: evolve deliberately)
-    VIR_SEVERITY: 0.001,    // passive trickle scaled by severity × infected
+    // Income comes from ACTIVELY SPREADING (new infections) and dries up once
+    // the world is saturated — no infinite passive trickle. Total earnable
+    // virality stays below the tree's total cost, forcing real build choices.
+    START_VIRALITY: 32,
+    VIR_INFECT: 0.045,      // per million newly infected — the main income source
+    VIR_SEVERITY: 0.00006,  // tiny passive trickle (was the runaway money printer)
     BUBBLE_MIN: 7, BUBBLE_MAX: 22,      // seconds between virality bubbles
-    VIRAL_BUBBLE_REWARD: [8, 28],
+    VIRAL_BUBBLE_REWARD: [4, 14],
 
     // --- Trend Heat (viral momentum) ----------------------------------
     // A meter that spikes on viral moments (new regions catching on, bubbles,
@@ -54,14 +59,14 @@
     HEAT_BUBBLE: 16,        // heat spike from tapping a viral bubble
     HEAT_EVENT: 12,         // heat spike from a viral/chaos world event
     HEAT_EVOLVE: 16,        // heat spike when you evolve a new upgrade ("a drop")
-    HEAT_INCOME_MULT: 1.15, // at full heat, income is +115%
-    HEAT_SPREAD: 0.55,      // at full heat, internal + cross-border spread +55%
+    HEAT_INCOME_MULT: 0.4,  // at full heat, income is +40%
+    HEAT_SPREAD: 0.3,       // at full heat, internal + cross-border spread +30%
     HEAT_AWARE: 0.10,       // at full heat, +0.10 global awareness (feeds Cure)
     HEAT_HOT: 62,           // threshold considered "trending hot" (UI cue)
 
     // --- The Cure ("Touch-Grass Campaign") — a real threat if you're loud
     CURE_MAX: 100,
-    CURE_BASE: 1.7,         // base research rate (× difficulty × research power)
+    CURE_BASE: 0.7,         // base research rate (× difficulty × research power)
     CURE_SEV_GAIN: 0.16,    // how much severity accelerates the cure
     CURE_BUBBLE_MIN: 11, CURE_BUBBLE_MAX: 24,
     CURE_BUBBLE_SETBACK: [3, 7],        // % knocked off the cure per bubble

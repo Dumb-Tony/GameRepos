@@ -25,8 +25,12 @@
       blurb: 'Resilience & Cure control. No spread of their own — pure strategy.' },
   ];
 
+  // Global cost scale (v8): the base costs below are authored on a small scale;
+  // this multiplier sets how scarce Virality is overall. Raising it means income
+  // covers less of the tree, forcing you to commit to a build. Tuned via econ.js.
+  const COST_SCALE = 3.5;
   const U = (id, tree, name, emoji, cost, desc, req, fx, extra) =>
-    Object.assign({ id, tree, name, emoji, cost, desc, req: req || [], fx: fx || {} }, extra || {});
+    Object.assign({ id, tree, name, emoji, cost: Math.round(cost * COST_SCALE), desc, req: req || [], fx: fx || {} }, extra || {});
   const sym = { deEvolvable: true };
 
   BR.UPGRADE_TREE = [
