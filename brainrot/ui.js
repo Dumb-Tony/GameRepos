@@ -34,8 +34,8 @@
       mk('heat', '🔥 Trend Heat', 'm-heat'); mk('inf', '⚡ Infectivity', 'm-inf'); mk('sev', '🚨 Severity', 'm-sev'); mk('let', '☠️ Lethality', 'm-let'); mk('aware', '👁️ Awareness', 'm-aware');
     }
 
-    // Plague-style tech tree: icon nodes laid out in prerequisite tiers,
-    // connector lines behind them, and a shared detail/Evolve panel.
+    // Plague-style tech tree: nodes BRANCH out from their prerequisites in a
+    // tidy top-down tree, connector branches behind them, shared detail panel.
     _buildTrees() {
       this._computeDepths();
       this._lineCanvas = {};
@@ -43,25 +43,50 @@
         const host = $('tab-' + tree.id); host.innerHTML = '';
         host.appendChild(el('div', 'tree-blurb', `${tree.emoji} ${tree.blurb}`));
         const scroll = el('div', 'tree-scroll');
-        const tiers = el('div', 'tiers'); tiers.id = 'tiers-' + tree.id;
-        const canvas = el('canvas', 'tree-lines'); tiers.appendChild(canvas);
+        const stage = el('div', 'tree-stage'); stage.id = 'tiers-' + tree.id;
+        const canvas = el('canvas', 'tree-lines'); stage.appendChild(canvas);
         this._lineCanvas[tree.id] = canvas;
         const nodes = BR.UPGRADE_TREE.filter((u) => u.tree === tree.id);
-        const maxD = nodes.reduce((m, u) => Math.max(m, this._depth[u.id]), 0);
-        for (let d = 0; d <= maxD; d++) {
-          const col = el('div', 'tier');
-          nodes.filter((u) => this._depth[u.id] === d).forEach((u) => {
-            const n = el('button', 'tnode' + (u.combo ? ' combo' : ''));
-            n.dataset.id = u.id;
-            n.innerHTML = `<span class="tn-ico">${u.emoji}</span><span class="tn-cost">💜${fmt(u.cost)}</span><span class="tn-tick">✔</span>`;
-            n.addEventListener('click', () => this._selectNode(u));
-            col.appendChild(n); this.nodeEls[u.id] = n;
-          });
-          tiers.appendChild(col);
+        const lay = this._layoutTree(nodes);
+        stage.style.width = lay.w + 'px'; stage.style.height = lay.h + 'px';
+        for (const u of nodes) {
+          const p = lay.xy[u.id];
+          const n = el('button', 'tnode' + (u.combo ? ' combo' : ''));
+          n.dataset.id = u.id; n.style.left = p.x + 'px'; n.style.top = p.y + 'px';
+          n.innerHTML = `<span class="tn-ico">${u.emoji}</span><span class="tn-cost">💜${fmt(u.cost)}</span><span class="tn-tick">✔</span>`;
+          n.addEventListener('click', () => this._selectNode(u));
+          stage.appendChild(n); this.nodeEls[u.id] = n;
         }
-        scroll.appendChild(tiers); host.appendChild(scroll);
+        scroll.appendChild(stage); host.appendChild(scroll);
       }
       this._updateTree(); this._renderNodeDetail(); this._drawLines('transmission');
+    }
+
+    // Tidy top-down tree layout (Reingold-Tilford-ish). Each node hangs under
+    // its PRIMARY prerequisite (first in-tree req); leaves fill columns left to
+    // right and parents centre over their children, so branches never overlap.
+    // Extra prerequisites (combos) just add converging branch lines.
+    _layoutTree(nodes) {
+      const NODE = 60, COLW = 80, ROWH = 94, PADX = 28, PADY = 12, GAP = 0.8;
+      const inTree = new Set(nodes.map((u) => u.id));
+      const parentOf = (u) => { for (const r of u.req) if (inTree.has(r)) return r; return null; };
+      const kids = {}; nodes.forEach((u) => { const p = parentOf(u); if (p) (kids[p] = kids[p] || []).push(u.id); });
+      const roots = nodes.filter((u) => !parentOf(u)).map((u) => u.id);
+      const col = {}; let leaf = 0;
+      const assign = (id) => {
+        const cs = kids[id] || [];
+        if (!cs.length) { col[id] = leaf++; return; }
+        cs.forEach(assign);
+        col[id] = (col[cs[0]] + col[cs[cs.length - 1]]) / 2;
+      };
+      roots.forEach((r, i) => { if (i) leaf += GAP; assign(r); });
+      const xy = {}; let maxCol = 0, maxDepth = 0;
+      nodes.forEach((u) => {
+        const c = col[u.id] || 0, d = this._depth[u.id];
+        xy[u.id] = { x: PADX + c * COLW, y: PADY + d * ROWH };
+        if (c > maxCol) maxCol = c; if (d > maxDepth) maxDepth = d;
+      });
+      return { xy, w: PADX * 2 + maxCol * COLW + NODE, h: PADY * 2 + maxDepth * ROWH + NODE };
     }
 
     _computeDepths() {
@@ -120,12 +145,13 @@
         u.req.forEach((r) => {
           const from = ctr(r); if (!from) return;
           const owned = g.purchased.has(r) && g.purchased.has(u.id), avail = g.purchased.has(r);
-          ctx.strokeStyle = owned ? 'rgba(182,239,63,0.85)' : avail ? 'rgba(138,127,240,0.55)' : 'rgba(120,130,165,0.20)';
-          ctx.lineWidth = owned ? 2.4 : avail ? 1.6 : 1.2;
+          ctx.strokeStyle = owned ? 'rgba(95,251,224,0.9)' : avail ? 'rgba(181,123,255,0.6)' : 'rgba(150,120,200,0.22)';
+          ctx.lineWidth = owned ? 2.6 : avail ? 1.8 : 1.3;
           ctx.shadowBlur = owned ? 8 : avail ? 5 : 0;
-          ctx.shadowColor = owned ? 'rgba(182,239,63,0.6)' : 'rgba(138,127,240,0.4)';
-          const mx = (from.x + to.x) / 2;
-          ctx.beginPath(); ctx.moveTo(from.x, from.y); ctx.bezierCurveTo(mx, from.y, mx, to.y, to.x, to.y); ctx.stroke();
+          ctx.shadowColor = owned ? 'rgba(95,251,224,0.7)' : 'rgba(181,123,255,0.45)';
+          // vertical S-curve so branches grow down from the parent node
+          const my = (from.y + to.y) / 2;
+          ctx.beginPath(); ctx.moveTo(from.x, from.y); ctx.bezierCurveTo(from.x, my, to.x, my, to.x, to.y); ctx.stroke();
         });
         ctx.shadowBlur = 0;
       });
