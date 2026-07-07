@@ -86,12 +86,14 @@
   // Difficulty presets scale the cure, hygiene (susceptibility), and how
   // fast the world locks down — mirroring the genre's difficulty tiers.
   BR.DIFFICULTIES = [
-    { id: 'casual',  name: 'Casual',  emoji: '😌', cure: 0.55, susc: 1.20, lockdown: 0.6, skeptic: 0.85,
+    { id: 'casual',  name: 'Casual',  emoji: '😌', cure: 0.55, susc: 1.20, lockdown: 0.6, skeptic: 0.85, chaos: 1.0,
       blurb: 'People barely notice. The cure crawls. Learn the ropes.' },
-    { id: 'normal',  name: 'Normal',  emoji: '🙂', cure: 1.00, susc: 1.00, lockdown: 1.0, skeptic: 1.00,
+    { id: 'normal',  name: 'Normal',  emoji: '🙂', cure: 1.00, susc: 1.00, lockdown: 1.0, skeptic: 1.00, chaos: 1.0,
       blurb: 'A fair fight between your memes and humanity’s attention span.' },
-    { id: 'brutal',  name: 'Brutal',  emoji: '😰', cure: 1.55, susc: 0.85, lockdown: 1.5, skeptic: 1.15,
+    { id: 'brutal',  name: 'Brutal',  emoji: '😰', cure: 1.55, susc: 0.85, lockdown: 1.5, skeptic: 1.15, chaos: 1.0,
       blurb: 'Fact-checkers are caffeinated. Borders slam shut. Good luck.' },
+    { id: 'chaos',   name: 'Chaos',   emoji: '🎲', cure: 1.10, susc: 1.05, lockdown: 1.0, skeptic: 1.00, chaos: 2.4,
+      blurb: 'Reality has left the chat. Events & mutations fire nonstop. Anything can happen.' },
   ];
   BR.difficultyById = (id) => BR.DIFFICULTIES.find((d) => d.id === id) || BR.DIFFICULTIES[1];
 

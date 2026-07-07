@@ -148,6 +148,8 @@
       if (fx.sev) b.push(`<span class="bdg ${fx.sev > 0 ? 'bad' : 'good'}">🚨${fx.sev > 0 ? '+' : ''}${fx.sev}</span>`);
       if (fx.let) b.push(`<span class="bdg warn">☠️+${fx.let}</span>`);
       if (fx.cureSlow) b.push(`<span class="bdg good">🧪↓${fx.cureSlow}</span>`);
+      if (fx.heatGain) b.push(`<span class="bdg gold">🔥+${fx.heatGain}</span>`);
+      if (fx.heatDecayReduce) b.push(`<span class="bdg gold">🔥 stays hot</span>`);
       const tags = { languagePierce: '🌐 langs', offlineReach: '📻 off-grid', borderPierce: '🧱 borders', moderationResist: '🔓 censors', online: '🎯 online', offline: '🎯 IRL', rich: '🎯 rich', poor: '🎯 poor', young: '🎯 young', old: '🎯 old' };
       for (const k in tags) if (fx[k]) b.push(`<span class="bdg neut">${tags[k]}</span>`);
       return b.join('');

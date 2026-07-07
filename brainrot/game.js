@@ -99,7 +99,7 @@
       const ev = BR.baseEv();
       this.purchased.forEach((id) => { const u = BR.UPGRADE_BY_ID[id]; if (u) BR.foldEffects(ev, u.fx); });
       ev.skepticScale = this.difficulty.skeptic;
-      ['borderPierce', 'moderationResist', 'languagePierce', 'offlineReach', 'cureSlow'].forEach((k) => (ev[k] = clamp(ev[k], 0, 1)));
+      ['borderPierce', 'moderationResist', 'languagePierce', 'offlineReach', 'cureSlow', 'heatDecayReduce'].forEach((k) => (ev[k] = clamp(ev[k], 0, 1)));
       this.ev = ev;
     }
     infectivity() { return Math.max(0, this.ev.inf); }
@@ -147,7 +147,8 @@
 
       // Trend Heat: fast-decaying viral momentum. Spikes elsewhere (bubbles,
       // events, evolutions); here it decays and drives its two effects.
-      this.heat = clamp(this.heat - C.HEAT_DECAY * dt, 0, C.HEAT_MAX);
+      // Trend-Surfing abilities slow the decay so you stay viral longer.
+      this.heat = clamp(this.heat - C.HEAT_DECAY * (1 - this.ev.heatDecayReduce) * dt, 0, C.HEAT_MAX);
       const heatFrac = this.heat / C.HEAT_MAX;
 
       // Global awareness + lockdown pressure. Heat adds transient visibility.
@@ -204,7 +205,7 @@
       if (this.world.anyDetected()) { this._cureBubbleT -= dt; if (this._cureBubbleT <= 0) { this._cureBubbleT = this._roll(C.CURE_BUBBLE_MIN, C.CURE_BUBBLE_MAX); this.spawnCureBubble(); } }
       // Uncontrolled mutation (a random symptom evolves on its own).
       this._mutateT -= dt;
-      if (this._mutateT <= 0) { this._mutateT = this._roll(C.MUTATE_MIN, C.MUTATE_MAX); this._mutate(); }
+      if (this._mutateT <= 0) { this._mutateT = this._roll(C.MUTATE_MIN, C.MUTATE_MAX) / (this.difficulty.chaos || 1); this._mutate(); }
 
       const age = (arr) => { for (let i = arr.length - 1; i >= 0; i--) { arr[i].ttl -= dt; if (arr[i].ttl <= 0) arr.splice(i, 1); } };
       age(this.viralBubbles); age(this.cureBubbles);
@@ -257,7 +258,7 @@
     addVirality(v) { this.virality += v; this.totalViralityEarned += v; }
     // Stoke Trend Heat. `spike` marks discrete viral moments (bubbles, events,
     // drops) so the UI can flash; passive infection heat passes spike=false.
-    addHeat(v, spike) { if (v <= 0) return; this.heat = clamp(this.heat + v, 0, C.HEAT_MAX); if (this.heat > this.peakHeat) this.peakHeat = this.heat; if (spike && this.ui) this.ui.onHeatSpike && this.ui.onHeatSpike(); }
+    addHeat(v, spike) { if (v <= 0) return; v *= 1 + (this.ev.heatGain || 0); this.heat = clamp(this.heat + v, 0, C.HEAT_MAX); if (this.heat > this.peakHeat) this.peakHeat = this.heat; if (spike && this.ui) this.ui.onHeatSpike && this.ui.onHeatSpike(); }
     heatLabel() { const h = this.heat; return h < C.HEAT_HOT * 0.35 ? 'Cold' : h < C.HEAT_HOT ? 'Warming' : h < 88 ? '🔥 Trending' : '🔥 Viral!'; }
     reduceCure(v) { this.cure = clamp(this.cure - v, 0, C.CURE_MAX); }
     addCure(v) { this.cure = clamp(this.cure + v, 0, C.CURE_MAX); }
@@ -265,6 +266,8 @@
     closeLinks(c) { c.airOpen = false; c.seaOpen = false; c.detected = true; }
     randomInfected() { const cs = this.world.countries.filter((c) => c.infected > 0.01 && c.total() < 0.99); return cs.length ? cs[(this.rnd() * cs.length) | 0] : null; }
     randomHealthy() { const cs = this.world.countries.filter((c) => c.total() < 0.5); return cs.length ? cs[(this.rnd() * cs.length) | 0] : null; }
+    // Schedule a follow-up event to fire `delay` seconds later (story chains).
+    queueEvent(id, delay) { if (this.events) this.events.queued.push({ id, t: Math.max(0, delay || 0) }); }
     onEvent(emoji, msg, tone) {
       const e = { emoji, msg, tone, t: this.elapsed };
       this.log.unshift(e); if (this.log.length > 80) this.log.pop();

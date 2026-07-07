@@ -384,7 +384,8 @@ body::before{
 
 /* difficulty picker */
 .diff-head,.diff-head2{ font-weight:800; font-size:11px; text-transform:uppercase; letter-spacing:.6px; color:var(--dim); margin:14px 0 8px; }
-.diffs{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+.diffs{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
+@media (min-width:520px){ .diffs{ grid-template-columns:repeat(4,1fr); } }
 .diff{ background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:10px 8px; cursor:pointer; text-align:center; transition:.15s; }
 .diff:hover{ border-color:var(--line2); }
 .diff.on{ border-color:var(--violet); background:linear-gradient(180deg,#251f45,#1a1730); box-shadow:0 0 0 1px #8a7ff055; }

@@ -41,14 +41,20 @@
     U('translate','transmission','Meme Translation','🌐',22,'Localizes the rot into non-English cultures.',['crosspost'], {inf:0.3, languagePierce:0.7, sev:0.2}),
     U('influencer','transmission','Influencer Seeding','🤳',24,'Pay the algorithm gods. Loud, effective.',['algo'], {inf:0.9, rich:0.2, sev:0.8}),
     U('news','transmission','News Media Hijack','📰',28,'Mainstream coverage supercharges spread — and detection.',['influencer'], {inf:0.8, rich:0.15, sev:1.4}),
+    U('aislop','transmission','AI Slop Firehose','🤖',22,'Endless AI-generated slop floods every feed. Relentless, and always trending.',['shortvid'], {inf:0.9, online:0.15, sev:1.0, heatGain:0.25}),
+    U('podcast','transmission','Podcast Bro Pipeline','🎙️',18,'Three-hour episodes radicalize the entire commute.',['boomer'], {inf:0.5, old:0.2, rich:0.15, sev:0.6}),
 
     // =================== SYMPTOMS ===================
     U('postmemes','symptom','Posting Memes','🖼️',6,'Harmless-looking. The first behavioral tell.',[], {inf:0.2, sev:0.3, virality:0.05}, Object.assign({root:true, trend:'posting 🖼️'}, sym)),
     U('slang_skibidi','symptom','Skibidi','🚽',8,'A word that means nothing and everything.',['postmemes'], {inf:0.4, sev:0.5}, Object.assign({trend:'skibidi 🚽'}, sym)),
     U('slang_ohio','symptom','Ohio','💀',8,'Everything is now "only in Ohio".',['postmemes'], {inf:0.3, sev:0.5}, Object.assign({trend:'Ohio 💀'}, sym)),
     U('slang_rizz','symptom','Rizz','😏',8,'Charisma, weaponized into a suffix.',['postmemes'], {inf:0.35, sev:0.4, virality:0.05}, Object.assign({trend:'rizz 😏'}, sym)),
+    U('slang_gyatt','symptom','Gyatt','🍑',8,'An exclamation. A worldview. A menace.',['postmemes'], {inf:0.35, sev:0.45}, Object.assign({trend:'gyatt 🍑'}, sym)),
+    U('slang_fanum','symptom','Fanum Tax','🍗',8,'Communal theft of a friend\'s food, now a way of life.',['postmemes'], {inf:0.3, sev:0.4, virality:0.05}, Object.assign({trend:'fanum tax 🍗'}, sym)),
     U('reaction','symptom','Reaction-Image Speech','😲',10,'Words replaced by GIFs. Great engagement.',['postmemes'], {virality:0.15, sev:0.6}, sym),
+    U('ragebait','symptom','Rage Bait','😡',14,'Nothing spreads like fury. Keeps you trending far longer.',['reaction'], {inf:0.3, sev:0.9, heatGain:0.3}, sym),
     U('combo_sor','symptom','Skibidi Ohio Rizz','🌟',20,'COMBO. The slang trinity fuses into one cursed phrase.',['slang_skibidi','slang_ohio','slang_rizz'], {inf:0.8, virality:0.2, sev:0.7}, Object.assign({combo:true}, sym)),
+    U('combo_looksmax','symptom','Mewing Looksmaxxing','🗿',22,'COMBO. Jaw tension elevated to an entire personality.',['slang_gyatt','slang_rizz'], {inf:0.7, virality:0.15, sev:0.8}, Object.assign({combo:true}, sym)),
     U('doomscroll','symptom','Doomscrolling','🌒',16,'3am, still going. Mildly corrosive to the host.',['reaction'], {inf:0.5, sev:1.0, let:0.05}, sym),
     U('npc','symptom','NPC Dialogue','🤖',16,'Only preset phrases remain. Big engagement.',['reaction'], {virality:0.2, sev:0.9}, sym),
     U('fragment','symptom','Attention Fragmentation','🧩',18,'Wait, what were we— oh, a new video.',['doomscroll'], {inf:0.6, sev:1.2, let:0.1}, sym),
@@ -69,6 +75,8 @@
     U('astroturf','ability','Astroturfing','🌾',30,'Flood the zone so nobody trusts the alarm. Lowers Severity.',['obfuscate'], {cureSlow:0.35, sev:-0.6}),
     U('deepfake','ability','Deepfake Ambiguity','🎭',34,'"Is it even real?" The Cure stalls hard.',['obfuscate'], {cureSlow:0.5}),
     U('remix','ability','Infinite Meme Remix','♻️',45,'Every debunk becomes a fresh meme. Cure nearly freezes.',['deepfake'], {cureSlow:0.6}),
+    U('trendsurf','ability','Trend Surfing','🏄',20,'Ride every wave. Your Trend Heat cools far more slowly.',[], {heatDecayReduce:0.45}, {root:true}),
+    U('botfarm','ability','Bot Farm Amplification','👥',26,'Ten thousand fake accounts boost every post. You trend on command.',['trendsurf'], {heatGain:0.5, sev:0.3}),
   ];
 
   BR.UPGRADE_BY_ID = {};
@@ -80,6 +88,7 @@
       online: 0, offline: 0, rich: 0, poor: 0, young: 0, old: 0,
       languagePierce: 0, offlineReach: 0, borderPierce: 0, moderationResist: 0,
       cureSlow: 0, skepticScale: 1,
+      heatGain: 0, heatDecayReduce: 0,   // Trend-Heat modifiers (v6 content)
     };
   };
 
