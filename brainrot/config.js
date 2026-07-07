@@ -76,6 +76,18 @@
   ];
   BR.difficultyById = (id) => BR.DIFFICULTIES.find((d) => d.id === id) || BR.DIFFICULTIES[1];
 
+  // Rotating strategy tips shown in the evolve panel's default state.
+  BR.EVO_TIPS = [
+    'Spread <b>quietly</b> first — high Severity feeds the Cure faster than it feeds you.',
+    'Buy <b>Transmission</b> before Symptoms. Reach the world, <i>then</i> turn up the rot.',
+    'Save loud symptoms &amp; <b>Terminal Brainrot</b> for last — evolve them once you\'re everywhere.',
+    'Symptoms are <b>de-evolvable</b>. If the Cure surges, refund your noisiest ones.',
+    'Abilities like <b>Deepfake Ambiguity</b> stall the Cure — pure defense, no visibility.',
+    'Tap 🔥 virality bubbles on the map for free income, and 🧪 cure bubbles to set it back.',
+    'Locked out by borders? <b>Cross-Platform Reposting</b> and border-pierce nodes slip through.',
+    'Combos (★) need every prerequisite — but pack a serious punch when they land.',
+  ];
+
   // ---- PRNG (mulberry32) — reproducible per seed ------------------------
   BR.rng = function (seed) {
     let s = seed >>> 0;

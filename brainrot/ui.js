@@ -78,7 +78,7 @@
     }
     _renderNodeDetail() {
       const host = $('nodeDetail'); if (!host) return; const u = this.selectedNode;
-      if (!u) { host.innerHTML = '<div class="nd-empty">▸ Tap an evolution to inspect its tradeoffs & evolve it.</div>'; return; }
+      if (!u) { host.innerHTML = this._vitalsHtml(); return; }
       const g = this.game, owned = g.purchased.has(u.id), ok = g.isUnlockable(u), afford = g.virality >= u.cost;
       let action;
       if (owned) action = g.canDeEvolve(u) ? `<button class="nd-btn de" id="ndDe">✕ De-evolve (refund 💜${Math.round(u.cost * BR.CONST.DEEVOLVE_REFUND)})</button>` : '<div class="nd-owned">✔ Evolved</div>';
@@ -88,6 +88,21 @@
         <div class="nd-desc">${u.desc}</div><div class="nd-fx">${this._badges(u.fx)}</div>${action}`;
       const b = $('ndBuy'); if (b) b.addEventListener('click', () => this._tryBuy(u));
       const dz = $('ndDe'); if (dz) dz.addEventListener('click', () => this._tryDeEvolve(u));
+    }
+
+    // Default detail-panel content: live disease vitals + a rotating tip,
+    // so the panel is useful even before a node is selected.
+    _vitalsHtml() {
+      const g = this.game;
+      const bar = (cls, name, val, frac) => `<div class="ndv ${cls}"><div class="ndv-top"><span class="ndv-name">${name}</span><span class="ndv-val">${val}</span></div><div class="ndv-track"><div style="width:${clamp(frac * 100, 0, 100)}%"></div></div></div>`;
+      const tips = BR.EVO_TIPS || ['Spread quietly first — high Severity feeds the Cure.'];
+      const tip = tips[(Math.floor(g.elapsed / 9) % tips.length + tips.length) % tips.length];
+      return `<div class="nd-vitals"><div class="nd-vitals-h">🧬 Disease Vitals</div>
+        ${bar('inf', '⚡ Infectivity', g.infectivity().toFixed(1), g.infectivity() / 12)}
+        ${bar('sev', '🚨 Severity', g.severity().toFixed(1), g.severity() / 14)}
+        ${bar('let', '☠️ Lethality', g.lethality().toFixed(1), g.lethality() / 8)}
+        ${bar('cure', '🧪 The Cure', BR.fmtPct(g.cure), g.cure / 100)}
+        <div class="nd-tip">💡 <b>Tip:</b> ${tip}</div></div>`;
     }
 
     _drawLines(treeId) {
@@ -105,11 +120,14 @@
         u.req.forEach((r) => {
           const from = ctr(r); if (!from) return;
           const owned = g.purchased.has(r) && g.purchased.has(u.id), avail = g.purchased.has(r);
-          ctx.strokeStyle = owned ? 'rgba(168,217,58,0.75)' : avail ? 'rgba(138,127,240,0.5)' : 'rgba(120,130,165,0.22)';
-          ctx.lineWidth = owned ? 2 : 1.3;
+          ctx.strokeStyle = owned ? 'rgba(182,239,63,0.85)' : avail ? 'rgba(138,127,240,0.55)' : 'rgba(120,130,165,0.20)';
+          ctx.lineWidth = owned ? 2.4 : avail ? 1.6 : 1.2;
+          ctx.shadowBlur = owned ? 8 : avail ? 5 : 0;
+          ctx.shadowColor = owned ? 'rgba(182,239,63,0.6)' : 'rgba(138,127,240,0.4)';
           const mx = (from.x + to.x) / 2;
           ctx.beginPath(); ctx.moveTo(from.x, from.y); ctx.bezierCurveTo(mx, from.y, mx, to.y, to.x, to.y); ctx.stroke();
         });
+        ctx.shadowBlur = 0;
       });
     }
 
@@ -357,6 +375,7 @@
       const cf = $('cureFill'); cf.style.width = g.cure + '%';
       cf.style.background = g.cure > 66 ? 'linear-gradient(90deg,#ff5a5a,#ff2020)' : g.cure > 33 ? 'linear-gradient(90deg,#f2c94c,#ff5a5a)' : 'linear-gradient(90deg,#4ea1ff,#43c6ac)';
       $('cureVal').textContent = BR.fmtPct(g.cure); $('cureLabel').textContent = g.cureLabel();
+      const cb = $('curebar'); if (cb) cb.classList.toggle('danger', g.cure >= 80);
 
       this._treeAfford(); this._updateStatusBar(); this._updateCountryPanel(); this._refreshSpeedBtns(); this._milestones();
       if (this.selectedNode && !g.purchased.has(this.selectedNode.id)) { const nb = $('ndBuy'); if (nb) nb.classList.toggle('dis', g.virality < this.selectedNode.cost); }
