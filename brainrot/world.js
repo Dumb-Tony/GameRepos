@@ -178,9 +178,9 @@
         const total = c.total(); if (total < 0.005 || !c.dots || !c.dots.length) continue;
         const n = Math.max(1, Math.round(total * c.dots.length)), necN = Math.round(c.necrotic * c.dots.length), st = c.stage();
         const rad = n < 4 ? 2.4 : 1.7;   // keep a lone patient-zero dot visible
-        ctx.globalAlpha = 0.92;
-        for (let i = 0; i < n; i++) { const d = c.dots[i]; if (!d) break; ctx.beginPath(); ctx.arc(d[0], d[1], rad, 0, Math.PI * 2); ctx.fillStyle = i < necN ? '#d06bff' : st.color; ctx.fill(); }
-        ctx.globalAlpha = 1;
+        ctx.globalAlpha = 0.95; ctx.shadowBlur = 6; ctx.shadowColor = st.color;
+        for (let i = 0; i < n; i++) { const d = c.dots[i]; if (!d) break; ctx.beginPath(); ctx.arc(d[0], d[1], rad, 0, Math.PI * 2); const col = i < necN ? '#d06bff' : st.color; ctx.fillStyle = col; ctx.shadowColor = col; ctx.fill(); }
+        ctx.globalAlpha = 1; ctx.shadowBlur = 0;
       }
 
       // Transmission links.

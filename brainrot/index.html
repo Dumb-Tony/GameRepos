@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Brainrot: Rise of the Meme</title>
-<link rel="stylesheet" href="style.css?v=7">
+<link rel="stylesheet" href="style.css?v=8">
 </head>
 <body>
 
@@ -23,6 +23,14 @@ window.onerror = function (msg, src, line) {
   <div id="selectBanner">☣️ Choose where patient-zero begins — click a country</div>
   <div id="mapHint">Click a country to inspect · grab 🔥 virality &amp; 🧪 cure bubbles</div>
   <div id="countryPopup"></div>
+</div>
+
+<!-- ===== VAPORWAVE SCENE (sun glow + wireframe grid horizon, decorative) ===== -->
+<div id="vwScene" aria-hidden="true">
+  <div class="vw-sun"></div>
+  <div class="vw-grid"></div>
+  <div class="vw-spark s1">✦</div><div class="vw-spark s2">✧</div><div class="vw-spark s3">✦</div>
+  <div class="vw-spark s4">·</div><div class="vw-spark s5">✧</div>
 </div>
 
 <!-- ===== TOP HUD (floats over the map) ===== -->
@@ -60,13 +68,13 @@ window.onerror = function (msg, src, line) {
 </div>
 
 <!-- ===== LEFT: DISEASE VITALS (floating card) ===== -->
-<aside id="left" class="hud-card">
+<aside id="left" class="hud-card" data-title="☣ Pathogen.exe">
   <div id="brainWrap"><canvas id="brainCanvas"></canvas><div id="brainLabel"><b id="brainPct">0%</b><span>global brainrot</span></div></div>
   <div id="meters"></div>
 </aside>
 
 <!-- ===== RIGHT: WORLD / NEWS (floating card) ===== -->
-<aside id="right" class="hud-card">
+<aside id="right" class="hud-card" data-title="🌐 World.sys">
   <div id="countryPanel"></div>
   <div class="section-h">🗞️ Recent Events</div>
   <div id="recentEvents"></div>
@@ -184,16 +192,16 @@ window.onerror = function (msg, src, line) {
   <div class="start-btns"><button class="big-btn" id="btnAgain">▶ Rot Again</button></div>
 </div></div>
 
-<script src="config.js?v=7"></script>
-<script src="audio.js?v=7"></script>
-<script src="animations.js?v=7"></script>
-<script src="countries.js?v=7"></script>
-<script src="worldmap.js?v=7"></script>
-<script src="upgrades.js?v=7"></script>
-<script src="events.js?v=7"></script>
-<script src="world.js?v=7"></script>
-<script src="save.js?v=7"></script>
-<script src="ui.js?v=7"></script>
-<script src="game.js?v=7"></script>
+<script src="config.js?v=8"></script>
+<script src="audio.js?v=8"></script>
+<script src="animations.js?v=8"></script>
+<script src="countries.js?v=8"></script>
+<script src="worldmap.js?v=8"></script>
+<script src="upgrades.js?v=8"></script>
+<script src="events.js?v=8"></script>
+<script src="world.js?v=8"></script>
+<script src="save.js?v=8"></script>
+<script src="ui.js?v=8"></script>
+<script src="game.js?v=8"></script>
 </body>
 </html>

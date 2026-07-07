@@ -86,11 +86,13 @@ body::after{
 @keyframes brandPulse{ 50%{ filter:drop-shadow(0 0 16px #ff4bb0cc); transform:rotate(-4deg) scale(1.04);} }
 .brand-txt{
   font-weight:900; letter-spacing:1.5px; font-size:21px;
-  background:var(--grad-brand); background-size:200% 100%;
+  background:linear-gradient(180deg,#ffffff 0%,#ffd6f5 30%,#ff4bd8 52%,#a15cff 68%,#6bdcff 100%);
+  background-size:100% 200%;
   -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter:drop-shadow(0 1px 0 #7a1f6e) drop-shadow(0 0 12px rgba(255,75,216,.55));
   animation:brandSlide 6s linear infinite;
 }
-@keyframes brandSlide{ to{ background-position:200% 0;} }
+@keyframes brandSlide{ to{ background-position:0 -200%;} }
 @keyframes hueSlide{ to{ filter:hue-rotate(360deg);} }
 .brand-sub{ color:var(--dim2); font-size:11px; font-style:italic; }
 
@@ -296,9 +298,11 @@ body::after{
 .start-hero{ font-size:44px; letter-spacing:8px; margin-bottom:2px; animation:glitchShift 3s infinite; }
 @keyframes glitchShift{ 0%,90%,100%{ transform:none; } 92%{ transform:translateX(-3px) skewX(-4deg);} 94%{ transform:translateX(3px);} 96%{ transform:translateX(-2px) skewX(3deg);} }
 .start-card h1{
-  font-size:44px; font-weight:900; letter-spacing:2px; line-height:1;
-  background:linear-gradient(90deg,var(--lime),var(--violet),var(--pink));
+  font-size:56px; font-weight:900; letter-spacing:4px; line-height:1;
+  /* chrome / holographic vaporwave title */
+  background:linear-gradient(180deg,#ffffff 0%,#ffe3fb 15%,#ff8fe0 36%,#ff4bd8 50%,#a15cff 62%,#6bdcff 83%,#ffffff 100%);
   -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter:drop-shadow(0 2px 0 #7a1f6e) drop-shadow(0 5px 10px rgba(20,0,40,.55)) drop-shadow(0 0 20px rgba(255,75,216,.6));
 }
 .start-card h2{ font-size:17px; color:var(--dim); font-weight:600; margin-top:2px; }
 .tag{ color:var(--dim); font-size:13px; margin:10px 0 14px; }
@@ -643,14 +647,24 @@ body{ display:block; height:100vh; }
   backdrop-filter:blur(8px); border-bottom:1px solid rgba(60,66,112,.5);
 }
 
-/* Shared floating-panel look (translucent glass over the map). */
+/* Shared floating-panel look — translucent glass + retro Y2K window chrome. */
 .hud-card{
   position:fixed; z-index:20; width:238px;
   display:flex; flex-direction:column; min-height:0; overflow:hidden;
-  background:linear-gradient(180deg,rgba(21,24,50,.82),rgba(15,17,38,.78));
+  background:linear-gradient(180deg,rgba(42,24,88,.84),rgba(20,12,44,.82));
   backdrop-filter:blur(9px);
-  border:1px solid rgba(60,66,112,.7); border-radius:16px;
-  box-shadow:0 16px 40px rgba(0,0,0,.5), var(--hair);
+  border:1px solid rgba(120,70,200,.7); border-radius:12px;
+  box-shadow:0 16px 40px rgba(20,0,40,.55),
+    inset 1px 1px 0 rgba(255,255,255,.28), inset -1px -1px 0 rgba(120,40,180,.5);
+}
+/* retro title bar */
+.hud-card::before{
+  content:attr(data-title); flex:0 0 auto; display:block;
+  padding:5px 10px; font-size:10px; font-weight:900; letter-spacing:1px;
+  color:#fff; text-shadow:0 1px 2px rgba(90,0,90,.8);
+  background:linear-gradient(90deg,#ff4bd8,#a15cff 70%,#6bdcff);
+  border-bottom:1px solid rgba(255,255,255,.3);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4);
 }
 #left{ left:12px; top:calc(var(--hud-top) + var(--hud-cure) + 12px); max-height:calc(100vh - var(--hud-top) - var(--hud-cure) - 210px); }
 #right{ right:12px; top:calc(var(--hud-top) + var(--hud-cure) + 12px); width:274px; max-height:calc(100vh - var(--hud-top) - var(--hud-cure) - 92px); overflow-y:auto; }
@@ -706,6 +720,38 @@ body{ display:block; height:100vh; }
 
 /* meters lose the hard border inside the translucent card */
 #meters{ border-bottom:none; }
+
+/* ===== VAPORWAVE SCENE overlay (above the map, below the HUD) ============ */
+#vwScene{ position:fixed; inset:0; z-index:6; pointer-events:none; overflow:hidden; }
+/* chrome sunset sun glowing behind the top HUD */
+.vw-sun{
+  position:absolute; top:-160px; left:50%; transform:translateX(-50%);
+  width:520px; height:520px; border-radius:50%;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 26px, rgba(10,6,24,.55) 26px 32px),
+    radial-gradient(circle at 50% 45%, #ffe9a8 0%, #ff8fd6 34%, #ff4bd8 55%, rgba(161,92,255,.25) 74%, transparent 80%);
+  filter:blur(.4px); opacity:.55;
+  mask-image:radial-gradient(circle at 50% 45%, #000 60%, transparent 78%);
+  -webkit-mask-image:radial-gradient(circle at 50% 45%, #000 60%, transparent 78%);
+}
+/* neon wireframe grid receding to a horizon along the bottom */
+.vw-grid{
+  position:absolute; left:-30%; right:-30%; bottom:0; height:40vh;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 46px, rgba(255,75,216,.5) 46px 48px),
+    repeating-linear-gradient(0deg, transparent 0 42px, rgba(75,231,255,.42) 42px 44px);
+  transform:perspective(300px) rotateX(70deg); transform-origin:bottom center;
+  mask-image:linear-gradient(180deg, transparent 8%, #000 78%);
+  -webkit-mask-image:linear-gradient(180deg, transparent 8%, #000 78%);
+  opacity:.28; mix-blend-mode:screen;
+  animation:vwGridRoll 6s linear infinite;
+}
+@keyframes vwGridRoll{ to{ background-position:0 44px, 0 44px; } }
+.vw-spark{ position:absolute; color:#fff; text-shadow:0 0 8px #ff4bd8, 0 0 14px #4be7ff; font-size:16px; opacity:.8; animation:vwTwinkle 3.4s ease-in-out infinite; }
+.vw-spark.s1{ top:14%; left:22%; } .vw-spark.s2{ top:26%; left:74%; font-size:22px; animation-delay:.7s; }
+.vw-spark.s3{ top:62%; left:12%; font-size:13px; animation-delay:1.4s; } .vw-spark.s4{ top:70%; left:84%; font-size:20px; animation-delay:2s; }
+.vw-spark.s5{ top:40%; left:48%; font-size:12px; animation-delay:1s; }
+@keyframes vwTwinkle{ 0%,100%{ opacity:.2; transform:scale(.7) rotate(0deg);} 50%{ opacity:.95; transform:scale(1.15) rotate(20deg);} }
 
 /* Small screens: let the floating cards shrink and the map still show. */
 @media (max-width:900px){
