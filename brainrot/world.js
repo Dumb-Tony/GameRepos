@@ -145,16 +145,18 @@
       cv.width = Math.max(1, v.w * dpr); cv.height = Math.max(1, v.h * dpr);
       const cx = cv.getContext('2d'); if (!cx) return;
       cx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const bg = cx.createLinearGradient(0, 0, 0, v.h); bg.addColorStop(0, '#0a1526'); bg.addColorStop(1, '#0b1220');
+      // Vaporwave ocean — deep indigo fading to violet-black.
+      const bg = cx.createLinearGradient(0, 0, 0, v.h); bg.addColorStop(0, '#1a0f38'); bg.addColorStop(1, '#0b0620');
       cx.fillStyle = bg; cx.fillRect(0, 0, v.w, v.h);
-      cx.strokeStyle = 'rgba(120,150,200,0.028)'; cx.lineWidth = 1;
+      // Neon magenta graticule (the vaporwave grid).
+      cx.strokeStyle = 'rgba(255,75,216,0.06)'; cx.lineWidth = 1;
       for (let lon = -150; lon <= 150; lon += 30) { const [x] = this._tx(lon, 0); cx.beginPath(); cx.moveTo(x, 0); cx.lineTo(x, v.h); cx.stroke(); }
       for (let lat = -60; lat <= 60; lat += 30) { const [, y] = this._tx(0, lat); cx.beginPath(); cx.moveTo(0, y); cx.lineTo(v.w, y); cx.stroke(); }
-      // All countries — neutral land.
-      cx.lineWidth = 0.5; cx.strokeStyle = 'rgba(140,165,205,0.30)'; cx.fillStyle = '#233246';
+      // All countries — neutral violet land.
+      cx.lineWidth = 0.5; cx.strokeStyle = 'rgba(180,120,255,0.28)'; cx.fillStyle = '#2a1a54';
       for (const f of (BR.WORLDMAP || [])) { this._path(cx, f.r.map((r) => this._projFlat(r))); cx.fill('evenodd'); cx.stroke(); }
-      // Gameplay countries — slightly lighter so they read as interactive.
-      cx.lineWidth = 0.8; cx.strokeStyle = 'rgba(190,205,235,0.55)'; cx.fillStyle = '#2b3d58';
+      // Gameplay countries — brighter violet with a magenta edge so they read as interactive.
+      cx.lineWidth = 0.9; cx.strokeStyle = 'rgba(255,120,230,0.5)'; cx.fillStyle = '#3a2472';
       for (const c of this.countries) if (c.pxRings) { this._path(cx, c.pxRings); cx.fill('evenodd'); cx.stroke(); }
     }
 
@@ -168,8 +170,8 @@
       // Light infection tint on real shapes; the spreading DOTS carry the look.
       for (const c of this.countries) {
         const total = c.total(); if (total < 0.004) continue;
-        this._fill(ctx, c, c.stage().color, clamp(0.12 + total * 0.34, 0, 0.5));
-        if (c.necrotic > 0.03) this._fill(ctx, c, '#5a2a90', clamp(c.necrotic * 0.4, 0, 0.5));
+        this._fill(ctx, c, c.stage().color, clamp(0.14 + total * 0.4, 0, 0.58));
+        if (c.necrotic > 0.03) this._fill(ctx, c, '#8a2fd0', clamp(c.necrotic * 0.42, 0, 0.52));
       }
       // Infection "spread dots" — bloom outward and take the region over as % rises.
       for (const c of this.countries) {
@@ -177,7 +179,7 @@
         const n = Math.max(1, Math.round(total * c.dots.length)), necN = Math.round(c.necrotic * c.dots.length), st = c.stage();
         const rad = n < 4 ? 2.4 : 1.7;   // keep a lone patient-zero dot visible
         ctx.globalAlpha = 0.92;
-        for (let i = 0; i < n; i++) { const d = c.dots[i]; if (!d) break; ctx.beginPath(); ctx.arc(d[0], d[1], rad, 0, Math.PI * 2); ctx.fillStyle = i < necN ? '#a05fd8' : st.color; ctx.fill(); }
+        for (let i = 0; i < n; i++) { const d = c.dots[i]; if (!d) break; ctx.beginPath(); ctx.arc(d[0], d[1], rad, 0, Math.PI * 2); ctx.fillStyle = i < necN ? '#d06bff' : st.color; ctx.fill(); }
         ctx.globalAlpha = 1;
       }
 
@@ -186,15 +188,15 @@
         const heat = (l.a.total() + l.b.total()) / 2;
         const closed = l.kind === 'land' ? (!l.a.landOpen || !l.b.landOpen) : (!l.a.airOpen || !l.b.airOpen);
         ctx.setLineDash(l.kind === 'air' ? [3, 5] : []);
-        ctx.strokeStyle = closed ? 'rgba(235,87,87,0.20)' : `rgba(176,108,240,${0.04 + heat * 0.34})`;
+        ctx.strokeStyle = closed ? 'rgba(255,92,138,0.22)' : `rgba(255,75,216,${0.05 + heat * 0.4})`;
         ctx.lineWidth = closed ? 0.7 : 0.7 + heat * 1.8;
         ctx.beginPath(); ctx.moveTo(l.a.px, l.a.py); ctx.lineTo(l.b.px, l.b.py); ctx.stroke();
       }
       ctx.setLineDash([]);
 
       // Selection / hover halos on the country shape.
-      if (game.selected && game.selected.pxRings) { ctx.save(); ctx.lineWidth = 2; ctx.strokeStyle = '#a8d93a'; ctx.shadowColor = '#a8d93a'; ctx.shadowBlur = 8; this._path(ctx, game.selected.pxRings); ctx.stroke(); ctx.restore(); }
-      if (game.phase === 'select' && game.hoverCountry && game.hoverCountry.pxRings && game.hoverCountry !== game.selected) { ctx.save(); ctx.lineWidth = 1.6; ctx.strokeStyle = '#8a7ff0'; this._path(ctx, game.hoverCountry.pxRings); ctx.stroke(); ctx.restore(); }
+      if (game.selected && game.selected.pxRings) { ctx.save(); ctx.lineWidth = 2; ctx.strokeStyle = '#5ffbe0'; ctx.shadowColor = '#5ffbe0'; ctx.shadowBlur = 10; this._path(ctx, game.selected.pxRings); ctx.stroke(); ctx.restore(); }
+      if (game.phase === 'select' && game.hoverCountry && game.hoverCountry.pxRings && game.hoverCountry !== game.selected) { ctx.save(); ctx.lineWidth = 1.6; ctx.strokeStyle = '#ff4bd8'; this._path(ctx, game.hoverCountry.pxRings); ctx.stroke(); ctx.restore(); }
 
       for (const c of this.countries) this._marker(ctx, c, game, t);
       for (const b of game.viralBubbles) this._bubble(ctx, b, t, '#f2c94c');

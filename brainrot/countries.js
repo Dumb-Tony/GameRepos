@@ -10,12 +10,12 @@
 
   // Escalating absurdity ladder, keyed off a country's total-brainrot %.
   BR.STAGES = [
-    { min: 0,   name: 'Healthy',                flavor: 'People still read whole articles.',              color: '#4ea1ff' },
-    { min: 12,  name: 'Posting Memes',          flavor: 'Group chats are 60% reaction images.',           color: '#43c6ac' },
-    { min: 30,  name: 'Speaking in Slang',      flavor: 'Every sentence contains "lowkey".',              color: '#f2c94c' },
-    { min: 52,  name: "Can't Form Sentences",   flavor: "Verbs optional. It's giving collapse.",          color: '#f2994a' },
-    { min: 74,  name: 'Gov Posts TikTok Comments', flavor: 'Parliament debates in the replies.',          color: '#eb5757' },
-    { min: 92,  name: 'Terminal Brainrot',      flavor: 'Brain fully necrotic. Only skibidi remains.',    color: '#b06cf0' },
+    { min: 0,   name: 'Healthy',                flavor: 'People still read whole articles.',              color: '#4be7ff' },
+    { min: 12,  name: 'Posting Memes',          flavor: 'Group chats are 60% reaction images.',           color: '#6f8bff' },
+    { min: 30,  name: 'Speaking in Slang',      flavor: 'Every sentence contains "lowkey".',              color: '#b06bff' },
+    { min: 52,  name: "Can't Form Sentences",   flavor: "Verbs optional. It's giving collapse.",          color: '#ff6bd6' },
+    { min: 74,  name: 'Gov Posts TikTok Comments', flavor: 'Parliament debates in the replies.',          color: '#ff3ea5' },
+    { min: 92,  name: 'Terminal Brainrot',      flavor: 'Brain fully necrotic. Only skibidi remains.',    color: '#ff2d6f' },
   ];
   BR.stageFor = function (v) {
     const s = BR.STAGES;

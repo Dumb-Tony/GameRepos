@@ -329,7 +329,7 @@
       const pct = clamp(this.game.globalBrainrot() / 100, 0, 1);
       const cx = w / 2, cy = h / 2 + 4, rx = Math.min(w * 0.36, 92), ry = Math.min(h * 0.34, 50);
       const col = (a, b, tt) => `rgb(${Math.round(BR.lerp(a[0], b[0], tt))},${Math.round(BR.lerp(a[1], b[1], tt))},${Math.round(BR.lerp(a[2], b[2], tt))})`;
-      const healthy = [235, 150, 168], mid = [120, 120, 70], rot = [110, 80, 150];
+      const healthy = [255, 150, 225], mid = [180, 95, 230], rot = [150, 65, 205];
       const base = pct < 0.5 ? col(healthy, mid, pct / 0.5) : col(mid, rot, (pct - 0.5) / 0.5);
       ctx.save();
       const pulse = 1 + Math.sin(t * 2) * 0.012 + pct * Math.sin(t * 11) * 0.012;
@@ -378,7 +378,7 @@
       this._meter('aware', g.awareness * 100, 100, BR.fmtPct(g.awareness * 100));
 
       const cf = $('cureFill'); cf.style.width = g.cure + '%';
-      cf.style.background = g.cure > 66 ? 'linear-gradient(90deg,#ff5a5a,#ff2020)' : g.cure > 33 ? 'linear-gradient(90deg,#f2c94c,#ff5a5a)' : 'linear-gradient(90deg,#4ea1ff,#43c6ac)';
+      cf.style.background = g.cure > 66 ? 'linear-gradient(90deg,#ff4bd8,#ff2d6f)' : g.cure > 33 ? 'linear-gradient(90deg,#b57bff,#ff6bd6)' : 'linear-gradient(90deg,#4be7ff,#5ffbe0)';
       $('cureVal').textContent = BR.fmtPct(g.cure); $('cureLabel').textContent = g.cureLabel();
       const cb = $('curebar'); if (cb) cb.classList.toggle('danger', g.cure >= 80);
 
