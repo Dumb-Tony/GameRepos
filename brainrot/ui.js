@@ -383,6 +383,9 @@
       const cb = $('curebar'); if (cb) cb.classList.toggle('danger', g.cure >= 80);
 
       this._treeAfford(); this._updateStatusBar(); this._updateCountryPanel(); this._refreshSpeedBtns(); this._milestones();
+      // Pulse the round EVOLVE button when something is actually affordable.
+      const be = $('btnEvolve');
+      if (be) { const can = g.phase === 'play' && !g.ended && BR.UPGRADE_TREE.some((u) => g.canBuy(u)); be.classList.toggle('can-evolve', can); }
       if (this.selectedNode && !g.purchased.has(this.selectedNode.id)) { const nb = $('ndBuy'); if (nb) nb.classList.toggle('dis', g.virality < this.selectedNode.cost); }
       if (this.popupCountry) this._tickPopup();
     }

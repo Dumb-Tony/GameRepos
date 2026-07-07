@@ -16,7 +16,16 @@ window.onerror = function (msg, src, line) {
 };
 </script>
 
-<!-- ===== TOP BAR ===== -->
+<!-- ===== FULL-SCREEN WORLD MAP (base layer, Plague-Inc style) ===== -->
+<div id="mapWrap">
+  <canvas id="mapCanvas"></canvas>
+  <canvas id="fxCanvas"></canvas>
+  <div id="selectBanner">☣️ Choose where patient-zero begins — click a country</div>
+  <div id="mapHint">Click a country to inspect · grab 🔥 virality &amp; 🧪 cure bubbles</div>
+  <div id="countryPopup"></div>
+</div>
+
+<!-- ===== TOP HUD (floats over the map) ===== -->
 <header id="topbar">
   <div class="brand"><span class="brand-emoji">🧠</span><span class="brand-txt">BRAINROT</span></div>
   <div class="chips">
@@ -30,7 +39,7 @@ window.onerror = function (msg, src, line) {
       <span class="chip-ico">🌍</span><span class="chip-val" id="valGlobal">0%</span><span class="chip-lbl">Global</span></div>
     <div class="chip chip-wide" title="Currently dominant meme trend.">
       <span class="chip-ico">📈</span><span class="chip-val" id="valTrend">—</span><span class="chip-lbl">Trending</span></div>
-    <div class="chip chip-wide" title="Latest world event."><span class="chip-ico" id="evIco">🗞️</span>
+    <div class="chip chip-wide chip-latest" title="Latest world event."><span class="chip-ico" id="evIco">🗞️</span>
       <span class="chip-val" id="valEvent">Awaiting chaos…</span><span class="chip-lbl">Latest</span></div>
   </div>
   <div class="topctrl">
@@ -44,50 +53,47 @@ window.onerror = function (msg, src, line) {
   </div>
 </header>
 
-<!-- ===== CURE BAR ===== -->
+<!-- ===== CURE BAR (floats under the top HUD) ===== -->
 <div id="curebar" title="The Cure — humanity's Touch-Grass Campaign. If it hits 100%, you lose.">
   <div class="cure-head"><span>🧪 The Cure · <b id="cureLabel">Dormant</b></span><span id="cureVal">0%</span></div>
   <div class="cure-track"><div class="cure-fill" id="cureFill"></div></div>
 </div>
 
-<!-- ===== MAIN GRID ===== -->
-<main id="grid">
-  <aside id="left" class="panel">
-    <div id="brainWrap"><canvas id="brainCanvas"></canvas><div id="brainLabel"><b id="brainPct">0%</b><span>global brainrot</span></div></div>
-    <div id="meters"></div>
-    <button id="btnEvolve">🧬 EVOLVE</button>
-    <div class="left-foot"><button class="mini-btn" id="btnStats">📊 Stats</button><button class="mini-btn" id="btnAwards">🏆 Awards</button></div>
-  </aside>
+<!-- ===== LEFT: DISEASE VITALS (floating card) ===== -->
+<aside id="left" class="hud-card">
+  <div id="brainWrap"><canvas id="brainCanvas"></canvas><div id="brainLabel"><b id="brainPct">0%</b><span>global brainrot</span></div></div>
+  <div id="meters"></div>
+</aside>
 
-  <section id="center">
-    <div id="mapWrap">
-      <canvas id="mapCanvas"></canvas>
-      <canvas id="fxCanvas"></canvas>
-      <div id="selectBanner">☣️ Choose where patient-zero begins — click a country</div>
-      <div id="mapHint">Click a country to inspect · grab 🔥 virality &amp; 🧪 cure bubbles</div>
-      <div id="countryPopup"></div>
-    </div>
-  </section>
+<!-- ===== RIGHT: WORLD / NEWS (floating card) ===== -->
+<aside id="right" class="hud-card">
+  <div id="countryPanel"></div>
+  <div class="section-h">🗞️ Recent Events</div>
+  <div id="recentEvents"></div>
+  <div class="section-h">🕒 Timeline</div>
+  <div id="timeline"></div>
+</aside>
 
-  <aside id="right" class="panel">
-    <div id="countryPanel"></div>
-    <div class="section-h">🗞️ Recent Events</div>
-    <div id="recentEvents"></div>
-    <div class="section-h">🕒 Timeline</div>
-    <div id="timeline"></div>
-  </aside>
-</main>
+<!-- ===== BIG ROUND BIOHAZARD "EVOLVE" BUTTON (bottom-left, Plague-Inc style) ===== -->
+<button id="btnEvolve" title="Evolve your brainrot (E)">
+  <span class="evo-btn-ring"></span><span class="evo-btn-ico">🧬</span><span class="evo-btn-lbl">EVOLVE</span>
+</button>
 
+<!-- ===== BOTTOM HUD: population bar · news ticker · round buttons ===== -->
 <div id="statusbar">
   <div class="sb-counts">
-    <span class="sb-c sb-inf">🧟 <b id="sbInf">0</b> infected</span>
-    <span class="sb-c sb-nec">☠️ <b id="sbNec">0</b> terminal</span>
-    <span class="sb-c sb-hea">🌱 <b id="sbHea">0</b> healthy</span>
+    <span class="sb-c sb-inf">🧟 <b id="sbInf">0</b></span>
+    <span class="sb-c sb-nec">☠️ <b id="sbNec">0</b></span>
+    <span class="sb-c sb-hea">🌱 <b id="sbHea">0</b></span>
   </div>
   <div class="worldbar" title="World population: healthy / infected / terminal"><span class="wb-inf" id="wbInf"></span><span class="wb-nec" id="wbNec"></span></div>
   <div class="sb-time">⏱️ <b id="sbTime">0:00</b></div>
+  <div class="sb-btns">
+    <button class="round-btn" id="btnStats" title="Statistics">📊</button>
+    <button class="round-btn" id="btnAwards" title="Achievements">🏆</button>
+  </div>
 </div>
-<footer id="logbar"><div id="eventLog"></div></footer>
+<footer id="logbar"><span class="log-tag">📰 WORLD NEWS</span><div id="eventLog"></div></footer>
 <div id="toasts"></div>
 
 <!-- ===== EVOLUTION OVERLAY (pauses the game) ===== -->
