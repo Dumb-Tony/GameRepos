@@ -15,7 +15,7 @@
   const MET = { inf: 8, sev: 16, let: 8 };
 
   class UI {
-    constructor(game) { this.game = game; this.mounted = false; this.nodeEls = {}; this.cssW = 0; this.cssH = 0; this.milestones = new Set(); this.selected = null; }
+    constructor(game) { this.game = game; this.mounted = false; this.nodeEls = {}; this.cssW = 0; this.cssH = 0; this.milestones = new Set(); this.selected = null; this.view = { zoom: 1, x: 0, y: 0 }; this._dpr = 1; }
 
     mount() {
       this.mapCanvas = $('mapCanvas'); this.fxCanvas = $('fxCanvas');
@@ -242,31 +242,64 @@
       else if (e.key === 'Escape') ['menuModal', 'statsModal', 'awardsModal'].forEach((m) => this._closeModal(m));
     }
 
+    // Convert a client (screen) point into map/layout coordinates, undoing pan+zoom.
+    _toMap(clientX, clientY) {
+      const r = this.mapCanvas.getBoundingClientRect(), v = this.view;
+      return { x: (clientX - r.left - v.x) / v.zoom, y: (clientY - r.top - v.y) / v.zoom };
+    }
+    _clampView() {
+      const v = this.view; v.zoom = clamp(v.zoom, 1, 6);
+      const w = this.cssW || 1, h = this.cssH || 1;
+      v.x = clamp(v.x, w - w * v.zoom, 0); v.y = clamp(v.y, h - h * v.zoom, 0);
+    }
     _wireMap() {
-      this.mapCanvas.addEventListener('click', (e) => {
-        const r = this.mapCanvas.getBoundingClientRect(); const x = e.clientX - r.left, y = e.clientY - r.top;
+      const cv = this.mapCanvas, v = this.view;
+      let down = false, moved = false, sx = 0, sy = 0, ox = 0, oy = 0;
+      cv.addEventListener('pointerdown', (e) => { down = true; moved = false; sx = e.clientX; sy = e.clientY; ox = v.x; oy = v.y; try { cv.setPointerCapture(e.pointerId); } catch (err) {} });
+      cv.addEventListener('pointermove', (e) => {
+        if (down) {
+          const dx = e.clientX - sx, dy = e.clientY - sy;
+          if (!moved && Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+          if (moved) { v.x = ox + dx; v.y = oy + dy; this._clampView(); if (this.popupCountry) this._positionPopup(); cv.style.cursor = 'grabbing'; }
+          return;
+        }
+        const m = this._toMap(e.clientX, e.clientY);
+        const hit = this.game.world.pick(m.x, m.y, this.game);
+        this.game.hoverCountry = hit && hit.type === 'country' ? hit.obj : null;
+        cv.style.cursor = hit ? 'pointer' : (this.game.phase === 'select' ? 'crosshair' : 'grab');
+      });
+      const endDrag = (e) => {
+        if (!down) return; down = false; try { cv.releasePointerCapture(e.pointerId); } catch (err) {}
+        cv.style.cursor = 'grab';
+        if (moved) return;                 // it was a pan, not a click
         this.game.audio && this.game.audio.ensure();
-        const hit = this.game.world.pick(x, y, this.game);
+        const m = this._toMap(e.clientX, e.clientY);
+        const hit = this.game.world.pick(m.x, m.y, this.game);
         if (!hit) { this.selectCountry(null); this._hideCountryPopup(); return; }
         if (hit.type === 'viral') { this.game.clickViral(hit.obj); this.game.audio && this.game.audio.click(); }
         else if (hit.type === 'cure') { this.game.clickCure(hit.obj); }
-        else {
-          if (this.game.phase === 'select') { this.game.chooseStart(hit.obj); this.selectCountry(hit.obj); }
-          else { this.selectCountry(hit.obj); this._showCountryPopup(hit.obj); }
-        }
-      });
-      this.mapCanvas.addEventListener('mousemove', (e) => {
-        const r = this.mapCanvas.getBoundingClientRect();
-        const hit = this.game.world.pick(e.clientX - r.left, e.clientY - r.top, this.game);
-        this.game.hoverCountry = hit && hit.type === 'country' ? hit.obj : null;
-        this.mapCanvas.style.cursor = hit ? 'pointer' : (this.game.phase === 'select' ? 'crosshair' : 'default');
-      });
+        else if (this.game.phase === 'select') { this.game.chooseStart(hit.obj); this.selectCountry(hit.obj); }
+        else { this.selectCountry(hit.obj); this._showCountryPopup(hit.obj); }
+      };
+      cv.addEventListener('pointerup', endDrag);
+      cv.addEventListener('pointercancel', () => { down = false; });
+      cv.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const r = cv.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top;
+        const lx = (mx - v.x) / v.zoom, ly = (my - v.y) / v.zoom;
+        v.zoom = clamp(v.zoom * (e.deltaY < 0 ? 1.15 : 1 / 1.15), 1, 6);
+        v.x = mx - lx * v.zoom; v.y = my - ly * v.zoom; this._clampView();
+        if (this.popupCountry) this._positionPopup();
+      }, { passive: false });
+      // double-click to reset the view
+      cv.addEventListener('dblclick', () => { v.zoom = 1; v.x = 0; v.y = 0; if (this.popupCountry) this._positionPopup(); });
     }
 
     // ---- lifecycle ----------------------------------------------------
     onNewGame() {
       if (!this.mounted) return;
       this.milestones.clear(); this.selected = null; this.game.selected = null;
+      if (this.view) { this.view.zoom = 1; this.view.x = 0; this.view.y = 0; }
       $('recentEvents').innerHTML = ''; $('eventLog').innerHTML = '';
       $('timeline').innerHTML = '<div class="tl"><b>0:00</b> Choose a starting country…</div>';
       this._buildDiffs(); this._updateTree(); this.selectCountry(null); this._hideCountryPopup();
@@ -317,9 +350,18 @@
       if (this._newsOpen) { this._newsOpen = false; this._newsQueue = []; this._closeModal('newsModal'); }
       this._evoOpen = true; this._updatePause();
       const ev = $('evoVir'); if (ev) ev.textContent = fmt(this.game.virality);
-      this._renderOverview(); this._updateTree(); this._openModal('evoModal'); this._drawLines(this._activeTree());
+      this._renderOverview(); this._updateTree(); this._updateEvoStats(); this._openModal('evoModal'); this._drawLines(this._activeTree());
     }
     _closeEvo() { this._evoOpen = false; this._updatePause(); this._closeModal('evoModal'); }
+    // Bottom stat bars (Virality + Infectivity / Severity / Lethality meters).
+    _updateEvoStats() {
+      const g = this.game, set = (id, v) => { const e = $(id); if (e) e.textContent = v; };
+      const bar = (id, v, max) => { const e = $(id); if (e) e.style.width = clamp(v / max * 100, 0, 100) + '%'; };
+      set('esbDna', fmt(g.virality));
+      bar('esbInf', g.infectivity(), 12); set('esbInfV', g.infectivity().toFixed(1));
+      bar('esbSev', g.severity(), 14); set('esbSevV', g.severity().toFixed(1));
+      bar('esbLet', g.lethality(), 8); set('esbLetV', g.lethality().toFixed(1));
+    }
     _renderOverview() {
       const g = this.game, host = $('etab-overview'); if (!host) return;
       const bar = (label, v, max, color) => `<div class="ov-bar"><div class="ov-bar-top"><span>${label}</span><span>${v.toFixed(1)}</span></div><div class="ov-track"><div style="width:${clamp(v / max * 100, 0, 100)}%;background:${color}"></div></div></div>`;
@@ -437,6 +479,7 @@
       $('cureVal').textContent = BR.fmtPct(g.cure); $('cureLabel').textContent = g.cureLabel();
       const cb = $('curebar'); if (cb) cb.classList.toggle('danger', g.cure >= 80);
 
+      if (this._evoOpen) this._updateEvoStats();
       this._treeAfford(); this._updateStatusBar(); this._updateCountryPanel(); this._refreshSpeedBtns(); this._milestones();
       // Pulse the round EVOLVE button when something is actually affordable.
       const be = $('btnEvolve');
@@ -451,16 +494,23 @@
     // ---- render loop --------------------------------------------------
     render(t, dt) {
       if (!this.mounted) return; this._resize();
+      const v = this.view, dpr = this._dpr;
+      // clear the whole canvas in device space, then draw under the pan+zoom view
+      this.mctx.setTransform(1, 0, 0, 1, 0, 0); this.mctx.clearRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
+      this.mctx.setTransform(dpr * v.zoom, 0, 0, dpr * v.zoom, dpr * v.x, dpr * v.y);
       this.game.world.render(this.mctx, this.game, t);
-      if (this.game.fx) { this.fctx.clearRect(0, 0, this.cssW, this.cssH); this.game.fx.update(dt); this.game.fx.render(this.fctx); }
+      if (this.game.fx) {
+        this.fctx.setTransform(1, 0, 0, 1, 0, 0); this.fctx.clearRect(0, 0, this.fxCanvas.width, this.fxCanvas.height);
+        this.fctx.setTransform(dpr * v.zoom, 0, 0, dpr * v.zoom, dpr * v.x, dpr * v.y);
+        this.game.fx.update(dt); this.game.fx.render(this.fctx);
+      }
       this._drawBrain(t);
     }
     _resize() {
       const w = this.mapWrap.clientWidth, h = this.mapWrap.clientHeight; if (w === this.cssW && h === this.cssH) return;
-      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const dpr = Math.min(2, window.devicePixelRatio || 1); this._dpr = dpr;
       [this.mapCanvas, this.fxCanvas].forEach((c) => { c.width = w * dpr; c.height = h * dpr; });
-      this.mctx.setTransform(dpr, 0, 0, dpr, 0, 0); this.fctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      this.cssW = w; this.cssH = h; this.game.world.layout(w, h);
+      this.cssW = w; this.cssH = h; this.game.world.layout(w, h); this._clampView();
       this._drawLines(this._activeTree());
       if (this.popupCountry) this._positionPopup();
     }
@@ -548,10 +598,11 @@
     }
     _positionPopup() {
       const p = $('countryPopup'), c = this.popupCountry; if (!p || !c || c.px === undefined) return;
-      const w = 190, h = p.offsetHeight || 130, mw = this.cssW, mh = this.cssH;
-      const left = clamp(c.px - w / 2, 6, Math.max(6, mw - w - 6));
-      let top = c.py - c.r - 12 - h;
-      if (top < 6) top = clamp(c.py + c.r + 12, 6, Math.max(6, mh - h - 6));
+      const v = this.view, w = 190, h = p.offsetHeight || 130, mw = this.cssW, mh = this.cssH;
+      const cx = c.px * v.zoom + v.x, cy = c.py * v.zoom + v.y, cr = c.r * v.zoom;   // map -> screen
+      const left = clamp(cx - w / 2, 6, Math.max(6, mw - w - 6));
+      let top = cy - cr - 12 - h;
+      if (top < 6) top = clamp(cy + cr + 12, 6, Math.max(6, mh - h - 6));
       p.style.left = left + 'px'; p.style.top = top + 'px'; p.style.width = w + 'px';
     }
 

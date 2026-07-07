@@ -581,6 +581,23 @@ body::after{
 .etab.on{ background:var(--panel); color:var(--txt); border-color:var(--line2); }
 .evo-main{ flex:1; min-height:0; display:flex; }
 .evo-panes{ flex:1; min-width:0; overflow:auto; padding:14px; }
+
+/* Bottom stat bars (Plague-Inc style: DNA + Infectivity/Severity/Lethality) */
+.evo-statbar{ flex:0 0 auto; display:flex; align-items:center; gap:18px; padding:9px 16px;
+  background:linear-gradient(180deg,#160c33,#0e0824); border-top:1px solid var(--line2); box-shadow:var(--hair); }
+.esb{ display:flex; align-items:center; gap:8px; }
+.esb-dna{ font-weight:900; color:var(--vir); }
+.esb-dna .esb-ico{ font-size:16px; }
+.esb-dna b{ font-size:15px; font-variant-numeric:tabular-nums; text-shadow:0 0 10px rgba(255,92,200,.5); }
+.esb .esb-lbl{ font-size:10px; font-weight:800; letter-spacing:.7px; text-transform:uppercase; color:var(--dim); }
+.esb:not(.esb-dna){ flex:1; max-width:280px; }
+.esb-bar{ flex:1; height:11px; background:#0a0618; border:1px solid var(--line); border-radius:6px; overflow:hidden; }
+.esb-bar div{ height:100%; border-radius:5px; transition:width .3s ease; box-shadow:0 0 8px currentColor; }
+.esb-bar.inf div{ background:linear-gradient(90deg,#ff8fe0,#ff2d8f); color:#ff2d8f; }
+.esb-bar.sev div{ background:linear-gradient(90deg,#ffe08a,#ffb020); color:#ffb020; }
+.esb-bar.let div{ background:linear-gradient(90deg,#c89bff,#8a3fe0); color:#8a3fe0; }
+.esb b{ font-size:12px; font-weight:800; font-variant-numeric:tabular-nums; color:var(--txt); min-width:22px; text-align:right; }
+@media (max-width:760px){ .evo-statbar{ gap:10px; } .esb .esb-lbl{ display:none; } }
 .etabpane{ display:none; }
 .etabpane.on{ display:block; }
 #evoModal #nodeDetail{ width:280px; flex:0 0 280px; border-left:1px solid var(--line); border-top:none; background:var(--panel); overflow-y:auto; }
