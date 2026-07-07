@@ -2133,9 +2133,16 @@ BR.WORLDMAP=[{"n":"Fiji","r":[[178.1,-17.5,178.4,-17.3,178.7,-17.6,178.6,-18.2,1
       const g = this.game, host = $('countryPanel');
       // During play the right panel is a disease/leaderboard overview; per-region
       // detail lives in the on-map popup. In select it shows pros/cons + Release.
-      if (g.phase !== 'select') { this._renderDiseasePanel(); return; }
+      if (g.phase !== 'select') { this._panelKey = null; this._renderDiseasePanel(); return; }
       const c = this.selected;
-      if (!c) { if (force) host.innerHTML = '<div class="cp-empty">☣️ Click a region on the map to see its pros &amp; cons, then release the brainrot there.</div>'; return; }
+      // tickHud() calls this ~10×/sec. Only rebuild when the selection actually
+      // changes — re-rendering every tick replaced the Release button's DOM node
+      // mid-click and swallowed the click (felt like needing a double-click / a
+      // "perfect spot"). With the panel stable between selections, one click lands.
+      const key = c ? 'sel:' + c.id : 'none';
+      if (!force && key === this._panelKey) return;
+      this._panelKey = key;
+      if (!c) { host.innerHTML = '<div class="cp-empty">☣️ Click a region on the map to see its pros &amp; cons, then release the brainrot there.</div>'; return; }
       const st = c.stage(), pc = this._prosCons(c);
       host.innerHTML = `<div class="cp-head"><div class="cp-emoji">${c.emoji}</div><div><div class="cp-name">${c.name}</div><span class="cp-stage" style="background:${st.color}22;color:${st.color}">${st.name}</span></div></div>
         <div class="pc"><div class="pc-h good">✔ Pros</div>${pc.pros.map((p) => `<div class="pc-row good">+ ${p}</div>`).join('')}<div class="pc-h bad">✘ Cons</div>${pc.cons.map((p) => `<div class="pc-row bad">– ${p}</div>`).join('')}</div>
