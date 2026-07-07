@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GameRepos</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 28px; padding: 40px 20px;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: radial-gradient(120% 120% at 50% 0%, #1a1140 0%, #0b0d1a 60%);
+    color: #f2f0ff; text-align: center;
+  }
+  h1 { margin: 0; font-size: clamp(28px, 6vw, 46px); letter-spacing: .5px; }
+  .sub { margin: -12px 0 8px; opacity: .6; font-size: 15px; }
+  .games { display: flex; flex-wrap: wrap; gap: 18px; justify-content: center; max-width: 760px; }
+  a.card {
+    display: flex; flex-direction: column; gap: 8px; align-items: center;
+    width: 220px; padding: 26px 20px; border-radius: 18px; text-decoration: none;
+    color: inherit; background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.10); transition: transform .15s, background .15s, border-color .15s;
+  }
+  a.card:hover { transform: translateY(-4px); background: rgba(168,120,255,.16); border-color: rgba(168,120,255,.5); }
+  .emoji { font-size: 46px; line-height: 1; }
+  .name { font-weight: 700; font-size: 18px; }
+  .desc { font-size: 13px; opacity: .7; }
+  footer { opacity: .35; font-size: 12px; }
+</style>
+</head>
+<body>
+  <div>
+    <h1>🎮 GameRepos</h1>
+    <div class="sub">a little collection of browser games</div>
+  </div>
+  <div class="games">
+    <a class="card" href="brainrot/">
+      <span class="emoji">🧠💥</span>
+      <span class="name">Brainrot</span>
+      <span class="desc">Rise of the Meme — infect the world with terminal brainrot before it cures itself.</span>
+    </a>
+  </div>
+  <footer>Click a game to play — no install, runs in your browser.</footer>
+</body>
+</html>
