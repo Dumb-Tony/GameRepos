@@ -445,28 +445,33 @@ body::after{
 .tree-scroll{ overflow-x:auto; overflow-y:visible; padding-bottom:4px; }
 .tree-stage{ position:relative; margin:6px auto 12px; }
 .tree-lines{ position:absolute; left:0; top:0; z-index:0; pointer-events:none; }
+/* HEXAGONAL nodes (Plague-Inc honeycomb). Owned reads as a filled hex; state
+ * glows use filter drop-shadow (box-shadow is clipped by clip-path). */
 .tnode{
   position:absolute;
-  width:60px; height:60px; border-radius:15px; background:var(--glass2); border:1px solid var(--line);
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
-  cursor:pointer; transition:transform .12s, border-color .12s, box-shadow .2s; padding:0;
-  box-shadow:var(--hair);
+  width:64px; height:58px; border:none; border-radius:0; padding:0;
+  clip-path:polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  background:linear-gradient(160deg, #3a2568, #201040);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0;
+  cursor:pointer; transition:transform .12s, filter .2s, background .2s;
+  filter:drop-shadow(0 2px 2px rgba(0,0,0,.45));
 }
-.tnode:hover{ border-color:var(--line2); transform:translateY(-2px); box-shadow:var(--sh-md); }
-.tn-ico{ font-size:21px; line-height:1; filter:drop-shadow(0 1px 2px rgba(0,0,0,.5)); }
-.tn-cost{ font-size:9px; font-weight:800; color:var(--vir); }
-.tn-tick{ display:none; position:absolute; top:-6px; right:-6px; background:var(--lime); color:#05201c; font-size:10px; font-weight:900; border-radius:50%; width:17px; height:17px; line-height:17px; box-shadow:0 0 8px rgba(75,231,255,.7); }
-.tnode.locked{ opacity:.38; filter:grayscale(.75); cursor:not-allowed; }
-.tnode.affordable{ border-color:var(--lime); box-shadow:0 0 0 1px rgba(95,251,224,.5), var(--glow-lime); animation:nodePulse 1.8s ease-in-out infinite; }
-@keyframes nodePulse{ 50%{ box-shadow:0 0 0 1px rgba(95,251,224,.8), 0 0 20px rgba(75,231,255,.55);} }
-.tnode.affordable .tn-cost{ color:var(--lime); }
-.tnode.owned{ background:linear-gradient(180deg,#16304a,#122238); border-color:#2f8fc0; box-shadow:inset 0 0 14px rgba(75,231,255,.16), var(--hair); }
-.tnode.owned .tn-ico{ filter:drop-shadow(0 0 6px rgba(75,231,255,.6)); }
+.tnode:hover{ transform:translateY(-2px) scale(1.05); filter:drop-shadow(0 3px 5px rgba(0,0,0,.5)) brightness(1.12); }
+.tn-ico{ font-size:22px; line-height:1; margin-top:2px; filter:drop-shadow(0 1px 2px rgba(0,0,0,.5)); }
+.tn-cost{ font-size:8.5px; font-weight:800; color:#e6c9ff; line-height:1.1; }
+.tn-tick{ display:none; }
+.tnode.locked{ opacity:.4; filter:grayscale(.8) drop-shadow(0 2px 2px rgba(0,0,0,.4)); cursor:not-allowed; }
+.tnode.locked:hover{ transform:none; }
+.tnode.affordable{ background:linear-gradient(160deg, #2b5a6e, #163a4a); filter:drop-shadow(0 0 7px rgba(95,251,224,.85)); animation:hexPulse 1.6s ease-in-out infinite; }
+@keyframes hexPulse{ 50%{ filter:drop-shadow(0 0 13px rgba(95,251,224,1)); } }
+.tnode.affordable .tn-cost{ color:#5ffbe0; }
+.tnode.combo{ background:linear-gradient(160deg, #6a5320, #3e3010); }
+.tnode.combo::before{ content:"★"; position:absolute; top:2px; left:50%; transform:translateX(-50%); font-size:9px; color:var(--gold); z-index:2; text-shadow:0 0 5px rgba(255,210,74,.9); }
+/* owned wins: a bright cyan-filled hex, like the original's coloured-in cells */
+.tnode.owned{ background:linear-gradient(160deg, #3fb0e0, #1c6a94); }
+.tnode.owned .tn-ico{ filter:drop-shadow(0 0 5px rgba(255,255,255,.7)); }
 .tnode.owned .tn-cost{ display:none; }
-.tnode.owned .tn-tick{ display:block; }
-.tnode.combo{ border-style:dashed; border-color:#7a6820; }
-.tnode.combo::before{ content:"★"; position:absolute; top:-7px; left:-4px; font-size:10px; color:var(--gold); text-shadow:0 0 6px rgba(255,210,74,.8); }
-.tnode.sel{ outline:2px solid var(--violet); outline-offset:3px; box-shadow:0 0 0 1px var(--violet), 0 0 22px rgba(138,127,240,.5); }
+.tnode.sel{ filter:drop-shadow(0 0 9px rgba(181,123,255,1)); z-index:3; }
 
 #nodeDetail{ border-top:1px solid var(--line); padding:10px 12px; min-height:96px; background:var(--panel2); }
 .nd-empty{ color:var(--dim2); font-size:11.5px; padding:14px 4px; text-align:center; }
@@ -580,8 +585,8 @@ body::after{
 .etabpane.on{ display:block; }
 #evoModal #nodeDetail{ width:280px; flex:0 0 280px; border-left:1px solid var(--line); border-top:none; background:var(--panel); overflow-y:auto; }
 /* trees get more room inside the overlay */
-.evo-panes .tiers{ gap:34px; padding:16px 10px; }
-.evo-panes .tnode{ width:60px; height:60px; }
+.evo-panes .tnode{ width:66px; height:60px; }
+.evo-panes .tn-ico{ font-size:23px; }
 .evo-panes .tn-ico{ font-size:24px; }
 
 /* Overview tab */

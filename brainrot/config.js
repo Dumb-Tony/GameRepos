@@ -103,6 +103,15 @@
   ];
   BR.difficultyById = (id) => BR.DIFFICULTIES.find((d) => d.id === id) || BR.DIFFICULTIES[1];
 
+  // Realistic anatomical brain art (Higgsfield). The game crossfades healthy ->
+  // rot as global brainrot rises. It loads the LOCAL file first (drop the PNGs
+  // into brainrot/ for a fully self-contained build); if that's missing it falls
+  // back to the hosted URL; if both fail it draws the procedural brain.
+  BR.BRAIN_IMG = {
+    healthy: { local: 'brain-healthy.png', url: 'https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260707_184725_58c1ecea-117d-42f4-b216-a16bb89df3ac.png' },
+    rot: { local: 'brain-rot.png', url: 'https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260707_184736_8bba62ee-f756-42cf-8a37-00e11a94ee3e.png' },
+  };
+
   // Rotating strategy tips shown in the evolve panel's default state.
   BR.EVO_TIPS = [
     'Spread <b>quietly</b> first — high Severity feeds the Cure faster than it feeds you.',

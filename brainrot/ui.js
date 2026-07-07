@@ -23,7 +23,7 @@
       this.mapWrap = $('mapWrap');
       this.brainCanvas = $('brainCanvas'); this.bctx = this.brainCanvas ? this.brainCanvas.getContext('2d') : null;
       this._newsQueue = []; this._newsOpen = false; this._evoOpen = false;
-      this._buildMeters(); this._buildTrees(); this._buildDiffs();
+      this._buildMeters(); this._buildTrees(); this._buildDiffs(); this._initBrainImgs();
       this._wireTabs(); this._wireControls(); this._wireMap();
       this.mounted = true; this.onNewGame(); this._resize(); this._renderOverview(); this.tickHud();
     }
@@ -67,7 +67,7 @@
     // right and parents centre over their children, so branches never overlap.
     // Extra prerequisites (combos) just add converging branch lines.
     _layoutTree(nodes) {
-      const NODE = 60, COLW = 80, ROWH = 94, PADX = 28, PADY = 12, GAP = 0.8;
+      const NODE = 66, COLW = 72, ROWH = 74, PADX = 24, PADY = 10, GAP = 0.7;
       const inTree = new Set(nodes.map((u) => u.id));
       const parentOf = (u) => { for (const r of u.req) if (inTree.has(r)) return r; return null; };
       const kids = {}; nodes.forEach((u) => { const p = parentOf(u); if (p) (kids[p] = kids[p] || []).push(u.id); });
@@ -345,6 +345,21 @@
       return '💡 Spread quietly (low Severity), reach every region, then go lethal before the Cure lands.';
     }
 
+    // Realistic anatomical brain art: load local file first (self-contained),
+    // fall back to the hosted URL, and to the procedural brain if both fail.
+    _initBrainImgs() {
+      const mk = (spec) => {
+        if (!spec) return null;
+        const img = new Image(); img._ready = false; let tried = false;
+        img.onload = () => { img._ready = true; };
+        img.onerror = () => { if (!tried && spec.url) { tried = true; img.src = spec.url; } };
+        img.src = spec.local || spec.url;
+        return img;
+      };
+      const B = BR.BRAIN_IMG || {};
+      this._brainHealthy = mk(B.healthy); this._brainRot = mk(B.rot);
+    }
+
     // ---- rotting brain (left panel; rots as global brainrot rises) -----
     _drawBrain(t) {
       const cv = this.brainCanvas, ctx = this.bctx; if (!cv || !ctx) return;
@@ -353,6 +368,20 @@
       if (cv.width !== Math.round(w * dpr)) { cv.width = w * dpr; cv.height = h * dpr; }
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
       const pct = clamp(this.game.globalBrainrot() / 100, 0, 1);
+
+      // Anatomical brain crossfade: healthy -> rotted as infection spreads,
+      // mirroring the original game's body/organ view. Falls back below.
+      const hImg = this._brainHealthy, rImg = this._brainRot;
+      if (hImg && hImg._ready) {
+        const cover = (img) => { const s = Math.max(w / img.width, h / img.height); const dw = img.width * s, dh = img.height * s; return [(w - dw) / 2, (h - dh) / 2, dw, dh]; };
+        const pulse = 1 + Math.sin(t * 2) * 0.008 + pct * Math.sin(t * 10) * 0.006;
+        ctx.save(); ctx.translate(w / 2, h / 2); ctx.scale(pulse, pulse); ctx.translate(-w / 2, -h / 2);
+        ctx.drawImage(hImg, ...cover(hImg));
+        if (rImg && rImg._ready && pct > 0.002) { ctx.globalAlpha = Math.min(1, pct * 1.08); ctx.drawImage(rImg, ...cover(rImg)); ctx.globalAlpha = 1; }
+        ctx.restore();
+        return;
+      }
+
       const cx = w / 2, cy = h / 2 + 4, rx = Math.min(w * 0.36, 92), ry = Math.min(h * 0.34, 50);
       const col = (a, b, tt) => `rgb(${Math.round(BR.lerp(a[0], b[0], tt))},${Math.round(BR.lerp(a[1], b[1], tt))},${Math.round(BR.lerp(a[2], b[2], tt))})`;
       const healthy = [255, 150, 225], mid = [180, 95, 230], rot = [150, 65, 205];
