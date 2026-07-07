@@ -9,6 +9,9 @@ const FILES = ['config.js','audio.js','animations.js','countries.js','worldmap.j
 let html = fs.readFileSync(path.join(DIR, 'index.html'), 'utf8');
 const css = fs.readFileSync(path.join(DIR, 'style.css'), 'utf8');
 
+// Strip cache-busting ?v=N query strings so the inliner anchors match.
+html = html.replace(/(\b(?:src|href)="[^"?]+)\?v=\d+"/g, '$1"');
+
 if (!html.includes('<link rel="stylesheet" href="style.css">')) throw new Error('CSS link anchor not found');
 html = html.replace('<link rel="stylesheet" href="style.css">', '<style>\n' + css + '\n</style>');
 
