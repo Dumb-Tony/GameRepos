@@ -72,10 +72,16 @@
 
       for (const c of this.countries) {
         const h = c.healthy();
-        if (h > 0 && c.infected >= 0) {
+        if (h > 0) {
           const susc = c.susceptibility(ev, diff.susc);
           const mult = 1 + infS * C.INF_SCALE;
-          const growth = C.INFECT_BASE * mult * sm * susc * (C.SEED_FLOOR + C.MOMENTUM * c.infected) * h * dt;
+          // Spread pressure scales with TOTAL brainrot (infected + terminal): a
+          // fully-necrotic region's people are still online posting the rot, so
+          // it keeps infecting its healthy holdouts. Using total() (not infected)
+          // prevents "lethality burnout" — necrosis draining the spreader pool
+          // before a resistant country finishes saturating, which used to freeze
+          // the world at ~85% and make the win unreachable.
+          const growth = C.INFECT_BASE * mult * sm * susc * (C.SEED_FLOOR + C.MOMENTUM * c.total()) * h * dt;
           const g = Math.min(h, growth);
           c.infected += g; newly += g * c.pop;
         }
@@ -102,12 +108,18 @@
       const chan = (open) => (open ? 1 : bp);
       const KIND = { land: C.LINK_LAND, sea: C.LINK_SEA, air: C.LINK_AIR };
       const cross = (src, dst, l) => {
-        if (src.infected < C.EXPORT_MIN) return;              // not yet an outbreak — can't export
+        if (src.total() < C.EXPORT_MIN) return;               // not yet an outbreak — can't export
         const f = chan(this._openOf(src, l.kind)) * chan(this._openOf(dst, l.kind));
         if (f <= 0) return;
         const distFall = 1 / (1 + l.dist * C.LINK_DIST_K);    // long-haul routes are weak
-        const push = (1 + infS) * sm * src.infected * dt;
-        seed[dst.id] += KIND[l.kind] * push * f * distFall * dst.susceptibility(ev, diff.susc);
+        // Infectivity gives a GENTLE, bounded boost (same scale as internal
+        // growth) — never the raw multiplier, which used to let a high-Infectivity
+        // plague saturate whole countries across borders in lockstep.
+        const push = (1 + infS * C.INF_SCALE) * sm * src.total() * dt;
+        // Links INTRODUCE the rot; internal growth does the heavy lifting. The
+        // dst.healthy() taper means re-seeding an already-spreading country adds
+        // little, so countries rise on their OWN logistic curve, not together.
+        seed[dst.id] += KIND[l.kind] * push * f * distFall * dst.healthy() * dst.susceptibility(ev, diff.susc);
       };
       for (const l of this.links) { cross(l.a, l.b, l); cross(l.b, l.a, l); }
       for (const b of this.countries) { if (seed[b.id] <= 0) continue; const g = Math.min(b.healthy(), seed[b.id]); b.infected += g; newly += g * b.pop; }

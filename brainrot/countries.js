@@ -129,12 +129,17 @@
       s *= 1 + ev.rich * (this.wealth - 0.5) * 2 + ev.poor * (0.5 - this.wealth) * 2;
       s *= 1 + ev.young * (this.youth - 0.5) * 2 + ev.old * (0.5 - this.youth) * 2;
       // Language gate: low-english countries resist until Meme Translation.
+      // A gate SLOWS these regions dramatically (you really want the ability),
+      // but never freezes them — the rot still creeps in eventually.
       const langBlock = (1 - this.english) * (1 - clamp(ev.languagePierce, 0, 1));
-      s *= 1 - 0.75 * langBlock;
+      s *= 1 - 0.62 * langBlock;
       // Low-internet countries resist unless Offline Spread is evolved.
       const offlineBlock = (1 - this.internet) * (1 - clamp(ev.offlineReach, 0, 1));
-      s *= 1 - 0.5 * offlineBlock;
-      return clamp(s, 0.02, 3) * (diffSusc || 1);
+      s *= 1 - 0.42 * offlineBlock;
+      // Floor keeps even the most resistant holdouts inching toward saturation
+      // so a run always CAN finish (the genre's Greenland/Madagascar holdouts) —
+      // the penetration abilities just make it far faster.
+      return clamp(s, 0.14, 3) * (diffSusc || 1);
     }
 
     snapshot() {

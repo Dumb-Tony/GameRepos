@@ -266,6 +266,15 @@
     closeLinks(c) { c.airOpen = false; c.seaOpen = false; c.detected = true; }
     randomInfected() { const cs = this.world.countries.filter((c) => c.infected > 0.01 && c.total() < 0.99); return cs.length ? cs[(this.rnd() * cs.length) | 0] : null; }
     randomHealthy() { const cs = this.world.countries.filter((c) => c.total() < 0.5); return cs.length ? cs[(this.rnd() * cs.length) | 0] : null; }
+    // Where a "goes viral" event lands. It stays ANCHORED to the current
+    // outbreak — an already-infected country, or (early on, before anything has
+    // crossed the detection floor) the patient-zero region — never a random
+    // country on the far side of the planet. Keeps spread traceable & Plague-like.
+    spreadTarget() {
+      const cs = this.world.countries.filter((c) => c.infected > 0.004 && c.total() < 0.99);
+      if (cs.length) return cs[(this.rnd() * cs.length) | 0];
+      return this.patientZero || this.startChoice || null;
+    }
     // Schedule a follow-up event to fire `delay` seconds later (story chains).
     queueEvent(id, delay) { if (this.events) this.events.queued.push({ id, t: Math.max(0, delay || 0) }); }
     onEvent(emoji, msg, tone) {

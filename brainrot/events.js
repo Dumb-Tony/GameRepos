@@ -11,7 +11,7 @@
   BR.EVENTS = [
     // ---- GOOD (accelerate the rot) ----
     { id: 'celeb', emoji: '🌟', weight: 10, tone: 'good',
-      run(g) { const c = g.randomInfected() || g.randomHealthy(); const v = 15 + g.rnd() * 40; g.addVirality(v); if (c) g.boostCountry(c, 0.05 + g.rnd() * 0.06);
+      run(g) { const c = g.spreadTarget(); const v = 15 + g.rnd() * 40; g.addVirality(v); if (c) g.boostCountry(c, 0.05 + g.rnd() * 0.06);
         return { msg: `A celebrity ${c ? 'in ' + c.name + ' ' : ''}accidentally reposts the rot. +${BR.fmt(v)} virality.` }; } },
     { id: 'livestream', emoji: '📡', weight: 8, tone: 'good',
       run(g) { g.world.countries.forEach((c) => { if (c.infected > 0.02) g.boostCountry(c, 0.03); }); return { msg: 'A 12-hour livestream melts brains across every infected feed.' }; } },
@@ -20,7 +20,7 @@
     { id: 'grandparents', emoji: '👵', weight: 6, tone: 'good',
       run(g) { g.world.countries.forEach((c) => { if (c.age >= 42 && c.infected > 0.01) g.boostCountry(c, 0.06); }); return { msg: 'Grandparents discover the algorithm. It is over for the boomers.' }; } },
     { id: 'influencer', emoji: '🤳', weight: 8, tone: 'good',
-      run(g) { const c = g.randomInfected() || g.randomHealthy(); if (c) g.boostCountry(c, 0.08 + g.rnd() * 0.08); return { msg: `A mega-influencer in ${c ? c.name : 'the feed'} goes fully unhinged. Followers follow.` }; } },
+      run(g) { const c = g.spreadTarget(); if (c) g.boostCountry(c, 0.08 + g.rnd() * 0.08); return { msg: `A mega-influencer in ${c ? c.name : 'the feed'} goes fully unhinged. Followers follow.` }; } },
     { id: 'migrate', emoji: '🚚', weight: 0, tone: 'good',
       run(g) { g.world.countries.forEach((c) => { if (c.infected > 0.01) g.boostCountry(c, 0.04); }); return { msg: 'Everyone migrates to a new app overnight. The swarm relocates, unbothered.' }; } },
 
@@ -38,7 +38,7 @@
 
     // ---- CHAOS / AI ----
     { id: 'aicursed', emoji: '🤖', weight: 7, tone: 'chaos',
-      run(g) { const c = g.randomInfected() || g.randomHealthy(); if (c) g.boostCountry(c, 0.10); g.addCure(1); return { msg: `AI generates a cursed meme. It should not exist. It is thriving${c ? ' in ' + c.name : ''}.` }; } },
+      run(g) { const c = g.spreadTarget(); if (c) g.boostCountry(c, 0.10); g.addCure(1); return { msg: `AI generates a cursed meme. It should not exist. It is thriving${c ? ' in ' + c.name : ''}.` }; } },
     { id: 'deepfake', emoji: '🎭', weight: 6, tone: 'chaos', cond: (g) => g.world.anyDetected(),
       run(g) { g.reduceCure(3 + g.rnd() * 4); return { msg: 'A viral deepfake makes people distrust every fact-check. The Cure stalls.' }; } },
     { id: 'reality', emoji: '🌀', weight: 5, tone: 'chaos', cond: (g) => g.globalBrainrot() > 50,
@@ -48,10 +48,10 @@
 
     // ---- v6 GOOD ----
     { id: 'ratio', emoji: '📉', weight: 8, tone: 'good',
-      run(g) { const c = g.randomInfected() || g.randomHealthy(); const v = 12 + g.rnd() * 30; g.addVirality(v); if (c) g.boostCountry(c, 0.04 + g.rnd() * 0.05);
+      run(g) { const c = g.spreadTarget(); const v = 12 + g.rnd() * 30; g.addVirality(v); if (c) g.boostCountry(c, 0.04 + g.rnd() * 0.05);
         return { msg: `Someone gets ratio'd into another dimension. The dunks spread faster than the take. +${BR.fmt(v)} virality.` }; } },
     { id: 'maincharacter', emoji: '🎭', weight: 7, tone: 'good',
-      run(g) { const c = g.randomInfected() || g.randomHealthy(); if (c) g.boostCountry(c, 0.07 + g.rnd() * 0.07); return { msg: `Today's main character has been selected${c ? ' in ' + c.name : ''}. Everyone piles on. Nobody logs off.` }; } },
+      run(g) { const c = g.spreadTarget(); if (c) g.boostCountry(c, 0.07 + g.rnd() * 0.07); return { msg: `Today's main character has been selected${c ? ' in ' + c.name : ''}. Everyone piles on. Nobody logs off.` }; } },
     { id: 'italianbrainrot', emoji: '🦈', weight: 6, tone: 'good',
       run(g) { g.world.countries.forEach((c) => { if (c.age < 34 && c.infected > 0.01) g.boostCountry(c, 0.06); }); return { msg: 'A CGI shark-crocodile-espresso hybrid becomes sentient in the feed. The youth are gone.' }; } },
     { id: 'touchgrassfail', emoji: '🌱', weight: 6, tone: 'good', cond: (g) => g.world.anyDetected(),
@@ -70,7 +70,7 @@
     { id: 'rogueintern', emoji: '📱', weight: 6, tone: 'chaos',
       run(g) { const v = 30 + g.rnd() * 40; g.addVirality(v); g.queueEvent('internfired', 4 + g.rnd() * 4); const c = g.randomInfected(); if (c) g.boostCountry(c, 0.05); return { msg: `A major brand's social intern goes fully rogue and posts pure, uncut brainrot. +${BR.fmt(v)} virality.` }; } },
     { id: 'internfired', emoji: '🔥', weight: 0, tone: 'good',
-      run(g) { const c = g.randomInfected() || g.randomHealthy(); if (c) g.boostCountry(c, 0.06 + g.rnd() * 0.06); return { msg: 'The rogue intern gets fired, instantly becomes a folk hero, and starts a movement. It spreads.' }; } },
+      run(g) { const c = g.spreadTarget(); if (c) g.boostCountry(c, 0.06 + g.rnd() * 0.06); return { msg: 'The rogue intern gets fired, instantly becomes a folk hero, and starts a movement. It spreads.' }; } },
     { id: 'aislopflood', emoji: '🤖', weight: 6, tone: 'chaos', cond: (g) => g.globalBrainrot() > 25,
       run(g) { g.world.countries.forEach((c) => { if (c.infected > 0.02) g.boostCountry(c, 0.04); }); g.addCure(1); return { msg: 'Overnight, every platform is 90% AI slop. Nobody can tell what\'s real. Nobody tries.' }; } },
   ];

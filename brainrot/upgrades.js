@@ -28,7 +28,7 @@
   // Global cost scale (v8): the base costs below are authored on a small scale;
   // this multiplier sets how scarce Virality is overall. Raising it means income
   // covers less of the tree, forcing you to commit to a build. Tuned via econ.js.
-  const COST_SCALE = 3.5;
+  const COST_SCALE = 4.0;
   const U = (id, tree, name, emoji, cost, desc, req, fx, extra) =>
     Object.assign({ id, tree, name, emoji, cost: Math.round(cost * COST_SCALE), desc, req: req || [], fx: fx || {} }, extra || {});
   const sym = { deEvolvable: true };
@@ -47,6 +47,14 @@
     U('news','transmission','News Media Hijack','📰',28,'Mainstream coverage supercharges spread — and detection.',['influencer'], {inf:0.8, rich:0.15, sev:1.4}),
     U('aislop','transmission','AI Slop Firehose','🤖',22,'Endless AI-generated slop floods every feed. Relentless, and always trending.',['shortvid'], {inf:0.9, online:0.15, sev:1.0, heatGain:0.25}),
     U('podcast','transmission','Podcast Bro Pipeline','🎙️',18,'Three-hour episodes radicalize the entire commute.',['boomer'], {inf:0.5, old:0.2, rich:0.15, sev:0.6}),
+    U('emoji','transmission','Emoji-Only Comms','🔣',12,'Language stops mattering when 💀🔥😭 says it all. Slips borders quietly.',['dm'], {inf:0.35, languagePierce:0.35, sev:0.25}),
+    U('asmr','transmission','Brainrot ASMR','🎧',16,'Whispered nonsense straight into the earbuds at 2am.',['shortvid'], {inf:0.6, young:0.15, sev:0.5}),
+    U('discord','transmission','Discord Server Sprawl','🟣',20,'Ten thousand servers no moderator can find. Reappears endlessly.',['encrypted'], {inf:0.6, online:0.2, moderationResist:0.25, sev:0.3}),
+    U('mobilegame','transmission','Hyper-Casual Mobile Games','🕹️',22,'Subway ads with a brainrot skin. The kids are cooked.',['algo'], {inf:0.7, young:0.2, rich:0.1, sev:0.7}),
+    U('streamer','transmission','Twitch Meltdown Clips','📹',30,'Streamer breakdowns get clipped, looped, and worshipped.',['influencer'], {inf:0.8, young:0.2, sev:1.0}),
+    U('smarttv','transmission','Smart-TV Autoplay','📺',18,'The rot now autoplays in the living room. Grandma cannot escape.',['boomer'], {inf:0.6, old:0.2, rich:0.15, sev:0.6}),
+    U('qrgraffiti','transmission','QR-Code Graffiti','🔳',16,'Scannable rot sprayed on every wall. No feed required.',['offline'], {inf:0.4, offlineReach:0.4, sev:0.4}),
+    U('satellite','transmission','Satellite Internet Drop','🛰️',28,'Beams the rot into the last disconnected holdouts on Earth.',['offline'], {inf:0.5, offlineReach:0.5, borderPierce:0.2, sev:0.4}),
 
     // =================== SYMPTOMS ===================
     U('postmemes','symptom','Posting Memes','🖼️',6,'Harmless-looking. The first behavioral tell.',[], {inf:0.2, sev:0.3, virality:0.05}, Object.assign({root:true, trend:'posting 🖼️'}, sym)),
@@ -55,13 +63,21 @@
     U('slang_rizz','symptom','Rizz','😏',8,'Charisma, weaponized into a suffix.',['postmemes'], {inf:0.35, sev:0.4, virality:0.05}, Object.assign({trend:'rizz 😏'}, sym)),
     U('slang_gyatt','symptom','Gyatt','🍑',8,'An exclamation. A worldview. A menace.',['postmemes'], {inf:0.35, sev:0.45}, Object.assign({trend:'gyatt 🍑'}, sym)),
     U('slang_fanum','symptom','Fanum Tax','🍗',8,'Communal theft of a friend\'s food, now a way of life.',['postmemes'], {inf:0.3, sev:0.4, virality:0.05}, Object.assign({trend:'fanum tax 🍗'}, sym)),
+    U('slang_sigma','symptom','Sigma','🧊',8,'The lone-wolf grindset. Cold. Aloof. Extremely online.',['postmemes'], {inf:0.35, sev:0.45}, Object.assign({trend:'sigma 🧊'}, sym)),
+    U('slang_delulu','symptom','Delulu','🦄',8,'Delusion, but make it aspirational.',['postmemes'], {inf:0.3, sev:0.4, virality:0.05}, Object.assign({trend:'delulu 🦄'}, sym)),
+    U('slang_mid','symptom','Mid','🫤',8,'The ultimate dismissal. Everything is now just… mid.',['postmemes'], {inf:0.3, sev:0.35}, Object.assign({trend:'mid 🫤'}, sym)),
     U('reaction','symptom','Reaction-Image Speech','😲',10,'Words replaced by GIFs. Great engagement.',['postmemes'], {virality:0.15, sev:0.6}, sym),
+    U('braindead','symptom','Braindead Takes','🧠',12,'Confidently wrong, endlessly shareable.',['reaction'], {virality:0.15, sev:0.7}, sym),
+    U('combo_delulu','symptom','Delulu Sigma Grindset','🌈',22,'COMBO. Cope and grindset fuse into one unshakeable delusion.',['slang_sigma','slang_delulu'], {inf:0.6, virality:0.15, sev:0.8}, Object.assign({combo:true}, sym)),
     U('ragebait','symptom','Rage Bait','😡',14,'Nothing spreads like fury. Keeps you trending far longer.',['reaction'], {inf:0.3, sev:0.9, heatGain:0.3}, sym),
     U('combo_sor','symptom','Skibidi Ohio Rizz','🌟',20,'COMBO. The slang trinity fuses into one cursed phrase.',['slang_skibidi','slang_ohio','slang_rizz'], {inf:0.8, virality:0.2, sev:0.7}, Object.assign({combo:true}, sym)),
     U('combo_looksmax','symptom','Mewing Looksmaxxing','🗿',22,'COMBO. Jaw tension elevated to an entire personality.',['slang_gyatt','slang_rizz'], {inf:0.7, virality:0.15, sev:0.8}, Object.assign({combo:true}, sym)),
     U('doomscroll','symptom','Doomscrolling','🌒',16,'3am, still going. Mildly corrosive to the host.',['reaction'], {inf:0.5, sev:1.0, let:0.05}, sym),
     U('npc','symptom','NPC Dialogue','🤖',16,'Only preset phrases remain. Big engagement.',['reaction'], {virality:0.2, sev:0.9}, sym),
+    U('edits','symptom','Velocity Edits','🎬',20,'Everything is a shaky, over-saturated edit set to phonk. Nobody blinks.',['npc'], {inf:0.5, sev:0.9}, sym),
     U('fragment','symptom','Attention Fragmentation','🧩',18,'Wait, what were we— oh, a new video.',['doomscroll'], {inf:0.6, sev:1.2, let:0.1}, sym),
+    U('hyperfix','symptom','Hyperfixation Spiral','🎯',18,'18 hours on one topic, zero memory of eating.',['doomscroll'], {inf:0.4, sev:0.9, let:0.15}, sym),
+    U('tics','symptom','Algorithmic Tics','⚡',24,'Involuntary catchphrases mid-sentence. Skibidi. Sorry. Skibidi.',['fragment'], {sev:1.1, let:0.3}, sym),
     U('brainfog','symptom','Brain Fog','🌫️',18,'The lights are on. Nobody is scrolling home.',['doomscroll'], {sev:0.8, let:0.2}, sym),
     U('combo_sigma','symptom','Sigma Grindset Psychosis','🐺',24,'COMBO. Doomscrolling meets NPC ideology. Corrosive.',['doomscroll','npc'], {inf:0.4, sev:0.9, let:0.4}, Object.assign({combo:true}, sym)),
     U('nosentences','symptom','Can\'t Form Sentences','🗯️',26,'Grammar optional. It\'s giving spread.',['fragment'], {inf:0.6, sev:1.6, let:0.4}, sym),
@@ -81,6 +97,13 @@
     U('remix','ability','Infinite Meme Remix','♻️',45,'Every debunk becomes a fresh meme. Cure nearly freezes.',['deepfake'], {cureSlow:0.6}),
     U('trendsurf','ability','Trend Surfing','🏄',20,'Ride every wave. Your Trend Heat cools far more slowly.',[], {heatDecayReduce:0.45}, {root:true}),
     U('botfarm','ability','Bot Farm Amplification','👥',26,'Ten thousand fake accounts boost every post. You trend on command.',['trendsurf'], {heatGain:0.5, sev:0.3}),
+    U('vpn','ability','VPN Mesh','🕶️',18,'Pop up wherever you\'re banned. Borders mean nothing.',['modresist'], {borderPierce:0.3, moderationResist:0.2}),
+    U('firewall','ability','Firewall Immunity','🧱',34,'Great Firewalls filter everything except this.',['modresist2'], {moderationResist:0.5, borderPierce:0.3}),
+    U('sockpuppets','ability','Sockpuppet Swarm','🧦',24,'A thousand fake yous, all trending in unison.',['botfarm'], {heatGain:0.3, cureSlow:0.15}),
+    U('algocapture','ability','Algorithm Capture','🎛️',30,'You don\'t ride the algorithm anymore — you own it.',['botfarm'], {heatDecayReduce:0.35, heatGain:0.3}),
+    U('cryptogrift','ability','Crypto Grift Funding','🪙',22,'Rug-pull the believers to bankroll the rot. Passive income.',['trendsurf'], {virality:0.2, cureSlow:0.1}),
+    U('griefarmy','ability','Comment Grief Army','💢',30,'Bury every fact-check under a landslide of replies. Lowers Severity.',['astroturf'], {cureSlow:0.25, sev:-0.3}),
+    U('memoryhole','ability','Memory-Hole PR','🧽',32,'Yesterday\'s exposé? Never happened. The Cure forgets too.',['deepfake'], {cureSlow:0.3, sev:-0.3}),
   ];
 
   BR.UPGRADE_BY_ID = {};

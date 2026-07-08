@@ -28,7 +28,7 @@
     INF_SCALE: 0.14,        // how strongly evolved Infectivity multiplies spread
     SEED_FLOOR: 0.04,       // minimum growth pressure in a seeded country
     MOMENTUM: 0.24,         // self-reinforcing S-curve strength (low = gradual, not bursty)
-    NECROSIS_BASE: 0.006,   // master lethality (infected -> terminal) coeff — the finish is a race
+    NECROSIS_BASE: 0.010,   // master lethality (infected -> terminal) coeff — the finish is a race
     SEED_INFECT: 0.006,     // fraction infected in the chosen start country
 
     // --- Cross-border transmission (air / sea / land) -----------------
@@ -71,7 +71,7 @@
 
     // --- The Cure ("Touch-Grass Campaign") — a real threat if you're loud
     CURE_MAX: 100,
-    CURE_BASE: 0.7,         // base research rate (× difficulty × research power)
+    CURE_BASE: 0.38,        // base research rate (× difficulty × research power)
     CURE_SEV_GAIN: 0.16,    // how much severity accelerates the cure
     CURE_BUBBLE_MIN: 11, CURE_BUBBLE_MAX: 24,
     CURE_BUBBLE_SETBACK: [3, 7],        // % knocked off the cure per bubble

@@ -125,12 +125,13 @@
       const MAP = {
         slang_skibidi: '_mSkibidi', shortvid: '_mSkibidi', slang_ohio: '_mOhio', slang_rizz: '_mRizz', trendsurf: '_mRizz',
         slang_gyatt: '_mGyatt', slang_fanum: '_mBruh', podcast: '_mBruh',
-        reaction: '_mVineBoom', ragebait: '_mAirhorn', algo: '_mAirhorn', influencer: '_mAirhorn', news: '_mAirhorn',
-        aislop: '_mRobot', npc: '_mRobot', botfarm: '_mRobot', modresist: '_mRobot', modresist2: '_mRobot',
-        doomscroll: '_mWobble', fragment: '_mWobble', brainfog: '_mWobble', detach: '_mWobble', nosentences: '_mWobble', obfuscate: '_mWobble', astroturf: '_mWobble', deepfake: '_mWobble', remix: '_mWobble',
-        combo_sor: '_mSparkle', combo_looksmax: '_mSparkle', combo_sigma: '_mBell', multiling: '_mSparkle', translate: '_mSparkle', offgrid: '_mSparkle',
+        slang_sigma: '_mBell', slang_delulu: '_mSparkle', slang_mid: '_mBruh', braindead: '_mVineBoom', edits: '_mSkibidi', tics: '_mWobble', hyperfix: '_mWobble',
+        reaction: '_mVineBoom', ragebait: '_mAirhorn', algo: '_mAirhorn', influencer: '_mAirhorn', news: '_mAirhorn', streamer: '_mAirhorn',
+        aislop: '_mRobot', npc: '_mRobot', botfarm: '_mRobot', modresist: '_mRobot', modresist2: '_mRobot', sockpuppets: '_mRobot', algocapture: '_mRobot', discord: '_mRobot', vpn: '_mRobot', firewall: '_mRobot',
+        doomscroll: '_mWobble', fragment: '_mWobble', brainfog: '_mWobble', detach: '_mWobble', nosentences: '_mWobble', obfuscate: '_mWobble', astroturf: '_mWobble', deepfake: '_mWobble', remix: '_mWobble', memoryhole: '_mWobble', griefarmy: '_mWobble',
+        combo_sor: '_mSparkle', combo_looksmax: '_mSparkle', combo_sigma: '_mBell', combo_delulu: '_mSparkle', multiling: '_mSparkle', translate: '_mSparkle', offgrid: '_mSparkle', satellite: '_mSparkle', emoji: '_mSparkle', qrgraffiti: '_mSkibidi',
         collapse: '_mZombie', terminal: '_mZombie', parasocial: '_mSad',
-        boomer: '_mCash',
+        boomer: '_mCash', smarttv: '_mCash', cryptogrift: '_mCash', mobilegame: '_mSkibidi', asmr: '_mRizz',
       };
       const fn = MAP[u.id] || (u.tree === 'symptom' ? '_mVineBoom' : u.tree === 'ability' ? '_mRobot' : '_mSkibidi');
       try { this[fn](); } catch (e) { this.buy(); }
