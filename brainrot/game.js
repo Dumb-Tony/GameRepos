@@ -115,7 +115,7 @@
       this.virality -= u.cost; this.purchased.add(id); this.recomputeEv();
       if (this.phase === 'play') this.addHeat(C.HEAT_EVOLVE, true);   // a fresh evolution = a viral drop
       this.save.stats.totalMemes++; this.save.saveStats();
-      if (this.audio) this.audio.buy();
+      if (this.audio) this.audio.buyUpgrade(u);
       if (this.ui) this.ui.onBuy(u);
       this.checkAchievements();
       return true;

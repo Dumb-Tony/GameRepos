@@ -523,45 +523,139 @@
       if (this._evoOpen) this._drawPathogen(t);
     }
 
-    // Animated "meme pathogen": a spinning spiky virus that grows nastier
-    // (more spikes, more necrotic-purple) as Severity / Lethality rise.
+    // Animated "meme pathogen": a sinister rotting brain-virus. It pulses,
+    // oozes, sprouts sharp receptor spikes and stares back with glowing eyes.
+    // Grows nastier (more necrosis-green, more spikes, angrier eyes) as
+    // Severity / Lethality climb.
     _drawPathogen(t) {
       const cv = this._pathogenCv, ctx = this._pathogenCtx; if (!cv || !ctx) return;
       const w = cv.clientWidth || 260, h = cv.clientHeight || 150;
       const dpr = Math.min(2, window.devicePixelRatio || 1);
       if (cv.width !== Math.round(w * dpr)) { cv.width = w * dpr; cv.height = h * dpr; }
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
-      const g = this.game, cx = w / 2, cy = h / 2, R = Math.min(w, h) * 0.24;
-      const sev = g.severity(), let_ = g.lethality(), rot = t * 0.6;
-      const N = 14 + Math.min(12, Math.round(sev * 1.2));           // spikier with severity
-      const lp = clamp(let_ / 6, 0, 1);                              // lethality -> purple
-      const core = `rgb(${Math.round(BR.lerp(255, 150, lp))},${Math.round(BR.lerp(75, 45, lp))},${Math.round(BR.lerp(200, 210, lp))})`;
-      const spike = lp > 0.5 ? '#c86bff' : '#ff6bd6';
+      const g = this.game, cx = w / 2, cy = h / 2 + h * 0.02, R = Math.min(w, h) * 0.26;
+      const sev = g.severity(), let_ = g.lethality(), rot = t * 0.35;
+      const sp = clamp(sev / 24, 0, 1);                              // severity 0..1
+      const lp = clamp(let_ / 6, 0, 1);                              // lethality -> necrosis
+      const pulse = 0.5 + 0.5 * Math.sin(t * 2.3);
+      const N = 12 + Math.round(sp * 12);                            // spikier with severity
+      // brain-blob radius: lumpy, two-hemisphere feel, breathing with the pulse
+      const RR = R * (1 + 0.03 * pulse);
+      const blob = (a) => RR * (1 + 0.13 * Math.sin(a * 7 + rot) + 0.07 * Math.sin(a * 3 - rot * 0.7) + 0.05 * Math.sin(a * 11 + rot * 1.7));
+      const sicK = lp > 0.55 ? '#8fd14a' : '#d94bff';               // spike/glow color shifts to necrosis-green
       ctx.save(); ctx.translate(cx, cy);
-      // receptor spikes radiating out, bobbing to fake a rotating sphere
-      ctx.strokeStyle = spike; ctx.fillStyle = spike;
+
+      // ---- dark aura behind the pathogen -------------------------------
+      const aura = ctx.createRadialGradient(0, 0, R * 0.4, 0, 0, R * 2.1);
+      aura.addColorStop(0, lp > 0.55 ? 'rgba(120,220,80,.22)' : 'rgba(220,60,255,.22)');
+      aura.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = aura; ctx.beginPath(); ctx.arc(0, 0, R * 2.1, 0, Math.PI * 2); ctx.fill();
+
+      // ---- dripping ooze below (menacing, elongating globs) ------------
+      const drips = 5, dr = BR.rng(77);
+      for (let i = 0; i < drips; i++) {
+        const dx = (dr() - 0.5) * R * 1.5, ph = (t * 0.5 + dr() * 6) % 3;
+        const dl = R * (0.2 + 0.9 * Math.min(1, ph)) * (0.4 + dr() * 0.8);
+        const dy0 = Math.sqrt(Math.max(0, RR * RR - dx * dx)) * 0.9 || RR * 0.5;
+        ctx.strokeStyle = lp > 0.55 ? 'rgba(120,200,60,.5)' : 'rgba(190,40,220,.5)';
+        ctx.lineWidth = 3 - i * 0.2; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(dx, dy0); ctx.lineTo(dx, dy0 + dl); ctx.stroke();
+        ctx.fillStyle = lp > 0.55 ? 'rgba(140,220,70,.65)' : 'rgba(210,60,240,.65)';
+        ctx.beginPath(); ctx.arc(dx, dy0 + dl, 2.6 - i * 0.15, 0, Math.PI * 2); ctx.fill();
+      }
+
+      // ---- sharp receptor spikes radiating out -------------------------
       for (let i = 0; i < N; i++) {
-        const a = (i / N) * Math.PI * 2 + rot, bob = 0.86 + 0.14 * Math.sin(a * 2 + rot);
-        const len = R * (0.34 + 0.1 * Math.sin(a * 3 + rot * 2));
-        const bx = Math.cos(a) * R * 0.92, by = Math.sin(a) * R * 0.92;
-        const ex = Math.cos(a) * (R + len) * bob, ey = Math.sin(a) * (R + len) * bob;
-        ctx.lineWidth = 2.4 * bob; ctx.globalAlpha = 0.55 + 0.45 * bob;
-        ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(ex, ey); ctx.stroke();
-        ctx.beginPath(); ctx.arc(ex, ey, 3 * bob, 0, Math.PI * 2); ctx.fill();
+        const a = (i / N) * Math.PI * 2 + rot * 1.4;
+        const bob = 0.88 + 0.12 * Math.sin(a * 2 + t * 2);
+        const br = blob(a) * 0.98, len = R * (0.28 + 0.12 * Math.sin(a * 5 + t)) * bob;
+        const bx = Math.cos(a) * br, by = Math.sin(a) * br;
+        const tx = Math.cos(a) * (br + len), ty = Math.sin(a) * (br + len);
+        const pa = a + 0.14, na = a - 0.14, wr = br * 0.5;
+        ctx.fillStyle = sicK; ctx.globalAlpha = 0.35 + 0.35 * bob;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(pa) * wr, Math.sin(pa) * wr);
+        ctx.lineTo(tx, ty);
+        ctx.lineTo(Math.cos(na) * wr, Math.sin(na) * wr);
+        ctx.closePath(); ctx.fill();
       }
       ctx.globalAlpha = 1;
-      // glowing body
-      const grd = ctx.createRadialGradient(-R * 0.32, -R * 0.32, R * 0.15, 0, 0, R * 1.12);
-      grd.addColorStop(0, '#ffd0f4'); grd.addColorStop(0.42, core); grd.addColorStop(1, '#3a0e4a');
-      ctx.shadowColor = spike; ctx.shadowBlur = 22;
-      ctx.beginPath(); ctx.arc(0, 0, R, 0, Math.PI * 2); ctx.fillStyle = grd; ctx.fill();
-      ctx.shadowBlur = 0;
-      // surface blotches (rotate with the body)
-      const rnd = BR.rng(1234);
-      for (let i = 0; i < 6; i++) { const a = rnd() * Math.PI * 2 + rot, rr = rnd() * R * 0.6, bx = Math.cos(a) * rr, by = Math.sin(a) * rr; ctx.globalAlpha = 0.28; ctx.fillStyle = '#7a1e8a'; ctx.beginPath(); ctx.arc(bx, by, 2 + rnd() * 4, 0, Math.PI * 2); ctx.fill(); }
+
+      // ---- the rotting brain body --------------------------------------
+      ctx.beginPath();
+      for (let a = 0; a <= Math.PI * 2 + 0.001; a += Math.PI / 40) {
+        const rr = blob(a), x = Math.cos(a) * rr, y = Math.sin(a) * rr;
+        if (a === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      const body = ctx.createRadialGradient(-R * 0.3, -R * 0.35, R * 0.12, 0, R * 0.1, R * 1.25);
+      body.addColorStop(0, lp > 0.55 ? '#e8ffb0' : '#ffc8f2');
+      body.addColorStop(0.35, lp > 0.55 ? '#7fae3a' : '#c23bb0');
+      body.addColorStop(0.72, lp > 0.55 ? '#3f5a1e' : '#6d1470');
+      body.addColorStop(1, '#1b0620');
+      ctx.save();
+      ctx.shadowColor = sicK; ctx.shadowBlur = 18 + 10 * pulse;
+      ctx.fillStyle = body; ctx.fill();
+      ctx.restore();
+      ctx.save(); ctx.clip();
+
+      // brain folds / sulci — squiggly grooves across the surface
+      ctx.strokeStyle = lp > 0.55 ? 'rgba(30,50,15,.55)' : 'rgba(60,8,70,.55)';
+      ctx.lineWidth = 2; ctx.lineCap = 'round';
+      for (let r = 0; r < 6; r++) {
+        ctx.beginPath();
+        for (let a = -0.2; a <= Math.PI * 2; a += 0.25) {
+          const rr = (R * 0.28 + r * R * 0.22) * (1 + 0.08 * Math.sin(a * 6 + r + rot));
+          const x = Math.cos(a) * rr, y = Math.sin(a) * rr * 0.92;
+          if (a < 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+      // central fissure between hemispheres
+      ctx.beginPath(); ctx.moveTo(0, -RR * 0.95);
+      ctx.bezierCurveTo(R * 0.14, -R * 0.3, -R * 0.14, R * 0.3, 0, RR * 0.95);
+      ctx.lineWidth = 2.6; ctx.stroke();
+
+      // necrosis blotches (grow greener/darker with lethality)
+      const nb = BR.rng(1234), nBlobs = 5 + Math.round((sp + lp) * 5);
+      for (let i = 0; i < nBlobs; i++) {
+        const a = nb() * Math.PI * 2 + rot, rr = nb() * R * 0.85;
+        const bx = Math.cos(a) * rr, by = Math.sin(a) * rr, sz = 2 + nb() * 5;
+        const green = nb() < lp + 0.2;
+        ctx.globalAlpha = 0.32; ctx.fillStyle = green ? '#2e4d16' : '#4a0c58';
+        ctx.beginPath(); ctx.arc(bx, by, sz, 0, Math.PI * 2); ctx.fill();
+      }
       ctx.globalAlpha = 1;
-      // specular highlight
-      ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.beginPath(); ctx.arc(-R * 0.34, -R * 0.34, R * 0.16, 0, Math.PI * 2); ctx.fill();
+      ctx.restore(); // unclip
+
+      // ---- glowing sinister eyes ---------------------------------------
+      const ex = R * 0.4, ey = -R * 0.12, er = R * 0.19;
+      const look = Math.sin(t * 0.9) * er * 0.28;                    // eyes shift, unsettling
+      const angry = 0.35 + 0.65 * sp;                                // narrower / redder when severe
+      const eyeCol = lp > 0.55 ? '210,80,60' : '120,255,240';        // acid red when lethal, hypno-cyan otherwise
+      [-1, 1].forEach((s) => {
+        const x = s * ex, y = ey;
+        // glow
+        const gg = ctx.createRadialGradient(x, y, 1, x, y, er * 1.8);
+        gg.addColorStop(0, `rgba(${eyeCol},${0.85})`); gg.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(x, y, er * 1.8, 0, Math.PI * 2); ctx.fill();
+        // sclera
+        ctx.fillStyle = `rgba(${eyeCol},0.95)`;
+        ctx.beginPath(); ctx.ellipse(x, y, er, er * (1.05 - 0.5 * angry), 0, 0, Math.PI * 2); ctx.fill();
+        // slit pupil
+        ctx.fillStyle = '#05030a';
+        ctx.beginPath(); ctx.ellipse(x + look, y, er * 0.26, er * 0.9, 0, 0, Math.PI * 2); ctx.fill();
+        // hot spec
+        ctx.fillStyle = 'rgba(255,255,255,.8)';
+        ctx.beginPath(); ctx.arc(x + look - er * 0.2, y - er * 0.3, er * 0.13, 0, Math.PI * 2); ctx.fill();
+      });
+      // angry brow ridges when severity is high
+      if (sp > 0.25) {
+        ctx.strokeStyle = lp > 0.55 ? 'rgba(40,60,15,.8)' : 'rgba(50,5,60,.8)';
+        ctx.lineWidth = 3.4; ctx.lineCap = 'round';
+        [-1, 1].forEach((s) => { ctx.beginPath(); ctx.moveTo(s * ex - s * er, ey - er * (0.8 + angry * 0.5)); ctx.lineTo(s * ex + s * er * 0.7, ey - er * 0.55); ctx.stroke(); });
+      }
+
       ctx.restore();
     }
     _resize() {
