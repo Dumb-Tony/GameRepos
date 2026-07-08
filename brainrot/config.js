@@ -24,19 +24,24 @@
     // links so the world saturates over minutes, not in one burst) plus a scarce
     // economy where income never covers the whole tree — so you commit to a
     // build instead of buying everything. Tuned via scratchpad/econ.js.
-    INFECT_BASE: 0.0048,    // master internal-spread coefficient (tuned via harness)
+    INFECT_BASE: 0.0040,    // master internal-spread coefficient (tuned via harness)
     INF_SCALE: 0.14,        // how strongly evolved Infectivity multiplies spread
-    SEED_FLOOR: 0.05,       // minimum growth pressure in a seeded country
-    MOMENTUM: 0.28,         // self-reinforcing S-curve strength (low = gradual, not bursty)
+    SEED_FLOOR: 0.04,       // minimum growth pressure in a seeded country
+    MOMENTUM: 0.24,         // self-reinforcing S-curve strength (low = gradual, not bursty)
     NECROSIS_BASE: 0.006,   // master lethality (infected -> terminal) coeff — the finish is a race
     SEED_INFECT: 0.006,     // fraction infected in the chosen start country
 
     // --- Cross-border transmission (air / sea / land) -----------------
-    // Slow, so regions light up one after another over minutes (no instant
-    // global snowball) — the single biggest lever on pacing.
-    LINK_AIR: 0.00054,      // per-step air-route seeding coefficient
-    LINK_SEA: 0.00036,      // sea-route seeding
-    LINK_LAND: 0.00112,     // land-border seeding (strongest)
+    // Infection hops COUNTRY-TO-COUNTRY along the discrete link graph the map
+    // draws (land borders, sea lanes, flight routes) — never a global mesh.
+    // A country must be ESTABLISHED (EXPORT_MIN) before it can seed a neighbour,
+    // and distant routes are weaker, so the world lights up one region after
+    // another over many minutes with a clear, visible path.
+    LINK_AIR: 0.0090,       // flight-route seeding coefficient
+    LINK_SEA: 0.0060,       // sea-lane seeding
+    LINK_LAND: 0.0140,      // land-border seeding (strongest — walk/drive across)
+    EXPORT_MIN: 0.035,      // a country must be this infected before it exports abroad
+    LINK_DIST_K: 5.5,       // distance falloff: farther links seed much slower
 
     // --- Economy (Virality = DNA) -------------------------------------
     // Income comes from ACTIVELY SPREADING (new infections) and dries up once

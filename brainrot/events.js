@@ -18,7 +18,7 @@
     { id: 'newslang', emoji: '🆕', weight: 8, tone: 'good',
       run(g) { g.addVirality(20 + g.rnd() * 30); g.reduceCure(2); return { msg: 'New slang just dropped. Yesterday\'s fact-checks are already irrelevant.' }; } },
     { id: 'grandparents', emoji: '👵', weight: 6, tone: 'good',
-      run(g) { g.world.countries.forEach((c) => { if (c.age >= 42) g.boostCountry(c, 0.05); }); return { msg: 'Grandparents discover the algorithm. It is over for the boomers.' }; } },
+      run(g) { g.world.countries.forEach((c) => { if (c.age >= 42 && c.infected > 0.01) g.boostCountry(c, 0.06); }); return { msg: 'Grandparents discover the algorithm. It is over for the boomers.' }; } },
     { id: 'influencer', emoji: '🤳', weight: 8, tone: 'good',
       run(g) { const c = g.randomInfected() || g.randomHealthy(); if (c) g.boostCountry(c, 0.08 + g.rnd() * 0.08); return { msg: `A mega-influencer in ${c ? c.name : 'the feed'} goes fully unhinged. Followers follow.` }; } },
     { id: 'migrate', emoji: '🚚', weight: 0, tone: 'good',
@@ -53,7 +53,7 @@
     { id: 'maincharacter', emoji: '🎭', weight: 7, tone: 'good',
       run(g) { const c = g.randomInfected() || g.randomHealthy(); if (c) g.boostCountry(c, 0.07 + g.rnd() * 0.07); return { msg: `Today's main character has been selected${c ? ' in ' + c.name : ''}. Everyone piles on. Nobody logs off.` }; } },
     { id: 'italianbrainrot', emoji: '🦈', weight: 6, tone: 'good',
-      run(g) { g.world.countries.forEach((c) => { if (c.age < 34) g.boostCountry(c, 0.05); }); return { msg: 'A CGI shark-crocodile-espresso hybrid becomes sentient in the feed. The youth are gone.' }; } },
+      run(g) { g.world.countries.forEach((c) => { if (c.age < 34 && c.infected > 0.01) g.boostCountry(c, 0.06); }); return { msg: 'A CGI shark-crocodile-espresso hybrid becomes sentient in the feed. The youth are gone.' }; } },
     { id: 'touchgrassfail', emoji: '🌱', weight: 6, tone: 'good', cond: (g) => g.world.anyDetected(),
       run(g) { g.reduceCure(3 + g.rnd() * 3); return { msg: 'A "Touch Grass" awareness campaign launches. Its ads become the season\'s hottest memes. The Cure backfires.' }; } },
 

@@ -34,17 +34,32 @@
       this.links = this._links();
     }
 
+    // A sparse, connected transmission graph — the SAME edges the map draws and
+    // the simulation spreads along. Land borders form the backbone; sea lanes
+    // and flight routes bridge oceans hub-to-nearest-hub. No global mesh: the
+    // disease must physically hop neighbour to neighbour.
     _links() {
       const out = [], seen = new Set();
-      const add = (a, b, kind) => { const k = Math.min(a.id, b.id) + '-' + Math.max(a.id, b.id); if (seen.has(k)) return; seen.add(k); out.push({ a, b, kind }); };
+      const add = (a, b, kind) => {
+        if (a === b) return;
+        const k = Math.min(a.id, b.id) + '-' + Math.max(a.id, b.id);
+        if (seen.has(k)) return;                 // first (strongest) kind wins for a pair
+        seen.add(k); out.push({ a, b, kind, dist: Math.sqrt(this._d(a, b)) });
+      };
+      const nearest = (c, pool, n) => pool.filter((o) => o !== c).sort((p, q) => this._d(c, p) - this._d(c, q)).slice(0, n);
+      // Land borders — always-present, strongest.
       this.countries.forEach((c) => c.landRefs.forEach((n) => add(c, n, 'land')));
-      this.countries.forEach((c) => {
-        const near = this.countries.filter((o) => o !== c).sort((p, q) => this._d(c, p) - this._d(c, q)).slice(0, 2);
-        near.forEach((n) => add(c, n, 'air'));
-      });
+      // Sea lanes — each port to its 2 nearest other ports.
+      this.seaHubs.forEach((c) => nearest(c, this.seaHubs, 2).forEach((n) => add(c, n, 'sea')));
+      // Flight routes — each air hub to its 3 nearest other air hubs.
+      this.airHubs.forEach((c) => nearest(c, this.airHubs, 3).forEach((n) => add(c, n, 'air')));
+      // Connectivity guarantee — every country links to its single nearest
+      // neighbour so no region is ever stranded (kind by available infrastructure).
+      this.countries.forEach((c) => { const n = nearest(c, this.countries, 1)[0]; if (n) add(c, n, (c.air || n.air) ? 'air' : (c.port || n.port) ? 'sea' : 'land'); });
       return out;
     }
     _d(a, b) { const dx = a.mx - b.mx, dy = a.my - b.my; return dx * dx + dy * dy; }
+    _openOf(c, kind) { return kind === 'land' ? c.landOpen : kind === 'sea' ? c.seaOpen : c.airOpen; }
 
     // ---- SIMULATION (pure) --------------------------------------------
     simStep(dt, ctx) {
@@ -78,16 +93,23 @@
         }
       }
 
+      // Cross-border spread flows ALONG THE LINK GRAPH the map draws — one
+      // country seeding a linked neighbour, so every new outbreak has a
+      // traceable path. A source must be ESTABLISHED (EXPORT_MIN) before it can
+      // export, and farther links seed far slower (LINK_DIST_K falloff).
       const seed = new Float64Array(this.countries.length);
       const bp = clamp(ev.borderPierce, 0, 1);
       const chan = (open) => (open ? 1 : bp);
-      for (const a of this.countries) {
-        if (a.infected < 0.015) continue;
-        const push = (1 + infS) * sm * a.infected * dt;
-        for (const b of a.landRefs) { const f = chan(a.landOpen) * chan(b.landOpen); if (f > 0) seed[b.id] += C.LINK_LAND * push * f * b.susceptibility(ev, diff.susc) * 0.5; }
-        if (a.air) for (const b of this.airHubs) { if (b === a) continue; const f = chan(a.airOpen) * chan(b.airOpen); if (f > 0) seed[b.id] += C.LINK_AIR * push * f * b.susceptibility(ev, diff.susc) * 0.35; }
-        if (a.port) for (const b of this.seaHubs) { if (b === a) continue; const f = chan(a.seaOpen) * chan(b.seaOpen); if (f > 0) seed[b.id] += C.LINK_SEA * push * f * b.susceptibility(ev, diff.susc) * 0.35; }
-      }
+      const KIND = { land: C.LINK_LAND, sea: C.LINK_SEA, air: C.LINK_AIR };
+      const cross = (src, dst, l) => {
+        if (src.infected < C.EXPORT_MIN) return;              // not yet an outbreak — can't export
+        const f = chan(this._openOf(src, l.kind)) * chan(this._openOf(dst, l.kind));
+        if (f <= 0) return;
+        const distFall = 1 / (1 + l.dist * C.LINK_DIST_K);    // long-haul routes are weak
+        const push = (1 + infS) * sm * src.infected * dt;
+        seed[dst.id] += KIND[l.kind] * push * f * distFall * dst.susceptibility(ev, diff.susc);
+      };
+      for (const l of this.links) { cross(l.a, l.b, l); cross(l.b, l.a, l); }
       for (const b of this.countries) { if (seed[b.id] <= 0) continue; const g = Math.min(b.healthy(), seed[b.id]); b.infected += g; newly += g * b.pop; }
 
       let research = 0;
@@ -198,8 +220,8 @@
       // travel from an infected country toward the ones it's seeding.
       for (const l of this.links) {
         const heat = (l.a.total() + l.b.total()) / 2;
-        const closed = l.kind === 'land' ? (!l.a.landOpen || !l.b.landOpen) : (!l.a.airOpen || !l.b.airOpen);
-        ctx.setLineDash(l.kind === 'air' ? [3, 5] : []);
+        const closed = !this._openOf(l.a, l.kind) || !this._openOf(l.b, l.kind);
+        ctx.setLineDash(l.kind === 'air' ? [3, 5] : l.kind === 'sea' ? [1, 4] : []);
         ctx.strokeStyle = closed ? 'rgba(255,92,138,0.18)' : `rgba(255,75,216,${0.05 + heat * 0.3})`;
         ctx.lineWidth = closed ? 0.6 : 0.7 + heat * 1.2;
         ctx.beginPath(); ctx.moveTo(l.a.px, l.a.py); ctx.lineTo(l.b.px, l.b.py); ctx.stroke();
@@ -208,10 +230,10 @@
       for (const l of this.links) {
         const a = l.a, b = l.b, src = a.total() >= b.total() ? a : b, dst = src === a ? b : a;
         if (src.total() < 0.05 || dst.total() > 0.92) continue;         // only active routes
-        const closed = l.kind === 'land' ? (!a.landOpen || !b.landOpen) : (!a.airOpen || !b.airOpen);
+        const closed = !this._openOf(a, l.kind) || !this._openOf(b, l.kind);
         if (closed) continue;
         ctx.strokeStyle = `rgba(255,120,235,${0.18 + src.total() * 0.3})`; ctx.lineWidth = 1 + src.total() * 1.4;
-        ctx.setLineDash(l.kind === 'air' ? [4, 6] : []); ctx.lineDashOffset = -t * 22;
+        ctx.setLineDash(l.kind === 'air' ? [4, 6] : l.kind === 'sea' ? [1, 5] : []); ctx.lineDashOffset = -t * 22;
         ctx.beginPath(); ctx.moveTo(src.px, src.py); ctx.lineTo(dst.px, dst.py); ctx.stroke();
         // a glowing bead travelling src -> dst
         const ph = ((t * 0.28 + (a.id + b.id) * 0.17) % 1 + 1) % 1;
