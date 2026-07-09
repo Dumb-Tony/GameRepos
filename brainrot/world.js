@@ -32,6 +32,12 @@
       this.airHubs = this.countries.filter((c) => c.air);
       this.seaHubs = this.countries.filter((c) => c.port);
       this.links = this._links();
+      // Bigger countries saturate slower (more people to reach), so no single
+      // giant-population country can spike the global % as it crosses its
+      // logistic midpoint — the last remaining snowball source. popFactor < 1
+      // for the giants, > 1 for small nations, ~1 at POP_REF.
+      const dk = C.POP_DRAG || 0, pr = C.POP_REF || 80;
+      this.countries.forEach((c) => { c.popFactor = dk > 0 ? clamp(Math.pow(pr / Math.max(1, c.pop), dk), 0.32, 1.6) : 1; });
     }
 
     // A sparse, connected transmission graph — the SAME edges the map draws and
@@ -68,7 +74,7 @@
       const sevS = Math.max(0, ev.sev);
       const letS = Math.max(0, ev.let);
       const sm = ctx.spreadMult || 1;   // Trend Heat spread multiplier
-      let newly = 0;
+      let newly = 0, internalNew = 0, crossNew = 0;   // (last two: telemetry only)
 
       for (const c of this.countries) {
         const h = c.healthy();
@@ -87,9 +93,9 @@
           // prevents "lethality burnout" — necrosis draining the spreader pool
           // before a resistant country finishes saturating, which used to freeze
           // the world at ~85% and make the win unreachable.
-          const growth = C.INFECT_BASE * mult * sm * susc * (C.SEED_FLOOR + C.MOMENTUM * c.total()) * h * dt;
+          const growth = C.INFECT_BASE * mult * sm * susc * c.popFactor * (C.SEED_FLOOR + C.MOMENTUM * c.total()) * h * dt;
           const g = Math.min(h, growth);
-          c.infected += g; newly += g * c.pop;
+          c.infected += g; newly += g * c.pop; internalNew += g * c.pop;
         }
         if (letS > 0 && c.infected > 0) {
           const nec = Math.min(c.infected, C.NECROSIS_BASE * letS * c.infected * dt);
@@ -122,18 +128,24 @@
         // growth) — never the raw multiplier, which used to let a high-Infectivity
         // plague saturate whole countries across borders in lockstep.
         const push = (1 + infS * C.INF_SCALE) * sm * src.total() * dt;
-        // Links INTRODUCE the rot; internal growth does the heavy lifting. The
-        // dst.healthy() taper means re-seeding an already-spreading country adds
-        // little, so countries rise on their OWN logistic curve, not together.
-        seed[dst.id] += KIND[l.kind] * push * f * distFall * dst.healthy() * dst.susceptibility(ev, diff.susc);
+        // Links only INTRODUCE the rot — they seed a fresh country up to a small
+        // foothold and then fade out; the country's OWN internal growth does the
+        // saturation. Without this, a dense cluster of established neighbours
+        // mutually pumps seed and force-saturates the whole region in lockstep
+        // (the mid-game snowball: ~95% of new infection was cross-border). The
+        // intro taper -> 0 as the destination approaches CROSS_TAPER, so once a
+        // country has a foothold each one rises on its own logistic clock.
+        const introTaper = clamp(1 - dst.total() / C.CROSS_TAPER, 0, 1);
+        if (introTaper <= 0) return;
+        seed[dst.id] += KIND[l.kind] * push * f * distFall * introTaper * dst.susceptibility(ev, diff.susc);
       };
       for (const l of this.links) { cross(l.a, l.b, l); cross(l.b, l.a, l); }
-      for (const b of this.countries) { if (seed[b.id] <= 0) continue; const g = Math.min(b.healthy(), seed[b.id]); b.infected += g; newly += g * b.pop; }
+      for (const b of this.countries) { if (seed[b.id] <= 0) continue; const g = Math.min(b.healthy(), seed[b.id]); b.infected += g; newly += g * b.pop; crossNew += g * b.pop; }
 
       let research = 0;
       for (const c of this.countries) research += c.wealth * (0.25 + c.moderation * 0.75) * c.total() * c.pop;
       research /= this.totalPop;
-      return { newlyInfected: newly, research };
+      return { newlyInfected: newly, research, internalNew, crossNew };
     }
 
     // ---- aggregate readouts -------------------------------------------

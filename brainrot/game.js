@@ -164,6 +164,7 @@
         spreadMult: 1 + heatFrac * C.HEAT_SPREAD,   // a hot trend spreads faster
       });
 
+      this._simRes = res;   // telemetry for balance harnesses (internal vs cross split)
       // New infections stoke the trend (a region catching on is a viral moment).
       this.addHeat(res.newlyInfected * C.HEAT_GAIN_INFECT, false);
 

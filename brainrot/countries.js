@@ -138,8 +138,10 @@
       s *= 1 - 0.42 * offlineBlock;
       // Floor keeps even the most resistant holdouts inching toward saturation
       // so a run always CAN finish (the genre's Greenland/Madagascar holdouts) —
-      // the penetration abilities just make it far faster.
-      return clamp(s, 0.14, 3) * (diffSusc || 1);
+      // the penetration abilities just make it far faster. The floor also sets
+      // how long the end-game "resistant tail" drags: too low and the last few
+      // countries crawl for minutes while the Cure catches up.
+      return clamp(s, BR.CONST.SUSC_FLOOR, 3) * (diffSusc || 1);
     }
 
     snapshot() {

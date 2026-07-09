@@ -24,11 +24,19 @@
     // links so the world saturates over minutes, not in one burst) plus a scarce
     // economy where income never covers the whole tree — so you commit to a
     // build instead of buying everything. Tuned via scratchpad/econ.js.
-    INFECT_BASE: 0.0040,    // master internal-spread coefficient (tuned via harness)
-    INF_SCALE: 0.14,        // how strongly evolved Infectivity multiplies spread
-    SEED_FLOOR: 0.04,       // minimum growth pressure in a seeded country
-    MOMENTUM: 0.24,         // self-reinforcing S-curve strength (low = gradual, not bursty)
-    NECROSIS_BASE: 0.010,   // master lethality (infected -> terminal) coeff — the finish is a race
+    // v10 anti-snowball rebalance: internal growth (now the main saturation
+    // driver) is stronger, but the compounding multipliers that caused the
+    // snowball are all softened — evolved Infectivity multiplies spread far more
+    // gently (INF_SCALE), Trend-Heat gives a smaller spread bonus (HEAT_SPREAD),
+    // and cross-border links only INTRODUCE the rot then hand off to a country's
+    // own logistic curve (CROSS_TAPER). Net effect: each country saturates on
+    // its own clock, so the global curve is a smooth multi-minute climb instead
+    // of a mid-game explosion. Tuned via scratchpad/analyze.js + sweep.js.
+    INFECT_BASE: 0.055,     // master internal-spread coefficient (tuned via harness)
+    INF_SCALE: 0.08,        // how strongly evolved Infectivity multiplies spread (gentle)
+    SEED_FLOOR: 0.06,       // minimum growth pressure in a seeded country
+    MOMENTUM: 0.15,         // self-reinforcing S-curve strength (low = gradual, not bursty)
+    NECROSIS_BASE: 0.027,   // master lethality (infected -> terminal) coeff — the finish is a race
     SEED_INFECT: 0.006,     // fraction infected in the chosen start country
 
     // --- Cross-border transmission (air / sea / land) -----------------
@@ -42,6 +50,16 @@
     LINK_LAND: 0.0140,      // land-border seeding (strongest — walk/drive across)
     EXPORT_MIN: 0.035,      // a country must be this infected before it exports abroad
     LINK_DIST_K: 5.5,       // distance falloff: farther links seed much slower
+    CROSS_TAPER: 0.30,      // links only seed a country UP TO this fraction; above it,
+                            // the country's own internal growth takes over (kills the
+                            // "dense cluster force-saturates in lockstep" snowball)
+    SUSC_FLOOR: 0.45,       // minimum per-person susceptibility — sets how fast the
+                            // most resistant holdouts saturate (the end-game tail)
+    POP_REF: 80,            // reference population (millions) for the saturation-speed
+    POP_DRAG: 0.18,         // drag: bigger countries saturate SLOWER (more people to
+                            // reach). Spreads a giant's saturation over more time so no
+                            // single populous country can spike the global % — the last
+                            // remaining snowball source. 0 = off (all countries equal).
 
     // --- Economy (Virality = DNA) -------------------------------------
     // Income comes from ACTIVELY SPREADING (new infections) and dries up once
@@ -65,14 +83,15 @@
     HEAT_EVENT: 12,         // heat spike from a viral/chaos world event
     HEAT_EVOLVE: 16,        // heat spike when you evolve a new upgrade ("a drop")
     HEAT_INCOME_MULT: 0.4,  // at full heat, income is +40%
-    HEAT_SPREAD: 0.3,       // at full heat, internal + cross-border spread +30%
+    HEAT_SPREAD: 0.14,      // at full heat, internal + cross-border spread +14% (softened
+                            // from +30% to break the heat->spread->heat snowball loop)
     HEAT_AWARE: 0.10,       // at full heat, +0.10 global awareness (feeds Cure)
     HEAT_HOT: 62,           // threshold considered "trending hot" (UI cue)
 
     // --- The Cure ("Touch-Grass Campaign") — a real threat if you're loud
     CURE_MAX: 100,
-    CURE_BASE: 0.38,        // base research rate (× difficulty × research power)
-    CURE_SEV_GAIN: 0.16,    // how much severity accelerates the cure
+    CURE_BASE: 0.36,        // base research rate (× difficulty × research power)
+    CURE_SEV_GAIN: 0.14,    // how much severity accelerates the cure
     CURE_BUBBLE_MIN: 11, CURE_BUBBLE_MAX: 24,
     CURE_BUBBLE_SETBACK: [3, 7],        // % knocked off the cure per bubble
 
