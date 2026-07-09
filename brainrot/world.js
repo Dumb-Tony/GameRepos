@@ -72,7 +72,13 @@
 
       for (const c of this.countries) {
         const h = c.healthy();
-        if (h > 0) {
+        // Internal growth ONLY happens in a country that has ALREADY been
+        // seeded (total > 0). A pristine country stays at zero until a
+        // transmission link physically brings the rot to it — otherwise the
+        // SEED_FLOOR term would make every country on Earth spontaneously
+        // generate its own brainrot in parallel, lighting up the whole world in
+        // seconds with no path (the "China → USA in 10s for no reason" bug).
+        if (h > 0 && c.total() > 0) {
           const susc = c.susceptibility(ev, diff.susc);
           const mult = 1 + infS * C.INF_SCALE;
           // Spread pressure scales with TOTAL brainrot (infected + terminal): a
