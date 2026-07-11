@@ -127,15 +127,24 @@
       const bp = clamp(ev.borderPierce, 0, 1);
       const chan = (open) => (open ? 1 : bp);
       const KIND = { land: C.LINK_LAND, sea: C.LINK_SEA, air: C.LINK_AIR };
+      const ramp = C.EXPORT_RAMP || 0.0001;
       const cross = (src, dst, l) => {
-        if (src.total() < C.EXPORT_MIN) return;               // not yet an outbreak — can't export
+        // Export strength RAMPS UP from 0 as the source grows past EXPORT_MIN
+        // (full only once it's EXPORT_RAMP above the gate). A barely-established
+        // origin exports weakly, so a dense cluster of close neighbours (e.g. a
+        // European start) is revealed gradually — each crossing 1% at its own
+        // time by susceptibility/distance — instead of all at once the instant
+        // the origin crosses the gate. This is the fix for "spreads across the
+        // world too fast at the start".
+        const exp = clamp((src.total() - C.EXPORT_MIN) / ramp, 0, 1);
+        if (exp <= 0) return;
         const f = chan(this._openOf(src, l.kind)) * chan(this._openOf(dst, l.kind));
         if (f <= 0) return;
         const distFall = 1 / (1 + l.dist * C.LINK_DIST_K);    // long-haul routes are weak
         // Infectivity gives a GENTLE, bounded boost (same scale as internal
         // growth) — never the raw multiplier, which used to let a high-Infectivity
         // plague saturate whole countries across borders in lockstep.
-        const push = (1 + infS * C.INF_SCALE) * sm * src.total() * dt;
+        const push = (1 + infS * C.INF_SCALE) * sm * src.total() * exp * dt;
         // Links only INTRODUCE the rot — they seed a fresh country up to a small
         // foothold and then fade out; the country's OWN internal growth does the
         // saturation. Without this, a dense cluster of established neighbours

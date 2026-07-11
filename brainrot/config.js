@@ -32,12 +32,12 @@
     // own logistic curve (CROSS_TAPER). Net effect: each country saturates on
     // its own clock, so the global curve is a smooth multi-minute climb instead
     // of a mid-game explosion. Tuned via scratchpad/analyze.js + sweep.js.
-    INFECT_BASE: 0.055,     // master internal-spread coefficient (tuned via harness)
+    INFECT_BASE: 0.050,     // master internal-spread coefficient (tuned via harness)
     INF_SCALE: 0.08,        // how strongly evolved Infectivity multiplies spread (gentle)
-    SEED_FLOOR: 0.06,       // minimum growth pressure in a seeded country
+    SEED_FLOOR: 0.035,       // minimum growth pressure in a seeded country
     MOMENTUM: 0.15,         // self-reinforcing S-curve strength (low = gradual, not bursty)
     NECROSIS_BASE: 0.027,   // master lethality (infected -> terminal) coeff — the finish is a race
-    SEED_INFECT: 0.006,     // fraction infected in the chosen start country
+    SEED_INFECT: 0.0038,     // fraction infected in the chosen start country
 
     // --- Cross-border transmission (air / sea / land) -----------------
     // Infection hops COUNTRY-TO-COUNTRY along the discrete link graph the map
@@ -45,11 +45,15 @@
     // A country must be ESTABLISHED (EXPORT_MIN) before it can seed a neighbour,
     // and distant routes are weaker, so the world lights up one region after
     // another over many minutes with a clear, visible path.
-    LINK_AIR: 0.0090,       // flight-route seeding coefficient
-    LINK_SEA: 0.0060,       // sea-lane seeding
-    LINK_LAND: 0.0140,      // land-border seeding (strongest — walk/drive across)
-    EXPORT_MIN: 0.035,      // a country must be this infected before it exports abroad
-    LINK_DIST_K: 5.5,       // distance falloff: farther links seed much slower
+    LINK_AIR: 0.0065,       // flight-route seeding coefficient
+    LINK_SEA: 0.0043,       // sea-lane seeding
+    LINK_LAND: 0.0100,      // land-border seeding (strongest — walk/drive across)
+    EXPORT_MIN: 0.11,       // a country must be this infected before it exports abroad
+    EXPORT_RAMP: 0.28,      // export strength ramps 0->full over this much infection
+                            // ABOVE the gate, so a fresh origin exports weakly and
+                            // dense neighbour clusters are revealed gradually, not
+                            // all at once (fixes the early "spread everywhere fast")
+    LINK_DIST_K: 6.5,       // distance falloff: farther links seed much slower
     CROSS_TAPER: 0.30,      // links only seed a country UP TO this fraction; above it,
                             // the country's own internal growth takes over (kills the
                             // "dense cluster force-saturates in lockstep" snowball)
@@ -90,7 +94,7 @@
 
     // --- The Cure ("Touch-Grass Campaign") — a real threat if you're loud
     CURE_MAX: 100,
-    CURE_BASE: 0.36,        // base research rate (× difficulty × research power)
+    CURE_BASE: 0.40,        // base research rate (× difficulty × research power)
     CURE_SEV_GAIN: 0.14,    // how much severity accelerates the cure
     CURE_BUBBLE_MIN: 11, CURE_BUBBLE_MAX: 24,
     CURE_BUBBLE_SETBACK: [3, 7],        // % knocked off the cure per bubble
