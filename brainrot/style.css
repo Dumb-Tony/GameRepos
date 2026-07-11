@@ -890,3 +890,13 @@ img.spr { display: inline-block; vertical-align: middle; image-rendering: auto; 
 .grade-s { color: #ffd34e; } .grade-a { color: #5ffbe0; } .grade-b { color: #8fb2ff; }
 .grade-c { color: #ff9bd6; } .grade-d { color: #ff7a9c; } .grade-f { color: #ff4b6b; }
 .end-verdict { margin-top: 10px; font-size: 12.5px; font-weight: 600; opacity: .82; font-style: italic; }
+
+/* ===== stats charts ===== */
+.stat-chart { width: 100%; height: 132px; display: block; margin: 2px 0 6px; background: rgba(16,8,34,.5); border: 1px solid rgba(150,110,220,.22); border-radius: 10px; }
+.chart-legend { display: flex; gap: 14px; justify-content: center; margin: -2px 0 8px; font: 600 11px Inter, system-ui, sans-serif; color: #cdbaf0; }
+.cl-item { display: inline-flex; align-items: center; gap: 5px; }
+.cl-dot { width: 9px; height: 9px; border-radius: 3px; display: inline-block; }
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 12px; margin-bottom: 6px; }
+.stat-grid .stat-row { display: flex; justify-content: space-between; align-items: center; gap: 6px; padding: 5px 9px; background: rgba(20,10,40,.4); border-radius: 7px; font-size: 12px; }
+.stat-grid .stat-row span { color: #c8b6ea; display: inline-flex; align-items: center; gap: 5px; }
+.stat-grid .stat-row b { color: #fbe9ff; }

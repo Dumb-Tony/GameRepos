@@ -815,9 +815,60 @@
     // ---- stats / awards / timeline ------------------------------------
     _renderStats() {
       const g = this.game, s = g.save.stats;
-      const rows = [['🌍 Global brainrot', BR.fmtPct(g.globalBrainrot())], ['🧟 Infected', fmt(g.infectedPeople() * 1e6)], ['☠️ Terminal', fmt(g.necroticPeople() * 1e6)], ['🧪 Cure', BR.fmtPct(g.cure)], ['⚡/🚨/☠️ Inf/Sev/Let', `${g.infectivity().toFixed(1)} / ${g.severity().toFixed(1)} / ${g.lethality().toFixed(1)}`], ['🧬 Upgrades', g.purchased.size + ' / ' + BR.UPGRADE_TREE.length], ['⏱️ Time', clock(g.elapsed)], ['😈 Difficulty', g.difficulty.name]];
-      const life = [['Games started', s.gamesStarted], ['Games won', s.gamesWon], ['Games lost', s.gamesLost], ['Best win', s.bestTime ? clock(s.bestTime) : '—'], ['Lifetime virality', fmt(s.totalVirality)]];
-      $('statsBody').innerHTML = `<div class="stat-block-h">This run</div>` + rows.map((r) => `<div class="stat-row"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('') + `<div class="stat-block-h">Lifetime</div>` + life.map((r) => `<div class="stat-row"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('');
+      const rows = [
+        [spr('hud', 'global', 14, '#5ffbe0') + ' Global brainrot', BR.fmtPct(g.globalBrainrot())],
+        [spr('hud', 'infected', 14, '#c86bff') + ' Infected', fmt(g.infectedPeople() * 1e6)],
+        [spr('hud', 'terminal', 14, '#ff5c8a') + ' Terminal', fmt(g.necroticPeople() * 1e6)],
+        [spr('hud', 'cure', 14, '#4ea1ff') + ' Cure', BR.fmtPct(g.cure)],
+        [spr('hud', 'dna', 14, '#5ffbe0') + ' Upgrades', g.purchased.size + ' / ' + BR.UPGRADE_TREE.length],
+        [spr('hud', 'clock', 14) + ' Time', clock(g.elapsed)],
+      ];
+      const life = [['Games won', (s.gamesWon || 0) + ' / ' + (s.gamesStarted || 0)], ['Best win', s.bestTime ? clock(s.bestTime) : '—'], ['Lifetime virality', fmt(s.totalVirality || 0)]];
+      const legend = (c, t) => `<span class="cl-item"><span class="cl-dot" style="background:${c}"></span>${t}</span>`;
+      $('statsBody').innerHTML =
+        `<div class="stat-block-h">${spr('hud', 'trending', 14, '#ff6bd6')} Outbreak curve</div>` +
+        `<canvas id="statChart1" class="stat-chart"></canvas>` +
+        `<div class="chart-legend">${legend('#ff4bd8', 'Brainrot')}${legend('#c86bff', 'Terminal')}${legend('#4ea1ff', 'Cure')}</div>` +
+        `<div class="stat-block-h">${spr('hud', 'virality', 14, '#ff6bd6')} Virality balance</div>` +
+        `<canvas id="statChart2" class="stat-chart"></canvas>` +
+        `<div class="stat-block-h">This run · ${g.difficulty.name}</div>` +
+        `<div class="stat-grid">` + rows.map((r) => `<div class="stat-row"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('') + `</div>` +
+        `<div class="stat-block-h">Lifetime</div>` +
+        `<div class="stat-grid">` + life.map((r) => `<div class="stat-row"><span>${r[0]}</span><b>${r[1]}</b></div>`).join('') + `</div>`;
+      this._drawStatCharts();
+    }
+    _drawStatCharts() {
+      const g = this.game, H = g.history || [];
+      const c1 = $('statChart1'), c2 = $('statChart2');
+      const tmax = H.length ? Math.max(1, H[H.length - 1].t) : 1;
+      this._chart(c1, H, tmax, [
+        { key: 'glob', color: '#ff4bd8', fill: 'rgba(255,75,216,0.16)' },
+        { key: 'nec', color: '#c86bff', fill: 'rgba(200,107,255,0.12)' },
+        { key: 'cure', color: '#4ea1ff', fill: null },
+      ], 1);
+      const vmax = H.reduce((m, p) => Math.max(m, p.vir), 1);
+      this._chart(c2, H, tmax, [{ key: 'vir', color: '#f2c94c', fill: 'rgba(242,201,76,0.16)' }], vmax);
+    }
+    // Minimal responsive line chart. series: [{key,color,fill}]; ymax scales the y axis.
+    _chart(cv, H, tmax, series, ymax) {
+      if (!cv) return;
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const w = cv.clientWidth || 360, h = 132;
+      cv.width = w * dpr; cv.height = h * dpr;
+      const ctx = cv.getContext('2d'); if (!ctx) return; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const padL = 4, padR = 4, padB = 16, padT = 6, iw = w - padL - padR, ih = h - padT - padB;
+      ctx.clearRect(0, 0, w, h);
+      // grid
+      ctx.strokeStyle = 'rgba(180,140,255,0.14)'; ctx.lineWidth = 1; ctx.font = '9px Inter, system-ui, sans-serif'; ctx.fillStyle = 'rgba(200,180,255,0.5)'; ctx.textAlign = 'left';
+      for (let i = 0; i <= 4; i++) { const y = padT + ih * (i / 4); ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR, y); ctx.stroke(); }
+      if (!H.length) { ctx.fillStyle = 'rgba(210,190,255,0.5)'; ctx.textAlign = 'center'; ctx.fillText('No data yet — start spreading!', w / 2, h / 2); return; }
+      const X = (t) => padL + iw * (tmax ? t / tmax : 0), Y = (v) => padT + ih * (1 - clamp(v / ymax, 0, 1));
+      for (const s of series) {
+        if (s.fill) { ctx.beginPath(); ctx.moveTo(X(H[0].t), padT + ih); for (const p of H) ctx.lineTo(X(p.t), Y(p[s.key])); ctx.lineTo(X(H[H.length - 1].t), padT + ih); ctx.closePath(); ctx.fillStyle = s.fill; ctx.fill(); }
+        ctx.beginPath(); H.forEach((p, i) => { const x = X(p.t), y = Y(p[s.key]); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.strokeStyle = s.color; ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.stroke();
+      }
+      // time axis label
+      ctx.fillStyle = 'rgba(200,180,255,0.55)'; ctx.textAlign = 'right'; ctx.fillText(clock(tmax), w - padR, h - 3); ctx.textAlign = 'left'; ctx.fillText('0:00', padL, h - 3);
     }
     _renderAwards() {
       $('awardsBody').innerHTML = '<div class="ach-grid">' + BR.ACHIEVEMENTS.map((a) => `<div class="ach ${this.game.save.isUnlocked(a.id) ? 'got' : ''}"><div class="ach-ico">${a.emoji}</div><div><div class="ach-name">${a.name}</div><div class="ach-desc">${a.desc}</div></div></div>`).join('') + '</div>';

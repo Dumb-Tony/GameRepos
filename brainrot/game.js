@@ -52,6 +52,7 @@
       this.selected = null; this.hoverCountry = null;
       this.viralBubbles = []; this.cureBubbles = [];
       this.log = []; this.currentEvent = null;
+      this.history = []; this._histAcc = 0;   // time-series for the stats charts
       this.trend = null; this.trendTimer = 0; this.trendIndex = 0;
       this.newAchievements = [];
 
@@ -183,6 +184,17 @@
         this.cure = clamp(this.cure + rate * dt, 0, C.CURE_MAX);
       }
       if (this.cure > (this.peakCure || 0)) this.peakCure = this.cure;
+
+      // sample the run for the stats charts (~ every 2 game-seconds, capped)
+      this._histAcc += dt;
+      if (this._histAcc >= 2) {
+        this._histAcc = 0;
+        const tot = this.world.totalPop;
+        this.history.push({ t: this.elapsed,
+          inf: this.infectedPeople() / tot, nec: this.necroticPeople() / tot,
+          glob: this.globalBrainrot() / 100, cure: this.cure / 100, vir: this.virality });
+        if (this.history.length > 400) this.history.shift();
+      }
 
       this._timers(dt);
       this.events.update(dt);
