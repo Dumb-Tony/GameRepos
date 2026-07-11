@@ -206,7 +206,17 @@
       $('speeds').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; this.game.audio && this.game.audio.ensure(); this.game.setSpeed(+b.dataset.sp); });
       $('menuBtn').addEventListener('click', () => { this._fillSlots(); this._openModal('menuModal'); });
       document.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => this._closeModal(b.dataset.close)));
-      document.querySelectorAll('.modal').forEach((m) => m.addEventListener('click', (e) => { if (e.target === m && m.id !== 'introModal' && m.id !== 'endModal') this._closeModal(m.id); }));
+      document.querySelectorAll('.modal').forEach((m) => m.addEventListener('click', (e) => {
+        if (e.target !== m || m.id === 'introModal' || m.id === 'endModal') return;
+        // Route the pausing overlays through their proper close paths so the
+        // pause flag is cleared. A raw _closeModal() only hides the element and
+        // would leave game.paused stuck true with no visible popup — the
+        // "game just stops, no more progress" freeze (worse at high Heat, which
+        // spawns more event popups to accidentally backdrop-dismiss).
+        if (m.id === 'newsModal') this._dismissNews();
+        else if (m.id === 'evoModal') this._closeEvo();
+        else this._closeModal(m.id);
+      }));
 
       $('btnBegin').addEventListener('click', () => { this.game.audio && this.game.audio.ensure(); this._closeModal('introModal'); this._showSelect(); });
       const cont = $('btnContinue');
@@ -475,6 +485,14 @@
     // ---- per-tick HUD -------------------------------------------------
     tickHud() {
       if (!this.mounted) return; const g = this.game;
+      // Self-heal: if the sim is paused for a news/evolve overlay but neither
+      // overlay is actually on-screen, the pause flags desynced from the DOM.
+      // Recover instead of freezing forever ("game just stops, no progress").
+      if (g.paused && g.phase === 'play' && !g.ended) {
+        const evoOn = $('evoModal') && $('evoModal').classList.contains('on');
+        const newsOn = $('newsModal') && $('newsModal').classList.contains('on');
+        if (!evoOn && !newsOn) { this._evoOpen = false; this._newsOpen = false; this._newsQueue = []; this._updatePause(); }
+      }
       $('valVir').textContent = fmt(g.virality);
       $('valInfected').textContent = fmt(g.infectedPeople() * 1e6);
       $('valTerminal').textContent = fmt(g.necroticPeople() * 1e6);
