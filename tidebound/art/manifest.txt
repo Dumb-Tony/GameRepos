@@ -1,5 +1,19 @@
 # Tidebound generated art manifest — one line per asset: <output-name>|<source-url>
 # All assets were generated with Recraft V4.1 via Higgsfield (2026-07-11).
+#
+# WANTED (add lines here once generated; CSS hooks already exist, painted
+# fallbacks render until then). Style prefix used for all backgrounds:
+#   "Painterly stylized visual novel background art, textured gouache
+#    brushwork, cinematic wide composition, soft volumetric light,
+#    no people, no text, no watermark."
+# bg-grove.webp    — Edda's terraced mountain garden: cut terraces, vegetable
+#                    beds, low pruned fruit trees, rain tanks, one flowering
+#                    tree over two grassy mounds, warm morning light
+# bg-river.webp    — the Silverthread: wide clear jungle river over amber
+#                    stones, grey clay banks, green ravine, midday light
+# bg-mangrove.webp — brackish mangrove maze: tea-dark channels, arched roots,
+#                    herons, hanging light, something long and mossy
+#                    half-submerged and easy to miss
 # The fetch-tidebound-art GitHub workflow downloads these, converts them to
 # web-optimized WebP (backgrounds 1920w, portraits 512w), and commits them
 # into this folder. Filenames match what style.css / engine.js reference.

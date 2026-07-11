@@ -32,7 +32,7 @@
   TB.newState = function () {
     return {
       scene: 'title', day: 0, seg: 0, hudOn: false,
-      chapter: 1, site: null, trust: 0,
+      chapter: 1, site: null, trust: 0, edda: 0, disease: null,
       stats: { health: 100, hunger: 80, thirst: 75, energy: 85, hope: 55 },
       bgnd: null,                       // background: medic|photog|cook|engineer
       inv: {},                          // item -> count (booleans as 1)
@@ -84,8 +84,12 @@
     if (s.stats.hunger === 0) s.stats.health = TB.clamp(s.stats.health - 8, 0, 100);
     if (s.stats.thirst === 0) s.stats.health = TB.clamp(s.stats.health - 12, 0, 100);
     if (s.injury) s.stats.health = TB.clamp(s.stats.health - 3, 0, 100);
+    if (s.disease === 'fever') {
+      s.stats.health = TB.clamp(s.stats.health - 2, 0, 100);
+      if (s.stats.energy > 55) s.stats.energy = 55; // the fever's ceiling
+    }
     if (s.stats.health <= 0 && !s.deathCause) {
-      s.deathCause = s.stats.thirst === 0 ? 'thirst' : s.stats.hunger === 0 ? 'hunger' : 'injury';
+      s.deathCause = s.disease === 'fever' ? 'fever' : s.stats.thirst === 0 ? 'thirst' : s.stats.hunger === 0 ? 'hunger' : 'injury';
     }
     s.seg += 1;
     if (s.seg > 3) { s.seg = 0; s.day += 1; }
@@ -108,6 +112,7 @@
       if (s.day > 3) return 'slice_end'; // safety net; courtship normally hands off to ch2
     }
     if (s.chapter === 2 && s.day > 9) return 'ch2_end'; // safety net; the Smoke threshold normally ends the chapter
+    if (s.chapter === 3 && s.day > 15) return 'ch3_end'; // safety net; Old Grin's Toll normally ends the chapter
     if (s.seg === 3) return s.chapter >= 2 ? 'night2' : 'night';
     return s.chapter >= 2 ? 'camp2' : 'camp';
   };
@@ -122,8 +127,9 @@
       if (!raw) return null;
       const st = JSON.parse(raw);
       if (!st || !TB.SCENES[st.scene]) return null;
-      // migrate saves from before chapter 2 existed
+      // migrate saves from before later chapters existed
       st.chapter = st.chapter || 1; st.trust = st.trust || 0; st.site = st.site || null;
+      st.edda = st.edda || 0; st.disease = st.disease || null;
       return st;
     } catch (e) { return null; }
   };
@@ -267,6 +273,11 @@
       ][TB.tier()];
       known.push(nm + ' ' + tierLine);
     }
+    if (TB.is('EDDA_MET')) {
+      const e = s.edda;
+      known.push('👵 Edda ' + (e >= 60 ? 'trusts you now, in her flinty way. The grove is half yours to work.' : e >= 35 ? 'tolerates your visits, and feeds you while insulting you. Progress.' : 'is watching you the way she watches weather: for damage.'));
+    }
+    if (s.disease === 'fever') known.push('🤒 Marsh fever is in your blood. It will not leave on its own.');
     if (s.fire) known.push('🔥 You have fire.' + (s.fire > 1 ? ' A proper hearth, even.' : ''));
     if (s.shelter) known.push(s.shelter > 1 ? '🏠 Your shelter is sturdy.' : '⛺ You have a lean-to.');
     if (s.food) known.push('🍖 Food put by: ' + s.food + ' meal' + (s.food > 1 ? 's' : '') + '.');

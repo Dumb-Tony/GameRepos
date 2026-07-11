@@ -245,6 +245,7 @@
           TB.tickSegment(); },
         go: 'act_result',
       });
+      if (TB.ch3Actions) c.push(...TB.ch3Actions(s)); // later chapters extend the hub
       return c;
     },
   });
@@ -607,11 +608,12 @@
       t.push('— The first storm ' + (s.site === 'overhang' ? 'broke on your stone roof and owed you nothing.' : s.shelter >= 2 ? 'tested your walls and lost.' : 'took its tax in full.') + (TB.is('MOA_FOUND') ? ' You went out into it and brought Moa home.' : '') + (TB.is('KAVI_FIRE_TEST') ? ' Kavi kept watch all night from inside his own fear.' : ''));
       t.push('— And the smoke: ' + (TB.is('SMOKE_NOW') ? 'you walked into the night and met a lantern, a braid, and a shotgun that never quite lowered. Her name starts with E, and Chapter Three belongs to her mountain.' : TB.is('SMOKE_LATER') ? 'you prepared first — and the mountain left you a note. "Come at noon. Come slow." Signed E. Chapter Three has an appointment.' : 'you turned your back on it and fed your signal instead. The mountain\'s fire burns on, unanswered, patient. Chapter Three will not wait forever.'));
       t.push('Route leanings — Signal ' + s.route.signal + ' · Roots ' + s.route.roots + ' · Depth ' + s.route.depth + '.');
-      t.push('<em>Chapter Three: The Green Deep — in development.</em> The mountain, the river, the mangroves and what owns them, and the woman with the lantern. The full design lives in this folder\'s design documents.');
       return t;
     },
     choices: [
-      { t: '🌊 Start a new run', sub: 'Different ground, different companion, different storms.',
+      { t: '🌴 Continue — Chapter Three: The Green Deep ➤', sub: 'The mountain, the river, the mangroves and what owns them, and the woman with the lantern.',
+        go: 'ch3_open' },
+      { t: '🌊 Start a new run instead', sub: 'Different ground, different companion, different storms.',
         do: () => { TB.wipe(); TB.state = TB.newState(); }, go: 'title' },
     ],
   });
