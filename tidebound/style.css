@@ -1,0 +1,176 @@
+/* =====================================================================
+ * Tidebound — style.css
+ * VN layout over CSS-painted island backdrops. No images, no fonts.
+ * =================================================================== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: Georgia, 'Times New Roman', serif;
+  color: #f2ede2;
+  background: #06121d;
+  overflow: hidden;
+}
+
+#crashBanner {
+  display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 99;
+  background: #7a1020; color: #fff; padding: 6px 12px;
+  font: 13px/1.4 monospace;
+}
+
+/* ===== Backdrop layers ============================================== */
+#backdrop { position: fixed; inset: 0; z-index: 0; transition: filter 1.2s; }
+#backdrop .sky  { position: absolute; inset: 0; transition: background 1.2s; }
+#backdrop .sun  { position: absolute; width: 90px; height: 90px; border-radius: 50%;
+  top: 12%; left: 68%; transition: all 1.2s; }
+#backdrop .sea  { position: absolute; left: 0; right: 0; top: 52%; bottom: 0; transition: background 1.2s; }
+#backdrop .sand { position: absolute; left: 0; right: 0; top: 78%; bottom: 0; transition: background 1.2s; }
+#backdrop .palms { position: absolute; bottom: 14%; left: 4%; font-size: 64px;
+  filter: brightness(.35) saturate(.6); letter-spacing: -10px; transition: opacity 1.2s; }
+
+/* sky-only scenes */
+.bg-sky   .sky { background: linear-gradient(#5f8fc7, #a8c6e2 60%, #dfe9f2); }
+.bg-sky   .sun { background: #fff7d9; box-shadow: 0 0 60px 24px #fff7d980; }
+.bg-sky   .sea, .bg-sky .sand, .bg-sky .palms { opacity: 0; }
+
+.bg-ocean-night .sky { background: linear-gradient(#040b16, #0a1a2e 55%, #10263d); }
+.bg-ocean-night .sun { background: #e8ecf2; box-shadow: 0 0 40px 10px #e8ecf240; width: 54px; height: 54px; left: 20%; top: 10%; }
+.bg-ocean-night .sea { background: linear-gradient(#0c2033, #071626); top: 45%; }
+.bg-ocean-night .sand, .bg-ocean-night .palms { opacity: 0; }
+
+.bg-beach-day .sky  { background: linear-gradient(#7db8dd, #b9dcea 55%, #eef6f4); }
+.bg-beach-day .sun  { background: #fff3c4; box-shadow: 0 0 70px 30px #fff3c470; }
+.bg-beach-day .sea  { background: linear-gradient(#2f8fa8, #1d6f8d 70%, #15586f); }
+.bg-beach-day .sand { background: linear-gradient(#e8d7ae, #cdb586); }
+.bg-beach-day .palms { opacity: 1; }
+
+.bg-beach-dusk .sky  { background: linear-gradient(#3f3f74, #b45f6e 55%, #ecb26b); }
+.bg-beach-dusk .sun  { background: #ffd9a0; box-shadow: 0 0 80px 34px #ff9d5e66; top: 40%; left: 55%; }
+.bg-beach-dusk .sea  { background: linear-gradient(#54465f, #2c3550 70%, #1d2740); }
+.bg-beach-dusk .sand { background: linear-gradient(#b9a37f, #8d7a5c); }
+.bg-beach-dusk .palms { opacity: 1; }
+
+.bg-beach-night .sky  { background: linear-gradient(#050d1a, #0c1c31 60%, #14304a); }
+.bg-beach-night .sun  { background: #eef1f5; box-shadow: 0 0 44px 12px #eef1f540; width: 50px; height: 50px; left: 74%; top: 9%; }
+.bg-beach-night .sea  { background: linear-gradient(#0e2438, #081724 70%, #04101a);
+  box-shadow: inset 0 -40px 80px -30px #2fe0c94d; } /* the glowing lagoon */
+.bg-beach-night .sand { background: linear-gradient(#3d3931, #26231d); }
+.bg-beach-night .palms { opacity: 1; filter: brightness(.15); }
+
+.bg-jungle .sky  { background: linear-gradient(#274b31, #3f7042 55%, #6fa05c); }
+.bg-jungle .sun  { background: #f5ffce; box-shadow: 0 0 60px 20px #f5ffce4d; width: 60px; height: 60px; left: 30%; top: 8%; }
+.bg-jungle .sea  { background: linear-gradient(#1e3d27, #16301e); top: 55%; }
+.bg-jungle .sand { background: linear-gradient(#233c24, #17281a); top: 82%; }
+.bg-jungle .palms { opacity: 1; filter: brightness(.5) saturate(1.1); font-size: 84px; left: 60%; }
+
+.bg-tidepools .sky  { background: linear-gradient(#8fc3d8, #cfe6e6 60%, #f2f4ea); }
+.bg-tidepools .sun  { background: #fff7d0; box-shadow: 0 0 60px 22px #fff7d066; }
+.bg-tidepools .sea  { background: linear-gradient(#57b3ad, #2e8b8a 60%, #20706f); top: 58%; }
+.bg-tidepools .sand { background: linear-gradient(#c9c3a4, #a3987a); top: 74%;
+  box-shadow: inset 0 18px 26px -12px #2e8b8a88; }
+.bg-tidepools .palms { opacity: .5; }
+
+.bg-title .sky  { background: linear-gradient(#0e2a44, #1d5a72 50%, #d98e5f 88%, #f7c777); }
+.bg-title .sun  { background: #ffe3a3; box-shadow: 0 0 90px 40px #ff9d5e59; top: 62%; left: 46%; }
+.bg-title .sea  { background: linear-gradient(#175066, #0d3346 70%, #082331); top: 72%; }
+.bg-title .sand, .bg-title .palms { opacity: 0; }
+
+/* ===== HUD ========================================================== */
+#hud {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 5;
+  display: flex; align-items: center; gap: 14px;
+  padding: 8px 12px;
+  background: linear-gradient(#04101acc, #04101a00);
+  font-family: system-ui, sans-serif;
+}
+#hud.hidden { display: none; }
+.clock { font-size: 14px; white-space: nowrap; opacity: .95; }
+.clock .dot { opacity: .5; margin: 0 6px; }
+.meters { display: flex; gap: 10px; flex-wrap: wrap; flex: 1; }
+.meter { display: flex; align-items: center; gap: 4px; }
+.mi { font-size: 13px; }
+.bar { width: 64px; height: 8px; border-radius: 5px; background: #ffffff26; overflow: hidden; }
+.fill { height: 100%; width: 100%; border-radius: 5px; transition: width .5s; }
+.f-health { background: #e35d6a; } .f-hunger { background: #e0a558; }
+.f-thirst { background: #58aee0; } .f-energy { background: #b9d857; }
+.f-hope   { background: #d5a7e8; }
+#kitBtn {
+  background: #ffffff1f; border: 1px solid #ffffff38; color: inherit;
+  font-size: 16px; border-radius: 8px; padding: 3px 10px; cursor: pointer;
+}
+#kitBtn:hover { background: #ffffff33; }
+
+/* ===== VN panel ===================================================== */
+#stage {
+  position: fixed; inset: 0; z-index: 2;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 14px; padding-bottom: max(14px, env(safe-area-inset-bottom));
+}
+#portrait {
+  align-self: flex-start; margin: 0 0 8px 10px;
+  display: flex; align-items: center; gap: 10px;
+  background: #04101ad9; border: 1px solid #ffffff2e; border-radius: 14px;
+  padding: 6px 14px 6px 8px;
+}
+#portrait.hidden { display: none; }
+#portraitEmoji { font-size: 40px; line-height: 1; }
+#portraitName { font-family: system-ui, sans-serif; font-size: 14px; opacity: .9; }
+#panel {
+  background: #04101ae0; border: 1px solid #ffffff2e; border-radius: 16px;
+  padding: 18px 20px 14px; max-height: 62vh; display: flex; flex-direction: column;
+  box-shadow: 0 12px 40px #00000080;
+}
+#textLog { overflow-y: auto; scroll-behavior: smooth; flex: 0 1 auto; min-height: 3.5em; }
+#textLog p { font-size: 17px; line-height: 1.62; margin-bottom: 12px; }
+#textLog p.faded { opacity: .52; }
+#textLog p:last-child { margin-bottom: 4px; }
+#textLog em { color: #ffe9b8; }
+#moreHint {
+  align-self: center; font-size: 12px; opacity: .6; cursor: pointer;
+  animation: bob 1.4s ease-in-out infinite; padding: 2px 20px;
+}
+#moreHint.hidden { display: none; }
+@keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
+#panel.clickable { cursor: pointer; }
+
+#choices { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; overflow-y: auto; flex: 1 1 auto; }
+#choices button { flex-shrink: 0; }
+#choices button {
+  text-align: left; font: inherit; font-size: 16px; color: inherit;
+  background: #ffffff14; border: 1px solid #ffffff30; border-radius: 10px;
+  padding: 10px 14px; cursor: pointer; transition: background .15s, transform .05s;
+}
+#choices button:hover { background: #ffffff2b; }
+#choices button:active { transform: scale(.99); }
+#choices .sub { display: block; font-family: system-ui, sans-serif; font-size: 12.5px; opacity: .62; margin-top: 3px; }
+
+/* title screen buttons get a splashier look */
+#choices button.title-btn { text-align: center; font-size: 18px; padding: 13px; background: #ffffff1f; }
+.game-title { display: block; font-size: 44px; letter-spacing: 8px; text-align: center; text-shadow: 0 4px 24px #000a; }
+.game-sub { display: block; text-align: center; font-style: italic; opacity: .82; }
+
+/* ===== Kit overlay ================================================== */
+#kitOverlay {
+  position: fixed; inset: 0; z-index: 10; background: #020a12cc;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+#kitOverlay.hidden { display: none; }
+#kitCard {
+  background: #071726; border: 1px solid #ffffff33; border-radius: 16px;
+  padding: 22px 26px; max-width: 520px; width: 100%; max-height: 80vh; overflow-y: auto;
+}
+#kitCard h2 { font-size: 17px; margin: 10px 0 8px; color: #ffe9b8; }
+#kitCard h2:first-child { margin-top: 0; }
+#kitItems div, #kitFacts div { font-size: 15px; line-height: 1.6; padding-left: 4px; }
+#kitCard .none { opacity: .55; font-style: italic; }
+#kitClose {
+  margin-top: 16px; font: inherit; color: inherit; cursor: pointer;
+  background: #ffffff1f; border: 1px solid #ffffff38; border-radius: 8px; padding: 8px 18px;
+}
+
+/* ===== small screens =============================================== */
+@media (max-width: 560px) {
+  .bar { width: 42px; }
+  #textLog p { font-size: 15.5px; }
+  h1.game-title { font-size: 32px; }
+  #panel { max-height: 68vh; }
+}

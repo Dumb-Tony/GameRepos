@@ -9,6 +9,19 @@ A small collection of browser games — each in its own folder, playable with no
 | Game | Folder | Play |
 |------|--------|------|
 | 🧠💥 **Brainrot: Rise of the Meme** | [`brainrot/`](brainrot/) | https://dumb-tony.github.io/GameRepos/brainrot/ |
+| 🌊🏝️ **Tidebound** *(in development)* | [`tidebound/`](tidebound/) | https://dumb-tony.github.io/GameRepos/tidebound/ |
+
+## Tidebound
+
+A branching **survival visual novel**: your plane goes down beside an island no chart
+admits exists. Survive your first days, then earn the trust of **one** wild animal — a
+grieving island dog, a larcenous macaque, an aloof sea eagle, a reckless bearded pig,
+an anxious junglefowl, or something in the tide pools that has been watching you back.
+Every important choice has a price, and the island's Ledger forgets nothing.
+
+Currently a playable vertical slice (Prologue + Chapter One, through the companion
+choice). The complete design — 7 chapters, 6 companions, 49 endings — lives in
+[`tidebound/design/`](tidebound/design/).
 
 ## Brainrot: Rise of the Meme
 

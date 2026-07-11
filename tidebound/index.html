@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tidebound — a survival visual novel</title>
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+
+<div id="crashBanner"></div>
+<script>
+window.onerror = function (msg, src, line) {
+  var b = document.getElementById('crashBanner');
+  if (b && b.style.display !== 'block') { b.style.display = 'block'; b.textContent = '💥 ' + msg + '  (' + (src || '').split('/').pop() + ':' + line + ')'; }
+};
+</script>
+
+<!-- ===== SCENE BACKDROP (CSS-painted, class set by engine) ===== -->
+<div id="backdrop" class="bg-title">
+  <div class="sky"></div>
+  <div class="sun"></div>
+  <div class="sea"></div>
+  <div class="sand"></div>
+  <div class="palms" aria-hidden="true">🌴&nbsp;&nbsp;🌴</div>
+</div>
+
+<!-- ===== TOP HUD ===== -->
+<header id="hud" class="hidden">
+  <div class="clock">
+    <span id="hudDay">Day 1</span><span class="dot">·</span><span id="hudSeg">🌅 Dawn</span>
+  </div>
+  <div class="meters">
+    <div class="meter" title="Health"><span class="mi">❤️</span><div class="bar"><div id="mHealth" class="fill f-health"></div></div></div>
+    <div class="meter" title="Hunger"><span class="mi">🍖</span><div class="bar"><div id="mHunger" class="fill f-hunger"></div></div></div>
+    <div class="meter" title="Thirst"><span class="mi">💧</span><div class="bar"><div id="mThirst" class="fill f-thirst"></div></div></div>
+    <div class="meter" title="Energy"><span class="mi">⚡</span><div class="bar"><div id="mEnergy" class="fill f-energy"></div></div></div>
+    <div class="meter" title="Hope"><span class="mi">🕯️</span><div class="bar"><div id="mHope" class="fill f-hope"></div></div></div>
+  </div>
+  <button id="kitBtn" title="Your kit &amp; what you know">🎒</button>
+</header>
+
+<!-- ===== VN PANEL ===== -->
+<main id="stage">
+  <div id="portrait" class="hidden"><span id="portraitEmoji">🐕</span><span id="portraitName"></span></div>
+  <section id="panel">
+    <div id="textLog" aria-live="polite"></div>
+    <div id="moreHint" class="hidden">▼</div>
+    <div id="choices"></div>
+  </section>
+</main>
+
+<!-- ===== KIT OVERLAY ===== -->
+<div id="kitOverlay" class="hidden">
+  <div id="kitCard">
+    <h2>🎒 Your kit</h2>
+    <div id="kitItems"></div>
+    <h2>🧭 What you know</h2>
+    <div id="kitFacts"></div>
+    <button id="kitClose">Close</button>
+  </div>
+</div>
+
+<script src="engine.js?v=1"></script>
+<script src="scenes-prologue.js?v=1"></script>
+<script src="scenes-chapter1.js?v=1"></script>
+<script>window.TB.start();</script>
+</body>
+</html>
