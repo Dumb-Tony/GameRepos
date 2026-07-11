@@ -62,6 +62,7 @@
   // travellers (drawn pointing +x; caller rotates to heading)
   I.plane = (c) => path(c, (c) => { mv(c, 0.9, 0.5); ln(c, 0.34, 0.62); ln(c, 0.12, 0.62); ln(c, 0.26, 0.5); ln(c, 0.12, 0.38); ln(c, 0.34, 0.38); c.closePath(); }, true);
   I.ship = (c) => { path(c, (c) => { mv(c, 0.16, 0.56); ln(c, 0.84, 0.56); ln(c, 0.72, 0.72); ln(c, 0.28, 0.72); c.closePath(); }, true); c.lineWidth = 0.06; seg(c, 0.5, 0.56, 0.5, 0.3); poly(c, [[0.5, 0.3], [0.72, 0.42], [0.5, 0.42]], true, true); };
+  I.road = (c) => { poly(c, [[0.32, 0.16], [0.68, 0.16], [0.82, 0.84], [0.18, 0.84]], true, false); c.lineWidth = 0.05; c.setLineDash && c.setLineDash([0.08, 0.07]); seg(c, 0.5, 0.18, 0.5, 0.82); c.setLineDash && c.setLineDash([]); };
 
   // ---------- transmission ----------
   I.chat = (c) => { path(c, (c) => { mv(c, 0.2, 0.62); c.arc(0.5, 0.42, 0.32, Math.PI * 0.75, Math.PI * 0.25, false); ln(c, 0.66, 0.62); ln(c, 0.66, 0.74); ln(c, 0.5, 0.62); c.closePath(); }, false); c.lineWidth = 0.06; for (let i = 0; i < 3; i++) circ(c, 0.36 + i * 0.14, 0.42, 0.02, true); };
@@ -184,7 +185,8 @@
     cure: 'flask', heat: 'flame', dna: 'dna', brain: 'brain', biohazard: 'biohazard', menu: 'bars', stats: 'barchart',
     awards: 'trophy', pause: 'pause', play: 'play', ff: 'ff', ff2: 'ff2', coin: 'coin', evolve: 'dna',
     healthy: 'sprout', news: 'newspaper', awareness: 'eyeTarget', infectivity: 'bolt', severity: 'alert', lethality: 'skull',
-    clock: 'clock', transmission: 'satellite', symptom: 'brain', ability: 'shield', check: 'check' };
+    clock: 'clock', transmission: 'satellite', symptom: 'brain', ability: 'shield', check: 'check',
+    plane: 'plane', ship: 'ship', road: 'road', eye: 'eyeTarget' };
 
   // ================= RENDER + CACHE ==================
   const CELL = 100;                          // authoring resolution

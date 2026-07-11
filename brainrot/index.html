@@ -67,6 +67,11 @@ window.onerror = function (msg, src, line) {
   <div class="cure-track"><div class="cure-fill" id="cureFill"></div></div>
 </div>
 
+<!-- ===== CURE ENDGAME WARNING (appears once the Cure passes 50%) ===== -->
+<div id="endgameBanner"><span class="eb-ico" data-spr="hud:alert" data-sprsize="16" data-sprcolor="#ff2d6f"></span>
+  <span class="eb-txt">THE CURE IS WINNING — <b class="eb-val">50%</b></span>
+  <span class="eb-sub">De-evolve loud symptoms · tap cure bubbles · finish the world FAST</span></div>
+
 <!-- ===== LEFT: DISEASE VITALS (floating card) ===== -->
 <aside id="left" class="hud-card" data-title="☣ Pathogen.exe">
   <div id="brainWrap"><canvas id="brainCanvas"></canvas><div id="brainLabel"><b id="brainPct">0%</b><span>global brainrot</span></div></div>
@@ -154,6 +159,8 @@ window.onerror = function (msg, src, line) {
     <div class="start-hero">🧠💥🚽</div>
     <h1>BRAINROT</h1><h2>Rise of the Meme</h2>
     <p class="tag">Infect humanity with terminal brainrot before the world can cure itself.</p>
+    <div class="diff-head">Name your brain rot</div>
+    <input id="plagueNameInput" class="plague-name" type="text" maxlength="22" placeholder="e.g. Skibidi Sigma-9" value="">
     <div class="diff-head">Choose difficulty</div>
     <div class="diffs" id="diffOpts"></div>
     <div class="how">

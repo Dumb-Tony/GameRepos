@@ -304,6 +304,17 @@
         }
         if (!this._stamped.has(c.id) && c.necrotic > 0.9) { this._stamped.add(c.id); this._pings.push({ x: c.px, y: c.py - c.r - 6, r0: 2, r1: 16, age: 0, life: 0.8, color: '#ff5c8a', w: 2 }); }
       }
+      // cure "labs": once the Cure is researching, wealthy/controlled countries
+      // pulse blue rings — the world visibly fighting back (Plague Inc's cure bubbles vibe).
+      if (game.cure > 30) {
+        this._labAcc = (this._labAcc || 0) + dt * (0.3 + game.cure / 120);
+        if (this._labAcc >= 1) {
+          this._labAcc -= 1;
+          const labs = this.countries.filter((c) => c.detected && c.wealth > 0.55);
+          const lc = labs[(BR.rng(((game.elapsed * 53) | 0))() * labs.length) | 0];
+          if (lc) this._pings.push({ x: lc.px, y: lc.py, r0: 3, r1: 22, age: 0, life: 1.2, color: '#4ea1ff', w: 1.8 });
+        }
+      }
       // spawn travellers on active routes (rate scales with activity, capped)
       const routes = this._activeRoutes();
       this._spawnAcc += dt * (0.8 + routes.length * 0.5);

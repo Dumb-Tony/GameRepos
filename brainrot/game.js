@@ -34,6 +34,7 @@
       this.virality = C.START_VIRALITY;
       this.totalViralityEarned = 0;
       this.cure = 0;
+      this.peakCure = 0; this.cureEndgame = false; this._ms = {};   // milestone/endgame state
       this.heat = 0;                        // Trend Heat — viral momentum (0..100)
       this.peakHeat = 0;
       this.awareness = 0;
@@ -74,7 +75,7 @@
       this.phase = 'play';
       this.startChoice.seed(C.SEED_INFECT);
       this.patientZero = this.startChoice;
-      this.onEvent('🦠', `Patient zero: ${this.patientZero.name}. The rot begins.`, 'good');
+      this.majorEvent('🦠', `Patient zero: ${this.plagueName || 'the brain rot'} is released in ${this.patientZero.name}. The rot begins.`, 'good');
       if (this.ui) this.ui.onRelease();
       return true;
     }
@@ -181,9 +182,11 @@
         rate /= 1 + this.ev.cureSlow * 2.5;
         this.cure = clamp(this.cure + rate * dt, 0, C.CURE_MAX);
       }
+      if (this.cure > (this.peakCure || 0)) this.peakCure = this.cure;
 
       this._timers(dt);
       this.events.update(dt);
+      this._milestones();
       this.checkAchievements();
       this._checkEnd();
 
@@ -280,12 +283,30 @@
     }
     // Schedule a follow-up event to fire `delay` seconds later (story chains).
     queueEvent(id, delay) { if (this.events) this.events.queued.push({ id, t: Math.max(0, delay || 0) }); }
-    onEvent(emoji, msg, tone) {
-      const e = { emoji, msg, tone, t: this.elapsed };
+    onEvent(emoji, msg, tone, major) {
+      const e = { emoji, msg, tone, t: this.elapsed, major: !!major };
       this.log.unshift(e); if (this.log.length > 80) this.log.pop();
       this.currentEvent = e;
       if (this.ui) this.ui.onEvent(e);
       if (this.audio) this.audio.event(tone);
+    }
+    // A pausing bulletin for a genuine milestone (patient zero, detection, cure
+    // stages, big saturation marks). Random flavour events only scroll the
+    // ticker — Plague Inc only interrupts you for the beats that matter.
+    majorEvent(emoji, msg, tone) { this.onEvent(emoji, msg, tone, true); }
+    // Fire once-per-run milestone bulletins based on the world state.
+    _milestones() {
+      this._ms = this._ms || {};
+      const fire = (k, emoji, msg, tone) => { if (!this._ms[k]) { this._ms[k] = true; this.majorEvent(emoji, msg, tone); } };
+      const gb = this.globalBrainrot();
+      if (this.world.anyDetected()) fire('detected', '🔍', 'The world has noticed. Scientists label the outbreak "digital brain rot" and begin work on a Cure.', 'bad');
+      if (gb >= 25) fire('g25', '🌍', 'A quarter of humanity is rotting. Group chats worldwide are now 90% reaction images.', 'good');
+      if (gb >= 50) fire('g50', '🌍', 'Half the planet has succumbed. Nobody can read past a headline.', 'good');
+      if (gb >= 90) fire('g90', '🌍', 'Ninety percent global brain rot. Only the strongest touch-grassers remain.', 'good');
+      if (this.necroticPeople() > 0.5) fire('firstTerm', '💀', 'The first minds have gone fully terminal — brains completely necrotic. Only skibidi remains.', 'chaos');
+      if (this.cure >= 25) fire('c25', '🧪', 'The Cure ("Touch-Grass Campaign") reaches 25%. Ad councils are mobilizing.', 'bad');
+      if (this.cure >= 50 && !this.cureEndgame) { this.cureEndgame = true; fire('c50', '⚠️', 'THE CURE IS AT 50%. Humanity is fighting back — funding surges and borders slam shut. Finish this, fast.', 'bad'); }
+      if (this.cure >= 75) fire('c75', '🚨', 'The Cure hits 75%. It is very nearly over for the brain rot. De-evolve loud symptoms and stall it!', 'bad');
     }
 
     // ---- readouts -----------------------------------------------------

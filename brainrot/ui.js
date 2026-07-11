@@ -235,7 +235,7 @@
         else this._closeModal(m.id);
       }));
 
-      $('btnBegin').addEventListener('click', () => { this.game.audio && this.game.audio.ensure(); this._closeModal('introModal'); this._showSelect(); });
+      $('btnBegin').addEventListener('click', () => { this.game.audio && this.game.audio.ensure(); this._captureName(); this._closeModal('introModal'); this._showSelect(); });
       const cont = $('btnContinue');
       const resumable = () => (this.game.save.hasSlot('auto') ? 'auto' : SLOTS.find((s) => this.game.save.hasSlot(s)));
       cont.disabled = !resumable();
@@ -350,6 +350,16 @@
       $('selectBanner').style.display = this.game.phase === 'select' ? 'block' : 'none';
       this.tickHud();
     }
+    _captureName() {
+      const inp = $('plagueNameInput'), NAMES = ['Skibidi Strain', 'Ohio Variant', 'Rizzler-9', 'Sigma Prion', 'Gyatt-19', 'Brainrot Prime', 'The Doomscroll', 'Fanumvirus', 'Delulu-X', 'Terminal Skibidi'];
+      let n = inp && inp.value ? inp.value.trim().slice(0, 22) : '';
+      if (!n) n = NAMES[(Math.floor(this.game.elapsed * 7 + (this.game.save.stats.totalMemes || 0)) % NAMES.length + NAMES.length) % NAMES.length];
+      this.game.plagueName = n;
+      const bl = $('brainLabel'); // keep; pathogen label uses it
+      const pl = document.querySelector('#pathogenPanel .pathogen-lbl');
+      if (pl) pl.innerHTML = `<span data-spr="hud:biohazard" data-sprsize="13" data-sprcolor="#8fd14a"></span> ${n.toUpperCase()}`;
+      const pca = document.querySelector('.hud-card#left'); if (pca) pca.setAttribute('data-title', '☣ ' + n);
+    }
     _showSelect() { $('selectBanner').style.display = 'block'; this.selectCountry(null); }
     onChooseStart() { this.selectCountry(this.game.startChoice); }
     onDifficulty() { this._buildDiffs(); }
@@ -362,7 +372,10 @@
       const host = $('recentEvents'); host.prepend(re); while (host.children.length > 12) host.removeChild(host.lastChild);
       const le = el('span', 'le ' + e.tone, `<b>${e.emoji} </b>${e.msg}`); const log = $('eventLog'); log.prepend(le); while (log.children.length > 14) log.removeChild(log.lastChild);
       $('evIco').textContent = e.emoji; $('valEvent').textContent = e.msg;
-      this._queueNews(e);
+      // Plague Inc only INTERRUPTS you for milestones; random flavour events
+      // just scroll the ticker above. A quick toast keeps them noticeable.
+      if (e.major) this._queueNews(e);
+      else if (this.game.phase === 'play') this.toast(e.emoji, e.msg, e.tone);
     }
     // ---- pausing news popups (like the original's bulletins) ----------
     _queueNews(e) {
@@ -527,7 +540,10 @@
       const cf = $('cureFill'); cf.style.width = g.cure + '%';
       cf.style.background = g.cure > 66 ? 'linear-gradient(90deg,#ff4bd8,#ff2d6f)' : g.cure > 33 ? 'linear-gradient(90deg,#b57bff,#ff6bd6)' : 'linear-gradient(90deg,#4be7ff,#5ffbe0)';
       $('cureVal').textContent = BR.fmtPct(g.cure); $('cureLabel').textContent = g.cureLabel();
-      const cb = $('curebar'); if (cb) cb.classList.toggle('danger', g.cure >= 80);
+      const cb = $('curebar'); if (cb) { cb.classList.toggle('danger', g.cure >= 80); cb.classList.toggle('endgame', !!g.cureEndgame && g.cure < 100); }
+      // Cure-endgame banner: once the world is fighting back in earnest.
+      const eb = $('endgameBanner');
+      if (eb) { const show = !!g.cureEndgame && !g.ended; eb.classList.toggle('show', show); if (show) eb.querySelector('.eb-val').textContent = BR.fmtPct(g.cure); }
 
       if (this._evoOpen) this._updateEvoStats();
       this._treeAfford(); this._updateStatusBar(); this._updateCountryPanel(); this._refreshSpeedBtns(); this._milestones();
@@ -753,12 +769,12 @@
       const g = this.game, host = $('countryPanel');
       const top = g.world.countries.filter((c) => c.total() > 0.004).sort((a, b) => b.total() - a.total()).slice(0, 9);
       const row = (c) => { const st = c.stage(); return `<div class="mi-row"><span class="mi-emo">${spr('country', c.name, 18, st.color)}</span><span class="mi-name">${c.short}</span><span class="mi-bar"><span style="width:${clamp(c.brainrotPct(), 0, 100)}%;background:${st.color}"></span></span><span class="mi-pct" style="color:${st.color}">${BR.fmtPct(c.brainrotPct())}</span></div>`; };
-      host.innerHTML = `<div class="dp-stats"><span class="dp-inf">🧟 <b>${fmt(g.infectedPeople() * 1e6)}</b></span><span class="dp-nec">☠️ <b>${fmt(g.necroticPeople() * 1e6)}</b></span><span class="dp-hea">🌱 <b>${fmt(Math.max(0, g.healthyPeople()) * 1e6)}</b></span></div>
-        <div class="section-h" style="padding:8px 0 4px">🌍 Most Infected Regions</div>
+      host.innerHTML = `<div class="dp-stats"><span class="dp-inf">${spr('hud', 'infected', 14, '#c86bff')} <b>${fmt(g.infectedPeople() * 1e6)}</b></span><span class="dp-nec">${spr('hud', 'terminal', 14, '#ff5c8a')} <b>${fmt(g.necroticPeople() * 1e6)}</b></span><span class="dp-hea">${spr('hud', 'healthy', 14, '#5ffbe0')} <b>${fmt(Math.max(0, g.healthyPeople()) * 1e6)}</b></span></div>
+        <div class="section-h" style="padding:8px 0 4px">${spr('hud', 'global', 14, '#5ffbe0')} Most Infected Regions</div>
         <div class="mi-list">${top.length ? top.map(row).join('') : '<div class="cp-empty" style="padding:10px">No regions infected yet.</div>'}</div>`;
     }
     // ---- on-map country/region popup (Plague-style) -------------------
-    _lnk(ok, ic) { return `<span class="${ok ? 'open' : 'shut'}">${ic}</span>`; }
+    _lnk(ok, name, label) { return `<span class="lnk ${ok ? 'open' : 'shut'}">${spr('hud', name, 13, ok ? '#5ffbe0' : '#ff6b8a')}${label ? ' ' + label : ''}</span>`; }
     _showCountryPopup(c) { this.popupCountry = c; this._renderCountryPopup(); this._positionPopup(); }
     _hideCountryPopup() { this.popupCountry = null; const p = $('countryPopup'); if (p) p.classList.remove('show'); }
     _renderCountryPopup() {
@@ -779,9 +795,12 @@
       const set = (id, v) => { const e = $(id); if (e) e.textContent = v; };
       const setw = (id, w) => { const e = $(id); if (e) e.style.width = clamp(w, 0, 100) + '%'; };
       setw('cpopNec', c.necrotic * 100); setw('cpopInf', c.infected * 100);
-      set('cpopIP', '🧟 ' + BR.fmtPct(c.infected * 100)); set('cpopNP', '☠️ ' + BR.fmtPct(c.necrotic * 100)); set('cpopHP', '🌱 ' + BR.fmtPct(c.healthy() * 100));
+      const seth = (id, html) => { const e = $(id); if (e) e.innerHTML = html; };
+      seth('cpopIP', spr('hud', 'infected', 12, '#c86bff') + ' ' + BR.fmtPct(c.infected * 100));
+      seth('cpopNP', spr('hud', 'terminal', 12, '#ff5c8a') + ' ' + BR.fmtPct(c.necrotic * 100));
+      seth('cpopHP', spr('hud', 'healthy', 12, '#5ffbe0') + ' ' + BR.fmtPct(c.healthy() * 100));
       const se = $('cpopStage'); if (se) { const st = c.stage(); se.textContent = st.name; se.style.color = st.color; }
-      const le = $('cpopLinks'); if (le) le.innerHTML = `${this._lnk(c.airOpen, '✈️')}${this._lnk(c.seaOpen, '🚢')}${this._lnk(c.landOpen, '🛣️')}${c.detected ? '<span class="shut">👁️ seen</span>' : ''}`;
+      const le = $('cpopLinks'); if (le) le.innerHTML = `${this._lnk(c.airOpen, 'plane')}${this._lnk(c.seaOpen, 'ship')}${this._lnk(c.landOpen, 'road')}${c.detected ? this._lnk(false, 'eye', 'seen') : ''}`;
     }
     _positionPopup() {
       const p = $('countryPopup'), c = this.popupCountry; if (!p || !c || c.px === undefined) return;
@@ -838,11 +857,39 @@
       this._closeModal('evoModal'); this._closeModal('newsModal');
       const g = this.game, card = $('endModal').querySelector('.modal-card');
       card.classList.toggle('win', win); card.classList.toggle('lose', !win);
-      $('endEmoji').textContent = win ? '🌍🧠💥' : '🧪';
-      $('endTitle').textContent = win ? 'Worldwide Brainrot!' : 'Cured.';
-      $('endMsg').innerHTML = win ? 'Every brain on Earth is fully necrotic. Humanity communicates only in reaction images. You did this. 🏆' : 'Humanity’s Touch-Grass Campaign reached 100%. The world logged off and healed. Devastating.';
-      $('endStats').innerHTML = [['🌍 Global rot', BR.fmtPct(g.globalBrainrot())], ['🧪 Cure', BR.fmtPct(g.cure)], ['⏱️ Time', clock(g.elapsed)], ['💜 Virality', fmt(g.totalViralityEarned)]].map((r) => `<div class="end-stat"><div class="es-val">${r[1]}</div><div class="es-lbl">${r[0]}</div></div>`).join('');
+      const grade = this._grade(win, g);
+      $('endEmoji').innerHTML = `<span class="end-grade grade-${grade.k}">${grade.letter}</span>`;
+      $('endTitle').textContent = win ? `${g.plagueName || 'Brainrot'} Wins!` : `${g.plagueName || 'Brainrot'} — Cured.`;
+      $('endMsg').innerHTML = (win
+        ? 'Every brain on Earth is fully necrotic. Humanity communicates only in reaction images. You did this.'
+        : 'Humanity’s Touch-Grass Campaign reached 100%. The world logged off and healed. Devastating.')
+        + `<div class="end-verdict">${grade.blurb}</div>`;
+      $('endStats').innerHTML = [
+        [spr('hud', 'global', 15, '#5ffbe0') + ' Global rot', BR.fmtPct(g.globalBrainrot())],
+        [spr('hud', 'terminal', 15, '#ff5c8a') + ' Terminal', BR.fmtPct(g.world.necroticFraction() * 100)],
+        [spr('hud', 'cure', 15, '#4ea1ff') + ' Peak cure', BR.fmtPct(g.peakCure || g.cure)],
+        [spr('hud', 'clock', 15) + ' Time', clock(g.elapsed)],
+        [spr('hud', 'virality', 15, '#ff6bd6') + ' Virality', fmt(g.totalViralityEarned)],
+      ].map((r) => `<div class="end-stat"><div class="es-val">${r[1]}</div><div class="es-lbl">${r[0]}</div></div>`).join('');
       this._openModal('endModal');
+    }
+    // Letter grade: rewards a fast, quiet win on a hard difficulty.
+    _grade(win, g) {
+      const diffBonus = ({ casual: 0, normal: 1, brutal: 2.2, chaos: 1.6 })[g.difficulty.id] || 0;
+      if (!win) {
+        const gb = g.globalBrainrot(), k = gb > 92 ? 'c' : gb > 75 ? 'd' : 'f';
+        return { k, letter: k.toUpperCase(), blurb: `The Cure won with <b>${BR.fmtPct(gb)}</b> of the world rotted. ${gb > 88 ? 'Agonizingly close — stall the Cure harder next time.' : 'Spread wider and quieter before turning up the Severity.'}` };
+      }
+      const mins = g.elapsed / 60, peak = g.peakCure || g.cure;
+      const score = 3 + diffBonus + clamp((14 - mins) * 0.4, -2, 3) + clamp((80 - peak) * 0.04, -1, 3);
+      const k = score >= 7 ? 's' : score >= 5.5 ? 'a' : score >= 4 ? 'b' : 'c';
+      const blurbs = {
+        s: 'Flawless outbreak. Fast, quiet, and utterly unstoppable. Patient zero would be proud.',
+        a: 'A masterful rot. You barely gave the Cure a chance to notice.',
+        b: 'Solid work — the world fell, though the labs made you sweat.',
+        c: 'A win is a win. It came down to the wire, but skibidi prevailed.',
+      };
+      return { k, letter: k.toUpperCase(), blurb: blurbs[k] };
     }
   }
   BR.UI = UI;
