@@ -59,6 +59,9 @@
   I.alert = (c) => { poly(c, [[0.5, 0.14], [0.88, 0.82], [0.12, 0.82]], true, false); c.lineWidth = 0.09; seg(c, 0.5, 0.4, 0.5, 0.62); circ(c, 0.5, 0.72, 0.03, true); };
   I.sprout = (c) => { seg(c, 0.5, 0.86, 0.5, 0.44); path(c, (c) => { mv(c, 0.5, 0.56); c.bezierCurveTo(0.3, 0.56, 0.24, 0.4, 0.26, 0.32); c.bezierCurveTo(0.42, 0.32, 0.5, 0.44, 0.5, 0.56); }, false); path(c, (c) => { mv(c, 0.5, 0.5); c.bezierCurveTo(0.7, 0.5, 0.76, 0.34, 0.74, 0.26); c.bezierCurveTo(0.58, 0.26, 0.5, 0.38, 0.5, 0.5); }, false); };
   I.clock = (c) => { circ(c, 0.5, 0.52, 0.34); seg(c, 0.5, 0.52, 0.5, 0.3); seg(c, 0.5, 0.52, 0.64, 0.58); seg(c, 0.5, 0.14, 0.5, 0.2); };
+  // travellers (drawn pointing +x; caller rotates to heading)
+  I.plane = (c) => path(c, (c) => { mv(c, 0.9, 0.5); ln(c, 0.34, 0.62); ln(c, 0.12, 0.62); ln(c, 0.26, 0.5); ln(c, 0.12, 0.38); ln(c, 0.34, 0.38); c.closePath(); }, true);
+  I.ship = (c) => { path(c, (c) => { mv(c, 0.16, 0.56); ln(c, 0.84, 0.56); ln(c, 0.72, 0.72); ln(c, 0.28, 0.72); c.closePath(); }, true); c.lineWidth = 0.06; seg(c, 0.5, 0.56, 0.5, 0.3); poly(c, [[0.5, 0.3], [0.72, 0.42], [0.5, 0.42]], true, true); };
 
   // ---------- transmission ----------
   I.chat = (c) => { path(c, (c) => { mv(c, 0.2, 0.62); c.arc(0.5, 0.42, 0.32, Math.PI * 0.75, Math.PI * 0.25, false); ln(c, 0.66, 0.62); ln(c, 0.66, 0.74); ln(c, 0.5, 0.62); c.closePath(); }, false); c.lineWidth = 0.06; for (let i = 0; i < 3; i++) circ(c, 0.36 + i * 0.14, 0.42, 0.02, true); };

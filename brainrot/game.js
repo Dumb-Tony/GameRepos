@@ -244,13 +244,15 @@
       const i = this.viralBubbles.indexOf(m); if (i < 0) return; this.viralBubbles.splice(i, 1);
       const r = m.reward * (1 + this.ev.virality); this.virality += r; this.totalViralityEarned += r;
       this.addHeat(C.HEAT_BUBBLE, true);
-      if (this.fx) { this.fx.emojiPop(m.x, m.y, m.emoji); this.fx.floatText(m.x, m.y - 20, '+' + BR.fmt(r), '#f2c94c'); }
+      if (this.world) this.world.addBurst(m.x, m.y, '#f2c94c', true);
+      if (this.fx) { this.fx.floatText(m.x, m.y - 20, '+' + BR.fmt(r), '#f2c94c'); }
       if (this.audio) this.audio.viral();
     }
     clickCure(m) {
       const i = this.cureBubbles.indexOf(m); if (i < 0) return; this.cureBubbles.splice(i, 1);
       this.cure = clamp(this.cure - m.setback, 0, C.CURE_MAX);
-      if (this.fx) { this.fx.emojiPop(m.x, m.y, '🧪'); this.fx.floatText(m.x, m.y - 20, '-' + m.setback.toFixed(1) + '% cure', '#4ea1ff'); }
+      if (this.world) this.world.addBurst(m.x, m.y, '#4ea1ff', true);
+      if (this.fx) { this.fx.floatText(m.x, m.y - 20, '-' + m.setback.toFixed(1) + '% cure', '#4ea1ff'); }
       if (this.audio) this.audio.pop();
     }
 

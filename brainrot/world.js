@@ -38,7 +38,15 @@
       // for the giants, > 1 for small nations, ~1 at POP_REF.
       const dk = C.POP_DRAG || 0, pr = C.POP_REF || 80;
       this.countries.forEach((c) => { c.popFactor = dk > 0 ? clamp(Math.pow(pr / Math.max(1, c.pop), dk), 0.32, 1.6) : 1; });
+      // ---- living-map fx state ----
+      this._travelers = [];      // planes/ships crossing active routes
+      this._pings = [];          // expanding rings (arrivals, alerts, bursts)
+      this._announced = new Set();  // countries that have flashed a "new outbreak"
+      this._stamped = new Set();    // countries that have received a terminal skull
+      this._lastT = 0; this._spawnAcc = 0;
     }
+    // Called by the game when a map bubble is tapped — pops a burst on the map.
+    addBurst(x, y, color, big) { this._pings.push({ x, y, r0: big ? 6 : 4, r1: big ? 46 : 30, age: 0, life: 0.6, color, w: 2.4 }); }
 
     // A sparse, connected transmission graph — the SAME edges the map draws and
     // the simulation spreads along. Land borders form the backbone; sea lanes
@@ -256,47 +264,98 @@
         ctx.lineWidth = closed ? 0.6 : 0.7 + heat * 1.2;
         ctx.beginPath(); ctx.moveTo(l.a.px, l.a.py); ctx.lineTo(l.b.px, l.b.py); ctx.stroke();
       }
-      ctx.setLineDash([]);
-      for (const l of this.links) {
-        const a = l.a, b = l.b, src = a.total() >= b.total() ? a : b, dst = src === a ? b : a;
-        if (src.total() < 0.05 || dst.total() > 0.92) continue;         // only active routes
-        const closed = !this._openOf(a, l.kind) || !this._openOf(b, l.kind);
-        if (closed) continue;
-        ctx.strokeStyle = `rgba(255,120,235,${0.18 + src.total() * 0.3})`; ctx.lineWidth = 1 + src.total() * 1.4;
-        ctx.setLineDash(l.kind === 'air' ? [4, 6] : l.kind === 'sea' ? [1, 5] : []); ctx.lineDashOffset = -t * 22;
-        ctx.beginPath(); ctx.moveTo(src.px, src.py); ctx.lineTo(dst.px, dst.py); ctx.stroke();
-        // a glowing bead travelling src -> dst
-        const ph = ((t * 0.28 + (a.id + b.id) * 0.17) % 1 + 1) % 1;
-        const bx = src.px + (dst.px - src.px) * ph, by = src.py + (dst.py - src.py) * ph;
-        ctx.setLineDash([]); ctx.globalAlpha = Math.sin(ph * Math.PI);
-        ctx.fillStyle = '#ffc4f2'; ctx.shadowColor = '#ff4bd8'; ctx.shadowBlur = 8;
-        ctx.beginPath(); ctx.arc(bx, by, 2.6, 0, Math.PI * 2); ctx.fill();
-        ctx.shadowBlur = 0; ctx.globalAlpha = 1;
-      }
       ctx.setLineDash([]); ctx.lineDashOffset = 0;
+
+      // Living map: planes/ships crossing active routes, arrival pops, new-
+      // outbreak alerts, terminal skull stamps, tap bursts.
+      const dt = this._lastT ? clamp(t - this._lastT, 0, 0.1) : 0.016; this._lastT = t;
+      if (game.phase === 'play' && !game.paused) this._mapFxUpdate(game, dt);
+      this._mapFxDraw(ctx, game, t);
 
       // Selection / hover halos on the country shape.
       if (game.selected && game.selected.pxRings) { ctx.save(); ctx.lineWidth = 2; ctx.strokeStyle = '#5ffbe0'; ctx.shadowColor = '#5ffbe0'; ctx.shadowBlur = 10; this._path(ctx, game.selected.pxRings); ctx.stroke(); ctx.restore(); }
       if (game.phase === 'select' && game.hoverCountry && game.hoverCountry.pxRings && game.hoverCountry !== game.selected) { ctx.save(); ctx.lineWidth = 1.6; ctx.strokeStyle = '#ff4bd8'; this._path(ctx, game.hoverCountry.pxRings); ctx.stroke(); ctx.restore(); }
 
       for (const c of this.countries) this._marker(ctx, c, game, t);
-      for (const b of game.viralBubbles) this._bubble(ctx, b, t, '#f2c94c');
-      for (const b of game.cureBubbles) this._bubble(ctx, b, t, '#4ea1ff');
+      for (const b of game.viralBubbles) this._bubble(ctx, b, t, '#f2c94c', 'flame');
+      for (const b of game.cureBubbles) this._bubble(ctx, b, t, '#4ea1ff', 'flask');
       this._glitch(ctx, this.globalBrainrot(), t);
     }
 
-    _marker(ctx, c, game, t) {
-      const total = c.total(), stage = c.stage(), inf = total > 0.02;
+    // ---- LIVING MAP: travellers, alerts, stamps, bursts ---------------
+    _activeRoutes() {
+      const out = [];
+      for (const l of this.links) {
+        if (l.kind === 'land') continue;                         // land spread shown by dots/beads
+        const src = l.a.total() >= l.b.total() ? l.a : l.b, dst = src === l.a ? l.b : l.a;
+        if (src.total() < C.EXPORT_MIN || dst.total() > 0.9) continue;
+        if (!this._openOf(l.a, l.kind) || !this._openOf(l.b, l.kind)) continue;
+        out.push({ src, dst, kind: l.kind });
+      }
+      return out;
+    }
+    _mapFxUpdate(game, dt) {
+      // new-outbreak alerts + terminal skull stamps
+      for (const c of this.countries) {
+        if (!this._announced.has(c.id) && c.total() > 0.012 && c !== game.patientZero) {
+          this._announced.add(c.id);
+          this._pings.push({ x: c.px, y: c.py, r0: c.r, r1: c.r + 26, age: 0, life: 1.1, color: '#ff3b6b', w: 2.2, alert: true });
+          if (game.audio && game.audio.event) { try { game.audio.event('bad'); } catch (e) {} }
+        }
+        if (!this._stamped.has(c.id) && c.necrotic > 0.9) { this._stamped.add(c.id); this._pings.push({ x: c.px, y: c.py - c.r - 6, r0: 2, r1: 16, age: 0, life: 0.8, color: '#ff5c8a', w: 2 }); }
+      }
+      // spawn travellers on active routes (rate scales with activity, capped)
+      const routes = this._activeRoutes();
+      this._spawnAcc += dt * (0.8 + routes.length * 0.5);
+      while (this._spawnAcc >= 1 && this._travelers.length < 26 && routes.length) {
+        this._spawnAcc -= 1;
+        const rt = routes[(BR.rng(((game.elapsed * 97) | 0) + this._travelers.length * 13)() * routes.length) | 0];
+        if (rt) this._travelers.push({ a: rt.src, b: rt.dst, kind: rt.kind, p: 0, spd: 0.22 + Math.random() * 0.16 });
+      }
+      // advance travellers; arrival pop at destination
+      for (let i = this._travelers.length - 1; i >= 0; i--) {
+        const tr = this._travelers[i]; tr.p += tr.spd * dt;
+        if (tr.p >= 1) { this._pings.push({ x: tr.b.px, y: tr.b.py, r0: 2, r1: 14, age: 0, life: 0.5, color: tr.kind === 'air' ? '#ffd0f4' : '#9fe0ff', w: 1.8 }); this._travelers.splice(i, 1); }
+      }
+      // advance pings
+      for (let i = this._pings.length - 1; i >= 0; i--) { const p = this._pings[i]; p.age += dt; if (p.age >= p.life) this._pings.splice(i, 1); }
+    }
+    _mapFxDraw(ctx, game, t) {
       const Spr = BR.Sprites;
+      // travellers with a short comet trail
+      for (const tr of this._travelers) {
+        const x = tr.a.px + (tr.b.px - tr.a.px) * tr.p, y = tr.a.py + (tr.b.py - tr.a.py) * tr.p;
+        const ang = Math.atan2(tr.b.py - tr.a.py, tr.b.px - tr.a.px);
+        const fade = Math.sin(clamp(tr.p, 0, 1) * Math.PI);
+        ctx.save(); ctx.globalAlpha = 0.35 * fade; ctx.strokeStyle = tr.kind === 'air' ? '#ffc4f2' : '#9fe0ff'; ctx.lineWidth = 1.4; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.moveTo(x - Math.cos(ang) * 12, y - Math.sin(ang) * 12); ctx.lineTo(x, y); ctx.stroke(); ctx.restore();
+        if (Spr) { ctx.save(); ctx.translate(x, y); ctx.rotate(ang); ctx.globalAlpha = 0.55 + 0.45 * fade; Spr.draw(ctx, tr.kind === 'air' ? 'plane' : 'ship', 0, 0, tr.kind === 'air' ? 13 : 12, tr.kind === 'air' ? '#ffe0f7' : '#bfeaff', 5); ctx.restore(); }
+      }
+      // expanding rings (arrivals / alerts / bursts)
+      for (const p of this._pings) {
+        const k = p.age / p.life, r = p.r0 + (p.r1 - p.r0) * k;
+        ctx.save(); ctx.globalAlpha = (1 - k) * (p.alert ? 0.9 : 0.7); ctx.strokeStyle = p.color; ctx.lineWidth = p.w * (1 - k * 0.5);
+        ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI * 2); ctx.stroke();
+        if (p.alert && k < 0.6) { ctx.globalAlpha = (1 - k / 0.6); ctx.fillStyle = p.color; ctx.font = 'bold 12px Inter, system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('!', p.x, p.y - p.r0 - 8); }
+        ctx.restore();
+      }
+    }
+
+    _marker(ctx, c, game, t) {
+      const total = c.total(), stage = c.stage(), inf = total > 0.02, terminal = c.necrotic > 0.85;
+      const Spr = BR.Sprites;
+      // biohazard pulse behind a saturated (but not yet terminal) country
+      if (Spr && total > 0.88 && !terminal) { const pl = 0.5 + 0.5 * Math.sin(t * 3 + c.id); ctx.save(); ctx.globalAlpha = 0.12 + 0.16 * pl; Spr.draw(ctx, 'biohazard', c.px, c.py, c.r * 3.4, '#8fd14a', false); ctx.restore(); }
       // pin
       ctx.beginPath(); ctx.arc(c.px, c.py, c.r, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(10,14,26,0.72)'; ctx.fill();
-      ctx.lineWidth = inf ? 1.6 : 1; ctx.strokeStyle = inf ? stage.color : 'rgba(210,220,240,0.55)'; ctx.stroke();
+      ctx.fillStyle = terminal ? 'rgba(30,6,20,0.82)' : 'rgba(10,14,26,0.72)'; ctx.fill();
+      ctx.lineWidth = inf ? 1.6 : 1; ctx.strokeStyle = terminal ? '#ff5c8a' : inf ? stage.color : 'rgba(210,220,240,0.55)'; ctx.stroke();
       const wob = total > 0.7 ? Math.sin(t * 12 + c.id) * (total - 0.7) * 2.5 : 0;
-      // vector country emblem, tinted by infection stage, glowing when infected
+      // vector country emblem, tinted by infection stage, glowing when infected.
+      // A fully-terminal country is stamped with a skull instead of its emblem.
       if (Spr) {
-        const col = inf ? stage.color : 'rgba(220,228,248,0.82)';
-        Spr.draw(ctx, Spr.iconFor('country', c.name), c.px + wob, c.py, c.r * 1.55, col, inf ? c.r * 0.5 : false);
+        if (terminal) { Spr.draw(ctx, 'skull', c.px, c.py, c.r * 1.5, '#ff5c8a', c.r * 0.4); }
+        else { const col = inf ? stage.color : 'rgba(220,228,248,0.82)'; Spr.draw(ctx, Spr.iconFor('country', c.name), c.px + wob, c.py, c.r * 1.55, col, inf ? c.r * 0.5 : false); }
       } else { ctx.font = `${Math.round(c.r * 1.15)}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(c.emoji, c.px + wob, c.py); }
       // closed-border padlock badge
       if (!c.airOpen || !c.seaOpen || !c.landOpen) { if (Spr) Spr.draw(ctx, 'lock', c.px + c.r + 4, c.py - c.r - 3, 11, '#ff5c8a'); }
@@ -310,13 +369,19 @@
       if (total > 0.01) lbl(BR.fmtPct(c.brainrotPct()), c.py + c.r + 19, stage.color, '800');
     }
 
-    _bubble(ctx, m, t, color) {
-      const s = 1 + Math.sin(t * 6 + m.x) * 0.12, life = clamp(m.ttl / m.maxTtl, 0, 1);
-      ctx.save(); ctx.globalAlpha = 0.55 + 0.45 * life; ctx.shadowColor = color; ctx.shadowBlur = 16;
-      ctx.font = `${Math.round(24 * s)}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(m.emoji, m.x, m.y - Math.sin(t * 3) * 3);
-      ctx.globalAlpha = 0.4 * life; ctx.strokeStyle = color; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.arc(m.x, m.y, 20 + (1 - life) * 10, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+    _bubble(ctx, m, t, color, icon) {
+      const life = clamp(m.ttl / m.maxTtl, 0, 1), pulse = 1 + Math.sin(t * 6 + m.x) * 0.1;
+      const y = m.y - Math.sin(t * 3 + m.x) * 3, r = 15 * pulse;
+      ctx.save();
+      // glowing disc
+      ctx.globalAlpha = 0.28 + 0.22 * life; ctx.fillStyle = color; ctx.shadowColor = color; ctx.shadowBlur = 14;
+      ctx.beginPath(); ctx.arc(m.x, y, r, 0, Math.PI * 2); ctx.fill();
+      ctx.shadowBlur = 0; ctx.globalAlpha = 0.85 * (0.6 + 0.4 * life); ctx.strokeStyle = color; ctx.lineWidth = 1.8;
+      ctx.beginPath(); ctx.arc(m.x, y, r, 0, Math.PI * 2); ctx.stroke();
+      // expanding "about to pop" ring as it nears expiry
+      if (life < 0.4) { ctx.globalAlpha = life * 1.6; ctx.beginPath(); ctx.arc(m.x, y, r + (0.4 - life) * 40, 0, Math.PI * 2); ctx.stroke(); }
+      ctx.globalAlpha = 1; ctx.restore();
+      if (BR.Sprites) BR.Sprites.draw(ctx, icon || 'flame', m.x, y, 17, '#0a0e1a', false);
     }
 
     _glitch(ctx, brainrot, t) {
