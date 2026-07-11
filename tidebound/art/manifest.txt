@@ -1,0 +1,19 @@
+# Tidebound generated art manifest — one line per asset: <output-name>|<source-url>
+# All assets were generated with Recraft V4.1 via Higgsfield (2026-07-11).
+# The fetch-tidebound-art GitHub workflow downloads these, converts them to
+# web-optimized WebP (backgrounds 1920w, portraits 512w), and commits them
+# into this folder. Filenames match what style.css / engine.js reference.
+bg-title.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_181721_27c202f5-a0b0-4cf2-a7e7-41d6e6ce0ac9.png
+bg-sky.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_181723_4b34dc19-b144-47e7-99b5-52af4328c5d6.png
+bg-ocean-night.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_181725_5ef496a1-2d80-475c-96fd-706beead20f6.png
+bg-beach-day.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_181727_06b80fa7-af7a-44f9-ac8f-51347dce577a.png
+bg-beach-dusk.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_181741_896cb843-fcce-420e-b9d6-90ca22953f0c.png
+bg-beach-night.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_181746_0fc2eaa8-c49e-4886-865f-2831012633a3.png
+bg-jungle.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_181748_e53a5868-4d79-4453-ac70-b26fbb1199c8.png
+bg-tidepools.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_181751_976a0acd-19fd-4d1d-86eb-73d43cd96d7c.png
+char-kavi.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_181802_33cfc62c-e415-4521-b76c-123bebc6fb30.png
+char-ipo.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_181804_2bb8d833-f1e0-47e8-9c94-eef68aa706d5.png
+char-vela.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_181806_11fc63de-0920-40e0-8750-1fe0e0cce367.png
+char-buri.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_181809_483dc37f-943c-450f-b15b-7a707d4fc404.png
+char-moa.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_181819_0466d14c-f890-41b6-9d05-a56b4fa5ac5f.png
+char-nine.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_181821_58d333cc-cc36-408e-9893-c4b3ec6ea2a9.png

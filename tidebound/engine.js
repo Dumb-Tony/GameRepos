@@ -138,10 +138,25 @@
   function setBackdrop(name) {
     $('backdrop').className = 'bg-' + (name || 'beach-day');
   }
+
+  // Generated art lives ONLY in art/ (one flat folder), referenced by
+  // filename here — backdrops via CSS classes, portraits via this map.
+  // Missing files degrade gracefully to the CSS-painted scene / emoji.
+  const PORTRAIT_ART = { '🐕': 'char-kavi', '🐒': 'char-ipo', '🦅': 'char-vela', '🐗': 'char-buri', '🐔': 'char-moa', '🐙': 'char-nine' };
   function setPortrait(who) {
     const el = $('portrait');
     if (!who) { el.classList.add('hidden'); return; }
     el.classList.remove('hidden');
+    const img = $('portraitImg');
+    const art = PORTRAIT_ART[who.emoji];
+    if (art) {
+      img.onerror = function () { img.classList.add('hidden'); $('portraitEmoji').classList.remove('hidden'); };
+      img.onload = function () { img.classList.remove('hidden'); $('portraitEmoji').classList.add('hidden'); };
+      img.src = 'art/' + art + '.webp';
+    } else {
+      img.classList.add('hidden');
+      $('portraitEmoji').classList.remove('hidden');
+    }
     $('portraitEmoji').textContent = who.emoji || '';
     $('portraitName').textContent = who.name || '';
   }

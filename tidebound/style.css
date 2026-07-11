@@ -27,6 +27,18 @@ body {
 #backdrop .palms { position: absolute; bottom: 14%; left: 4%; font-size: 64px;
   filter: brightness(.35) saturate(.6); letter-spacing: -10px; transition: opacity 1.2s; }
 
+/* Generated art layer (art/ folder). Sits over the CSS-painted scene;
+   if an image is missing the painted scene simply shows through. */
+#backdrop .art { position: absolute; inset: 0; background-size: cover; background-position: center; }
+.bg-title .art       { background-image: url('art/bg-title.webp'); }
+.bg-sky .art         { background-image: url('art/bg-sky.webp'); }
+.bg-ocean-night .art { background-image: url('art/bg-ocean-night.webp'); }
+.bg-beach-day .art   { background-image: url('art/bg-beach-day.webp'); }
+.bg-beach-dusk .art  { background-image: url('art/bg-beach-dusk.webp'); }
+.bg-beach-night .art { background-image: url('art/bg-beach-night.webp'); }
+.bg-jungle .art      { background-image: url('art/bg-jungle.webp'); }
+.bg-tidepools .art   { background-image: url('art/bg-tidepools.webp'); }
+
 /* sky-only scenes */
 .bg-sky   .sky { background: linear-gradient(#5f8fc7, #a8c6e2 60%, #dfe9f2); }
 .bg-sky   .sun { background: #fff7d9; box-shadow: 0 0 60px 24px #fff7d980; }
@@ -113,6 +125,9 @@ body {
 }
 #portrait.hidden { display: none; }
 #portraitEmoji { font-size: 40px; line-height: 1; }
+#portraitEmoji.hidden { display: none; }
+#portraitImg { width: 76px; height: 76px; border-radius: 12px; object-fit: cover; border: 1px solid #ffffff2e; }
+#portraitImg.hidden { display: none; }
 #portraitName { font-family: system-ui, sans-serif; font-size: 14px; opacity: .9; }
 #panel {
   background: #04101ae0; border: 1px solid #ffffff2e; border-radius: 16px;
