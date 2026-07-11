@@ -3,11 +3,18 @@ name: Fetch Tidebound art
 # Downloads the generated art assets listed in tidebound/art/manifest.txt,
 # converts them to web-optimized WebP (backgrounds 1920w, portraits 512w),
 # and commits them into tidebound/art/ on the branch the workflow runs on.
-# Manually triggered: the images live on a CDN the authoring sandbox cannot
-# reach, so CI does the one-time fetch instead.
+# The images live on a CDN the authoring sandbox cannot reach, so CI does
+# the one-time fetch instead. Runs on pushes that change the manifest (or
+# this workflow), and can be run manually once it exists on the default
+# branch. The commit it makes touches only tidebound/art/*.webp, which the
+# paths filter excludes — no trigger loop.
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - 'tidebound/art/manifest.txt'
+      - '.github/workflows/fetch-tidebound-art.yml'
 
 permissions:
   contents: write
