@@ -241,10 +241,15 @@
       cont.disabled = !resumable();
       cont.addEventListener('click', () => { this.game.audio && this.game.audio.ensure(); const s = resumable(); if (s && this.game.loadGame(s)) this._closeModal('introModal'); });
 
-      const mute = $('setMute'), music = $('setMusic');
+      const mute = $('setMute'), music = $('setMusic'), hd = $('setHDIcons');
       mute.checked = this.game.save.settings.muted; music.checked = this.game.save.settings.music;
       mute.addEventListener('change', () => { this.game.save.settings.muted = mute.checked; this.game.save.saveSettings(); this.game.audio && this.game.audio.setMuted(mute.checked); });
       music.addEventListener('change', () => { this.game.save.settings.music = music.checked; this.game.save.saveSettings(); this.game.audio && (this.game.audio.ensure(), this.game.audio.setMusic(music.checked)); });
+      if (hd) {
+        hd.checked = !!this.game.save.settings.hdIcons;
+        if (BR.Sprites && BR.Sprites.setHDIcons) BR.Sprites.setHDIcons(hd.checked);
+        hd.addEventListener('change', () => { this.game.save.settings.hdIcons = hd.checked; this.game.save.saveSettings(); if (BR.Sprites) BR.Sprites.setHDIcons(hd.checked); this._paintStaticIcons(); this._buildTrees(); this._buildGenes(); });
+      }
 
       $('btnRestart').addEventListener('click', () => { this._closeModal('menuModal'); this.game.stop(); this.game.newGame(undefined, this.game.difficulty.id); this.game.start(); this._openModal('introModal'); });
       $('btnHelp').addEventListener('click', () => { this._closeModal('menuModal'); this._openModal('introModal'); });
@@ -477,6 +482,9 @@
       };
       const B = BR.BRAIN_IMG || {};
       this._brainHealthy = mk(B.healthy); this._brainRot = mk(B.rot);
+      this._pathogenImg = mk(BR.PATHOGEN_IMG);
+      // optional HD meme sprite sheet (skins a subset of icons when enabled)
+      if (BR.SPRITE_SHEET_IMG && BR.Sprites && BR.Sprites.loadSheet) BR.Sprites.loadSheet(BR.SPRITE_SHEET_IMG, mk(BR.SPRITE_SHEET_IMG));
     }
 
     // ---- rotting brain (left panel; rots as global brainrot rises) -----
@@ -606,7 +614,22 @@
       const dpr = Math.min(2, window.devicePixelRatio || 1);
       if (cv.width !== Math.round(w * dpr)) { cv.width = w * dpr; cv.height = h * dpr; }
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
-      const g = this.game, cx = w / 2, cy = h / 2 + h * 0.02, R = Math.min(w, h) * 0.26;
+      const g = this.game;
+      // Higgsfield pathogen creature (if it loaded): draw it breathing + glowing,
+      // tinted toward necrosis-green as Lethality rises. Falls back to the
+      // procedural creature below when the image is unavailable (offline/sandbox).
+      const pim = this._pathogenImg;
+      if (pim && pim._ready && pim.naturalWidth) {
+        const lp0 = clamp(g.lethality() / 6, 0, 1), pl = 0.5 + 0.5 * Math.sin(t * 2.1);
+        const sz = Math.min(w, h) * (0.92 + 0.03 * pl);
+        ctx.save(); ctx.globalAlpha = 0.9;
+        ctx.shadowColor = lp0 > 0.55 ? '#8fd14a' : '#d94bff'; ctx.shadowBlur = 16 + 10 * pl;
+        ctx.drawImage(pim, w / 2 - sz / 2, h / 2 - sz / 2, sz, sz);
+        if (lp0 > 0.05) { ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = 0.18 * lp0; ctx.fillStyle = '#8fd14a'; ctx.beginPath(); ctx.arc(w / 2, h / 2, sz * 0.42, 0, Math.PI * 2); ctx.fill(); }
+        ctx.restore();
+        return;
+      }
+      const cx = w / 2, cy = h / 2 + h * 0.02, R = Math.min(w, h) * 0.26;
       const sev = g.severity(), let_ = g.lethality(), rot = t * 0.35;
       const sp = clamp(sev / 24, 0, 1);                              // severity 0..1
       const lp = clamp(let_ / 6, 0, 1);                              // lethality -> necrosis

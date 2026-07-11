@@ -199,15 +199,30 @@
     const fn = I[name]; if (fn) { try { fn(c); } catch (e) { /* never break the frame */ } }
     cache.set(key, cv); return cv;
   }
+  // ---- optional HD raster sprite sheet (Higgsfield) ----
+  let SHEET = null;          // { img, cols, rows, map:{name->[col,row]} }
+  let useSheet = false;      // toggled by the settings checkbox
+  function sheetRect(name) {
+    if (!SHEET || !SHEET.img || !SHEET.img._ready || !SHEET.img.naturalWidth) return null;
+    const cell = SHEET.map[name]; if (!cell) return null;
+    const cw = SHEET.img.naturalWidth / SHEET.cols, ch = SHEET.img.naturalHeight / SHEET.rows;
+    const inset = 0.05;      // trim cell bleed/padding
+    return { sx: (cell[0] + inset) * cw, sy: (cell[1] + inset) * ch, sw: cw * (1 - 2 * inset), sh: ch * (1 - 2 * inset) };
+  }
+
   const Sprites = {
     has: (name) => !!I[name],
     iconFor(kind, id) { const m = kind === 'upgrade' ? UP : kind === 'country' ? CO : HUD; return m[id] || (kind === 'country' ? 'globe' : kind === 'upgrade' ? 'chat' : 'heart'); },
+    loadSheet(spec, img) { const map = {}; (spec.cells || []).forEach((n, i) => (map[n] = [i % spec.cols, Math.floor(i / spec.cols)])); SHEET = { img, cols: spec.cols, rows: spec.rows, map }; },
+    setHDIcons(on) { useSheet = !!on; cache.clear(); },
+    hdActive() { return useSheet && !!(SHEET && SHEET.img && SHEET.img._ready); },
     // Blit centered at (x,y) filling a size×size box. color tints; glow adds neon halo.
     draw(ctx, name, x, y, size, color, glow) {
-      const cv = bake(name, color || '#eef');
       ctx.save();
       if (glow) { ctx.shadowColor = color || '#ff4bd8'; ctx.shadowBlur = glow === true ? size * 0.4 : glow; }
-      ctx.drawImage(cv, x - size / 2, y - size / 2, size, size);
+      const rect = useSheet && sheetRect(name);
+      if (rect) { ctx.drawImage(SHEET.img, rect.sx, rect.sy, rect.sw, rect.sh, x - size / 2, y - size / 2, size, size); }
+      else ctx.drawImage(bake(name, color || '#eef'), x - size / 2, y - size / 2, size, size);
       ctx.restore();
     },
     // Data URL for DOM <img>. Rendered at the requested pixel size × DPR.
@@ -215,7 +230,10 @@
       const dpr = Math.min(3, (typeof window !== 'undefined' && window.devicePixelRatio) || 1);
       const px = Math.round(size * dpr);
       const cv = document.createElement('canvas'); cv.width = cv.height = px;
-      const c = cv.getContext('2d'); c.scale(px, px);
+      const c = cv.getContext('2d');
+      const rect = useSheet && sheetRect(name);
+      if (rect) { c.drawImage(SHEET.img, rect.sx, rect.sy, rect.sw, rect.sh, 0, 0, px, px); return cv.toDataURL(); }
+      c.scale(px, px);
       c.strokeStyle = color || '#eef'; c.fillStyle = color || '#eef'; c.lineWidth = 0.09; c.lineCap = 'round'; c.lineJoin = 'round';
       const fn = I[name]; if (fn) { try { fn(c); } catch (e) {} }
       return cv.toDataURL();
