@@ -919,3 +919,12 @@ img.spr { display: inline-block; vertical-align: middle; image-rendering: auto; 
 .gene-nm { font: 800 12.5px Inter, system-ui, sans-serif; }
 .gene-dz { font-size: 10px; color: #b8a4dd; line-height: 1.25; }
 .gene.on .gene-nm { color: #fff; }
+
+/* HD-icons toggle on the intro screen */
+.intro-setting {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin: 2px 0 6px; padding: 8px 12px; border-radius: 10px;
+  background: rgba(22,12,44,.55); border: 1px solid rgba(150,110,220,.25);
+  font: 600 12px Inter, system-ui, sans-serif; color: #d9c8f5; cursor: pointer;
+}
+.intro-setting small { opacity: .6; font-weight: 500; }

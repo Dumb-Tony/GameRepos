@@ -232,13 +232,22 @@
     setHDIcons(on) { useSheet = !!on; cache.clear(); },
     hdActive() { return useSheet && !!(SHEET && SHEET.img && SHEET.img._ready); },
     sheetInfo() { return { loaded: !!(SHEET && SHEET.img && SHEET.img._ready), domOK: SHEET ? SHEET.domOK : null, use: useSheet }; },
-    // Blit centered at (x,y) filling a size×size box. color tints; glow adds neon halo.
+    // Blit centered at (x,y) filling a size×size box. color tints; glow adds
+    // neon halo. MUST NEVER THROW — this runs inside the map render loop, and
+    // an exception here would blank the whole map every frame.
     draw(ctx, name, x, y, size, color, glow) {
       ctx.save();
-      if (glow) { ctx.shadowColor = color || '#ff4bd8'; ctx.shadowBlur = glow === true ? size * 0.4 : glow; }
-      const rect = useSheet && sheetRect(name);
-      if (rect) { ctx.drawImage(SHEET.img, rect.sx, rect.sy, rect.sw, rect.sh, x - size / 2, y - size / 2, size, size); }
-      else ctx.drawImage(bake(name, color || '#eef'), x - size / 2, y - size / 2, size, size);
+      try {
+        if (glow) { ctx.shadowColor = color || '#ff4bd8'; ctx.shadowBlur = glow === true ? size * 0.4 : glow; }
+        const rect = useSheet && sheetRect(name);
+        if (rect) { ctx.drawImage(SHEET.img, rect.sx, rect.sy, rect.sw, rect.sh, x - size / 2, y - size / 2, size, size); }
+        else ctx.drawImage(bake(name, color || '#eef'), x - size / 2, y - size / 2, size, size);
+      } catch (e) {
+        // sheet blit failed (broken/partial image state) — disable it and fall
+        // back to the vector icon so the map keeps rendering.
+        if (SHEET) SHEET.domOK = false; useSheet = false;
+        try { ctx.drawImage(bake(name, color || '#eef'), x - size / 2, y - size / 2, size, size); } catch (e2) {}
+      }
       ctx.restore();
     },
     // Data URL for DOM <img>. Rendered at the requested pixel size × DPR.

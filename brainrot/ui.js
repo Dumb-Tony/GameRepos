@@ -616,7 +616,13 @@
     _refreshSpeedBtns() { document.querySelectorAll('#speeds button').forEach((b) => b.classList.toggle('on', +b.dataset.sp === this.game.speed)); }
 
     // ---- render loop --------------------------------------------------
+    // Wrapped so a bad frame (e.g. an asset in a weird state) logs once and
+    // skips, instead of throwing after clearRect and leaving a blank map.
     render(t, dt) {
+      try { this._renderFrame(t, dt); }
+      catch (e) { if (!this._renderErrOnce) { this._renderErrOnce = true; try { console.error('render frame failed:', e); } catch (e2) {} } }
+    }
+    _renderFrame(t, dt) {
       if (!this.mounted) return; this._resize();
       const v = this.view, dpr = this._dpr;
       // clear the whole canvas in device space, then draw under the pan+zoom view

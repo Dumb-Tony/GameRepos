@@ -235,7 +235,7 @@
     render(ctx, game, t) {
       const v = this._view; if (!v) return;
       ctx.clearRect(0, 0, v.w, v.h);
-      if (this._cache) ctx.drawImage(this._cache, 0, 0, v.w, v.h);
+      if (this._cache && this._cache.width > 0 && this._cache.height > 0) ctx.drawImage(this._cache, 0, 0, v.w, v.h);
 
       // Light infection tint on real shapes; the spreading DOTS carry the look.
       for (const c of this.countries) {
