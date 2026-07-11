@@ -841,3 +841,13 @@ body{ display:block; height:100vh; }
   border-radius:14px 14px 0 0; text-shadow:0 1px 2px rgba(90,0,90,.85);
 }
 
+
+/* ===== vector sprite icons (sprites.js) ===== */
+img.spr { display: inline-block; vertical-align: middle; image-rendering: auto; }
+.chip-ico img.spr, .mtr-ic img.spr, .esb-ico img.spr, .inl-spr img.spr, .t-ico img.spr,
+.sb-c img.spr, .sb-time img.spr, .sb-btns img.spr, .log-tag img.spr, .etab img.spr,
+.speeds button img.spr, .menu-btn img.spr, .brand-emoji img.spr, .pathogen-lbl img.spr,
+.cure-head img.spr, .mi-emo img.spr, .cp-emoji img.spr, .cpop-emo img.spr { vertical-align: middle; }
+.speeds button img.spr, .menu-btn img.spr, .round-btn img.spr { pointer-events: none; }
+.tn-ico img.spr { filter: drop-shadow(0 1px 2px rgba(0,0,0,.5)); }
+.tn-cost img.spr { vertical-align: -1px; margin-right: 1px; }

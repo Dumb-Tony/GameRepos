@@ -11,6 +11,9 @@
   const $ = (id) => document.getElementById(id);
   const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
   const clock = (s) => { s = Math.floor(s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+  // Vector-sprite icon as an <img> HTML string (falls back to empty if sprites
+  // haven't loaded). kind: 'upgrade' | 'country' | 'hud'.
+  const spr = (kind, id, size, color, cls) => (BR.Sprites ? BR.Sprites.img(BR.Sprites.iconFor(kind, id), size, color || '#efe6ff', cls) : '');
   const SLOTS = [1, 2, 3];
   const MET = { inf: 8, sev: 16, let: 8 };
 
@@ -26,13 +29,27 @@
       this._newsQueue = []; this._newsOpen = false; this._evoOpen = false;
       this._buildMeters(); this._buildTrees(); this._buildDiffs(); this._initBrainImgs();
       this._wireTabs(); this._wireControls(); this._wireMap();
+      this._paintStaticIcons();
       this.mounted = true; this.onNewGame(); this._resize(); this._renderOverview(); this.tickHud();
+    }
+
+    // Replace every static [data-spr="kind:id"] placeholder in the HTML with a
+    // crisp vector sprite, so no emoji remain in the chrome. Optional
+    // data-sprsize / data-sprcolor tune it.
+    _paintStaticIcons() {
+      if (!BR.Sprites) return;
+      document.querySelectorAll('[data-spr]').forEach((e) => {
+        const [kind, id] = e.getAttribute('data-spr').split(':');
+        const size = +(e.getAttribute('data-sprsize') || 18), color = e.getAttribute('data-sprcolor') || '#efe6ff';
+        e.innerHTML = spr(kind, id, size, color);
+      });
     }
 
     _buildMeters() {
       const host = $('meters'); host.innerHTML = '';
       const mk = (key, name, cls) => { const w = el('div', 'meter ' + cls, `<div class="meter-top"><span class="meter-name">${name}</span><span class="meter-val" id="mv-${key}"></span></div><div class="meter-bar"><div class="meter-fill" id="mf-${key}"></div></div>`); host.appendChild(w); };
-      mk('heat', '🔥 Trend Heat', 'm-heat'); mk('inf', '⚡ Infectivity', 'm-inf'); mk('sev', '🚨 Severity', 'm-sev'); mk('let', '☠️ Lethality', 'm-let'); mk('aware', '👁️ Awareness', 'm-aware');
+      const ic = (id, col) => `<span class="mtr-ic" data-spr="hud:${id}" data-sprsize="13" data-sprcolor="${col}"></span>`;
+      mk('heat', ic('heat', '#ff8a3d') + ' Trend Heat', 'm-heat'); mk('inf', ic('infectivity', '#43c6ac') + ' Infectivity', 'm-inf'); mk('sev', ic('severity', '#f2c94c') + ' Severity', 'm-sev'); mk('let', ic('lethality', '#ff5c8a') + ' Lethality', 'm-let'); mk('aware', ic('awareness', '#8fb2ff') + ' Awareness', 'm-aware');
     }
 
     // Plague-style tech tree: nodes BRANCH out from their prerequisites in a
@@ -54,7 +71,7 @@
           const p = lay.xy[u.id];
           const n = el('button', 'tnode' + (u.combo ? ' combo' : ''));
           n.dataset.id = u.id; n.style.left = p.x + 'px'; n.style.top = p.y + 'px';
-          n.innerHTML = `<span class="tn-ico">${u.emoji}</span><span class="tn-cost">💜${fmt(u.cost)}</span><span class="tn-tick">✔</span>`;
+          n.innerHTML = `<span class="tn-ico">${spr('upgrade', u.id, 32)}</span><span class="tn-cost">${spr('hud', 'virality', 11, '#ff6bd6')}${fmt(u.cost)}</span><span class="tn-tick">✔</span>`;
           n.addEventListener('click', () => this._selectNode(u));
           stage.appendChild(n); this.nodeEls[u.id] = n;
         }
@@ -110,7 +127,7 @@
       if (owned) action = g.canDeEvolve(u) ? `<button class="nd-btn de" id="ndDe">✕ De-evolve (refund 💜${Math.round(u.cost * BR.CONST.DEEVOLVE_REFUND)})</button>` : '<div class="nd-owned">✔ Evolved</div>';
       else if (!ok) action = `<div class="nd-lock">🔒 Requires: ${u.req.map((r) => BR.UPGRADE_BY_ID[r].name).join(', ')}</div>`;
       else action = `<button class="nd-btn ${afford ? '' : 'dis'}" id="ndBuy">Evolve · 💜${fmt(u.cost)}</button>`;
-      host.innerHTML = `<div class="nd-head"><span class="nd-ico">${u.emoji}</span><div><div class="nd-name">${u.name}${u.combo ? ' <span class="nd-combo">★ COMBO</span>' : ''}</div><div class="nd-tree">${BR.TREES.find((t) => t.id === u.tree).name}</div></div></div>
+      host.innerHTML = `<div class="nd-head"><span class="nd-ico">${spr('upgrade', u.id, 40, '#ffffff')}</span><div><div class="nd-name">${u.name}${u.combo ? ' <span class="nd-combo">★ COMBO</span>' : ''}</div><div class="nd-tree">${BR.TREES.find((t) => t.id === u.tree).name}</div></div></div>
         <div class="nd-desc">${u.desc}</div><div class="nd-fx">${this._badges(u.fx)}</div>${action}`;
       const b = $('ndBuy'); if (b) b.addEventListener('click', () => this._tryBuy(u));
       const dz = $('ndDe'); if (dz) dz.addEventListener('click', () => this._tryDeEvolve(u));
@@ -338,7 +355,7 @@
     onDifficulty() { this._buildDiffs(); }
     onRelease() { $('selectBanner').style.display = 'none'; this._pushTimeline(this.game.elapsed, `Patient zero: <b>${this.game.patientZero ? this.game.patientZero.name : '?'}</b>`); this.selectCountry(null); }
     _evoVir() { const ev = $('evoVir'); if (ev) ev.textContent = fmt(this.game.virality); if (this._evoOpen && this._activeTree() === 'overview') this._renderOverview(); }
-    onBuy(u) { this._updateTree(); this._drawLines(this._activeTree()); this._renderNodeDetail(); this._evoVir(); this._flash('chipVir'); this.toast(u.emoji, `Evolved <b>${u.name}</b>`, u.tree === 'symptom' && u.fx.sev > 1 ? 'bad' : 'good'); }
+    onBuy(u) { this._updateTree(); this._drawLines(this._activeTree()); this._renderNodeDetail(); this._evoVir(); this._flash('chipVir'); this.toast(spr('upgrade', u.id, 20), `Evolved <b>${u.name}</b>`, u.tree === 'symptom' && u.fx.sev > 1 ? 'bad' : 'good'); }
     onDeEvolve(u) { this._updateTree(); this._drawLines(this._activeTree()); this._renderNodeDetail(); this._evoVir(); this.toast('✂️', `De-evolved <b>${u.name}</b> (severity down)`, 'info'); }
     onEvent(e) {
       const re = el('div', 're ' + e.tone, `<span class="re-ico">${e.emoji}</span><span class="re-msg">${e.msg}</span>`);
@@ -391,7 +408,7 @@
       const g = this.game, host = $('etab-overview'); if (!host) return;
       const bar = (label, v, max, color) => `<div class="ov-bar"><div class="ov-bar-top"><span>${label}</span><span>${v.toFixed(1)}</span></div><div class="ov-track"><div style="width:${clamp(v / max * 100, 0, 100)}%;background:${color}"></div></div></div>`;
       const top = g.world.countries.filter((c) => c.total() > 0.004).sort((a, b) => b.total() - a.total()).slice(0, 6);
-      const mi = top.length ? top.map((c) => { const st = c.stage(); return `<div class="mi-row"><span class="mi-emo">${c.emoji}</span><span class="mi-name">${c.short}</span><span class="mi-bar"><span style="width:${clamp(c.brainrotPct(), 0, 100)}%;background:${st.color}"></span></span><span class="mi-pct" style="color:${st.color}">${BR.fmtPct(c.brainrotPct())}</span></div>`; }).join('') : '<div class="cp-empty">Nothing infected yet — evolve a Transmission to start.</div>';
+      const mi = top.length ? top.map((c) => { const st = c.stage(); return `<div class="mi-row"><span class="mi-emo">${spr('country', c.name, 18, st.color)}</span><span class="mi-name">${c.short}</span><span class="mi-bar"><span style="width:${clamp(c.brainrotPct(), 0, 100)}%;background:${st.color}"></span></span><span class="mi-pct" style="color:${st.color}">${BR.fmtPct(c.brainrotPct())}</span></div>`; }).join('') : '<div class="cp-empty">Nothing infected yet — evolve a Transmission to start.</div>';
       host.innerHTML = `<div class="ov-grid">
           <div class="ov-card"><div class="ov-k">🧟 Infected</div><div class="ov-v">${fmt(g.infectedPeople() * 1e6)}</div></div>
           <div class="ov-card"><div class="ov-k">☠️ Terminal</div><div class="ov-v">${fmt(g.necroticPeople() * 1e6)}</div></div>
@@ -726,7 +743,7 @@
       this._panelKey = key;
       if (!c) { host.innerHTML = '<div class="cp-empty">☣️ Click a region on the map to see its pros &amp; cons, then release the brainrot there.</div>'; return; }
       const st = c.stage(), pc = this._prosCons(c);
-      host.innerHTML = `<div class="cp-head"><div class="cp-emoji">${c.emoji}</div><div><div class="cp-name">${c.name}</div><span class="cp-stage" style="background:${st.color}22;color:${st.color}">${st.name}</span></div></div>
+      host.innerHTML = `<div class="cp-head"><div class="cp-emoji">${spr('country', c.name, 34, st.color)}</div><div><div class="cp-name">${c.name}</div><span class="cp-stage" style="background:${st.color}22;color:${st.color}">${st.name}</span></div></div>
         <div class="pc"><div class="pc-h good">✔ Pros</div>${pc.pros.map((p) => `<div class="pc-row good">+ ${p}</div>`).join('')}<div class="pc-h bad">✘ Cons</div>${pc.cons.map((p) => `<div class="pc-row bad">– ${p}</div>`).join('')}</div>
         ${this._bar('💰 Wealth', c.wealth, '#f2c94c')}${this._bar('📶 Internet', c.internet, '#4ea1ff')}${this._bar('🏛️ Censorship', c.moderation, '#b06cf0')}${this._bar('🗣️ Meme-native', c.english, '#43c6ac')}
         <button class="release-btn" id="btnRelease">☣️ Release the Brainrot here</button>`;
@@ -735,7 +752,7 @@
     _renderDiseasePanel() {
       const g = this.game, host = $('countryPanel');
       const top = g.world.countries.filter((c) => c.total() > 0.004).sort((a, b) => b.total() - a.total()).slice(0, 9);
-      const row = (c) => { const st = c.stage(); return `<div class="mi-row"><span class="mi-emo">${c.emoji}</span><span class="mi-name">${c.short}</span><span class="mi-bar"><span style="width:${clamp(c.brainrotPct(), 0, 100)}%;background:${st.color}"></span></span><span class="mi-pct" style="color:${st.color}">${BR.fmtPct(c.brainrotPct())}</span></div>`; };
+      const row = (c) => { const st = c.stage(); return `<div class="mi-row"><span class="mi-emo">${spr('country', c.name, 18, st.color)}</span><span class="mi-name">${c.short}</span><span class="mi-bar"><span style="width:${clamp(c.brainrotPct(), 0, 100)}%;background:${st.color}"></span></span><span class="mi-pct" style="color:${st.color}">${BR.fmtPct(c.brainrotPct())}</span></div>`; };
       host.innerHTML = `<div class="dp-stats"><span class="dp-inf">🧟 <b>${fmt(g.infectedPeople() * 1e6)}</b></span><span class="dp-nec">☠️ <b>${fmt(g.necroticPeople() * 1e6)}</b></span><span class="dp-hea">🌱 <b>${fmt(Math.max(0, g.healthyPeople()) * 1e6)}</b></span></div>
         <div class="section-h" style="padding:8px 0 4px">🌍 Most Infected Regions</div>
         <div class="mi-list">${top.length ? top.map(row).join('') : '<div class="cp-empty" style="padding:10px">No regions infected yet.</div>'}</div>`;
@@ -748,7 +765,7 @@
       const p = $('countryPopup'), c = this.popupCountry; if (!p) return;
       if (!c) { p.classList.remove('show'); return; }
       const st = c.stage();
-      p.innerHTML = `<div class="cpop-head"><span class="cpop-emo">${c.emoji}</span><span class="cpop-name">${c.name}</span><button class="cpop-x" id="cpopX">✕</button></div>
+      p.innerHTML = `<div class="cpop-head"><span class="cpop-emo">${spr('country', c.name, 22, c.stage().color)}</span><span class="cpop-name">${c.name}</span><button class="cpop-x" id="cpopX">✕</button></div>
         <div class="cpop-stage" id="cpopStage" style="color:${st.color}">${st.name}</div>
         <div class="seg"><span class="seg-fill nec" id="cpopNec"></span><span class="seg-fill inf" id="cpopInf"></span></div>
         <div class="cpop-row"><span class="k-inf" id="cpopIP"></span><span class="k-nec" id="cpopNP"></span><span class="k-hea" id="cpopHP"></span></div>

@@ -287,15 +287,21 @@
 
     _marker(ctx, c, game, t) {
       const total = c.total(), stage = c.stage(), inf = total > 0.02;
+      const Spr = BR.Sprites;
       // pin
       ctx.beginPath(); ctx.arc(c.px, c.py, c.r, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(10,14,26,0.72)'; ctx.fill();
       ctx.lineWidth = inf ? 1.6 : 1; ctx.strokeStyle = inf ? stage.color : 'rgba(210,220,240,0.55)'; ctx.stroke();
       const wob = total > 0.7 ? Math.sin(t * 12 + c.id) * (total - 0.7) * 2.5 : 0;
-      ctx.font = `${Math.round(c.r * 1.15)}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(c.emoji, c.px + wob, c.py);
-      if (!c.airOpen || !c.seaOpen || !c.landOpen) { ctx.font = '10px serif'; ctx.fillText('🚫', c.px + c.r + 1, c.py - c.r - 1); }
+      // vector country emblem, tinted by infection stage, glowing when infected
+      if (Spr) {
+        const col = inf ? stage.color : 'rgba(220,228,248,0.82)';
+        Spr.draw(ctx, Spr.iconFor('country', c.name), c.px + wob, c.py, c.r * 1.55, col, inf ? c.r * 0.5 : false);
+      } else { ctx.font = `${Math.round(c.r * 1.15)}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(c.emoji, c.px + wob, c.py); }
+      // closed-border padlock badge
+      if (!c.airOpen || !c.seaOpen || !c.landOpen) { if (Spr) Spr.draw(ctx, 'lock', c.px + c.r + 4, c.py - c.r - 3, 11, '#ff5c8a'); }
       // label (name always subtle; % when infected) with outline for legibility
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       const lbl = (s, y, color, weight) => { ctx.font = `${weight} 10px Inter, system-ui, sans-serif`; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(0,0,0,0.72)'; ctx.strokeText(s, c.px, y); ctx.fillStyle = color; ctx.fillText(s, c.px, y); };
       // Declutter: only label a country's name when it matters (infected /
       // picked / hovered / during country select). Emoji marker is always on.

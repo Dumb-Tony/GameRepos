@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Brainrot: Rise of the Meme</title>
-<link rel="stylesheet" href="style.css?v=22">
+<link rel="stylesheet" href="style.css?v=23">
 </head>
 <body>
 
@@ -35,35 +35,35 @@ window.onerror = function (msg, src, line) {
 
 <!-- ===== TOP HUD (floats over the map) ===== -->
 <header id="topbar">
-  <div class="brand"><span class="brand-emoji">🧠</span><span class="brand-txt">BRAINROT</span></div>
+  <div class="brand"><span class="brand-emoji" data-spr="hud:brain" data-sprsize="26" data-sprcolor="#ff6bd6"></span><span class="brand-txt">BRAINROT</span></div>
   <div class="chips">
     <div class="chip chip-vir" id="chipVir" title="Virality — your currency. Spend it evolving.">
-      <span class="chip-ico">💜</span><span class="chip-val" id="valVir">0</span><span class="chip-lbl">Virality</span></div>
+      <span class="chip-ico" data-spr="hud:virality" data-sprcolor="#ff6bd6"></span><span class="chip-val" id="valVir">0</span><span class="chip-lbl">Virality</span></div>
     <div class="chip" title="People actively brainrotted (still spreading).">
-      <span class="chip-ico">🧟</span><span class="chip-val" id="valInfected">0</span><span class="chip-lbl">Infected</span></div>
+      <span class="chip-ico" data-spr="hud:infected" data-sprcolor="#c86bff"></span><span class="chip-val" id="valInfected">0</span><span class="chip-lbl">Infected</span></div>
     <div class="chip" title="Terminal — full brain necrosis. Get everyone here to win.">
-      <span class="chip-ico">☠️</span><span class="chip-val" id="valTerminal">0</span><span class="chip-lbl">Terminal</span></div>
+      <span class="chip-ico" data-spr="hud:terminal" data-sprcolor="#ff5c8a"></span><span class="chip-val" id="valTerminal">0</span><span class="chip-lbl">Terminal</span></div>
     <div class="chip" title="Average global brainrot saturation.">
-      <span class="chip-ico">🌍</span><span class="chip-val" id="valGlobal">0%</span><span class="chip-lbl">Global</span></div>
+      <span class="chip-ico" data-spr="hud:global" data-sprcolor="#5ffbe0"></span><span class="chip-val" id="valGlobal">0%</span><span class="chip-lbl">Global</span></div>
     <div class="chip chip-wide" title="Currently dominant meme trend.">
-      <span class="chip-ico">📈</span><span class="chip-val" id="valTrend">—</span><span class="chip-lbl">Trending</span></div>
+      <span class="chip-ico" data-spr="hud:trending" data-sprcolor="#f2c94c"></span><span class="chip-val" id="valTrend">—</span><span class="chip-lbl">Trending</span></div>
     <div class="chip chip-wide chip-latest" title="Latest world event."><span class="chip-ico" id="evIco">🗞️</span>
       <span class="chip-val" id="valEvent">Awaiting chaos…</span><span class="chip-lbl">Latest</span></div>
   </div>
   <div class="topctrl">
     <div class="speeds" id="speeds">
-      <button data-sp="0" title="Pause">⏸</button>
-      <button data-sp="1" class="on" title="Normal">▶</button>
-      <button data-sp="2" title="Fast">⏩</button>
-      <button data-sp="3" title="Ludicrous">⏭</button>
+      <button data-sp="0" title="Pause" data-spr="hud:pause" data-sprsize="13"></button>
+      <button data-sp="1" class="on" title="Normal" data-spr="hud:play" data-sprsize="13"></button>
+      <button data-sp="2" title="Fast" data-spr="hud:ff" data-sprsize="13"></button>
+      <button data-sp="3" title="Ludicrous" data-spr="hud:ff2" data-sprsize="13"></button>
     </div>
-    <button class="menu-btn" id="menuBtn" title="Menu">☰</button>
+    <button class="menu-btn" id="menuBtn" title="Menu" data-spr="hud:menu" data-sprsize="16"></button>
   </div>
 </header>
 
 <!-- ===== CURE BAR (floats under the top HUD) ===== -->
 <div id="curebar" title="The Cure — humanity's Touch-Grass Campaign. If it hits 100%, you lose.">
-  <div class="cure-head"><span>🧪 The Cure · <b id="cureLabel">Dormant</b></span><span id="cureVal">0%</span></div>
+  <div class="cure-head"><span><span class="inl-spr" data-spr="hud:cure" data-sprsize="14" data-sprcolor="#4ea1ff"></span> The Cure · <b id="cureLabel">Dormant</b></span><span id="cureVal">0%</span></div>
   <div class="cure-track"><div class="cure-fill" id="cureFill"></div></div>
 </div>
 
@@ -84,39 +84,39 @@ window.onerror = function (msg, src, line) {
 
 <!-- ===== BIG ROUND BIOHAZARD "EVOLVE" BUTTON (bottom-left, Plague-Inc style) ===== -->
 <button id="btnEvolve" title="Evolve your brainrot (E)">
-  <span class="evo-btn-ring"></span><span class="evo-btn-ico">🧬</span><span class="evo-btn-lbl">EVOLVE</span>
+  <span class="evo-btn-ring"></span><span class="evo-btn-ico" data-spr="hud:dna" data-sprsize="26" data-sprcolor="#0a0e1a"></span><span class="evo-btn-lbl">EVOLVE</span>
 </button>
 
 <!-- ===== BOTTOM HUD: population bar · news ticker · round buttons ===== -->
 <div id="statusbar">
   <div class="sb-counts">
-    <span class="sb-c sb-inf">🧟 <b id="sbInf">0</b></span>
-    <span class="sb-c sb-nec">☠️ <b id="sbNec">0</b></span>
-    <span class="sb-c sb-hea">🌱 <b id="sbHea">0</b></span>
+    <span class="sb-c sb-inf"><span data-spr="hud:infected" data-sprsize="14" data-sprcolor="#c86bff"></span> <b id="sbInf">0</b></span>
+    <span class="sb-c sb-nec"><span data-spr="hud:terminal" data-sprsize="14" data-sprcolor="#ff5c8a"></span> <b id="sbNec">0</b></span>
+    <span class="sb-c sb-hea"><span data-spr="hud:healthy" data-sprsize="14" data-sprcolor="#5ffbe0"></span> <b id="sbHea">0</b></span>
   </div>
   <div class="worldbar" title="World population: healthy / infected / terminal"><span class="wb-inf" id="wbInf"></span><span class="wb-nec" id="wbNec"></span></div>
-  <div class="sb-time">⏱️ <b id="sbTime">0:00</b></div>
+  <div class="sb-time"><span data-spr="hud:clock" data-sprsize="13"></span> <b id="sbTime">0:00</b></div>
   <div class="sb-btns">
-    <button class="round-btn" id="btnStats" title="Statistics">📊</button>
-    <button class="round-btn" id="btnAwards" title="Achievements">🏆</button>
+    <button class="round-btn" id="btnStats" title="Statistics" data-spr="hud:stats" data-sprsize="16"></button>
+    <button class="round-btn" id="btnAwards" title="Achievements" data-spr="hud:awards" data-sprsize="16"></button>
   </div>
 </div>
-<footer id="logbar"><span class="log-tag">📰 WORLD NEWS</span><div id="eventLog"></div></footer>
+<footer id="logbar"><span class="log-tag"><span data-spr="hud:news" data-sprsize="13"></span> WORLD NEWS</span><div id="eventLog"></div></footer>
 <div id="toasts"></div>
 
 <!-- ===== EVOLUTION OVERLAY (pauses the game) ===== -->
 <div class="modal" id="evoModal">
   <div class="evo-card">
     <div class="evo-top">
-      <div class="evo-title">🧬 Evolve Your Brainrot <span class="evo-paused">⏸ paused</span></div>
+      <div class="evo-title"><span class="inl-spr" data-spr="hud:dna" data-sprsize="18" data-sprcolor="#5ffbe0"></span> Evolve Your Brainrot <span class="evo-paused">⏸ paused</span></div>
       <div class="evo-vir">💜 <b id="evoVir">0</b></div>
       <button class="evo-back" id="evoClose">▶ Back to World</button>
     </div>
     <div class="evo-tabs" id="evoTabs">
-      <button class="etab on" data-etab="overview">📊 Overview</button>
-      <button class="etab" data-etab="transmission">📡 Transmission</button>
-      <button class="etab" data-etab="symptom">🧠 Symptoms</button>
-      <button class="etab" data-etab="ability">🛡️ Abilities</button>
+      <button class="etab on" data-etab="overview"><span data-spr="hud:stats" data-sprsize="13"></span> Overview</button>
+      <button class="etab" data-etab="transmission"><span data-spr="hud:transmission" data-sprsize="13"></span> Transmission</button>
+      <button class="etab" data-etab="symptom"><span data-spr="hud:symptom" data-sprsize="13"></span> Symptoms</button>
+      <button class="etab" data-etab="ability"><span data-spr="hud:ability" data-sprsize="13"></span> Abilities</button>
     </div>
     <div class="evo-main">
       <div class="evo-panes">
@@ -126,12 +126,12 @@ window.onerror = function (msg, src, line) {
         <div id="tab-ability" class="etabpane"></div>
       </div>
       <div id="nodeDetail">
-        <div id="pathogenPanel"><canvas id="pathogenCanvas"></canvas><div class="pathogen-lbl">🦠 THE PATHOGEN</div></div>
+        <div id="pathogenPanel"><canvas id="pathogenCanvas"></canvas><div class="pathogen-lbl"><span data-spr="hud:biohazard" data-sprsize="13" data-sprcolor="#8fd14a"></span> THE PATHOGEN</div></div>
         <div id="nodeDetailBody"></div>
       </div>
     </div>
     <div class="evo-statbar">
-      <div class="esb esb-dna"><span class="esb-ico">🧬</span><span class="esb-lbl">Virality</span><b id="esbDna">0</b></div>
+      <div class="esb esb-dna"><span class="esb-ico" data-spr="hud:dna" data-sprsize="15" data-sprcolor="#5ffbe0"></span><span class="esb-lbl">Virality</span><b id="esbDna">0</b></div>
       <div class="esb"><span class="esb-lbl">Infectivity</span><div class="esb-bar inf"><div id="esbInf"></div></div><b id="esbInfV">0</b></div>
       <div class="esb"><span class="esb-lbl">Severity</span><div class="esb-bar sev"><div id="esbSev"></div></div><b id="esbSevV">0</b></div>
       <div class="esb"><span class="esb-lbl">Lethality</span><div class="esb-bar let"><div id="esbLet"></div></div><b id="esbLetV">0</b></div>
@@ -201,16 +201,17 @@ window.onerror = function (msg, src, line) {
   <div class="start-btns"><button class="big-btn" id="btnAgain">▶ Rot Again</button></div>
 </div></div>
 
-<script src="config.js?v=22"></script>
-<script src="audio.js?v=22"></script>
-<script src="animations.js?v=22"></script>
-<script src="countries.js?v=22"></script>
-<script src="worldmap.js?v=22"></script>
-<script src="upgrades.js?v=22"></script>
-<script src="events.js?v=22"></script>
-<script src="world.js?v=22"></script>
-<script src="save.js?v=22"></script>
-<script src="ui.js?v=22"></script>
-<script src="game.js?v=22"></script>
+<script src="config.js?v=23"></script>
+<script src="sprites.js?v=23"></script>
+<script src="audio.js?v=23"></script>
+<script src="animations.js?v=23"></script>
+<script src="countries.js?v=23"></script>
+<script src="worldmap.js?v=23"></script>
+<script src="upgrades.js?v=23"></script>
+<script src="events.js?v=23"></script>
+<script src="world.js?v=23"></script>
+<script src="save.js?v=23"></script>
+<script src="ui.js?v=23"></script>
+<script src="game.js?v=23"></script>
 </body>
 </html>
