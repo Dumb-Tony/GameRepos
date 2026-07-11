@@ -27,7 +27,7 @@
       this.brainCanvas = $('brainCanvas'); this.bctx = this.brainCanvas ? this.brainCanvas.getContext('2d') : null;
       this._pathogenCv = $('pathogenCanvas'); this._pathogenCtx = this._pathogenCv ? this._pathogenCv.getContext('2d') : null;
       this._newsQueue = []; this._newsOpen = false; this._evoOpen = false;
-      this._buildMeters(); this._buildTrees(); this._buildDiffs(); this._initBrainImgs();
+      this._buildMeters(); this._buildTrees(); this._buildDiffs(); this._buildGenes(); this._initBrainImgs();
       this._wireTabs(); this._wireControls(); this._wireMap();
       this._paintStaticIcons();
       this.mounted = true; this.onNewGame(); this._resize(); this._renderOverview(); this.tickHud();
@@ -344,12 +344,34 @@
       if (this.view) { this.view.zoom = 1; this.view.x = 0; this.view.y = 0; }
       $('recentEvents').innerHTML = ''; $('eventLog').innerHTML = '';
       $('timeline').innerHTML = '<div class="tl"><b>0:00</b> Choose a starting country…</div>';
-      this._buildDiffs(); this._updateTree(); this.selectCountry(null); this._hideCountryPopup();
+      this._buildDiffs(); this._buildGenes(); this._updateTree(); this.selectCountry(null); this._hideCountryPopup();
       this._newsQueue = []; this._newsOpen = false; this._evoOpen = false; this._updatePause();
       this._closeModal('evoModal'); this._closeModal('newsModal'); this.selectedNode = null; this._renderNodeDetail(); this._renderOverview();
       $('selectBanner').style.display = this.game.phase === 'select' ? 'block' : 'none';
       this.tickHud();
     }
+    // ---- Rot Genes (meta-progression) on the intro screen ----
+    _buildGenes() {
+      const host = $('geneOpts'); if (!host || !BR.GENES) return;
+      const save = this.game.save, equipped = save.getGenes();
+      host.innerHTML = BR.GENES.map((g) => {
+        const unlocked = save.isUnlocked(g.ach), on = equipped.includes(g.id);
+        const ach = BR.ACHIEVEMENTS.find((a) => a.id === g.ach);
+        return `<button class="gene ${unlocked ? '' : 'locked'} ${on ? 'on' : ''}" data-gene="${g.id}" title="${unlocked ? g.desc : 'Locked — ' + (ach ? ach.name + ': ' + ach.desc : '')}">
+          <span class="gene-ic">${spr('hud', g.icon, 22, unlocked ? g.color : '#6a5a86')}</span>
+          <span class="gene-nm">${unlocked ? g.name : '???'}</span>
+          <span class="gene-dz">${unlocked ? g.desc : '🔒 ' + (ach ? ach.name : 'Locked')}</span>
+        </button>`;
+      }).join('');
+      host.querySelectorAll('.gene').forEach((b) => b.addEventListener('click', () => {
+        const id = b.dataset.gene; if (!save.isUnlocked(BR.GENE_BY_ID[id].ach)) { this.toast('🔒', 'Locked — earn its achievement first.', 'bad'); return; }
+        if (!save.toggleGene(id) && !save.getGenes().includes(id)) { this.toast('🧬', `Only ${BR.MAX_GENES} gene slots — unequip one first.`, 'bad'); return; }
+        if (this.game.applyGenes) this.game.applyGenes();
+        this._buildGenes(); this.tickHud();
+      }));
+      const gs = $('geneSlots'); if (gs) gs.textContent = `${equipped.length}/${BR.MAX_GENES} slotted`;
+    }
+    onGeneUnlock(gene) { this.toast(spr('hud', gene.icon, 20, gene.color), `🧬 Rot Gene unlocked: <b>${gene.name}</b>`, 'good'); }
     _captureName() {
       const inp = $('plagueNameInput'), NAMES = ['Skibidi Strain', 'Ohio Variant', 'Rizzler-9', 'Sigma Prion', 'Gyatt-19', 'Brainrot Prime', 'The Doomscroll', 'Fanumvirus', 'Delulu-X', 'Terminal Skibidi'];
       let n = inp && inp.value ? inp.value.trim().slice(0, 22) : '';

@@ -900,3 +900,22 @@ img.spr { display: inline-block; vertical-align: middle; image-rendering: auto; 
 .stat-grid .stat-row { display: flex; justify-content: space-between; align-items: center; gap: 6px; padding: 5px 9px; background: rgba(20,10,40,.4); border-radius: 7px; font-size: 12px; }
 .stat-grid .stat-row span { color: #c8b6ea; display: inline-flex; align-items: center; gap: 5px; }
 .stat-grid .stat-row b { color: #fbe9ff; }
+
+/* ===== Rot Genes (intro meta-progression) ===== */
+.gene-head { display: flex; align-items: center; justify-content: space-between; }
+.gene-slots { font-size: 11px; font-weight: 600; color: #b79ae0; letter-spacing: .02em; }
+.genes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px; margin: 2px 0 6px; }
+.gene {
+  display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 8px; align-items: center;
+  text-align: left; padding: 8px 10px; border-radius: 10px; cursor: pointer;
+  background: rgba(22,12,44,.6); border: 1px solid rgba(150,110,220,.28); color: #eadcff;
+  transition: border-color .15s, background .15s, transform .1s;
+}
+.gene:hover { border-color: rgba(255,120,230,.55); transform: translateY(-1px); }
+.gene.on { background: linear-gradient(135deg, rgba(120,40,150,.5), rgba(60,20,90,.5)); border-color: #ff6bd6; box-shadow: 0 0 0 1px rgba(255,107,214,.4), 0 4px 16px rgba(255,75,216,.2); }
+.gene.locked { opacity: .5; cursor: not-allowed; filter: grayscale(.5); }
+.gene.locked:hover { transform: none; border-color: rgba(150,110,220,.28); }
+.gene-ic { grid-row: 1 / span 2; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
+.gene-nm { font: 800 12.5px Inter, system-ui, sans-serif; }
+.gene-dz { font-size: 10px; color: #b8a4dd; line-height: 1.25; }
+.gene.on .gene-nm { color: #fff; }

@@ -45,6 +45,7 @@
       this.purchased = new Set();
       this.ev = BR.baseEv();
       this.recomputeEv();
+      this.applyGenes();               // fold equipped Rot Genes into the starting state
 
       this.speed = 1;
       this.paused = false;              // true while a news popup / evolve overlay is open
@@ -74,7 +75,8 @@
     releaseBrainrot() {
       if (this.phase !== 'select' || !this.startChoice) return false;
       this.phase = 'play';
-      this.startChoice.seed(C.SEED_INFECT);
+      this.startChoice.seed(C.SEED_INFECT * (this.geneSeedMult || 1));   // "Patient Zero+" Rot Gene
+      if (this._geneStartHeat) this.heat = Math.max(this.heat, this._geneStartHeat);   // "Instant Trend" Rot Gene
       this.patientZero = this.startChoice;
       this.majorEvent('🦠', `Patient zero: ${this.plagueName || 'the brain rot'} is released in ${this.patientZero.name}. The rot begins.`, 'good');
       if (this.ui) this.ui.onRelease();
@@ -100,9 +102,26 @@
     recomputeEv() {
       const ev = BR.baseEv();
       this.purchased.forEach((id) => { const u = BR.UPGRADE_BY_ID[id]; if (u) BR.foldEffects(ev, u.fx); });
+      if (this._geneEv) for (const k in this._geneEv) ev[k] = (ev[k] || 0) + this._geneEv[k];   // Rot Gene starting bonuses
       ev.skepticScale = this.difficulty.skeptic;
       ['borderPierce', 'moderationResist', 'languagePierce', 'offlineReach', 'cureSlow', 'heatDecayReduce'].forEach((k) => (ev[k] = clamp(ev[k], 0, 1)));
       this.ev = ev;
+    }
+    // Fold the player's equipped Rot Genes into this run's starting state.
+    applyGenes() {
+      this.geneSeedMult = 1; this.geneIncomeMult = 1; this.geneCureMult = 1; this._geneStartHeat = 0; this._geneEv = {};
+      if (!BR.GENES || !this.save) { this.recomputeEv(); return; }
+      for (const id of this.save.getGenes()) {
+        const gene = BR.GENE_BY_ID[id]; if (!gene || !this.save.isUnlocked(gene.ach)) continue;
+        const m = gene.mods || {};
+        if (m.virality) this.virality = Math.max(0, this.virality + m.virality);
+        if (m.seedMult) this.geneSeedMult *= m.seedMult;
+        if (m.incomeMult) this.geneIncomeMult *= m.incomeMult;
+        if (m.cureMult) this.geneCureMult *= m.cureMult;
+        if (m.startHeat) this._geneStartHeat = Math.max(this._geneStartHeat, m.startHeat);
+        if (m.ev) for (const k in m.ev) this._geneEv[k] = (this._geneEv[k] || 0) + m.ev[k];
+      }
+      this.recomputeEv();
     }
     infectivity() { return Math.max(0, this.ev.inf); }
     severity() { return Math.max(0, this.ev.sev); }
@@ -173,7 +192,7 @@
       // Virality income: new infections + a severity trickle, amplified while
       // you're trending. This is the payoff for riding a hot wave.
       let gain = res.newlyInfected * C.VIR_INFECT + this.severity() * this.world.infectedPeople() * C.VIR_SEVERITY * dt;
-      gain *= (1 + this.ev.virality) * (1 + heatFrac * C.HEAT_INCOME_MULT);
+      gain *= (1 + this.ev.virality) * (1 + heatFrac * C.HEAT_INCOME_MULT) * (this.geneIncomeMult || 1);
       this.virality += gain; this.totalViralityEarned += gain; this.save.stats.totalVirality += gain;
 
       // The Cure — only after the world has noticed the brainrot. Heat makes
@@ -181,6 +200,7 @@
       if (this.world.anyDetected()) {
         let rate = C.CURE_BASE * this.difficulty.cure * res.research * (1 + this.severity() * C.CURE_SEV_GAIN) * (1 + heatFrac * 0.5);
         rate /= 1 + this.ev.cureSlow * 2.5;
+        rate *= (this.geneCureMult || 1);       // "Muddy Waters" Rot Gene
         this.cure = clamp(this.cure + rate * dt, 0, C.CURE_MAX);
       }
       if (this.cure > (this.peakCure || 0)) this.peakCure = this.cure;
@@ -331,7 +351,11 @@
     // ---- achievements & end -------------------------------------------
     checkAchievements() {
       for (const a of BR.ACHIEVEMENTS) if (!this.save.isUnlocked(a.id) && a.check(this)) {
-        if (this.save.unlock(a.id)) { this.newAchievements.push(a); if (this.ui) this.ui.onAchievement(a); if (this.audio) this.audio.pop(); }
+        if (this.save.unlock(a.id)) {
+          this.newAchievements.push(a); if (this.ui) this.ui.onAchievement(a); if (this.audio) this.audio.pop();
+          const gene = (BR.GENES || []).find((g) => g.ach === a.id);   // did this unlock a Rot Gene?
+          if (gene && this.ui) this.ui.onGeneUnlock(gene);
+        }
       }
     }
     _checkEnd() {

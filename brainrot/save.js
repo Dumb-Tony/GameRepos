@@ -70,6 +70,16 @@
 
     unlock(id) { if (this.unlockedAch[id]) return false; this.unlockedAch[id] = true; this._writeJSON(KEY.ach, this.unlockedAch); return true; }
     isUnlocked(id) { return !!this.unlockedAch[id]; }
+    // ---- equipped Rot Genes (persisted in settings) ----
+    getGenes() { return Array.isArray(this.settings.genes) ? this.settings.genes.slice() : []; }
+    setGenes(ids) { this.settings.genes = (ids || []).slice(0, BR.MAX_GENES || 3); this.saveSettings(); }
+    toggleGene(id) {
+      const cur = this.getGenes(), i = cur.indexOf(id);
+      if (i >= 0) cur.splice(i, 1);
+      else if (cur.length < (BR.MAX_GENES || 3)) cur.push(id);
+      else return false;                       // slots full
+      this.setGenes(cur); return true;
+    }
     saveStats() { this._writeJSON(KEY.stats, this.stats); }
     saveSettings() { this._writeJSON(KEY.settings, this.settings); }
   }
