@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Brainrot: Rise of the Meme</title>
-<link rel="stylesheet" href="style.css?v=25">
+<link rel="stylesheet" href="style.css?v=26">
 </head>
 <body>
 
@@ -21,7 +21,7 @@ window.onerror = function (msg, src, line) {
   <canvas id="mapCanvas"></canvas>
   <canvas id="fxCanvas"></canvas>
   <div id="selectBanner">☣️ Choose where patient-zero begins — click a country</div>
-  <div id="mapHint">Click a country · scroll to zoom · drag to pan · grab 🔥 &amp; 🧪 bubbles</div>
+  <div id="mapHint">Click a country · scroll to zoom · drag to pan · grab bubbles</div>
   <div id="countryPopup"></div>
 </div>
 
@@ -81,9 +81,9 @@ window.onerror = function (msg, src, line) {
 <!-- ===== RIGHT: WORLD / NEWS (floating card) ===== -->
 <aside id="right" class="hud-card" data-title="🌐 World.sys">
   <div id="countryPanel"></div>
-  <div class="section-h">🗞️ Recent Events</div>
+  <div class="section-h"><span data-spr="hud:news" data-sprsize="13"></span> Recent Events</div>
   <div id="recentEvents"></div>
-  <div class="section-h">🕒 Timeline</div>
+  <div class="section-h"><span data-spr="hud:clock" data-sprsize="13"></span> Timeline</div>
   <div id="timeline"></div>
 </aside>
 
@@ -114,7 +114,7 @@ window.onerror = function (msg, src, line) {
   <div class="evo-card">
     <div class="evo-top">
       <div class="evo-title"><span class="inl-spr" data-spr="hud:dna" data-sprsize="18" data-sprcolor="#5ffbe0"></span> Evolve Your Brainrot <span class="evo-paused">⏸ paused</span></div>
-      <div class="evo-vir">💜 <b id="evoVir">0</b></div>
+      <div class="evo-vir"><span data-spr="hud:virality" data-sprsize="15" data-sprcolor="#ff6bd6"></span> <b id="evoVir">0</b></div>
       <button class="evo-back" id="evoClose">▶ Back to World</button>
     </div>
     <div class="evo-tabs" id="evoTabs">
@@ -211,18 +211,18 @@ window.onerror = function (msg, src, line) {
   <div class="start-btns"><button class="big-btn" id="btnAgain">▶ Rot Again</button></div>
 </div></div>
 
-<script src="config.js?v=25"></script>
-<script src="sprites.js?v=25"></script>
-<script src="audio.js?v=25"></script>
-<script src="animations.js?v=25"></script>
-<script src="countries.js?v=25"></script>
-<script src="worldmap.js?v=25"></script>
-<script src="upgrades.js?v=25"></script>
-<script src="events.js?v=25"></script>
-<script src="world.js?v=25"></script>
-<script src="save.js?v=25"></script>
-<script src="genes.js?v=25"></script>
-<script src="ui.js?v=25"></script>
-<script src="game.js?v=25"></script>
+<script src="config.js?v=26"></script>
+<script src="sprites.js?v=26"></script>
+<script src="audio.js?v=26"></script>
+<script src="animations.js?v=26"></script>
+<script src="countries.js?v=26"></script>
+<script src="worldmap.js?v=26"></script>
+<script src="upgrades.js?v=26"></script>
+<script src="events.js?v=26"></script>
+<script src="world.js?v=26"></script>
+<script src="save.js?v=26"></script>
+<script src="genes.js?v=26"></script>
+<script src="ui.js?v=26"></script>
+<script src="game.js?v=26"></script>
 </body>
 </html>
