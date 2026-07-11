@@ -17,3 +17,8 @@ char-vela.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1M
 char-buri.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_181809_483dc37f-943c-450f-b15b-7a707d4fc404.png
 char-moa.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_181819_0466d14c-f890-41b6-9d05-a56b4fa5ac5f.png
 char-nine.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_181821_58d333cc-cc36-408e-9893-c4b3ec6ea2a9.png
+bg-camp-fringe.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_183201_6fce7c37-a58c-432f-aa54-c6aea32c506c.png
+bg-cliff-camp.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_183203_83718fff-e4a3-4e0b-b20c-57873b3eacaa.png
+bg-jungle-night.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_183205_0f274b91-68f4-4a6c-a271-3fdcfe60a852.png
+char-boarking.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_183209_267b3c12-582a-4368-9ccc-19e98ef5915c.png
+char-edda.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_183211_7e2fdd6d-2bc8-4918-9841-65f6ecc8a070.png

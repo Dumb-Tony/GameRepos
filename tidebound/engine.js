@@ -32,6 +32,7 @@
   TB.newState = function () {
     return {
       scene: 'title', day: 0, seg: 0, hudOn: false,
+      chapter: 1, site: null, trust: 0,
       stats: { health: 100, hunger: 80, thirst: 75, energy: 85, hope: 55 },
       bgnd: null,                       // background: medic|photog|cook|engineer
       inv: {},                          // item -> count (booleans as 1)
@@ -69,13 +70,16 @@
     TB.state.interest[k] = (TB.state.interest[k] || 0) + (warmth || 0);
   };
   TB.warm = function (k, d) { TB.state.interest[k] = (TB.state.interest[k] || 0) + d; };
+  // Companion trust (0-100). Never shown as a number — only as behavior.
+  TB.bond = function (d) { TB.state.trust = TB.clamp(TB.state.trust + d, 0, 100); };
+  TB.tier = function () { const t = TB.state.trust; return t >= 100 ? 4 : t >= 75 ? 3 : t >= 50 ? 2 : t >= 25 ? 1 : 0; };
 
   // ---- the clock -------------------------------------------------------
   // Consumes one segment: base metabolic tick, then starvation/thirst harm.
   TB.tickSegment = function () {
     const s = TB.state;
     s.stats.hunger = TB.clamp(s.stats.hunger - 6, 0, 100);
-    s.stats.thirst = TB.clamp(s.stats.thirst - 8, 0, 100);
+    s.stats.thirst = TB.clamp(s.stats.thirst - (s.site === 'overhang' ? 8 : 6), 0, 100); // the overhang is dry country
     s.stats.energy = TB.clamp(s.stats.energy - 3, 0, 100);
     if (s.stats.hunger === 0) s.stats.health = TB.clamp(s.stats.health - 8, 0, 100);
     if (s.stats.thirst === 0) s.stats.health = TB.clamp(s.stats.health - 12, 0, 100);
@@ -89,7 +93,7 @@
   };
 
   // Where does the story go after an action consumes a segment?
-  // Priority: death → scheduled event → Clearing of Eyes → night → camp.
+  // Priority: death → scheduled event → chapter thresholds → night → camp.
   TB.advance = function () {
     const s = TB.state;
     if (s.deathCause) return 'death';
@@ -99,10 +103,13 @@
         return ev.id;
       }
     }
-    if (s.day === 3 && s.seg === 3 && !s.companion && !TB.is('CLEARING_DONE')) return 'clearing';
-    if (s.day > 3) return 'slice_end';
-    if (s.seg === 3) return 'night';
-    return 'camp';
+    if (s.chapter === 1) {
+      if (s.day === 3 && s.seg === 3 && !TB.is('CLEARING_DONE')) return 'clearing';
+      if (s.day > 3) return 'slice_end'; // safety net; courtship normally hands off to ch2
+    }
+    if (s.chapter === 2 && s.day > 9) return 'ch2_end'; // safety net; the Smoke threshold normally ends the chapter
+    if (s.seg === 3) return s.chapter >= 2 ? 'night2' : 'night';
+    return s.chapter >= 2 ? 'camp2' : 'camp';
   };
 
   // ---- save / load ----------------------------------------------------
@@ -114,7 +121,10 @@
       const raw = localStorage.getItem(SAVE_KEY);
       if (!raw) return null;
       const st = JSON.parse(raw);
-      return st && TB.SCENES[st.scene] ? st : null;
+      if (!st || !TB.SCENES[st.scene]) return null;
+      // migrate saves from before chapter 2 existed
+      st.chapter = st.chapter || 1; st.trust = st.trust || 0; st.site = st.site || null;
+      return st;
     } catch (e) { return null; }
   };
   TB.wipe = function () { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} };
@@ -148,7 +158,7 @@
     if (!who) { el.classList.add('hidden'); return; }
     el.classList.remove('hidden');
     const img = $('portraitImg');
-    const art = PORTRAIT_ART[who.emoji];
+    const art = who.art || PORTRAIT_ART[who.emoji];
     if (art) {
       img.onerror = function () { img.classList.add('hidden'); $('portraitEmoji').classList.remove('hidden'); };
       img.onload = function () { img.classList.remove('hidden'); $('portraitEmoji').classList.add('hidden'); };
@@ -246,6 +256,17 @@
     const facts = $('kitFacts');
     facts.innerHTML = '';
     const known = [];
+    if (s.companion) {
+      const nm = { kavi: '🐕 Kavi', ipo: '🐒 Ipo', vela: '🦅 Vela', buri: '🐗 Buri', moa: '🐔 Moa', nine: '🐙 Nine' }[s.companion];
+      const tierLine = [
+        'keeps a careful distance still, watching everything you do.',
+        'shares your camp now, and takes food from your hand.',
+        'comes when you call. You are, apparently, a fact of life.',
+        'has started acting on your behalf without being asked.',
+        'is family. There is no other word left.',
+      ][TB.tier()];
+      known.push(nm + ' ' + tierLine);
+    }
     if (s.fire) known.push('🔥 You have fire.' + (s.fire > 1 ? ' A proper hearth, even.' : ''));
     if (s.shelter) known.push(s.shelter > 1 ? '🏠 Your shelter is sturdy.' : '⛺ You have a lean-to.');
     if (s.food) known.push('🍖 Food put by: ' + s.food + ' meal' + (s.food > 1 ? 's' : '') + '.');

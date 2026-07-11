@@ -441,9 +441,9 @@
     ],
     choices: [
       { t: '"Kavi." You name him after the sound the reef makes at low tide.', sub: 'Named things stay.',
-        do: (s) => { TB.warm('kavi', 2); TB.stat('hope', 6); }, go: 'slice_end' },
+        do: (s) => { TB.warm('kavi', 2); TB.stat('hope', 6); }, go: 'ch2_open' },
       { t: 'Say nothing. Let him keep his own name a while longer.', sub: 'He\'ll tell you when it\'s time.',
-        do: (s) => { TB.warm('kavi', 1); TB.route('depth', 1); TB.stat('hope', 4); }, go: 'slice_end' },
+        do: (s) => { TB.warm('kavi', 1); TB.route('depth', 1); TB.stat('hope', 4); }, go: 'ch2_open' },
     ],
   });
 
@@ -458,9 +458,9 @@
     ],
     choices: [
       { t: '"Ipo." It means gift where you learned it — and he\'d hate a humble name.', sub: 'Star billing.',
-        do: (s) => { TB.item('lighter'); TB.warm('ipo', 2); TB.stat('hope', 6); }, go: 'slice_end' },
+        do: (s) => { TB.item('lighter'); TB.warm('ipo', 2); TB.stat('hope', 6); }, go: 'ch2_open' },
       { t: 'Flick the lighter once, in salute, and pocket it.', sub: 'Between professionals.',
-        do: (s) => { TB.item('lighter'); TB.warm('ipo', 1); TB.stat('hope', 5); }, go: 'slice_end' },
+        do: (s) => { TB.item('lighter'); TB.warm('ipo', 1); TB.stat('hope', 5); }, go: 'ch2_open' },
     ],
   });
 
@@ -475,9 +475,9 @@
     ],
     choices: [
       { t: '"Vela." A sail. Something that works with the wind and owes it nothing.', sub: 'She would approve, insofar as she approves of anything.',
-        do: (s) => { TB.warm('vela', 2); TB.stat('hope', 5); }, go: 'slice_end' },
+        do: (s) => { TB.warm('vela', 2); TB.stat('hope', 5); }, go: 'ch2_open' },
       { t: 'Name nothing. Feed the account. Let the books speak.', sub: 'Transactional. She\'d call it correct.',
-        do: (s) => { TB.warm('vela', 1); TB.route('signal', 1); TB.stat('hope', 4); }, go: 'slice_end' },
+        do: (s) => { TB.warm('vela', 1); TB.route('signal', 1); TB.stat('hope', 4); }, go: 'ch2_open' },
     ],
   });
 
@@ -492,9 +492,9 @@
     ],
     choices: [
       { t: '"Buri." Short, sturdy, shouts well across a beach.', sub: 'You\'ll be shouting it a lot.',
-        do: (s) => { TB.warm('buri', 2); TB.stat('hope', 7); }, go: 'slice_end' },
+        do: (s) => { TB.warm('buri', 2); TB.stat('hope', 7); }, go: 'ch2_open' },
       { t: 'Whatever you name him, he\'s clearly staying. Budget accordingly.', sub: 'He eats like a delegation.',
-        do: (s) => { TB.warm('buri', 1); TB.route('roots', 1); TB.stat('hope', 6); }, go: 'slice_end' },
+        do: (s) => { TB.warm('buri', 1); TB.route('roots', 1); TB.stat('hope', 6); }, go: 'ch2_open' },
     ],
   });
 
@@ -509,9 +509,9 @@
     ],
     choices: [
       { t: '"Moa." An old word for a bird too stubborn for its own story.', sub: 'It suits her.',
-        do: (s) => { TB.warm('moa', 2); TB.stat('hope', 6); }, go: 'slice_end' },
+        do: (s) => { TB.warm('moa', 2); TB.stat('hope', 6); }, go: 'ch2_open' },
       { t: 'Slide one more grub across the driftwood. Words later.', sub: 'The vocabulary you share is food and staying.',
-        do: (s) => { TB.warm('moa', 1); TB.stat('hunger', -2); TB.stat('hope', 5); }, go: 'slice_end' },
+        do: (s) => { TB.warm('moa', 1); TB.stat('hunger', -2); TB.stat('hope', 5); }, go: 'ch2_open' },
     ],
   });
 
@@ -526,9 +526,9 @@
     ],
     choices: [
       { t: '"Nine." For the brains, the arms\' near-count, the ninth wave.', sub: 'Every version of the name is true.',
-        do: (s) => { TB.warm('nine', 2); TB.stat('hope', 5); TB.route('depth', 1); }, go: 'slice_end' },
+        do: (s) => { TB.warm('nine', 2); TB.stat('hope', 5); TB.route('depth', 1); }, go: 'ch2_open' },
       { t: 'Trace the spiral back in the sand beside hers.', sub: 'Answer in her language.',
-        do: (s) => { TB.warm('nine', 1); TB.route('depth', 2); TB.stat('hope', 4); }, go: 'slice_end' },
+        do: (s) => { TB.warm('nine', 1); TB.route('depth', 2); TB.stat('hope', 4); }, go: 'ch2_open' },
     ],
   });
 
@@ -540,7 +540,7 @@
       'The grey dog sings somewhere inland with a pack that isn\'t his. The monkey\'s treetops go quiet. Small feet and large ones print the morning sand at the edges of your life, and you will let them stay at the edges: neighbors, all of them. Not family.',
       'Alone, then. Unbroken, if you can manage it. The night is enormous, and you are exactly one person, and you find — checking, the way you\'d check a knot — that this holds.',
     ],
-    next: 'slice_end',
+    next: 'ch2_open',
   });
 
   // ---- slice end & death ----------------------------------------------------------

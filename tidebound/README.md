@@ -2,7 +2,11 @@
 
 *A branching survival visual novel about a castaway, an island that doesn't appear on any chart, and the one animal who chooses to stay.*
 
-**Status: 📐 Design phase — no code yet.**
+**Status: 🎮 Playable — Prologue + Chapters 1–2** (companion choice, base-site
+threshold, trust system, the Boar King, the first storm, the smoke on the mountain).
+Open `index.html` in a browser — no build step, no dependencies. Generated art lives
+in [`art/`](art/) (see `art/manifest.txt`; fetched/optimized by the
+`fetch-tidebound-art` GitHub workflow).
 
 The complete Game Design Document lives in [`design/`](design/):
 
