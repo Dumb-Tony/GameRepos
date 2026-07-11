@@ -19,10 +19,12 @@ grieving island dog, a larcenous macaque, an aloof sea eagle, a reckless bearded
 an anxious junglefowl, or something in the tide pools that has been watching you back.
 Every important choice has a price, and the island's Ledger forgets nothing.
 
-Currently playable: Prologue + Chapters One and Two — the companion choice, the
-base-site decision, the trust system, the Boar King, the first storm, and the smoke
-on the mountain. The complete design — 7 chapters, 6 companions, 49 endings — lives
-in [`tidebound/design/`](tidebound/design/).
+**Playable start to finish**: Prologue + all seven chapters — the companion choice,
+the trust system, Edda's mountain, Old Grin's Toll, Station Halcyon, the monsoon
+crucible (three whole-chapter variants), the Tidewell's three doors, and a Convergence
+finale that resolves your run into one of 14 ledger-assembled endings (plus death
+endings along the way). The complete design bible — and the full 49-ending roadmap —
+lives in [`tidebound/design/`](tidebound/design/).
 
 ## Brainrot: Rise of the Meme
 

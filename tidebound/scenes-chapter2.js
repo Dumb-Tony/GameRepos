@@ -239,9 +239,11 @@
         go: 'act_result',
       });
       c.push({
-        t: '😴 Rest', sub: 'Recovery is also production.',
+        t: '😴 Rest' + (s.injury ? ' and tend your wound' : ''), sub: s.injury ? 'No kit — just rest, clean seawater, and time. It may knit.' : 'Recovery is also production.',
         do: () => { const s2 = TB.state; TB.stat('energy', 16); TB.stat('hope', 2); TB.stat('health', s2.injury ? 0 : 3);
-          s2.out = { bg, text: ['You let the island run itself for a few hours. It manages. When you get up, so do you.'] };
+          if (s2.injury && (s2.fire ? R() < 0.45 : R() < 0.25)) { s2.injury = null; TB.stat('health', 6);
+            s2.out = { bg, text: ['You give the day to the wound: seawater-washed, sun-dried, dressed in the cleanest cloth you own, and then honest rest beside it' + (s2.fire ? ', the fire keeping everything dry and warm' : '') + '.', 'By dusk the edges have closed to a clean pink seam. It held. It\'s knitting. Out here that\'s not luck — that\'s discipline paying its dividend.'] }; }
+          else s2.out = { bg, text: [s2.injury ? 'You rest, and clean the wound, and rest again. It\'s not worse. It\'s not better. Wounds keep their own calendar out here — all you can do is keep appearing for the appointments.' : 'You let the island run itself for a few hours. It manages. When you get up, so do you.'] };
           TB.tickSegment(); },
         go: 'act_result',
       });
@@ -276,6 +278,7 @@
       const floor = 45 + s.shelter * 11 + s.fire * 8;
       if (s.stats.energy < floor) s.stats.energy = floor;
       TB.stat('hope', s.shelter || s.fire ? 1 : -3);
+      if (s.chapter === 5 && s.fire && s.shelter < 2 && s.site !== 'overhang') { s.fire = 0; TB.flag('MONSOON_FIRE_LOST'); }
       if (s.site === 'fringe' && R() < 0.25) TB.flag('FEVER_SEED');
       s.gift = null;
       if (s.companion === 'moa') { TB.stat('hunger', 8); s.gift = '🥚 Moa\'s morning egg waits by the fire ring, warm and entirely matter-of-fact. The steadiest wealth on the island.'; }

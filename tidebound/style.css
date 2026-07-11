@@ -45,6 +45,9 @@ body {
 .bg-river .art        { background-image: url('art/bg-river.webp'); }
 .bg-mangrove .art     { background-image: url('art/bg-mangrove.webp'); }
 .bg-station .art      { background-image: url('art/bg-station.webp'); }
+.bg-gullet .art       { background-image: url('art/bg-gullet.webp'); }
+.bg-temple .art       { background-image: url('art/bg-temple.webp'); }
+.bg-caldera .art      { background-image: url('art/bg-caldera.webp'); }
 
 /* sky-only scenes */
 .bg-sky   .sky { background: linear-gradient(#5f8fc7, #a8c6e2 60%, #dfe9f2); }
@@ -132,6 +135,26 @@ body {
 .bg-station .sand { background: linear-gradient(#a9a99a, #8b8b7d); top: 78%;
   box-shadow: inset 0 6px 18px -6px #55555577; }
 .bg-station .palms { opacity: .55; filter: brightness(.45) saturate(.8); font-size: 66px; left: 74%; }
+
+.bg-gullet .sky  { background: linear-gradient(#02070c, #071420 55%, #0b1f2e); }
+.bg-gullet .sun  { background: #2fe0c9; box-shadow: 0 0 70px 26px #2fe0c94d; width: 40px; height: 40px; left: 48%; top: 34%; opacity: .8; }
+.bg-gullet .sea  { background: linear-gradient(#0a2331, #051520 60%, #030d15);
+  box-shadow: inset 0 -30px 90px -20px #2fe0c933; top: 62%; }
+.bg-gullet .sand { background: linear-gradient(#0a141c, #050b11); top: 86%; }
+.bg-gullet .palms { opacity: 0; }
+
+.bg-temple .sky  { background: linear-gradient(#3d4f63, #5f7183 55%, #93a08f); }
+.bg-temple .sun  { background: #e8ecda; box-shadow: 0 0 50px 18px #e8ecda40; width: 50px; height: 50px; left: 64%; top: 8%; }
+.bg-temple .sea  { background: linear-gradient(#1b2f3d, #0e2130 60%, #071825);
+  box-shadow: inset 0 -24px 70px -18px #2fe0c940; top: 58%; }
+.bg-temple .sand { background: linear-gradient(#5a5f55, #434840); top: 84%; }
+.bg-temple .palms { opacity: 0; }
+
+.bg-caldera .sky  { background: linear-gradient(#7f9bb5, #b8cbc9 55%, #e6ecd2); }
+.bg-caldera .sun  { background: #fef8d8; box-shadow: 0 0 60px 22px #fef8d859; top: 10%; left: 30%; }
+.bg-caldera .sea  { background: linear-gradient(#4d7a49, #3a6039 60%, #2c4c2e); top: 52%; }
+.bg-caldera .sand { background: linear-gradient(#6f6a58, #565243); top: 86%; }
+.bg-caldera .palms { opacity: .5; filter: brightness(.55) saturate(1.2); font-size: 54px; left: 40%; }
 
 .bg-title .sky  { background: linear-gradient(#0e2a44, #1d5a72 50%, #d98e5f 88%, #f7c777); }
 .bg-title .sun  { background: #ffe3a3; box-shadow: 0 0 90px 40px #ff9d5e59; top: 62%; left: 46%; }

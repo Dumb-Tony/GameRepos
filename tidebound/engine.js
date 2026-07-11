@@ -78,14 +78,15 @@
   // Consumes one segment: base metabolic tick, then starvation/thirst harm.
   TB.tickSegment = function () {
     const s = TB.state;
-    s.stats.hunger = TB.clamp(s.stats.hunger - 6, 0, 100);
-    s.stats.thirst = TB.clamp(s.stats.thirst - (s.site === 'overhang' ? 8 : 6), 0, 100); // the overhang is dry country
-    s.stats.energy = TB.clamp(s.stats.energy - 3, 0, 100);
+    const monsoon = s.chapter === 5; // the Long Rain: water everywhere, food scarce, everything heavier
+    s.stats.hunger = TB.clamp(s.stats.hunger - (monsoon ? 8 : 6), 0, 100);
+    s.stats.thirst = TB.clamp(s.stats.thirst - (monsoon ? 3 : s.site === 'overhang' ? 8 : 6), 0, 100);
+    s.stats.energy = TB.clamp(s.stats.energy - (monsoon ? 4 : 3), 0, 100);
     if (s.stats.hunger === 0) s.stats.health = TB.clamp(s.stats.health - 8, 0, 100);
     if (s.stats.thirst === 0) s.stats.health = TB.clamp(s.stats.health - 12, 0, 100);
-    if (s.injury) s.stats.health = TB.clamp(s.stats.health - 3, 0, 100);
+    if (s.injury) s.stats.health = TB.clamp(s.stats.health - 2, 0, 100);
     if (s.disease === 'fever') {
-      s.stats.health = TB.clamp(s.stats.health - 2, 0, 100);
+      s.stats.health = TB.clamp(s.stats.health - 1, 0, 100);
       if (s.stats.energy > 55) s.stats.energy = 55; // the fever's ceiling
     }
     if (s.stats.health <= 0 && !s.deathCause) {
@@ -114,6 +115,8 @@
     if (s.chapter === 2 && s.day > 9) return 'ch2_end'; // safety net; the Smoke threshold normally ends the chapter
     if (s.chapter === 3 && s.day > 15) return 'ch3_end'; // safety net; Old Grin's Toll normally ends the chapter
     if (s.chapter === 4 && s.day > 21) return 'ch4_end'; // safety net; Vane's Question normally ends the chapter
+    if (s.chapter === 5 && s.day > 28) return 'ch5_end'; // safety net; each variant's finale normally ends the chapter
+    if (s.chapter >= 6) return s.deathCause ? 'death' : 'ch6_open'; // chapters 6+ are linear chains; advance() shouldn't be reached
     if (s.seg === 3) return s.chapter >= 2 ? 'night2' : 'night';
     return s.chapter >= 2 ? 'camp2' : 'camp';
   };
@@ -224,6 +227,13 @@
   }
 
   TB.go = function (id) {
+    try { TB._go(id); } catch (e) {
+      const b = $('crashBanner');
+      if (b) { b.style.display = 'block'; b.textContent = '💥 scene "' + id + '": ' + e.message; }
+      throw e;
+    }
+  };
+  TB._go = function (id) {
     const def = TB.SCENES[id];
     if (!def) { throw new Error('Unknown scene: ' + id); }
     const s = TB.state;

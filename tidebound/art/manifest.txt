@@ -18,6 +18,17 @@
 #                    jungle: six pale prefab buildings, moss-loaded roofs,
 #                    knee-high yard growth, one tall rusted guyed antenna
 #                    mast leaning over it all, overcast pale light
+# bg-gullet.webp   — vast sea cave under an island: black water, smoothed
+#                    stone galleries, veins of dark glassy mineral glowing
+#                    faint teal in seven-beat pulses, one shaft of pale
+#                    light from far above, eerie and beautiful
+# bg-temple.webp   — half-drowned open-air stone temple high on a mountain
+#                    shoulder: carved spiral motifs, a black tidal pool
+#                    filling half the nave with faint teal glow, dusk light
+# bg-caldera.webp  — vast volcanic caldera seen from its shattered rim: a
+#                    hidden green valley two miles across, terraced gardens,
+#                    tree-woven roofs, spiral water channels, threads of
+#                    smoke in still air, morning light
 # The fetch-tidebound-art GitHub workflow downloads these, converts them to
 # web-optimized WebP (backgrounds 1920w, portraits 512w), and commits them
 # into this folder. Filenames match what style.css / engine.js reference.

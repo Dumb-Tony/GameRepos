@@ -2,11 +2,17 @@
 
 *A branching survival visual novel about a castaway, an island that doesn't appear on any chart, and the one animal who chooses to stay.*
 
-**Status: 🎮 Playable — Prologue + Chapters 1–2** (companion choice, base-site
-threshold, trust system, the Boar King, the first storm, the smoke on the mountain).
-Open `index.html` in a browser — no build step, no dependencies. Generated art lives
-in [`art/`](art/) (see `art/manifest.txt`; fetched/optimized by the
-`fetch-tidebound-art` GitHub workflow).
+**Status: 🎮 Playable start to finish — Prologue + Chapters 1–7.** A full run is
+roughly 60–90 minutes: the crash, the Clearing of Eyes companion choice, the trust
+system, Edda Voss's mountain, Old Grin's Toll (10 resolutions), Station Halcyon and
+Vane's Question, the monsoon crucible (three whole-chapter variants: Countdown /
+Homestead / Descent), the Tidewell's doors, and a Convergence finale resolving into
+one of 14 implemented endings (the design's full 49-ending roadmap is in
+[`design/09-endings.md`](design/09-endings.md)). Open `index.html` in a browser —
+no build step, no dependencies. Generated art lives in [`art/`](art/) (see
+`art/manifest.txt`; fetched/optimized by the `fetch-tidebound-art` GitHub workflow;
+several late-game locations still use painted-CSS placeholders pending art
+generation — prompts are listed in the manifest).
 
 The complete Game Design Document lives in [`design/`](design/):
 

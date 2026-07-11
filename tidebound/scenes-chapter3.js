@@ -202,6 +202,12 @@
           s2.out = { bg: 'grove', text: ['She walks you through the beds like a general reviewing troops: the fever-tree and how to strip its bark without killing it; the fat-leafed aloe-kin for burns; bittergreen for guts; and a grey-green shrub whose crushed leaves smell like medicine feels.', first ? '"Marshmint," she says. "Rub it on at dusk and the biting flies will dine elsewhere." You take cuttings. Your evenings — and your blood — just got considerably safer.' : 'You take fresh cuttings and better instructions, and the almanac in your head gains pages.'] }; },
         go: 'act_result',
       });
+      if (s.injury) c.push({
+        t: '🩸 Let her see to the wound', sub: 'Sixty years of island medicine, and no bedside manner whatsoever.',
+        do: () => { const s2 = TB.state; s2.injury = null; s2.edda = TB.clamp(s2.edda + 3, 0, 100); TB.stat('health', 8);
+          s2.out = { bg: 'grove', text: ['She unwraps your dressing, pronounces your field medicine "ambitious," and redoes all of it: the wound irrigated with something that hisses, packed with honey and a moss you now know by name, bound in boiled cloth.', '"Keep it dry, which on this island in this season is a joke, so keep it CLEAN." She flicks your ear like a schoolmistress. "You heal fast, castaway. Stop giving it so much to do."'] }; },
+        go: 'act_result',
+      });
       if (s.disease === 'fever') c.push({
         t: '🤒 Ask for the cure. You\'re sick, and getting sicker.', sub: 'Feverbark, and no pride about it.',
         do: () => { const s2 = TB.state; s2.disease = null; s2.edda = TB.clamp(s2.edda + 4, 0, 100); TB.stat('health', 5); TB.stat('hope', 6);

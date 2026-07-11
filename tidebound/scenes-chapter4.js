@@ -433,11 +433,12 @@
       if (TB.is('COMP4_DONE') && s.companion) t.push('— ' + NAMES[s.companion] + '\'s station gift: ' + ({ kavi: 'a warning, filed by nose, about what sleeps under the E wing.', ipo: 'a quartermaster\'s trove — fuses, tubes, the radio\'s odds improved and an ego beyond salvage.', vela: 'a road no ground-bound eye could see — the drill\'s road, running for the mountain.', buri: 'a stores trailer excavated from the yard, and a hauling capacity you didn\'t have before.', moa: 'a dead station\'s living garden — feral tomatoes and a cabinet of maybe-viable seed.', nine: 'a film canister from a drowned throat, hidden by Vane herself outside her own files. "Only if—"' }[s.companion]));
       t.push('— And Vane\'s Question: ' + (TB.is('INCIDENT_FILES') ? 'you opened her drawer. The Incident has a shape now — the bore site, the throat, the nine silent hours, and her last instruction: <em>tend the skin.</em> Her map is in your kit.' : TB.is('FILES_BURNED') ? 'you burned it unread, standing witness, and one line escaped in the updraft: <em>tend the skin.</em> The dead keep their door; you keep the words.' : TB.is('FILES_TO_EDDA') ? 'you carried the drawer up the mountain unopened, and watched sixty years take its coat off. When the rains are down, you\'ll open it together.' : 'deferred — the drawer keeps, and the season won\'t.'));
       t.push('Route leanings — Signal ' + s.route.signal + ' · Roots ' + s.route.roots + ' · Depth ' + s.route.depth + '.');
-      t.push('<em>Chapter Five: The Long Rain — in development.</em> The monsoon, the crucible, and the season that decides what kind of castaway you are. The full design lives in this folder\'s design documents.');
       return t;
     },
     choices: [
-      { t: '🌊 Start a new run', sub: 'Different station, different sailor, different question.',
+      { t: '🌧️ Continue — Chapter Five: The Long Rain ➤', sub: 'The monsoon, the crucible, and the season that decides what kind of castaway you are.',
+        go: 'ch5_open' },
+      { t: '🌊 Start a new run instead', sub: 'Different station, different sailor, different question.',
         do: () => { TB.wipe(); TB.state = TB.newState(); }, go: 'title' },
     ],
   });
