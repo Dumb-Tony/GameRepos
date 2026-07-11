@@ -248,7 +248,14 @@
       if (hd) {
         hd.checked = !!this.game.save.settings.hdIcons;
         if (BR.Sprites && BR.Sprites.setHDIcons) BR.Sprites.setHDIcons(hd.checked);
-        hd.addEventListener('change', () => { this.game.save.settings.hdIcons = hd.checked; this.game.save.saveSettings(); if (BR.Sprites) BR.Sprites.setHDIcons(hd.checked); this._paintStaticIcons(); this._buildTrees(); this._buildGenes(); });
+        hd.addEventListener('change', () => {
+          this.game.save.settings.hdIcons = hd.checked; this.game.save.saveSettings();
+          try {
+            if (BR.Sprites) BR.Sprites.setHDIcons(hd.checked);
+            this._paintStaticIcons(); this._buildTrees(); this._buildGenes();
+          } catch (e) { if (BR.Sprites) BR.Sprites.setHDIcons(false); this._paintStaticIcons(); this._buildTrees(); this._buildGenes(); }
+          if (hd.checked && BR.Sprites && !BR.Sprites.hdActive()) this.toast('🎨', 'HD sheet still loading (or unavailable) — icons will use it where possible.', 'info');
+        });
       }
 
       $('btnRestart').addEventListener('click', () => { this._closeModal('menuModal'); this.game.stop(); this.game.newGame(undefined, this.game.difficulty.id); this.game.start(); this._openModal('introModal'); });
@@ -472,19 +479,40 @@
     // Realistic anatomical brain art: load local file first (self-contained),
     // fall back to the hosted URL, and to the procedural brain if both fail.
     _initBrainImgs() {
+      // Attempt chain: local file (same-origin, canvas-safe) → hosted URL WITH
+      // CORS (canvas-safe when the CDN sends ACAO) → hosted URL without CORS
+      // (loads but taints canvases — fine for drawing, not for toDataURL; the
+      // sprite code detects that and keeps DOM icons on the vector atlas).
       const mk = (spec) => {
         if (!spec) return null;
-        const img = new Image(); img._ready = false; let tried = false;
+        const img = new Image(); img._ready = false;
+        const attempts = [];
+        if (spec.local) attempts.push({ src: spec.local, cors: false });
+        if (spec.url) { attempts.push({ src: spec.url, cors: true }, { src: spec.url, cors: false }); }
+        let i = 0;
+        const tryNext = () => {
+          if (i >= attempts.length) return;
+          const a = attempts[i++];
+          if (a.cors) img.crossOrigin = 'anonymous'; else img.removeAttribute('crossorigin');
+          img.src = a.src;
+        };
         img.onload = () => { img._ready = true; };
-        img.onerror = () => { if (!tried && spec.url) { tried = true; img.src = spec.url; } };
-        img.src = spec.local || spec.url;
+        img.onerror = tryNext;
+        tryNext();
         return img;
       };
       const B = BR.BRAIN_IMG || {};
       this._brainHealthy = mk(B.healthy); this._brainRot = mk(B.rot);
       this._pathogenImg = mk(BR.PATHOGEN_IMG);
       // optional HD meme sprite sheet (skins a subset of icons when enabled)
-      if (BR.SPRITE_SHEET_IMG && BR.Sprites && BR.Sprites.loadSheet) BR.Sprites.loadSheet(BR.SPRITE_SHEET_IMG, mk(BR.SPRITE_SHEET_IMG));
+      if (BR.SPRITE_SHEET_IMG && BR.Sprites && BR.Sprites.loadSheet) {
+        const sheetImg = mk(BR.SPRITE_SHEET_IMG);
+        BR.Sprites.loadSheet(BR.SPRITE_SHEET_IMG, sheetImg);
+        // once it finishes loading, refresh DOM icons if the skin is enabled
+        sheetImg.addEventListener('load', () => {
+          if (this.mounted && this.game.save.settings.hdIcons) { try { this._paintStaticIcons(); this._buildTrees(); this._buildGenes(); } catch (e) {} }
+        });
+      }
     }
 
     // ---- rotting brain (left panel; rots as global brainrot rises) -----

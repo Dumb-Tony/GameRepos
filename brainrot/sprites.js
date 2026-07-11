@@ -200,7 +200,7 @@
     cache.set(key, cv); return cv;
   }
   // ---- optional HD raster sprite sheet (Higgsfield) ----
-  let SHEET = null;          // { img, cols, rows, map:{name->[col,row]} }
+  let SHEET = null;          // { img, cols, rows, map:{name->[col,row]}, domOK }
   let useSheet = false;      // toggled by the settings checkbox
   function sheetRect(name) {
     if (!SHEET || !SHEET.img || !SHEET.img._ready || !SHEET.img.naturalWidth) return null;
@@ -209,6 +209,21 @@
     const inset = 0.05;      // trim cell bleed/padding
     return { sx: (cell[0] + inset) * cw, sy: (cell[1] + inset) * ch, sw: cw * (1 - 2 * inset), sh: ch * (1 - 2 * inset) };
   }
+  // Can the sheet be EXPORTED from a canvas (toDataURL for DOM <img> icons)?
+  // A cross-origin image loaded without CORS taints any canvas it touches and
+  // toDataURL throws a SecurityError. Test once, lazily. When tainted, the
+  // sheet is still used for direct canvas draws (map markers, bubbles — always
+  // allowed); only the DOM icons fall back to the vector atlas.
+  function sheetCanExport() {
+    if (!SHEET || !SHEET.img || !SHEET.img._ready || !SHEET.img.naturalWidth) return false;
+    if (SHEET.domOK != null) return SHEET.domOK;
+    try {
+      const t = document.createElement('canvas'); t.width = t.height = 2;
+      t.getContext('2d').drawImage(SHEET.img, 0, 0, 2, 2); t.toDataURL();
+      SHEET.domOK = true;
+    } catch (e) { SHEET.domOK = false; }
+    return SHEET.domOK;
+  }
 
   const Sprites = {
     has: (name) => !!I[name],
@@ -216,6 +231,7 @@
     loadSheet(spec, img) { const map = {}; (spec.cells || []).forEach((n, i) => (map[n] = [i % spec.cols, Math.floor(i / spec.cols)])); SHEET = { img, cols: spec.cols, rows: spec.rows, map }; },
     setHDIcons(on) { useSheet = !!on; cache.clear(); },
     hdActive() { return useSheet && !!(SHEET && SHEET.img && SHEET.img._ready); },
+    sheetInfo() { return { loaded: !!(SHEET && SHEET.img && SHEET.img._ready), domOK: SHEET ? SHEET.domOK : null, use: useSheet }; },
     // Blit centered at (x,y) filling a size×size box. color tints; glow adds neon halo.
     draw(ctx, name, x, y, size, color, glow) {
       ctx.save();
@@ -226,17 +242,24 @@
       ctx.restore();
     },
     // Data URL for DOM <img>. Rendered at the requested pixel size × DPR.
+    // NEVER throws: if the HD sheet is CORS-tainted (toDataURL forbidden), the
+    // vector icon is drawn instead.
     dataURL(name, size, color) {
       const dpr = Math.min(3, (typeof window !== 'undefined' && window.devicePixelRatio) || 1);
       const px = Math.round(size * dpr);
       const cv = document.createElement('canvas'); cv.width = cv.height = px;
       const c = cv.getContext('2d');
-      const rect = useSheet && sheetRect(name);
-      if (rect) { c.drawImage(SHEET.img, rect.sx, rect.sy, rect.sw, rect.sh, 0, 0, px, px); return cv.toDataURL(); }
+      if (useSheet && sheetCanExport()) {
+        const rect = sheetRect(name);
+        if (rect) {
+          try { c.drawImage(SHEET.img, rect.sx, rect.sy, rect.sw, rect.sh, 0, 0, px, px); return cv.toDataURL(); }
+          catch (e) { SHEET.domOK = false; cv.width = px; /* reset the tainted canvas */ }
+        }
+      }
       c.scale(px, px);
       c.strokeStyle = color || '#eef'; c.fillStyle = color || '#eef'; c.lineWidth = 0.09; c.lineCap = 'round'; c.lineJoin = 'round';
       const fn = I[name]; if (fn) { try { fn(c); } catch (e) {} }
-      return cv.toDataURL();
+      try { return cv.toDataURL(); } catch (e) { return ''; }
     },
     // <img>-ready HTML string for an icon (used inside tree nodes, chips, etc.).
     img(name, size, color, cls) {
