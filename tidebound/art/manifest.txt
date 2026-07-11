@@ -14,6 +14,10 @@
 # bg-mangrove.webp — brackish mangrove maze: tea-dark channels, arched roots,
 #                    herons, hanging light, something long and mossy
 #                    half-submerged and easy to miss
+# bg-station.webp  — abandoned 1970s research compound half-swallowed by
+#                    jungle: six pale prefab buildings, moss-loaded roofs,
+#                    knee-high yard growth, one tall rusted guyed antenna
+#                    mast leaning over it all, overcast pale light
 # The fetch-tidebound-art GitHub workflow downloads these, converts them to
 # web-optimized WebP (backgrounds 1920w, portraits 512w), and commits them
 # into this folder. Filenames match what style.css / engine.js reference.

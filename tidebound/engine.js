@@ -32,7 +32,7 @@
   TB.newState = function () {
     return {
       scene: 'title', day: 0, seg: 0, hudOn: false,
-      chapter: 1, site: null, trust: 0, edda: 0, disease: null,
+      chapter: 1, site: null, trust: 0, edda: 0, disease: null, ryo: 0,
       stats: { health: 100, hunger: 80, thirst: 75, energy: 85, hope: 55 },
       bgnd: null,                       // background: medic|photog|cook|engineer
       inv: {},                          // item -> count (booleans as 1)
@@ -113,6 +113,7 @@
     }
     if (s.chapter === 2 && s.day > 9) return 'ch2_end'; // safety net; the Smoke threshold normally ends the chapter
     if (s.chapter === 3 && s.day > 15) return 'ch3_end'; // safety net; Old Grin's Toll normally ends the chapter
+    if (s.chapter === 4 && s.day > 21) return 'ch4_end'; // safety net; Vane's Question normally ends the chapter
     if (s.seg === 3) return s.chapter >= 2 ? 'night2' : 'night';
     return s.chapter >= 2 ? 'camp2' : 'camp';
   };
@@ -129,7 +130,7 @@
       if (!st || !TB.SCENES[st.scene]) return null;
       // migrate saves from before later chapters existed
       st.chapter = st.chapter || 1; st.trust = st.trust || 0; st.site = st.site || null;
-      st.edda = st.edda || 0; st.disease = st.disease || null;
+      st.edda = st.edda || 0; st.disease = st.disease || null; st.ryo = st.ryo || 0;
       return st;
     } catch (e) { return null; }
   };
@@ -278,6 +279,7 @@
       known.push('👵 Edda ' + (e >= 60 ? 'trusts you now, in her flinty way. The grove is half yours to work.' : e >= 35 ? 'tolerates your visits, and feeds you while insulting you. Progress.' : 'is watching you the way she watches weather: for damage.'));
     }
     if (s.disease === 'fever') known.push('🤒 Marsh fever is in your blood. It will not leave on its own.');
+    if (TB.is('RYO_MET')) known.push('⛵ Ryo Nakata ' + (s.ryo >= 40 ? 'is on his feet and already talking about hulls, tides, and home. He means all three.' : 'is mending in your camp, slowly. The sea nearly kept him.'));
     if (s.fire) known.push('🔥 You have fire.' + (s.fire > 1 ? ' A proper hearth, even.' : ''));
     if (s.shelter) known.push(s.shelter > 1 ? '🏠 Your shelter is sturdy.' : '⛺ You have a lean-to.');
     if (s.food) known.push('🍖 Food put by: ' + s.food + ' meal' + (s.food > 1 ? 's' : '') + '.');

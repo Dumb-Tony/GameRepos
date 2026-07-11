@@ -517,11 +517,12 @@
       t.push('— And Old Grin\'s Toll: ' + (TB.is('GRIN_BAITED') ? 'paid in smoked meat, crossed in cold blood. Business is business.' : TB.is('GRIN_TIMED') ? 'dodged entirely — you crossed at the dawn window while the cold held him. The swamp respects homework.' : TB.is('GRIN_DISTRACTED') ? 'paid by Ipo, in the single greatest performance of his career. He will never let you forget it.' : TB.is('GRIN_MAPPED') ? 'never owed — Nine walked you through the back door of his kingdom.' : TB.is('GRIN_STANDOFF') ? 'faced down, side by side with Kavi, at a walk. Never once prey.' : TB.is('GRIN_CONVOY') ? 'declined — Buri made the meal too expensive. One unnecessary victory scream was screamed.' : TB.is('GRIN_OVERWATCH') ? 'crossed on Vela\'s syllables alone. You bet your life on her word and she took the weight.' : TB.is('GRIN_FOUGHT') ? 'paid in blood — some his, more yours. You crossed on your own terrible terms, and the ledger between you has a standing entry now.' : 'refused. The east keeps its answers, and the landlord keeps his channel. For now.'));
       if (TB.is('EAST_OPEN')) t.push('— The east is open. A rusted mast stands above the far canopy, and under it, everything Halcyon left behind.' + (TB.is('IPO_KEY') ? ' The key in your pocket says E WING.' : ''));
       t.push('Route leanings — Signal ' + s.route.signal + ' · Roots ' + s.route.roots + ' · Depth ' + s.route.depth + '.');
-      t.push('<em>Chapter Four: The Hum — in development.</em> Station Halcyon, the journals of Dr. Ilsa Vane, and what answered the drill. The full design lives in this folder\'s design documents.');
       return t;
     },
     choices: [
-      { t: '🌊 Start a new run', sub: 'Different companion, different tolls, different ledger.',
+      { t: '📡 Continue — Chapter Four: The Hum ➤', sub: 'Station Halcyon, the journals of Dr. Ilsa Vane, and what answered the drill.',
+        go: 'ch4_open' },
+      { t: '🌊 Start a new run instead', sub: 'Different companion, different tolls, different ledger.',
         do: () => { TB.wipe(); TB.state = TB.newState(); }, go: 'title' },
     ],
   });
