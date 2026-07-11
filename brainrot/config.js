@@ -146,7 +146,7 @@
   // on and the image loads, to skin a subset of icons (grid order below);
   // otherwise the vector sprites (sprites.js) are used. Fully graceful offline.
   BR.PATHOGEN_IMG = { local: 'pathogen.png', url: 'https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_181133_e55065f2-ad63-4a2e-80fb-60725c401980.png' };
-  BR.SPRITE_SHEET_IMG = { local: 'sprites-hd.png', url: 'https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_181114_e919633a-76ca-457c-be43-3c62f2a0ce19.png',
+  BR.SPRITE_SHEET_IMG = { local: 'sprites-hd.png', url: 'https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_191148_37bb511b-1210-4fde-a5dd-c67133834202.png',
     cols: 5, rows: 5,
     // row-major cell -> icon name, matching the generation prompt order.
     cells: ['toilet', 'skull', 'smirk', 'peach', 'drumstick',

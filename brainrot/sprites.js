@@ -191,12 +191,41 @@
   // ================= RENDER + CACHE ==================
   const CELL = 100;                          // authoring resolution
   const cache = new Map();                   // key name|color -> canvas
+  // GRUNGE: give the clean vector icons a cursed "brainrot" glitch-sticker look
+  // — a dark outline, chromatic-aberration cyan/magenta ghosts, a neon glow, and
+  // a slightly wonky doubled stroke. Applied uniformly at bake time so every
+  // icon everywhere gets it. Size-proportional (subtle on tiny HUD glyphs, bold
+  // on big map/tree icons). Toggle via BR.Sprites.setGrunge(false) for clean.
+  let grunge = true;
   function bake(name, color) {
-    const key = name + '|' + color, hit = cache.get(key); if (hit) return hit;
+    const key = name + '|' + color + (grunge ? '|g' : ''), hit = cache.get(key); if (hit) return hit;
     const cv = document.createElement('canvas'); cv.width = cv.height = CELL;
     const c = cv.getContext('2d');
-    c.scale(CELL, CELL); c.strokeStyle = color; c.fillStyle = color; c.lineWidth = 0.09; c.lineCap = 'round'; c.lineJoin = 'round';
-    const fn = I[name]; if (fn) { try { fn(c); } catch (e) { /* never break the frame */ } }
+    const fn = I[name];
+    if (!fn) { cache.set(key, cv); return cv; }
+    const paint = (col, dx, dy, lw, blur) => {
+      c.save(); c.setTransform(CELL, 0, 0, CELL, dx, dy);
+      c.strokeStyle = col; c.fillStyle = col; c.lineWidth = lw; c.lineCap = 'round'; c.lineJoin = 'round';
+      if (blur) { c.shadowColor = col; c.shadowBlur = blur; }
+      try { fn(c); } catch (e) { /* never break the frame */ }
+      c.restore();
+    };
+    if (!grunge) { paint(color, 0, 0, 0.09, 0); cache.set(key, cv); return cv; }
+    // deep-fried cursed-sticker treatment. Offsets are in CELL px (CELL=100), so
+    // ~4px = 4% of the icon — big enough that the glitch fringe survives being
+    // shrunk to a 28px tree node, not just visible on the big map markers.
+    // 1) thick dark marker under-outline that rims the whole shape
+    c.globalAlpha = 1; paint('#0c0518', 0, 0, 0.22, 0);
+    // 2) chromatic-aberration ghosts — bright, punchy, offset far apart
+    c.globalAlpha = 0.72; paint('#12f2ff', -4.2, -2.4, 0.135, 0);
+    c.globalAlpha = 0.72; paint('#ff1fc7', 4.2, 2.4, 0.135, 0);
+    // 3) faint doubled wonky ghost stroke (VHS smear)
+    c.globalAlpha = 0.4; paint(color, 1.6, -1.1, 0.13, 0);
+    // 4) main neon icon with a hot glow
+    c.globalAlpha = 1; paint(color, 0, 0, 0.125, 13);
+    // 5) additive blow-out pass — the "deep-fried" oversaturated highlight
+    c.globalCompositeOperation = 'lighter'; c.globalAlpha = 0.55; paint(color, 0, 0, 0.07, 17);
+    c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1;
     cache.set(key, cv); return cv;
   }
   // ---- optional HD raster sprite sheet (Higgsfield) ----
@@ -230,6 +259,7 @@
     iconFor(kind, id) { const m = kind === 'upgrade' ? UP : kind === 'country' ? CO : HUD; return m[id] || (kind === 'country' ? 'globe' : kind === 'upgrade' ? 'chat' : 'heart'); },
     loadSheet(spec, img) { const map = {}; (spec.cells || []).forEach((n, i) => (map[n] = [i % spec.cols, Math.floor(i / spec.cols)])); SHEET = { img, cols: spec.cols, rows: spec.rows, map }; },
     setHDIcons(on) { useSheet = !!on; cache.clear(); },
+    setGrunge(on) { grunge = !!on; cache.clear(); },
     hdActive() { return useSheet && !!(SHEET && SHEET.img && SHEET.img._ready); },
     sheetInfo() { return { loaded: !!(SHEET && SHEET.img && SHEET.img._ready), domOK: SHEET ? SHEET.domOK : null, use: useSheet }; },
     // Blit centered at (x,y) filling a size×size box. color tints; glow adds
@@ -264,6 +294,13 @@
           try { c.drawImage(SHEET.img, rect.sx, rect.sy, rect.sw, rect.sh, 0, 0, px, px); return cv.toDataURL(); }
           catch (e) { SHEET.domOK = false; cv.width = px; /* reset the tainted canvas */ }
         }
+      }
+      // Vector fallback. For icons big enough to read it (tree nodes, gene
+      // cards, big chips) blit the grunge-baked canvas so DOM <img> icons get
+      // the same cursed look as the on-canvas draws. Tiny HUD number-glyphs
+      // (<20px) stay crisp — grunge there just smears them.
+      if (grunge && size >= 20) {
+        try { c.drawImage(bake(name, color || '#eef'), 0, 0, px, px); return cv.toDataURL(); } catch (e) { /* fall through to clean */ }
       }
       c.scale(px, px);
       c.strokeStyle = color || '#eef'; c.fillStyle = color || '#eef'; c.lineWidth = 0.09; c.lineCap = 'round'; c.lineJoin = 'round';
