@@ -9,7 +9,10 @@ Vane's Question, the monsoon crucible (three whole-chapter variants: Countdown /
 Homestead / Descent), the Tidewell's doors, and a Convergence finale resolving into
 one of 14 implemented endings (the design's full 49-ending roadmap is in
 [`design/09-endings.md`](design/09-endings.md)). Open `index.html` in a browser —
-no build step, no dependencies. Generated art lives in [`art/`](art/) (see
+no build step, no dependencies. **TAB** opens the in-game menu (volume,
+brightness, ambient/animal-sound toggles, three manual save slots + autosave
+loading); all sound is synthesized live with WebAudio — per-area, per-time-of-day
+ambience and stylized animal calls, zero audio files. Generated art lives in [`art/`](art/) (see
 `art/manifest.txt`; fetched/optimized by the `fetch-tidebound-art` GitHub workflow;
 several late-game locations still use painted-CSS placeholders pending art
 generation — prompts are listed in the manifest).

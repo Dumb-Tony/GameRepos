@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tidebound — a survival visual novel</title>
-<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
 
@@ -40,6 +40,7 @@ window.onerror = function (msg, src, line) {
   </div>
   <button id="kitBtn" title="Your kit &amp; what you know">🎒</button>
   <button id="sndBtn" title="Sound on/off">🔊</button>
+  <button id="menuBtn" title="Menu (TAB)">☰</button>
 </header>
 
 <!-- ===== VN PANEL ===== -->
@@ -63,15 +64,36 @@ window.onerror = function (msg, src, line) {
   </div>
 </div>
 
-<script src="engine.js?v=4"></script>
-<script src="scenes-prologue.js?v=4"></script>
-<script src="scenes-chapter1.js?v=4"></script>
-<script src="scenes-chapter2.js?v=4"></script>
-<script src="scenes-chapter3.js?v=4"></script>
-<script src="scenes-chapter4.js?v=4"></script>
-<script src="scenes-chapter5.js?v=4"></script>
-<script src="scenes-chapter6.js?v=4"></script>
-<script src="scenes-chapter7.js?v=4"></script>
+<!-- ===== IN-GAME MENU (TAB) ===== -->
+<div id="menuOverlay" class="hidden">
+  <div id="menuCard">
+    <h2>⚙️ Menu <span class="menuHint">— TAB to open/close</span></h2>
+    <div class="mRow"><label for="mVol">🔊 Volume</label><input id="mVol" type="range" min="0" max="100" step="1"></div>
+    <div class="mRow"><label for="mBright">☀️ Brightness</label><input id="mBright" type="range" min="50" max="130" step="1"></div>
+    <div class="mRow mChecks">
+      <label><input id="mAmb" type="checkbox"> Ambient sound</label>
+      <label><input id="mSfx" type="checkbox"> Animal calls</label>
+    </div>
+    <h2>💾 Saves</h2>
+    <div class="mSlot"><span id="autoLabel">—</span><span class="mSlotBtns"><button id="autoLoad">Load</button></span></div>
+    <div class="mSlot"><span id="slotLabel1">—</span><span class="mSlotBtns"><button id="slotSave1">Save</button><button id="slotLoad1">Load</button></span></div>
+    <div class="mSlot"><span id="slotLabel2">—</span><span class="mSlotBtns"><button id="slotSave2">Save</button><button id="slotLoad2">Load</button></span></div>
+    <div class="mSlot"><span id="slotLabel3">—</span><span class="mSlotBtns"><button id="slotSave3">Save</button><button id="slotLoad3">Load</button></span></div>
+    <div class="mBtns"><button id="menuTitle">🏝️ Title screen</button><button id="menuClose">Resume ➤</button></div>
+  </div>
+</div>
+
+<script src="engine.js?v=5"></script>
+<script src="audio.js?v=5"></script>
+<script src="menu.js?v=5"></script>
+<script src="scenes-prologue.js?v=5"></script>
+<script src="scenes-chapter1.js?v=5"></script>
+<script src="scenes-chapter2.js?v=5"></script>
+<script src="scenes-chapter3.js?v=5"></script>
+<script src="scenes-chapter4.js?v=5"></script>
+<script src="scenes-chapter5.js?v=5"></script>
+<script src="scenes-chapter6.js?v=5"></script>
+<script src="scenes-chapter7.js?v=5"></script>
 <script>window.TB.start();</script>
 </body>
 </html>

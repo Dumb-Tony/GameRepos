@@ -257,6 +257,41 @@ body {
   background: #ffffff1f; border: 1px solid #ffffff38; border-radius: 8px; padding: 8px 18px;
 }
 
+/* ===== In-game menu (TAB) =========================================== */
+#menuOverlay {
+  position: fixed; inset: 0; z-index: 12; background: #020a12cc;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+#menuOverlay.hidden { display: none; }
+#menuCard {
+  background: #071726; border: 1px solid #ffffff33; border-radius: 16px;
+  padding: 22px 26px; max-width: 520px; width: 100%; max-height: 84vh; overflow-y: auto;
+}
+#menuCard h2 { font-size: 17px; margin: 14px 0 10px; color: #ffe9b8; }
+#menuCard h2:first-child { margin-top: 0; }
+.menuHint { font-family: system-ui, sans-serif; font-size: 12px; opacity: .55; font-weight: normal; }
+.mRow { display: flex; align-items: center; gap: 14px; margin: 10px 0; font-size: 15px; }
+.mRow label { min-width: 110px; }
+.mRow input[type="range"] { flex: 1; accent-color: #2fe0c9; }
+.mChecks { gap: 26px; font-family: system-ui, sans-serif; font-size: 14px; }
+.mChecks label { min-width: 0; display: flex; align-items: center; gap: 7px; }
+.mChecks input { accent-color: #2fe0c9; }
+.mSlot {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 8px 10px; margin: 6px 0; background: #ffffff0d; border: 1px solid #ffffff1f;
+  border-radius: 10px; font-family: system-ui, sans-serif; font-size: 13.5px;
+}
+.mSlot span:first-child { opacity: .85; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mSlotBtns { display: flex; gap: 6px; flex-shrink: 0; }
+#menuCard button {
+  font: inherit; font-family: system-ui, sans-serif; font-size: 13px; color: inherit; cursor: pointer;
+  background: #ffffff1f; border: 1px solid #ffffff38; border-radius: 8px; padding: 5px 12px;
+}
+#menuCard button:hover:not(:disabled) { background: #ffffff33; }
+#menuCard button:disabled { opacity: .35; cursor: default; }
+.mBtns { display: flex; justify-content: space-between; margin-top: 16px; }
+.mBtns button { padding: 8px 18px; font-size: 14px; }
+
 /* ===== small screens =============================================== */
 @media (max-width: 560px) {
   .bar { width: 42px; }
