@@ -301,6 +301,7 @@
     },
     nextLabel: 'Sleep ➤',
     next: (s) => {
+      if (s.stats.hope <= 8 && !TB.is('DESPAIR_OFFERED') && TB.SCENES.ev_despair) { TB.flag('DESPAIR_OFFERED'); return 'ev_despair'; }
       if (TB.has('rations') && s.stats.hunger < 55) { TB.item('rations', -1); TB.stat('hunger', 25); }
       const floor = 45 + s.shelter * 11 + s.fire * 8;
       if (s.stats.energy < floor) s.stats.energy = floor;

@@ -205,6 +205,24 @@
       'You stand a very long time in the drum of the far surge. Then you put your hand in the hollow, because there is no version of you that doesn\'t.',
     ],
     enter: (s) => { if (!TB.is('DEEP2')) { TB.flag('DEEP2'); TB.flag('GULLET2'); TB.flag('SUNDERING_SEEN'); TB.route('depth', 3); TB.stat('hope', 4); } },
+    choices: (s) => [
+      { t: '⛰️ Mark your line and climb out with the surge, as planned.', sub: 'The tide-clock is the only law down here. Honor it.',
+        do: () => { TB.route('depth', 1); }, go: 'camp2' },
+      { t: '🕳️ Press past the marked line. The lull might hold.', sub: '⚠️ The Gallery\'s painters drew the sea as a woman with seven arms. They knew her. You are gambling that she\'s slow today.',
+        do: () => { const s2 = TB.state;
+          if (R() < 0.35) { s2.deathCause = 'dark'; }
+          else { TB.flag('HEARTGLASS'); TB.flag('DEEP_GREED_PAID'); TB.route('depth', 2); TB.stat('energy', -12); } },
+        go: (s2) => (TB.state.deathCause ? 'death' : 'ch5_deepgreed') },
+    ],
+  });
+  TB.scene('ch5_deepgreed', {
+    bg: 'gullet',
+    text: [
+      'Past the marked line the throat narrows and brightens at once — the heartglass veins thickening toward the seam\'s true body, the walls alive with your own delayed reflections — and there, in a surge-scoured pocket, you find what the wound has been shedding: a spur of heartglass the size of your forearm, fallen clean, pulsing its seven beats in your hands like a warm, slow instrument.',
+      'You are still wrapping it when the sea clears her throat below you.',
+      'The climb out is the worst twenty minutes of your island life: the lull failing early, the boom of the returning surge chasing you gallery by gallery, black water taking the marked line behind your heels — and then daylight, and the grotto\'s mouth, and your legs giving out on honest stone.',
+      'You have the spur. The sea, this once, let the gamble stand. You lie on your back listening to the throat roar shut below, and make the tide a promise you intend to keep about never, ever doing that again.',
+    ],
     next: (s) => 'camp2',
   });
 
