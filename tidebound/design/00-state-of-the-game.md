@@ -23,7 +23,7 @@ compressed realization. Deviations a resuming developer must know:
 | Designed | Built | Notes |
 |---|---|---|
 | ~100 in-game days | **34 days** (Ch1 d1–3 · Ch2 d4–9 · Ch3 d10–15 · Ch4 d16–21 · Ch5 d22–28 · Ch6 d29–33 · Ch7 d34) | Chapter *content* kept; day counts compressed. Expanding day ranges is pure tuning if desired. |
-| 49 endings | **14 implemented** (ids: RESCUE, STAY_OPEN, BROKER, HOME, VILLAGE, JOIN, KEEPER, COVENANT, TWO_WORLDS, SAIL_BLESSED, RYO_BOAT, LONG_SWIM, WHOLE_SKY, COCO) + 6 death endings (thirst, hunger, injury, undertow, fever, grin) | Remaining 35 are the roadmap's top item; see design/09. Ending engine is parameterized — new endings = new CORES entry + convergence choice mapping. |
+| 49 endings | **20 CORES endings** (RESCUE, STAY_OPEN, BROKER, HOME, VILLAGE, JOIN, KEEPER, COVENANT, TWO_WORLDS, SAIL_BLESSED, RYO_BOAT, LONG_SWIM, WHOLE_SKY, COCO, THREE_SPRINGS, LAST_PACK, TRICKSTER, ROSAS_RANSOM, OTHER_SIGNAL, FIRST_KAARI) + 8 death endings (thirst, hunger, injury, undertow, fever, grin, despair, dark) | Ending engine is parameterized — new endings = CORES entry (scenes-extra.js appends via TB.CORES) + convergence mapping. |
 | Trust 0–100, 5 tiers, per-companion | ✅ As designed (`s.trust`, `TB.tier()`), plus `s.edda` and `s.ryo` human-relationship tracks | Never shown as numbers; behavioral text only. |
 | Route points Signal/Roots/Depth | ✅ As designed (`s.route`) — steer Ch5 variant choice framing + Convergence options | |
 | Island Regard | **`TB.regard()`** — computed from ~8 mercy/restraint/bond flags rather than a running counter | Gates Inner Green admission (≥4) and the keeper covenant. |
@@ -33,7 +33,7 @@ compressed realization. Deviations a resuming developer must know:
 | NG+ "Driftwood Loops" | **Cross-run memory v1**: `tidebound.meta.v1` records runs/endings/deaths; title gallery (X/14); déjà-vu lines in `falling` and `clearing` | Keepsake carry, X3 The Loop ending, run modifiers = roadmap. |
 | Nine = secret companion | ✅ Tide pools twice before Day 3 | |
 | Solo route | ✅ Full: Coco arc (COCO flag chain), ev2_solo, X4-style content folded into epilogues | |
-| Companion-exclusive quests (design/03) | **Partial**: heart scenes I (Ch2 d8) & II (Ch3 d14), station beats (Ch4 d19), fear-arc peaks (Ch2 storm, Ch5 cyclone), toll crossings (Ch3) | The named exclusive quests (Troop Politics, The High Nests, etc.) are roadmap. |
+| Companion-exclusive quests (design/03) | ✅ **Built** (scenes-quests.js): Old Bones, Troop Politics, The High Nests + hatchling, The Root Cellar + Kaari seed vault, The Flock + Edda's Rooster, Eight Arms Three Tricks + the reef-learns coda — plus heart scenes I/II, station beats, fear-arc peaks, toll crossings | Courier case arc, Rosa Dourada, listening vigil, temple time-slip, and the random-event layer live in scenes-extra.js. |
 
 Everything else — companions' personalities/fears/loyalty arcs, Edda, Ryo, Naia,
 Tekau, the Boar King and Old Grin, Halcyon/Vane/the Incident, the Hum/heartglass

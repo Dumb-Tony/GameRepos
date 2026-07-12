@@ -187,6 +187,12 @@
     if (TB.is('TREASURE_LEFT')) t.push('— The Rosa Dourada keeps her gold and her crew, undisturbed. You never once regretted the empty hands; the knowing where it sleeps turned out to be the whole treasure.');
     else if ((TB.is('TREASURE_SOME') || TB.is('TREASURE_ALL')) && id !== 'ROSAS_RANSOM' && !leaving) t.push('— A dead ship\'s gold sits in a jar on your shelf, funding nothing, meaning everything: proof that on this island you finally learned the difference between what glitters and what keeps.');
     if (TB.is('OTHER_HEARD') && id !== 'OTHER_SIGNAL' && !leaving) t.push('— And some nights, at the radio, in the skips: the nine-beat station, keeping her vigil across the hidden world. You are two lighthouses who know each other\'s light.');
+    // quest afterglow
+    if (TB.is('Q_KAVI_DONE')) t.push('— On the singing ridge, on the highest stone, a brass collar weathers in the wind: BOSUN, 1887, found and carried home. The pack sings over it on clear nights. First of the line, last debt paid.');
+    if (TB.is('HATCHLING') && !leaving) t.push('— The gargoyle from the high nest grows into an eagle the cliffs will talk about for thirty years — huge, loud, and convinced to the end of its days that your shoulder is furniture. Vela pretends not to be proud. Vela is entirely proud.');
+    if (TB.is('KAARI_SEEDS') && !leaving) t.push('— And the old colors grow again: the vault\'s rice, the impossible beans, five centuries of sealed patience coming up green in your rows. Somewhere below the terrace wall, a carved wooden boar stands watch over an empty shelf, its work complete.');
+    if (TB.is('Q_ROOSTER_DONE')) t.push('— Trouble crows from Edda\'s fence post every dawn, form improving under daily correction, and the grove has a voice again after forty years. Some medicines cannot be brewed.');
+    if (TB.is('REEF_LEARNS')) t.push('— And in the far pools, at low tide, if you are very patient: small wild arms, practicing. The lessons are out of the classroom now, moving through the reef\'s bright network on a timescale that has nothing to do with anyone. Sixty years from now, the island will know things. You started that.');
     return t;
   }
 
