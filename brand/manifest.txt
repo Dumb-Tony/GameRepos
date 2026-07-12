@@ -1,0 +1,7 @@
+# Dirty Boy Devs brand assets — name|url, fetched verbatim by
+# .github/workflows/fetch-brand-assets.yml on push (sandbox egress
+# cannot reach the CDN, so CI downloads and commits these).
+dirty-boy-mascot.glb|https://d3u0tzju9qaucj.cloudfront.net/7d051b5a-7bfe-49fe-a484-24e7b3a9458a/f0d7e26f-bf5a-4d55-9bbd-e33e68dba650.glb
+dirty-boy-front.png|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260712_204253_c123e4d6-0394-41f5-9ab5-098ef9b37fbf.png
+dirty-boy-back.png|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260712_204257_5dcb5550-2548-4a97-a17e-5940a242d0be.png
+dirty-boy-devs-logo.png|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260712_203408_4ad4f5e6-b3da-4fb2-89d6-8644a3188320.png
