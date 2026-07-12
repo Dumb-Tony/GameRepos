@@ -11,11 +11,21 @@
   // ---- Title ----------------------------------------------------------
   TB.scene('title', {
     bg: 'title', hud: false,
-    text: [
-      '<span class="game-title">🌊 TIDEBOUND</span>',
-      '<span class="game-sub">a survival visual novel — Prologue &amp; Chapter One (vertical slice)</span>',
-      '<span class="game-sub">One island. One companion. Every choice has a price.</span>',
-    ],
+    text: (s) => {
+      const t = [
+        '<span class="game-title">🌊 TIDEBOUND</span>',
+        '<span class="game-sub">a survival visual novel</span>',
+        '<span class="game-sub">One island. One companion. Every choice has a price.</span>',
+      ];
+      const m = TB.meta();
+      if (m.runs > 0) {
+        const found = Object.keys(m.endings);
+        const deaths = Object.values(m.deaths).reduce((a, b) => a + b, 0);
+        t.push('<span class="game-sub">🌀 The island remembers ' + m.runs + (m.runs === 1 ? ' life' : ' lives') + (deaths ? ' (' + deaths + ' kept forever)' : '') + ' · endings found: ' + found.length + '/14</span>');
+        if (found.length && TB.CORES) t.push('<span class="game-sub">' + found.map((id) => (TB.CORES[id] ? TB.CORES[id].icon + ' ' + TB.CORES[id].title : id)).join(' · ') + '</span>');
+      }
+      return t;
+    },
     choices: (s) => {
       const list = [{
         t: '🛫 Begin', cls: 'title-btn',
@@ -32,14 +42,15 @@
   // ---- The crash --------------------------------------------------------
   TB.scene('falling', {
     bg: 'sky', hud: false,
-    text: [
+    text: (s) => [
       'The seatbelt light comes on over the middle of nowhere.',
       'You are one of four passengers on a charter hop between islands whose names you learned yesterday. Below the wing there is ocean, and then more ocean, and then — you sit up — <em>green</em>. An island. A big one. It isn\'t on the seat-pocket map.',
       'Up front, the pilot taps the compass. Taps it again. The needle turns like it\'s looking for something it lost. The radio gives out a long, low tone that rises and falls, seven beats, like a chord hummed underwater. It does not sound like static.',
       'The engines are fine. The instruments are drunk. The plane begins, gently and unarguably, to descend.',
+      TB.meta().runs > 0 ? '<em>(The seven-beat tone under the static… you know it. From somewhere. A dream, a life, a story someone told you — the thought slides away like water off a wing, and does not quite leave.)</em>' : '',
       'Someone behind you starts to pray. The man across the aisle — a quiet passenger with a battered courier case chained to his wrist — looks at the island, not the water, and says, to nobody: <em>"There you are."</em>',
       'The descent stops being gentle. In the last minute, you—',
-    ],
+    ].filter(Boolean),
     choices: [
       {
         t: 'Brace, and breathe, and count the seconds.',
