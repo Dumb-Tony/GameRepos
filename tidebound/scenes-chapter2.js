@@ -11,6 +11,7 @@
   'use strict';
   const TB = G.TB;
   const R = Math.random;
+  const pick = (a) => a[Math.floor(R() * a.length)];
 
   const NAMES = { kavi: 'Kavi', ipo: 'Ipo', vela: 'Vela', buri: 'Buri', moa: 'Moa', nine: 'Nine' };
   const WHO = {
@@ -120,14 +121,27 @@
         t: s.site === 'overhang' ? '💧 Haul water and coconuts up the track' : '🥥 Coconuts — drink and eat',
         sub: s.site === 'overhang' ? 'The overhang\'s daily tax. Energy −−, thirst restored.' : 'The palms keep providing. Energy −, thirst restored.',
         do: () => { const s2 = TB.state; TB.stat('thirst', 34); TB.stat('hunger', 10); TB.stat('energy', s2.site === 'overhang' ? -12 : -8);
-          s2.out = { bg, text: [s2.site === 'overhang' ? 'Down the goat-track, load, up the goat-track — twice. Your calves have opinions; the gourds sweat cool against your back. From the ledge you drink looking down at the whole shining lagoon, which almost makes carrying a personal ocean uphill feel reasonable.' : 'The green coconuts come down, come open, and go down easier. You will never again drink anything without noticing you\'re drinking.'] };
+          s2.out = { bg, text: [s2.site === 'overhang' ? pick([
+            'Down the goat-track, load, up the goat-track — twice. Your calves have opinions; the gourds sweat cool against your back. From the ledge you drink looking down at the whole shining lagoon, which almost makes carrying a personal ocean uphill feel reasonable.',
+            'The water run, morning edition. You know every root-step of the goat-track now, every resting ledge, the exact spot where the wind arrives to dry your back. The gourds ride up full and heavy. Civilization, one trip at a time.',
+            'You haul the day\'s water with your mind elsewhere and your feet on autopilot, and only notice at the top that you\'ve carried an extra half-load without registering it. The mountain is making you into someone specific.',
+          ]) : pick([
+            'The green coconuts come down, come open, and go down easier. You will never again drink anything without noticing you\'re drinking.',
+            'You work the near grove with the long pole and the practiced twist, and drink the first one standing right there under the palms, warm and green-tasting, tribute at the source.',
+            'Coconut arithmetic: two for thirst, one for the shreds, husks for the fire pile. Nothing wasted. Edda would grunt approval, which is her highest civilian honor.',
+          ])] };
           TB.tickSegment(); },
         go: 'act_result',
       });
       c.push({
         t: '🌿 Forage', sub: (s.site === 'fringe' ? 'The fringe is generous. ' : '') + 'Fruit, crabs, roots. Energy −, food +.',
         do: () => { const s2 = TB.state; const bonus = s2.site === 'fringe' ? 6 : 0; TB.stat('energy', -8); TB.stat('hunger', 16 + bonus); TB.stat('thirst', 3);
-          s2.out = { bg: s2.site === 'beach' ? 'jungle' : bg, text: ['You work the gathering lines you\'ve learned: seagrape, fig, the breadfruit tree you\'ve started thinking of possessively' + (s2.site === 'fringe' ? ' — all of it minutes from your fire now, which still feels like cheating.' : '.')] };
+          s2.out = { bg: s2.site === 'beach' ? 'jungle' : bg, text: [pick([
+            'You work the gathering lines you\'ve learned: seagrape, fig, the breadfruit tree you\'ve started thinking of possessively' + (s2.site === 'fringe' ? ' — all of it minutes from your fire now, which still feels like cheating.' : '.'),
+            'A good forage day: the figs are dropping, the crabs are careless, and you find a stand of palm-hearts you\'ve been saving like money. The bag comes home with weight in it.',
+            'You gather on autopilot and let your eyes do the newer work — reading the jungle\'s margins for sign, for change, for the island\'s small daily edits. The food is almost a byproduct now. Almost.',
+            'Half the harvest today is knowledge: which fig tree the birds hit first (theirs is riper), where the crabs shifted after the last tide, what the ants know about tomorrow\'s weather (rain, they vote, moving house uphill).',
+          ])] };
           TB.tickSegment(); },
         go: 'act_result',
       });
@@ -136,8 +150,16 @@
         do: () => { const s2 = TB.state; const skill = (s2.site === 'beach' ? 0.75 : 0.6) + (s2.companion === 'vela' && s2.trust >= 40 ? 0.2 : 0);
           TB.stat('energy', -9);
           if (R() < skill) { TB.stat('hunger', 24); s2.food += 1;
-            s2.out = { bg: 'tidepools', text: ['An hour of stillness, three misses, and then the spear comes up arguing — a fat mullet, then a second. One for now, one smoked for later.' + (s2.companion === 'vela' && s2.trust >= 40 ? ' Vela, wheeling above the shallows, stoops twice to drive fish toward your legs. You are, you realize, being <em>assisted</em>.' : '')] }; }
-          else { s2.out = { bg: 'tidepools', text: ['The fish hold a meeting somewhere you aren\'t. An hour of stalking buys you two misses, one splinter, and a renewed respect for herons.'] }; }
+            s2.out = { bg: 'tidepools', text: [pick([
+              'An hour of stillness, three misses, and then the spear comes up arguing — a fat mullet, then a second. One for now, one smoked for later.',
+              'The tide brings a parrotfish within honest range and your arm remembers everything you\'ve taught it. Clean strike. You thank the fish the way you\'ve started thanking everything, quietly, like paying at a till.',
+              'Today the shallows are generous: a school working the weed-line, unbothered, and you take two with the patience of a heron and the smugness of a person who was once wholly incompetent at this.',
+            ]) + (s2.companion === 'vela' && s2.trust >= 40 ? ' Vela, wheeling above the shallows, stoops twice to drive fish toward your legs. You are, you realize, being <em>assisted</em>.' : '')] }; }
+          else { s2.out = { bg: 'tidepools', text: [pick([
+            'The fish hold a meeting somewhere you aren\'t. An hour of stalking buys you two misses, one splinter, and a renewed respect for herons.',
+            'You spook the school on the first cast and spend the rest of the hour being watched by everything you might have eaten. The sea keeps its side of the counter shut today.',
+            'A near-thing on a big trevally that would have fed three days — the spear kisses scale and comes back empty, and the swirl it leaves is the ocean\'s version of laughter.',
+          ])] }; }
           TB.tickSegment(); },
         go: 'act_result',
       });
@@ -243,7 +265,12 @@
         do: () => { const s2 = TB.state; TB.stat('energy', 16); TB.stat('hope', 2); TB.stat('health', s2.injury ? 0 : 3);
           if (s2.injury && (s2.fire ? R() < 0.45 : R() < 0.25)) { s2.injury = null; TB.stat('health', 6);
             s2.out = { bg, text: ['You give the day to the wound: seawater-washed, sun-dried, dressed in the cleanest cloth you own, and then honest rest beside it' + (s2.fire ? ', the fire keeping everything dry and warm' : '') + '.', 'By dusk the edges have closed to a clean pink seam. It held. It\'s knitting. Out here that\'s not luck — that\'s discipline paying its dividend.'] }; }
-          else s2.out = { bg, text: [s2.injury ? 'You rest, and clean the wound, and rest again. It\'s not worse. It\'s not better. Wounds keep their own calendar out here — all you can do is keep appearing for the appointments.' : 'You let the island run itself for a few hours. It manages. When you get up, so do you.'] };
+          else s2.out = { bg, text: [s2.injury ? 'You rest, and clean the wound, and rest again. It\'s not worse. It\'s not better. Wounds keep their own calendar out here — all you can do is keep appearing for the appointments.' : pick([
+            'You let the island run itself for a few hours. It manages. When you get up, so do you.',
+            'You sleep in the shade with one arm over your eyes and dream, for once, of nothing at all — no sea, no sky, no falling. Just green. You wake restored in a way sleep alone doesn\'t explain.',
+            'You spend the hours on small maintenance — hands, feet, tools, thoughts — the quiet servicing that keeps a castaway from becoming driftwood. Nothing to show for it but tomorrow.',
+            'You rest, and the island fills the time with its unbilled entertainment: cloud armadas, crab politics, the tide doing its two-a-day miracle. You\'d pay for worse. You have paid for worse.',
+          ])] };
           TB.tickSegment(); },
         go: 'act_result',
       });

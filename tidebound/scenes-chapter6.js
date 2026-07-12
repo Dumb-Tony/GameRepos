@@ -12,8 +12,8 @@
 
   const NAMES = { kavi: 'Kavi', ipo: 'Ipo', vela: 'Vela', buri: 'Buri', moa: 'Moa', nine: 'Nine' };
   const EDDA = { emoji: '👵', name: 'Edda Voss', art: 'char-edda' };
-  const NAIA = { emoji: '🌿', name: 'Naia' };
-  const TEKAU = { emoji: '🗿', name: 'Tekau, Elder Speaker' };
+  const NAIA = { emoji: '🌿', name: 'Naia', art: 'char-naia' };
+  const TEKAU = { emoji: '🗿', name: 'Tekau, Elder Speaker', art: 'char-tekau' };
 
   // advance most of a day and continue the chain (with an honest death check)
   const chain = (id, ticks) => () => {
@@ -31,6 +31,7 @@
     if (TB.is('SUNDERING_SEEN')) r++;
     if (TB.is('NAIA_TRUSTED') || TB.is('NAIA_TERMS')) r++;
     if (TB.is('MOA_FOUND') || TB.is('VELA_MANTLED') || TB.is('HEART2_DONE')) r++;
+    if (TB.is('TURTLES') || TB.is('TREASURE_LEFT')) r++; // mercies the island witnessed
     return r;
   };
 
@@ -85,7 +86,28 @@
       'You do not touch the water. Not yet. Some doors you knock on from a respectful distance first.',
     ].filter(Boolean),
     nextLabel: 'Higher ➤',
-    next: chain('ch6_tremor', 3),
+    next: () => {
+      for (let i = 0; i < 3; i++) TB.tickSegment();
+      if (TB.state.deathCause) return 'death';
+      return TB.is('GLYPH1') && TB.is('GLYPH2') && TB.is('GLYPH3') && !TB.is('VISION_SEEN') ? 'ch6_vision' : 'ch6_tremor';
+    },
+  });
+
+  // ---- The time-slip (all three glyph stones found) ---------------------------------
+  TB.scene('ch6_vision', {
+    bg: 'temple',
+    text: [
+      'Before you leave the nave, the wall stops you.',
+      'You\'ve been carrying the three glyph stones in your head for weeks — the spiral cut three ways, the re-carved line, the inlay that held your reflection late. And here, low on the temple\'s oldest course, where a casual eye slides past: all three marks TOGETHER, nested, a triple spiral the size of your spread hand — and worn into its center, polished by centuries of exactly this, a hollow.',
+      'At the height of your own palm. Like the one in the Gallery of Hands. You already know you\'re going to do it. You already know the island knows.',
+      'You place your hand in the hollow, at the turn of the tide —',
+      '— and you are standing on the Terrace of Steps under an UNBROKEN mountain, in air thick with a thousand cook-fires, and the sea below is full of wings: boats, hundreds of boats, sails like herons\' wings, coming in to the first landing. Nine centuries deep. The arrival itself.',
+      'And on the great stair a woman turns — sea-speaker\'s hood, the spiral at her collar, the whole unfallen world at her back — and she looks AT you. Across everything. The way the pool looks at you. She is not surprised. She raises one hand, palm out: not a greeting. A <em>placing</em> — the gesture for setting a stone in a wall.',
+      'Then the tide turns fully, and you are on your knees in the drowned nave with your hand aching and the water running its seven beats, and eight hundred years of dust motes settling around you like something that has just moved through, going home.',
+    ],
+    enter: (s) => { if (!TB.is('VISION_SEEN')) { TB.flag('VISION_SEEN'); TB.route('depth', 3); TB.stat('hope', 4); } },
+    nextLabel: 'Higher ➤',
+    next: chain('ch6_tremor', 1),
   });
 
   // ---- The tremor ladder --------------------------------------------------------------------

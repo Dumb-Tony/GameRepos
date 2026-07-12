@@ -10,6 +10,7 @@
   'use strict';
   const TB = G.TB;
   const R = Math.random;
+  const pick = (a) => a[Math.floor(R() * a.length)];
 
   // ---- chapter opener ---------------------------------------------------
   TB.scene('ch1_open', {
@@ -54,7 +55,11 @@
       c.push({
         t: '🥥 Coconuts — drink and eat', sub: 'The palms provide. Costs energy, buys you the rest.',
         do: () => { TB.stat('thirst', 28); TB.stat('hunger', 10); TB.stat('energy', -8);
-          TB.state.out = { bg: campBg(TB.state), text: ['You knock down green coconuts and open them ' + (TB.has('knife') ? 'with the chef\'s knife, cleanly, like you\'ve done it forever.' : TB.has('multitool') ? 'with the multitool and a rock and some language.' : 'with a rock, eventually, and wear half of the first one.'), 'The water inside is faintly sweet and absurdly cold-tasting. You drink until your headache loosens its grip, and scrape the soft flesh after.'] };
+          TB.state.out = { bg: campBg(TB.state), text: ['You knock down green coconuts and open them ' + (TB.has('knife') ? 'with the chef\'s knife, cleanly, like you\'ve done it forever.' : TB.has('multitool') ? 'with the multitool and a rock and some language.' : 'with a rock, eventually, and wear half of the first one.'), pick([
+            'The water inside is faintly sweet and absurdly cold-tasting. You drink until your headache loosens its grip, and scrape the soft flesh after.',
+            'You drink two straight down, standing in the palm shade, and feel your body\'s complaints settle one by one like a room going quiet.',
+            'The second one you take slowly, sitting, watching the reef breathe — hydration as a meal, a meeting, and a view.',
+          ])] };
           TB.tickSegment(); },
         go: 'act_result',
       });

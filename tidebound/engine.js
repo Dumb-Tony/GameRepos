@@ -119,6 +119,7 @@
     if (s.chapter === 5 && s.day > 28) return 'ch5_end'; // safety net; each variant's finale normally ends the chapter
     if (s.chapter >= 6) return s.deathCause ? 'death' : 'ch6_open'; // chapters 6+ are linear chains; advance() shouldn't be reached
     if (s.seg === 3) return s.chapter >= 2 ? 'night2' : 'night';
+    if (TB.randomEvent) { const ev = TB.randomEvent(s); if (ev) return ev; } // the living island
     return s.chapter >= 2 ? 'camp2' : 'camp';
   };
 

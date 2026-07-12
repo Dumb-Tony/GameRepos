@@ -13,8 +13,8 @@
 
   const NAMES = { kavi: 'Kavi', ipo: 'Ipo', vela: 'Vela', buri: 'Buri', moa: 'Moa', nine: 'Nine' };
   const EDDA = { emoji: '👵', name: 'Edda Voss', art: 'char-edda' };
-  const RYO = { emoji: '⛵', name: 'Ryo Nakata' };
-  const NAIA = { emoji: '🌿', name: 'The watcher' };
+  const RYO = { emoji: '⛵', name: 'Ryo Nakata', art: 'char-ryo' };
+  const NAIA = { emoji: '🌿', name: 'The watcher', art: 'char-naia' };
   const BOAR_KING = { emoji: '🐗', name: 'The Boar King', art: 'char-boarking' };
 
   function campBg2(s) {

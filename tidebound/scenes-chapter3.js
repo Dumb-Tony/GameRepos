@@ -128,7 +128,11 @@
     if (TB.is('RIVER_KNOWN')) c.push({
       t: '🏞️ Haul water from the Silverthread', sub: 'Cold, clean, and endless. The island\'s artery is yours now.',
       do: () => { const s2 = TB.state; TB.stat('thirst', 40); TB.stat('energy', s2.site === 'overhang' ? -10 : -6); TB.stat('health', 2);
-        s2.out = { bg: 'river', text: ['The Silverthread runs cold out of the mountain\'s shadow, so clear the fish seem to hang in air. You drink until your ribs creak and fill everything that holds water.', TB.is('CLAY') ? '' : 'On the cut bank you find grey riverside clay in thick seams — pots, water jars, a real kitchen, all sleeping in that bank. You carry back an armload to dry.'].filter(Boolean) };
+        s2.out = { bg: 'river', text: [[
+          'The Silverthread runs cold out of the mountain\'s shadow, so clear the fish seem to hang in air. You drink until your ribs creak and fill everything that holds water.',
+          'The river is running bright today, talking over its stones. You drink, fill the gourds, and stand a while midstream letting the cold argue with your ankles — the island\'s best free medicine.',
+          'Water run to the Silverthread: routine now, and still never routine — kingfishers working the far bank, the mountain upside-down in the pools, the gourds going heavy and cold.',
+        ][Math.floor(Math.random() * 3)], TB.is('CLAY') ? '' : 'On the cut bank you find grey riverside clay in thick seams — pots, water jars, a real kitchen, all sleeping in that bank. You carry back an armload to dry.'].filter(Boolean) };
         TB.flag('CLAY'); TB.tickSegment(); },
       go: 'act_result',
     });
