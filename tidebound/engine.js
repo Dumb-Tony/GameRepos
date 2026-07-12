@@ -19,6 +19,7 @@
   'use strict';
   const TB = (G.TB = G.TB || {});
   const SAVE_KEY = 'tidebound.save.v1';
+  TB.SAVE_KEY = SAVE_KEY;
   const $ = (id) => document.getElementById(id);
 
   TB.SCENES = {};
@@ -158,32 +159,8 @@
     try { localStorage.setItem(META_KEY, JSON.stringify(m)); } catch (e) {}
   };
 
-  // ---- ambient audio: surf, synthesized, with a persisted mute --------
-  let audioCtx = null;
-  function sndOn() { try { return localStorage.getItem('tidebound.snd') !== 'off'; } catch (e) { return true; } }
-  function startAudio() {
-    if (audioCtx || !sndOn() || !window.AudioContext) return;
-    try {
-      audioCtx = new AudioContext();
-      const len = audioCtx.sampleRate * 4, buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate), d = buf.getChannelData(0);
-      let last = 0;
-      for (let i = 0; i < len; i++) { const w = Math.random() * 2 - 1; last = (last + 0.02 * w) / 1.02; d[i] = last * 3.5; }
-      const src = audioCtx.createBufferSource(); src.buffer = buf; src.loop = true;
-      const lp = audioCtx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 420;
-      const gain = audioCtx.createGain(); gain.gain.value = 0.055;
-      const lfo = audioCtx.createOscillator(), lfoG = audioCtx.createGain();
-      lfo.frequency.value = 0.09; lfoG.gain.value = 0.035; // slow swell, like surf breathing
-      lfo.connect(lfoG); lfoG.connect(gain.gain); lfo.start();
-      src.connect(lp); lp.connect(gain); gain.connect(audioCtx.destination); src.start();
-    } catch (e) { audioCtx = null; }
-  }
-  function renderSndBtn() { const b = $('sndBtn'); if (b) b.textContent = sndOn() ? '🔊' : '🔇'; }
-  TB.toggleSound = function () {
-    try { localStorage.setItem('tidebound.snd', sndOn() ? 'off' : 'on'); } catch (e) {}
-    if (sndOn()) { startAudio(); if (audioCtx) audioCtx.resume(); }
-    else if (audioCtx) audioCtx.suspend();
-    renderSndBtn();
-  };
+  // Ambient audio & animal calls live in audio.js (TB.Audio); the in-game
+  // menu (TAB) lives in menu.js (TB.Menu). The engine only sends hooks.
 
   // ---- rendering -------------------------------------------------------
   let queue = [];       // paragraphs waiting to be revealed
@@ -202,6 +179,17 @@
 
   function setBackdrop(name) {
     $('backdrop').className = 'bg-' + (name || 'beach-day');
+    if (TB.Audio) TB.Audio.setScene(name || 'beach-day', TB.state);
+  }
+
+  // which stylized call a scene should make when its portrait appears
+  const CALL_BY_EMOJI = { '🐕': 'kavi', '🐒': 'ipo', '🦅': 'vela', '🐗': 'buri', '🐔': 'moa', '🐙': 'nine' };
+  function animalCallFor(def, who, sceneId) {
+    if (/^(ev3_grin|ch3_toll)/.test(sceneId)) return 'grin';
+    if (sceneId === 'ev_moa') return 'hawk';
+    if (!who) return null;
+    if (who.art === 'char-boarking') return 'boarking';
+    return CALL_BY_EMOJI[who.emoji] || null;
   }
 
   // Generated art lives ONLY in art/ (one flat folder), referenced by
@@ -289,7 +277,9 @@
     if (id === 'ending' && s.endingId) TB.recordEnd('ending', s.endingId);
     if (id === 'death' && s.deathCause) TB.recordEnd('death', s.deathCause);
     setBackdrop(resolve(def.bg, s));
-    setPortrait(resolve(def.who, s));
+    const who = resolve(def.who, s);
+    setPortrait(who);
+    if (TB.Audio) { const sp = animalCallFor(def, who, id); if (sp) TB.Audio.call(sp, id); }
     s.hudOn = def.hud === false ? false : s.hudOn;
     TB.renderHud();
     $('textLog').innerHTML = '';
@@ -359,9 +349,10 @@
     });
     $('moreHint').addEventListener('click', showNextParagraph);
     $('kitBtn').addEventListener('click', openKit);
-    $('sndBtn').addEventListener('click', TB.toggleSound);
-    renderSndBtn();
-    window.addEventListener('pointerdown', function once() { startAudio(); window.removeEventListener('pointerdown', once); });
+    $('sndBtn').addEventListener('click', TB.Audio.toggleMute);
+    $('sndBtn').textContent = TB.Audio.muted() ? '🔇' : '🔊';
+    window.addEventListener('pointerdown', function once() { TB.Audio.kick(); window.removeEventListener('pointerdown', once); });
+    TB.Menu.init();
     $('kitClose').addEventListener('click', () => $('kitOverlay').classList.add('hidden'));
     $('kitOverlay').addEventListener('click', (e) => { if (e.target.id === 'kitOverlay') e.target.classList.add('hidden'); });
     window.addEventListener('keydown', (e) => { if ((e.key === ' ' || e.key === 'Enter') && queue.length) { e.preventDefault(); showNextParagraph(); } });
