@@ -140,6 +140,51 @@
   TB.wipe = function () { try { localStorage.removeItem(SAVE_KEY); } catch (e) {} };
   TB.hasSave = function () { return !!TB.loadSave(); };
 
+  // ---- cross-run memory: the island remembers -------------------------
+  const META_KEY = 'tidebound.meta.v1';
+  TB.meta = function () {
+    try { return JSON.parse(localStorage.getItem(META_KEY)) || { runs: 0, endings: {}, deaths: {} }; }
+    catch (e) { return { runs: 0, endings: {}, deaths: {} }; }
+  };
+  TB.recordEnd = function (kind, id) {
+    const s = TB.state, m = TB.meta();
+    if (!s.flags.META_RECORDED) { s.flags.META_RECORDED = true; m.runs += 1; }
+    const key = 'META_K_' + kind + ':' + id;
+    if (!s.flags[key]) {
+      s.flags[key] = true;
+      if (kind === 'ending') m.endings[id] = (m.endings[id] || 0) + 1;
+      else m.deaths[id] = (m.deaths[id] || 0) + 1;
+    }
+    try { localStorage.setItem(META_KEY, JSON.stringify(m)); } catch (e) {}
+  };
+
+  // ---- ambient audio: surf, synthesized, with a persisted mute --------
+  let audioCtx = null;
+  function sndOn() { try { return localStorage.getItem('tidebound.snd') !== 'off'; } catch (e) { return true; } }
+  function startAudio() {
+    if (audioCtx || !sndOn() || !window.AudioContext) return;
+    try {
+      audioCtx = new AudioContext();
+      const len = audioCtx.sampleRate * 4, buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate), d = buf.getChannelData(0);
+      let last = 0;
+      for (let i = 0; i < len; i++) { const w = Math.random() * 2 - 1; last = (last + 0.02 * w) / 1.02; d[i] = last * 3.5; }
+      const src = audioCtx.createBufferSource(); src.buffer = buf; src.loop = true;
+      const lp = audioCtx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 420;
+      const gain = audioCtx.createGain(); gain.gain.value = 0.055;
+      const lfo = audioCtx.createOscillator(), lfoG = audioCtx.createGain();
+      lfo.frequency.value = 0.09; lfoG.gain.value = 0.035; // slow swell, like surf breathing
+      lfo.connect(lfoG); lfoG.connect(gain.gain); lfo.start();
+      src.connect(lp); lp.connect(gain); gain.connect(audioCtx.destination); src.start();
+    } catch (e) { audioCtx = null; }
+  }
+  function renderSndBtn() { const b = $('sndBtn'); if (b) b.textContent = sndOn() ? '🔊' : '🔇'; }
+  TB.toggleSound = function () {
+    try { localStorage.setItem('tidebound.snd', sndOn() ? 'off' : 'on'); } catch (e) {}
+    if (sndOn()) { startAudio(); if (audioCtx) audioCtx.resume(); }
+    else if (audioCtx) audioCtx.suspend();
+    renderSndBtn();
+  };
+
   // ---- rendering -------------------------------------------------------
   let queue = [];       // paragraphs waiting to be revealed
   let currentDef = null;
@@ -241,6 +286,8 @@
     currentDef = def;
     if (def.enter) def.enter(s);
     if (s.deathCause && id !== 'death' && id !== 'title') { TB.go('death'); return; }
+    if (id === 'ending' && s.endingId) TB.recordEnd('ending', s.endingId);
+    if (id === 'death' && s.deathCause) TB.recordEnd('death', s.deathCause);
     setBackdrop(resolve(def.bg, s));
     setPortrait(resolve(def.who, s));
     s.hudOn = def.hud === false ? false : s.hudOn;
@@ -312,6 +359,9 @@
     });
     $('moreHint').addEventListener('click', showNextParagraph);
     $('kitBtn').addEventListener('click', openKit);
+    $('sndBtn').addEventListener('click', TB.toggleSound);
+    renderSndBtn();
+    window.addEventListener('pointerdown', function once() { startAudio(); window.removeEventListener('pointerdown', once); });
     $('kitClose').addEventListener('click', () => $('kitOverlay').classList.add('hidden'));
     $('kitOverlay').addEventListener('click', (e) => { if (e.target.id === 'kitOverlay') e.target.classList.add('hidden'); });
     window.addEventListener('keydown', (e) => { if ((e.key === ' ' || e.key === 'Enter') && queue.length) { e.preventDefault(); showNextParagraph(); } });

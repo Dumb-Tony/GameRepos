@@ -179,6 +179,8 @@
     ];
   }
 
+  TB.CORES = CORES; // exposed for the title screen's endings gallery
+
   TB.scene('ending', {
     bg: (s) => (CORES[s.endingId] || CORES.HOME).bg,
     text: (s) => {

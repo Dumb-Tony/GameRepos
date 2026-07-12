@@ -1,34 +1,6 @@
 # Tidebound generated art manifest — one line per asset: <output-name>|<source-url>
 # All assets were generated with Recraft V4.1 via Higgsfield (2026-07-11).
-#
-# WANTED (add lines here once generated; CSS hooks already exist, painted
-# fallbacks render until then). Style prefix used for all backgrounds:
-#   "Painterly stylized visual novel background art, textured gouache
-#    brushwork, cinematic wide composition, soft volumetric light,
-#    no people, no text, no watermark."
-# bg-grove.webp    — Edda's terraced mountain garden: cut terraces, vegetable
-#                    beds, low pruned fruit trees, rain tanks, one flowering
-#                    tree over two grassy mounds, warm morning light
-# bg-river.webp    — the Silverthread: wide clear jungle river over amber
-#                    stones, grey clay banks, green ravine, midday light
-# bg-mangrove.webp — brackish mangrove maze: tea-dark channels, arched roots,
-#                    herons, hanging light, something long and mossy
-#                    half-submerged and easy to miss
-# bg-station.webp  — abandoned 1970s research compound half-swallowed by
-#                    jungle: six pale prefab buildings, moss-loaded roofs,
-#                    knee-high yard growth, one tall rusted guyed antenna
-#                    mast leaning over it all, overcast pale light
-# bg-gullet.webp   — vast sea cave under an island: black water, smoothed
-#                    stone galleries, veins of dark glassy mineral glowing
-#                    faint teal in seven-beat pulses, one shaft of pale
-#                    light from far above, eerie and beautiful
-# bg-temple.webp   — half-drowned open-air stone temple high on a mountain
-#                    shoulder: carved spiral motifs, a black tidal pool
-#                    filling half the nave with faint teal glow, dusk light
-# bg-caldera.webp  — vast volcanic caldera seen from its shattered rim: a
-#                    hidden green valley two miles across, terraced gardens,
-#                    tree-woven roofs, spiral water channels, threads of
-#                    smoke in still air, morning light
+# (Second generation batch 2026-07-12, same style prefix.)
 # The fetch-tidebound-art GitHub workflow downloads these, converts them to
 # web-optimized WebP (backgrounds 1920w, portraits 512w), and commits them
 # into this folder. Filenames match what style.css / engine.js reference.
@@ -51,3 +23,10 @@ bg-cliff-camp.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MC
 bg-jungle-night.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_183205_0f274b91-68f4-4a6c-a271-3fdcfe60a852.png
 char-boarking.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_183209_267b3c12-582a-4368-9ccc-19e98ef5915c.png
 char-edda.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260711_183211_7e2fdd6d-2bc8-4918-9841-65f6ecc8a070.png
+bg-grove.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260712_055058_2709239b-08b5-464d-ac1b-09a38dd1cc57.png
+bg-river.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260712_055101_1a6c3384-db99-4ecc-be5d-e1fcd20fe49f.png
+bg-mangrove.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260712_055104_7255c324-038e-4d14-af26-22ec23b47a98.png
+bg-station.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260712_055116_0cd30a3c-a42e-4ed6-a751-0c42da1638c1.png
+bg-gullet.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260712_055123_64a4cde3-6610-425b-ad96-5fb43bfc7d36.png
+bg-temple.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260712_055125_62419668-a577-4bca-894c-451d0e037c95.png
+bg-caldera.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260712_055136_648ff182-421a-4400-98a5-45bd0250fc97.png

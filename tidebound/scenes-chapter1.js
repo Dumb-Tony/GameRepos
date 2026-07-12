@@ -410,8 +410,9 @@
         'And as the light goes long and gold, you realize you have company. You\'ve had company all along.',
         'They are all, in their various ways, present: ' + met.map((k) => COURTS[k].name).join('; ') + '. Wild lives, orbiting your small fire of a life these three days, each for their own reasons. Curious. Hungry. Lonely, maybe — you\'re projecting, probably — or maybe not.',
         'Trust, out here, is the most expensive thing you can build, and you only have the hours to build it once. If you give your scarce time to one of them — food you can\'t spare, patience you can\'t spare, days you can\'t spare — one of these lives might tie itself to yours. For good.',
+        TB.meta().runs > 0 ? '<em>(And — strange — the choosing feels rehearsed, like a step your feet already know. As if you have stood at this exact dusk before, and chosen, and lived whole lives on the far side of it. The feeling passes. The eyes wait.)</em>' : '',
         '<em>One.</em>',
-      ];
+      ].filter(Boolean);
     },
     choices: (s) => {
       const list = Object.keys(COURTS).filter((k) => s.met[k]).map((k) => ({

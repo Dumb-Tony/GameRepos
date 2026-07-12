@@ -180,11 +180,11 @@ body {
 .f-health { background: #e35d6a; } .f-hunger { background: #e0a558; }
 .f-thirst { background: #58aee0; } .f-energy { background: #b9d857; }
 .f-hope   { background: #d5a7e8; }
-#kitBtn {
+#kitBtn, #sndBtn {
   background: #ffffff1f; border: 1px solid #ffffff38; color: inherit;
   font-size: 16px; border-radius: 8px; padding: 3px 10px; cursor: pointer;
 }
-#kitBtn:hover { background: #ffffff33; }
+#kitBtn:hover, #sndBtn:hover { background: #ffffff33; }
 
 /* ===== VN panel ===================================================== */
 #stage {
