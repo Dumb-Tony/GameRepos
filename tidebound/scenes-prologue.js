@@ -21,7 +21,7 @@
       if (m.runs > 0) {
         const found = Object.keys(m.endings);
         const deaths = Object.values(m.deaths).reduce((a, b) => a + b, 0);
-        t.push('<span class="game-sub">🌀 The island remembers ' + m.runs + (m.runs === 1 ? ' life' : ' lives') + (deaths ? ' (' + deaths + ' kept forever)' : '') + ' · endings found: ' + found.length + '/14</span>');
+        t.push('<span class="game-sub">🌀 The island remembers ' + m.runs + (m.runs === 1 ? ' life' : ' lives') + (deaths ? ' (' + deaths + ' kept forever)' : '') + ' · endings found: ' + found.length + '/' + Object.keys(TB.CORES || {}).length + '</span>');
         if (found.length && TB.CORES) t.push('<span class="game-sub">' + found.map((id) => (TB.CORES[id] ? TB.CORES[id].icon + ' ' + TB.CORES[id].title : id)).join(' · ') + '</span>');
       }
       return t;

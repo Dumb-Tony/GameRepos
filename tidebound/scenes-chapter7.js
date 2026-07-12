@@ -60,6 +60,28 @@
           else c.push({ t: '🌊 Sail. Through the veil\'s one window, out, and away.', sub: kindred ? 'Two tickets. ' + NAMES[s.companion] + ' boards or it doesn\'t happen.' : 'The Long Swim — alone, the way you arrived.', do: () => { TB.state.endingId = kindred ? 'SAIL_BLESSED' : 'LONG_SWIM'; }, go: 'ending' });
         }
       }
+      // --- the Locked Things: endings unlocked by deep or secret play ---
+      const treasure = TB.is('TREASURE_SOME') || TB.is('TREASURE_ALL') || TB.is('GEMS');
+      if (treasure && (TB.is('VESSEL_READY') || TB.is('CONTACT_MADE') || TB.is('TIDEWELL_SILENCE'))) c.push({
+        t: '🪙 Leave RICH — the Rosa\'s gold, the cut stones, the whole ransom.', sub: 'The world out there prices everything. Arrive holding the prices.',
+        do: () => { TB.state.endingId = 'ROSAS_RANSOM'; }, go: 'ending' });
+      if (TB.is('OTHER_HEARD') && !TB.is('TIDEWELL_SILENCE')) c.push({
+        t: '📻 Stay — and answer the nine-beat station. Keep the archipelago\'s watch.', sub: '"There are more of us than two."',
+        do: () => { TB.state.endingId = 'OTHER_SIGNAL'; }, go: 'ending' });
+      if (TB.is('VISION_SEEN') && (TB.is('TIDEWELL_KEEP') || TB.is('TIDEWELL_WITNESS'))) c.push({
+        t: '🗿 Live as what the sea-speaker made you: a placed stone.', sub: 'The last mural was a mirror. Vessa-tau.',
+        do: () => { TB.state.endingId = 'FIRST_KAARI'; }, go: 'ending' });
+      if (!TB.is('TIDEWELL_SILENCE')) {
+        if (s.companion === 'nine' && s.trust >= 75) c.push({
+          t: '🐙 Stay for her springs — every one she has left.', sub: 'Octopuses are lanterns, not hearths. You always knew the shape of this route.',
+          do: () => { TB.state.endingId = 'THREE_SPRINGS'; }, go: 'ending' });
+        if (s.companion === 'kavi' && s.trust >= 90) c.push({
+          t: '🐕 Go where Kavi\'s other half lives. The pack.', sub: 'Where one of you goes, both of you go.',
+          do: () => { TB.state.endingId = 'LAST_PACK'; }, go: 'ending' });
+        if (s.companion === 'ipo' && s.trust >= 90) c.push({
+          t: '🐒 Let Ipo show you what he\'s been building in the canopy.', sub: 'He has been hinting for WEEKS.',
+          do: () => { TB.state.endingId = 'TRICKSTER'; }, go: 'ending' });
+      }
       if (!s.companion && TB.is('COCO')) c.push({ t: '🥥 …Run the whole plan past Coco first.', sub: 'He has been very patient.', do: () => { TB.state.endingId = 'COCO'; }, go: 'ending' });
       return c;
     },
@@ -144,8 +166,9 @@
 
   function epilogue(s, id) {
     const t = [];
-    const leaving = id === 'RESCUE' || id === 'SAIL_BLESSED' || id === 'RYO_BOAT' || id === 'LONG_SWIM';
-    if (s.companion && id !== 'COCO') {
+    const leaving = id === 'RESCUE' || id === 'SAIL_BLESSED' || id === 'RYO_BOAT' || id === 'LONG_SWIM' || id === 'ROSAS_RANSOM';
+    const companionCovered = id === 'THREE_SPRINGS' || id === 'LAST_PACK' || id === 'TRICKSTER'; // their cores ARE the companion's fate
+    if (s.companion && id !== 'COCO' && !companionCovered) {
       const c = s.companion;
       if (leaving && id !== 'SAIL_BLESSED' && id !== 'WHOLE_SKY') {
         t.push('— ' + ({ kavi: 'Kavi watches your boat from the tideline until it is nothing, and then — the pack has long since made its peace — turns inland, to the wild that always held his other half. Some nights, sailors becalmed off an uncharted sea swear they hear a dog singing.', ipo: 'Ipo inspects the boat, the horizon, and you — and delivers his verdict by climbing to the highest palm and NOT following. His island, his kingdom, his troop to run at last. The lighter, you find later, is in your pack. Paid in full.', vela: 'Vela escorts you to the reef gate and one mile beyond — further over open water than she has flown in years — and banks away at last in one wide, deliberate circle: the blind side, then the good eye, then gone. The account closes in credit. Hers.', buri: 'Buri cannot come — you know it, he knows it, and the last morning he leans his whole warm mass against you one final time and then, with the dignity of a king, does not watch you go. The homestead is his now. Heaven help anything that raids it.', moa: 'Moa you carry to Edda\'s grove yourself, the night before — the one goodbye you couldn\'t do at a tideline. The old woman takes the basket without a word, and the small copper hen stands on her wrist facing the sea, and between the two of them your leaving is, at last, permitted.', nine: 'Nine follows the hull out — you see her in the bow-wave glow, keeping pace, one long arm breaking the surface once in that unmistakable spiral — to the reef gate, and no further. Her whole world ends at that line. Yours, she has always known, never did. The last you see is the light of her, going down.' }[c]));
@@ -160,6 +183,10 @@
     if (TB.is('KING_ALLY') || TB.is('KING_FED')) t.push('— The Boar King holds the treaty to the end of his old age, and the inland dark holds it after him: nothing with tusks ever again crosses your boundary uninvited. Rent, it turned out, was a language. You both spoke it.');
     if (TB.is('HOME_NAMED') && !leaving) t.push('— ' + homeName() + ' outlives every plan you had for it. Names hold, on this island. The island heard you give it.');
     if (TB.is('INNER_GREEN') && leaving) t.push('— The Inner Green keeps your name in its counting songs: the first guest, who ate first, and left, and kept the secret whole. Naia\'s letters — carried out once a year by means she declines to explain — find you anywhere you live, forever.');
+    if (TB.is('SPONSORS_KNOWN') && (leaving || id === 'BROKER' || id === 'STAY_OPEN' || id === 'RESCUE')) t.push('— And you carry the dossier\'s cold gift everywhere: you know Meridian\'s name, and they don\'t know you know. When their surveyors come sniffing — and they come, they always come — you are, every time, three moves ahead of people who think they\'re hunting an anomaly instead of being watched by one\'s friend.');
+    if (TB.is('TREASURE_LEFT')) t.push('— The Rosa Dourada keeps her gold and her crew, undisturbed. You never once regretted the empty hands; the knowing where it sleeps turned out to be the whole treasure.');
+    else if ((TB.is('TREASURE_SOME') || TB.is('TREASURE_ALL')) && id !== 'ROSAS_RANSOM' && !leaving) t.push('— A dead ship\'s gold sits in a jar on your shelf, funding nothing, meaning everything: proof that on this island you finally learned the difference between what glitters and what keeps.');
+    if (TB.is('OTHER_HEARD') && id !== 'OTHER_SIGNAL' && !leaving) t.push('— And some nights, at the radio, in the skips: the nine-beat station, keeping her vigil across the hidden world. You are two lighthouses who know each other\'s light.');
     return t;
   }
 
@@ -168,6 +195,9 @@
     if (!TB.is('TIDEWELL_KEEP') && TB.regard() >= 4) roads.push('a covenant went untaken at a mountain pool');
     if (s.companion !== 'nine') roads.push('something in the tide pools watched a castaway who never looked twice');
     if (!TB.is('E_WING_OPEN') && TB.is('STATION_OPENED')) roads.push('a steel door in the east kept its room');
+    if (TB.has('case') && !TB.is('CASE_OPEN')) roads.push('a locked courier\'s case kept its answer to the end');
+    if (TB.is('CHART_ROSA') && !TB.is('ROSA_DONE')) roads.push('a marked wreck on the north reef kept two centuries of gold');
+    if (TB.is('LISTEN1') && !TB.is('OTHER_HEARD')) roads.push('something under the static waited for a second vigil that never came');
     if (!TB.is('INNER_GREEN')) roads.push('a hidden town fed its fires unvisited');
     if (!TB.is('CONTACT_MADE')) roads.push('a radio\'s four-second window opened for no one');
     if (s.companion) roads.push('five other wild lives waited at a clearing that only ever chose one');

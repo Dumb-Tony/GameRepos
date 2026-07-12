@@ -30,3 +30,6 @@ bg-station.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1
 bg-gullet.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260712_055123_64a4cde3-6610-425b-ad96-5fb43bfc7d36.png
 bg-temple.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260712_055125_62419668-a577-4bca-894c-451d0e037c95.png
 bg-caldera.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260712_055136_648ff182-421a-4400-98a5-45bd0250fc97.png
+char-ryo.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260712_210159_73ee2163-6fa8-4776-b7fd-33d841f681fc.png
+char-naia.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260712_210203_732bfc2e-8d14-4037-84d8-36f5c4777610.png
+char-tekau.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260712_210207_78ec7e2d-bbe8-4a92-b55d-063abe7dd4e9.png

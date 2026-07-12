@@ -12,7 +12,7 @@
 
   const NAMES = { kavi: 'Kavi', ipo: 'Ipo', vela: 'Vela', buri: 'Buri', moa: 'Moa', nine: 'Nine' };
   const EDDA = { emoji: '👵', name: 'Edda Voss', art: 'char-edda' };
-  const RYO = { emoji: '⛵', name: 'Ryo Nakata' };
+  const RYO = { emoji: '⛵', name: 'Ryo Nakata', art: 'char-ryo' };
 
   function campBg2(s) {
     if (s.site === 'fringe') return 'camp-fringe';
