@@ -6,6 +6,11 @@
 This GDD is split into twelve documents so it can double as the production bible when
 scripting and coding begin. Read them in order the first time; afterwards each stands alone.
 
+> **The game is now built.** Start with
+> [`00-state-of-the-game.md`](00-state-of-the-game.md) — the resumption document:
+> what's implemented vs. designed, code conventions, balance targets, the voice
+> guide, and the roadmap. The docs below remain canonical for vision and lore.
+
 ## Design pillars (the five laws)
 
 Every mechanic, scene, and line of dialogue must serve at least one of these, and no

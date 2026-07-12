@@ -1,0 +1,187 @@
+# 00 · State of the Game — the Resumption Document
+
+> **Purpose:** if the chat that built this game is ever lost, this document — together
+> with the twelve design docs that follow it — is everything needed to pick up
+> Tidebound with the same vision. It records what is BUILT (and how), where it
+> deviates from the original design, the code and writing conventions, and the
+> roadmap in priority order. Last updated: **2026-07-12**, after PR #5.
+
+## 1. Project snapshot
+
+- **Live game:** https://dumb-tony.github.io/GameRepos/tidebound/ (GitHub Pages, serves `main`)
+- **Repo:** `Dumb-Tony/GameRepos`, game in `tidebound/`, design bible in `tidebound/design/`
+- **Dev branch:** `claude/island-survival-vn-design-3iyhzk` — reset onto `origin/main` after every merge; work merges to main via PR (owner's standing permission)
+- **Merged PRs:** #2 complete game · #3 art/memory/audio-v1 · #4 CLAUDE.md · #5 soundscape + TAB menu
+- **Status:** playable start to finish (Prologue + 7 chapters, ~60–90 min/run), 26 art assets, full synthesized soundscape, in-game menu with save slots, cross-run memory
+- **Art generation:** Higgsfield MCP → Recraft V4.1, ~156 credits used of 1336. Owner has approved using credits for game assets.
+
+## 2. As built vs. as designed (the honest diff)
+
+The design docs (01–12) describe the *full* game. The shipped v1 is a faithful but
+compressed realization. Deviations a resuming developer must know:
+
+| Designed | Built | Notes |
+|---|---|---|
+| ~100 in-game days | **34 days** (Ch1 d1–3 · Ch2 d4–9 · Ch3 d10–15 · Ch4 d16–21 · Ch5 d22–28 · Ch6 d29–33 · Ch7 d34) | Chapter *content* kept; day counts compressed. Expanding day ranges is pure tuning if desired. |
+| 49 endings | **14 implemented** (ids: RESCUE, STAY_OPEN, BROKER, HOME, VILLAGE, JOIN, KEEPER, COVENANT, TWO_WORLDS, SAIL_BLESSED, RYO_BOAT, LONG_SWIM, WHOLE_SKY, COCO) + 6 death endings (thirst, hunger, injury, undertow, fever, grin) | Remaining 35 are the roadmap's top item; see design/09. Ending engine is parameterized — new endings = new CORES entry + convergence choice mapping. |
+| Trust 0–100, 5 tiers, per-companion | ✅ As designed (`s.trust`, `TB.tier()`), plus `s.edda` and `s.ryo` human-relationship tracks | Never shown as numbers; behavioral text only. |
+| Route points Signal/Roots/Depth | ✅ As designed (`s.route`) — steer Ch5 variant choice framing + Convergence options | |
+| Island Regard | **`TB.regard()`** — computed from ~8 mercy/restraint/bond flags rather than a running counter | Gates Inner Green admission (≥4) and the keeper covenant. |
+| Random event tables per region | **Scheduled events only** (`TB.SCHEDULE`: day/segment/when-clause) | Random tables are roadmap item 3. |
+| Crafting tree (~70 recipes) | **Abstracted into camp actions** (shelter tiers 0–3, fire 0–1, food stores counter) | Full crafting is a possible later system; don't add without owner ask. |
+| Collectibles (75) + almanac | **Glyph stones only** (3, as flags GLYPH1–3) | Roadmap item 4. |
+| NG+ "Driftwood Loops" | **Cross-run memory v1**: `tidebound.meta.v1` records runs/endings/deaths; title gallery (X/14); déjà-vu lines in `falling` and `clearing` | Keepsake carry, X3 The Loop ending, run modifiers = roadmap. |
+| Nine = secret companion | ✅ Tide pools twice before Day 3 | |
+| Solo route | ✅ Full: Coco arc (COCO flag chain), ev2_solo, X4-style content folded into epilogues | |
+| Companion-exclusive quests (design/03) | **Partial**: heart scenes I (Ch2 d8) & II (Ch3 d14), station beats (Ch4 d19), fear-arc peaks (Ch2 storm, Ch5 cyclone), toll crossings (Ch3) | The named exclusive quests (Troop Politics, The High Nests, etc.) are roadmap. |
+
+Everything else — companions' personalities/fears/loyalty arcs, Edda, Ryo, Naia,
+Tekau, the Boar King and Old Grin, Halcyon/Vane/the Incident, the Hum/heartglass
+lore, the Tidewell's meaning — is implemented as designed and the design docs
+remain canonical for tone and facts.
+
+## 3. Technical architecture (read before touching code)
+
+**Stack:** plain HTML/CSS/JS, zero dependencies, no build step. Files:
+`index.html` · `style.css` · `engine.js` (core) · `audio.js` (soundscape) ·
+`menu.js` (TAB menu) · `scenes-prologue.js` · `scenes-chapter1..7.js`.
+Global namespace `window.TB`. Cache-bust query `?v=N` on every asset — bump on release.
+
+**Scene format** (registered via `TB.scene(id, def)`):
+```js
+{ bg: 'beach-day'|fn(s),        // backdrop class bg-<name>; drives art + ambience
+  hud: false,                    // hide HUD (title/death only)
+  who: {emoji,name,art?}|fn(s),  // portrait; art overrides the emoji->file map
+  enter: fn(s),                  // MUST be reload-safe: guard with a flag
+  text: [..]|fn(s)->[..],        // paragraphs; NEVER put effects in text fns
+  choices: [..]|fn(s)-> [{t,sub,if,do,go}],
+  next: 'id'|fn(s), nextLabel }  // linear scenes
+```
+**The three iron conventions** (violations caused every real bug so far):
+1. All effects in choice `do` / `next` handlers or **flag-guarded** `enter` — never in `text` (text re-runs on reload).
+2. Camp actions stash `s.out = {bg, text, go?}` then `go:'act_result'`; `act_result.next` = `s.out.go || TB.advance()`.
+3. Nothing may call `TB.is()`/`TB.state` at script load time — only inside functions (static choice arrays are evaluated at load!).
+
+**Time & flow:** day/segment clock (Dawn/Day/Dusk/Night), `TB.tickSegment()` applies
+metabolic ticks (monsoon rates when `chapter===5`), `TB.advance()` routes: death →
+scheduled event (`TB.SCHEDULE`, one-shot via `s.fired`) → chapter thresholds → night
+→ camp. Ch1 uses `camp`/`night`; Ch2–5 `camp2`/`night2` (hub extended via the
+`TB.ch3Actions` decorator chain); Ch6–7 are linear chains with explicit ticks.
+
+**State:** `TB.state` — stats {health,hunger,thirst,energy,hope}, chapter/day/seg,
+site (beach|fringe|overhang), trust/edda/ryo, route {signal,roots,depth}, plan
+(sea|home|deep), inv, flags (the Ledger — write-once booleans, never GC'd),
+companion, disease/injury, endingId. Autosave per scene to localStorage
+`tidebound.save.v1` (skipped on title); manual slots `tidebound.slot1..3`; cross-run
+`tidebound.meta.v1`; settings `tidebound.settings` + master mute `tidebound.snd`.
+`loadSave()` migrates old saves — add defaults there when adding state fields.
+
+**Art pipeline (important — sandbox egress is blocked to the CDN):** generated art
+lives ONLY in flat `tidebound/art/`, referenced by filename. To add art: generate
+via Higgsfield MCP (style prefix: *"Painterly stylized visual novel background art,
+textured gouache brushwork, cinematic wide composition, soft volumetric light, no
+people, no text, no watermark"* — Recraft V4.1, 2k 16:9 backgrounds / 1k 1:1
+portraits), append `name.webp|rawUrl` to `art/manifest.txt`, push — the
+`fetch-tidebound-art` workflow downloads/optimizes/commits (bg 1920w q82, char 512w
+q85). Backdrops: CSS class `.bg-<name> .art {background-image}` over painted-CSS
+fallback layers. Portraits: emoji→file map in engine + `who.art` override.
+**Never download art in the sandbox; never Read image files into context.**
+
+**Audio (`audio.js`):** all synthesized. Continuous layers (surf/wind/rain/river)
+crossfade via `mixFor(bg, state)`; a 260ms scheduler sprinkles one-shots (birds dawn,
+cicadas dusk, crickets/frogs night, gulls, drips, fire, thunder in Ch5) and renders
+the **seven-beat hum** (7 low pulses + rest) where the lagoon glows. Animal calls in
+`CALLS`, triggered per scene entry from portraits (engine's `animalCallFor`).
+Everything try/catch'd; starts on first gesture; honors settings + mute.
+
+**Testing:** headless Chromium (playwright-core, executablePath
+`/opt/pw-browsers/chromium-1194/chrome-linux/chrome`). Two harnesses (session
+scratchpad, not committed): a strategy smoke suite and a "sane policy" driver
+(drink<55/eat<45/rest<30, else random; **must prefer 'Continue —' buttons at end
+cards or it restarts the game**). Green bar: 6 seeds reach endings or die honestly,
+zero pageerrors/crash-banner. The crash banner shows scene id on any TB.go throw.
+
+## 4. Ledger flags that matter downstream (selection)
+
+Prologue: BRACED/HELPED_COURIER/SAW_ISLAND, SALV_* (5), BG_* (4) ·
+Ch1: companion + interest, DIVED, FLARE_SPENT/HELD, SOS, SOLO_ROUTE ·
+Ch2: SITE_*, NEST_BOX, KING_TRACKED/WALLED/TITHED, STORM_*, MOA_BOLTED/FOUND,
+SMOKE_NOW/LATER/IGNORED, HEART1_* · Ch3: EDDA_MET/GROVE_OPENED, edda lore stages,
+SALVE, FEVER_*, RIVER_KNOWN, GLYPH1-3, KING_SYMPATHY/KING2, GRIN_MET/SCOUTED,
+GRIN_<method>, EAST_OPEN, HEART2_*, IPO_KEY, SHIP_PHOTO · Ch4: STATION_OPENED,
+VANE_J1-3, DRAWER_KNOWN, E_WING_OPEN, TRANSMITTER/WIRE/FUEL, RADIO_STAGED, RECORDER,
+RYO_MET (signal≥5 at d18), INCIDENT_FILES/FILES_BURNED/FILES_TO_EDDA, GULLET_MAP,
+COMP4 gifts (DRILL_ROAD, VANE_FILM, TRAILER, SEEDS, KAVI_WARNING) ·
+Ch5: plan, RADIO_DONE, WINDOW_PLAN, CONTACT_MADE, VESSEL_READY, FARM, FLOOD_*,
+KING_FED/KING_ALLY/KING_REFUSED, GULLET1-2, SUNDERING_SEEN, WOUND_SEEN, NAIA_MET,
+CYCLONE flags (VELA_MANTLED, KAVI_FIRE_NIGHT), EDDA_WINTER/TENDED, INNER_INVITED,
+NAIA_TRUSTED/TERMS, HOME_NAMED + NAME_* · Ch6: TEMPLE_SEEN, TREMORS, INNER_GREEN/
+INNER_PROBATION/RIM_ONLY, TIDEWELL_SILENCE/FEED/KEEP/WITNESS ·
+Meta: META_RECORDED, META_K_* (per-ending/death).
+
+## 5. Balance targets (don't retune casually — these survived playtesting)
+
+Ticks/segment: hunger −6 (−8 monsoon), thirst −6 (overhang −8, monsoon −3),
+energy −3/−4; injury −2 health, fever −1 health + energy cap 55. Coconuts +30/34
+thirst; river +40. Night energy floor 45 + shelter×11 + fire×8. Trust: init
+18+interest×5 (cap 45); tend +5, abilities +2, heart scenes +10; gates at 50
+(heart I quality, toll crossings) and 75 (heart II). Deaths must always trace to
+ignored warnings, never to RNG.
+
+## 6. Roadmap (priority order — the vision for what's next)
+
+1. **More endings** toward the designed 49 (design/09): first the secret set (X1
+   First Kaari via glyphs+temple, X2 Rosa's Ransom — needs the treasure wreck &
+   courier-case payoff content, X5 The Other Signal via CONTACT_MADE listening), the
+   remaining companion finales (C1 Last Pack, C3 Trickster's Crown, C8 Three Springs
+   with Nine's lifespan), and death-category expansion (D3/D4 despair & cave).
+2. **Courier case payoff** — it's salvageable, Edda recognizes the crest
+   (CASE_EDDA), Nine can retrieve it, but it never opens. Design intent: three
+   opening methods, contents tie to Halcyon's sponsors + X2.
+3. **Random event tables** per region/season with anti-repeat memory (design/08),
+   incl. the rare wonder events (green flash, turtle hatching, whale migration).
+4. **Collectibles & almanac** (design/10-11): remaining 27 glyph stones w/ lore
+   text, Vane's 24 journal pages as findables, species almanac.
+5. **NG+ full "Driftwood Loops"** (design/10): keepsake carry, X3 The Loop, run
+   modifiers, Kaari recognition of loopers.
+6. **Expand day counts** toward the designed 100 (more free days per chapter,
+   more events to fill them) — only with more event content, else it pads.
+7. Optional: generated ambience/music via Higgsfield `generate_audio` to layer
+   over/replace synth; more portrait art (Ryo, Naia, Tekau — currently emoji).
+
+## 7. Voice & style guide (the part that's hardest to recover)
+
+- **Prose:** second person, present tense. Long sentences that land on short ones.
+  Em-dashes for breath, italics (`<em>`) for the word that matters. The island is
+  always slightly personified but NEVER speaks. Humor is dry, observational, kind —
+  never snarky at the player. Emotional peaks earn their length; survival beats stay
+  brisk.
+- **Choices:** every option has a real upside and a real price shown or implied in
+  the `sub`. No "correct" answers. Costs surface within two chapters. The game never
+  says "+5 trust" — feedback is behavioral.
+- **Characters in one line each:** Kavi = grief become loyalty (fears fire).
+  Ipo = loneliness performing (fears dark). Vela = love as bookkeeping (fears
+  storms). Buri = devotion without brakes (fears abandonment). Moa = courage as
+  refusal (fears storms, arc inverts). Nine = attention as love, mortality as
+  shadow (bound to water). Edda = tenderness sideways, insults as affection.
+  Ryo = Signal personified, warmth deflecting grief. Naia = discipline losing to
+  curiosity. The Boar King = veteran, not monster. Old Grin = toll, not villain.
+- **Lore rules:** the Hum is 90% explicable (heartglass piezo + tides), the last
+  10% stays ajar forever. "Tend the skin." The Kaari went IN. Endings resolve
+  emotionally, never explain completely.
+- **Endings:** core card + epilogue paragraphs assembled from the run's actual
+  Ledger + "The Ledger Opens" report naming roads not taken. Tone tags from
+  design/09 (🌅🍂🌑🌀😂).
+
+## 8. Working agreements (also in /CLAUDE.md)
+
+After EVERY work session: merge via PR (standing permission), reset the dev branch
+onto main, and **post the live link in chat**: https://dumb-tony.github.io/GameRepos/tidebound/
+
+## 9. How to resume from nothing
+
+Give a fresh assistant: this file (or the repo), then say what you want built next.
+The repo is the source of truth — `tidebound/design/` for vision, this doc for
+state, the scene files themselves for voice reference (court_* scenes and the
+heart scenes are the best style calibration). Verify changes with a headless-
+Chromium full-run driver before merging; the game must always be completable.
