@@ -1,0 +1,45 @@
+name: Fetch brand assets
+
+# Downloads the Dirty Boy Devs brand assets listed in brand/manifest.txt
+# (3D mascot GLB, logo/reference renders) and commits them into brand/ on
+# the branch the workflow runs on. Same pattern as fetch-tidebound-art:
+# the files live on a CDN the authoring sandbox cannot reach, so CI does
+# the one-time fetch. Files are committed verbatim under the manifest
+# name — no conversion — so binary formats like .glb survive intact.
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'brand/manifest.txt'
+      - '.github/workflows/fetch-brand-assets.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download brand assets
+        run: |
+          set -euo pipefail
+          cd brand
+          while IFS='|' read -r name url; do
+            case "$name" in ''|\#*) continue ;; esac
+            echo "== $name"
+            curl -fsSL --retry 3 --retry-delay 2 -o "$name" "$url"
+          done < manifest.txt
+          ls -la
+
+      - name: Commit assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add brand
+          git diff --cached --quiet && echo "nothing new" || {
+            git commit -m "Add Dirty Boy Devs brand assets (fetched from brand manifest)"
+            git push
+          }

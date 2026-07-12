@@ -1,0 +1,10 @@
+# Dirty Boy Devs brand assets — name|url, fetched verbatim by
+# .github/workflows/fetch-brand-assets.yml on push (sandbox egress
+# cannot reach the CDN, so CI downloads and commits these).
+# dirty-boy-mascot.glb is committed directly (the Meshy bake smeared the
+# back print, so the correct emblem was baked into the texture atlas by
+# hand) — do not add a manifest line for it or CI will overwrite it.
+dirty-boy-front.png|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260712_204253_c123e4d6-0394-41f5-9ab5-098ef9b37fbf.png
+# dirty-boy-back.png is committed directly (locally composited with the
+# corrected logo) — do not add a manifest line for it or CI will overwrite it.
+dirty-boy-devs-logo.png|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260712_205337_ad5363df-eafc-4e04-84ce-8fb56182b7f1.png
