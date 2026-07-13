@@ -395,8 +395,14 @@ body {
 }
 
 /* ===== the wayfinder (chart, rendered inside the panel) ============= */
-#mapWrap { display: block; max-width: 520px; margin: 2px auto 0; }
-#mapSvg { width: 100%; height: auto; display: block; border-radius: 10px; border: 1px solid #ffffff24; }
+#mapWrap { display: block; max-width: 460px; margin: 2px auto 0; }
+/* the chart needs headroom: while it's on screen the text block keeps its
+   natural height (no flex squeeze from the long region list) and the panel
+   grows; the choices scroll in whatever remains */
+#panel:has(#mapWrap) { max-height: 88vh; max-height: 88dvh; }
+#panel:has(#choices button):has(#mapWrap) #textLog,
+#panel:has(#mapWrap) #textLog { max-height: none; flex: 0 0 auto; }
+#mapSvg { width: 100%; height: auto; aspect-ratio: 440 / 320; display: block; border-radius: 10px; border: 1px solid #ffffff24; }
 .mapReg { cursor: pointer; }
 .mapReg ellipse { fill: #04101a66; stroke: #ffe9b866; stroke-width: 1.5; transition: fill .15s, stroke .15s; }
 .mapReg:hover ellipse { fill: #2fe0c930; stroke: #2fe0c9; }
@@ -481,4 +487,11 @@ body {
   #portrait { margin: 0 0 6px 4px; padding: 4px 10px 4px 6px; }
   #portraitImg { width: 56px; height: 56px; }
   #portraitEmoji { font-size: 30px; }
+}
+
+/* phones: the chart still outranks the tight dialogue cap */
+@media (max-width: 560px) {
+  #panel:has(#mapWrap) { max-height: 92vh; max-height: 92dvh; }
+  #panel:has(#choices button):has(#mapWrap) #textLog,
+  #panel:has(#mapWrap) #textLog { max-height: none; flex: 0 0 auto; }
 }

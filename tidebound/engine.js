@@ -278,7 +278,7 @@
     if (typing) { finishTyping(); return; } // a click completes the line first
     if (!queue.length) return;
     const log = $('textLog');
-    for (const p of log.children) p.classList.add('faded');
+    for (const p of log.children) if (!p.querySelector('#mapWrap')) p.classList.add('faded'); // the chart never dims
     const html = queue.shift();
     const p = document.createElement('p');
     log.appendChild(p);
