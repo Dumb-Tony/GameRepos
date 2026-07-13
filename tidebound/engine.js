@@ -329,6 +329,7 @@
     const s = TB.state;
     s.scene = id;
     currentDef = def;
+    if (TB.Almanac) { try { TB.Almanac.note(id, s); } catch (e) {} } // field almanac sightings
     if (def.enter) def.enter(s);
     if (s.deathCause && id !== 'death' && id !== 'title') { TB.go('death'); return; }
     if (id === 'ending' && s.endingId) TB.recordEnd('ending', s.endingId);
@@ -411,6 +412,7 @@
     $('sndBtn').textContent = TB.Audio.muted() ? '🔇' : '🔊';
     window.addEventListener('pointerdown', function once() { TB.Audio.kick(); window.removeEventListener('pointerdown', once); });
     TB.Menu.init();
+    if (TB.Almanac) TB.Almanac.init();
     $('kitClose').addEventListener('click', () => $('kitOverlay').classList.add('hidden'));
     $('kitOverlay').addEventListener('click', (e) => { if (e.target.id === 'kitOverlay') e.target.classList.add('hidden'); });
     window.addEventListener('keydown', (e) => { if ((e.key === ' ' || e.key === 'Enter') && (queue.length || typing)) { e.preventDefault(); showNextParagraph(); } });

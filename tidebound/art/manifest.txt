@@ -33,3 +33,14 @@ bg-caldera.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1
 char-ryo.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260712_210159_73ee2163-6fa8-4776-b7fd-33d841f681fc.png
 char-naia.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260712_210203_732bfc2e-8d14-4037-84d8-36f5c4777610.png
 char-tekau.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260712_210207_78ec7e2d-bbe8-4a92-b55d-063abe7dd4e9.png
+char-grin.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260713_060614_b84813e5-dfae-4f58-9ab9-ca1980840d88.png
+char-hawk.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260713_060618_0a24a282-a4c8-4cb0-91c8-870d3eba856d.png
+char-heron.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260713_060623_f1ae4a7c-54bb-44c4-aa4e-58a0336d1989.png
+char-whale.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260713_060626_61a83bd1-8578-4783-a09d-bc2dc266a47f.png
+char-turtle.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260713_060636_363c2f0a-f815-46e9-98a0-33efcc8c64fd.png
+char-crab.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260713_060643_510e41dc-c4d7-4b48-8939-67fde5f726e3.png
+char-rooster.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260713_060646_b31b3881-926a-4444-8198-e095e6a50378.png
+char-moray.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260713_060648_9d5ce5f1-f7c5-4123-a15f-91f0551e9c17.png
+char-tern.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260713_060700_ce516e03-483e-4e1f-8d54-2753082e0569.png
+char-snake.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260713_060702_12b346a1-6fbf-4677-8e91-ee4a9903d4c5.png
+char-hornbill.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260713_060709_c75fc3f2-2a9f-43e0-a2ba-2f5622604a98.png

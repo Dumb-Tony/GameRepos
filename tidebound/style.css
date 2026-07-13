@@ -394,6 +394,46 @@ body {
   font-size: 13px; font-family: system-ui, sans-serif;
 }
 
+/* ===== field almanac =============================================== */
+#almOverlay {
+  position: fixed; inset: 0; z-index: 13; background: #020a12cc;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+#almOverlay.hidden { display: none; }
+#almCard {
+  background: #071726; border: 1px solid #ffffff33; border-radius: 16px;
+  padding: 22px 26px; max-width: 680px; width: 100%; max-height: 86vh;
+  display: flex; flex-direction: column;
+}
+#almCard h2 { font-size: 17px; margin-bottom: 6px; color: #ffe9b8; }
+#almCounts { font-family: system-ui, sans-serif; font-size: 12px; opacity: .6; margin-bottom: 10px; }
+#almTabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+#almTabs button {
+  font: inherit; font-family: system-ui, sans-serif; font-size: 13px; color: inherit; cursor: pointer;
+  background: #ffffff14; border: 1px solid #ffffff30; border-radius: 8px; padding: 5px 12px;
+}
+#almTabs button.sel { background: #2fe0c92e; border-color: #2fe0c966; }
+#almBody { overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1; min-height: 0; }
+.almRow { display: flex; gap: 12px; align-items: flex-start; padding: 9px 4px; border-bottom: 1px solid #ffffff12; }
+.almRow.almDim { opacity: .55; }
+.almThumb { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; border: 1px solid #ffffff2e; flex-shrink: 0; }
+.almEmoji { width: 52px; height: 52px; border-radius: 10px; background: #ffffff0d; border: 1px solid #ffffff1f;
+  display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; }
+.almName { font-size: 15px; color: #ffe9b8; margin-bottom: 2px; }
+.almDim .almName { color: inherit; font-style: italic; }
+.almText { font-size: 13.5px; line-height: 1.5; opacity: .88; }
+.almDone { margin: 14px 4px 4px; padding: 12px 14px; border: 1px solid #2fe0c94d; border-radius: 12px;
+  background: #2fe0c914; font-size: 14px; line-height: 1.55; }
+.almDone em { color: #9ff5d9; }
+#almClose {
+  margin-top: 14px; align-self: flex-end; font: inherit; color: inherit; cursor: pointer;
+  background: #ffffff1f; border: 1px solid #ffffff38; border-radius: 8px; padding: 7px 16px;
+  font-size: 13px; font-family: system-ui, sans-serif;
+}
+@media (max-width: 560px) {
+  .mBtns { flex-wrap: wrap; gap: 8px; }
+}
+
 /* ===== small screens =============================================== */
 @media (max-width: 560px) {
   /* HUD becomes two rows: [clock ..... buttons] / [all five meters] */

@@ -55,7 +55,16 @@ hard|silent|kind|chaos), `keepsake` (offered at endings), `ev_loop` grotto journ
 (SCHEDULE d11 s1, NG+ only → LOOP_KNOWN → convergence gate → ending LOOP).
 Modifier teeth: engine tickSegment (kind ×0.6 drains, hard = monsoon from ch4),
 scenes-extra randomEvent (chaos 0.36 roll + rare ×3), ch1 clearing (silent = solo
-only)) · `scenes-prologue.js` · `scenes-chapter1..7.js`.
+only)) · `almanac.js` (Field Almanac, store `tidebound.almanac.v1` {seen, got},
+CROSS-RUN by design: 25 species (18 with art incl. 11 new portraits; 7 "impossible"
+Hum-lore entries masked as 🌀 dots until found) + 4 collectible sets — 10 glyph
+stones (3 temple GLYPH + 7 STONE finds), 8 Vane pages (3 VANE_J + 5 PAGE finds),
+6 Edda recipes (flag predicates), 9 photograph FRAGments (the courier's story).
+Engine `_go` calls `TB.Almanac.note(sceneId)` for sightings + banks at
+ending/death; finds arrive via scenes-extra POOL events rev_glyphstone /
+rev_vanepage / rev_photofrag using reload-guarded `grantFor` (state.lastGrant).
+Overlay: 📔 menu button, 5 tabs, set-completion lore cards.) ·
+`scenes-prologue.js` · `scenes-chapter1..7.js`.
 Global namespace `window.TB`. Cache-bust query `?v=N` on every asset — bump on release.
 
 **Scene format** (registered via `TB.scene(id, def)`):

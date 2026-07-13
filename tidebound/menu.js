@@ -116,6 +116,7 @@
       $('mText').addEventListener('input', (e) => setSetting({ tsize: +e.target.value }));
       $('mType').addEventListener('change', (e) => setSetting({ type: e.target.checked }));
       $('menuLog').addEventListener('click', () => { Menu.close(); showBacklog(); });
+      $('menuAlm').addEventListener('click', () => { Menu.close(); if (TB.Almanac) TB.Almanac.open(); });
       $('logClose').addEventListener('click', () => $('logOverlay').classList.add('hidden'));
       $('logOverlay').addEventListener('click', (e) => { if (e.target.id === 'logOverlay') e.target.classList.add('hidden'); });
       buildSwatches('mThemes', THEMES, 'theme');

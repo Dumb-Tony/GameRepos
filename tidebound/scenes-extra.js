@@ -227,6 +227,10 @@
     { id: 'rev_orchid', w: 1.5, when: (s) => TB.is('EDDA_MET') && !TB.is('REV_ORCHID') },
     { id: 'rev_compidle', w: 4, when: (s) => !!s.companion },
     { id: 'rev_humflicker', w: 1, when: (s) => s.seg === 2 && !TB.is('REV_HUM') },
+    // collectible finds (almanac.js sets) — eligible only while the set has gaps
+    { id: 'rev_glyphstone', w: 1.2, when: (s) => s.chapter >= 2 && TB.Almanac && TB.Almanac.remaining(s, 'stones') },
+    { id: 'rev_vanepage', w: 1.2, when: (s) => s.chapter >= 4 && TB.is('STATION_OPENED') && TB.Almanac && TB.Almanac.remaining(s, 'pages') },
+    { id: 'rev_photofrag', w: 1.4, when: (s) => TB.has('photo') && TB.Almanac && TB.Almanac.remaining(s, 'frags') },
     // rare wonders — once per run, low weight
     { id: 'rev_greenflash', w: 0.5, rare: true, when: (s) => s.seg === 2 },
     { id: 'rev_hatching', w: 0.5, rare: true, when: (s) => s.chapter >= 3 },
@@ -254,6 +258,47 @@
   };
 
   const rev = (id, def) => { def.next = def.next || ((s) => backToCamp(s)); TB.scene(id, def); };
+
+  // ---- collectible finds (grants are reload-guarded inside Almanac.grantFor) ----
+  rev('rev_glyphstone', {
+    bg: (s) => pick(['jungle', 'tidepools', 'river']),
+    enter: (s) => { if (TB.Almanac) TB.Almanac.grantFor(s, 'stones'); },
+    text: (s) => {
+      const g = s.lastGrant || {};
+      return [
+        pick(['Your foot finds it before your eyes do: a worked stone, palm-flat, half-swallowed by roots, its face cut with the old strokes.', 'The tide has turned something over in the night — a stone that was shaped by hands, its carved face washed clean and waiting.', 'It sits in the streambed like it grew there, but stones do not grow strokes. You lift it dripping into the light.']),
+        g.key ? 'The marks resolve the way the temple taught you to let them: <em>' + g.name + '.</em>' : 'The strokes are familiar now — a stone you have already read, in this life or another. You set it back with respect.',
+        g.line ? '<em>' + g.line + '</em>' : '',
+        'You copy the strokes into the Ledger before you set the stone back where the island filed it. (📔 The almanac keeps the rubbing — across every life.)',
+      ].filter(Boolean);
+    },
+  });
+  rev('rev_vanepage', {
+    bg: 'station',
+    enter: (s) => { if (TB.Almanac) { TB.Almanac.grantFor(s, 'pages'); TB.route('signal', 1); } },
+    text: (s) => {
+      const g = s.lastGrant || {};
+      return [
+        pick(['Behind a drawer that never quite closed, folded into the runner\'s gap: paper. Vane\'s hand.', 'The wind has worked a page loose from somewhere in the station\'s bones and pinned it, flapping, against the mess-hall screen.', 'A rusted specimen tin, and inside, dry as the day it was hidden: a page.']),
+        g.key ? '<em>' + g.name + '.</em>' : 'A page you have read before. You leave it for the next pair of hands.',
+        g.line || '',
+        'You file it with the others. (📔 The almanac keeps the pages — across every life.)',
+      ].filter(Boolean);
+    },
+  });
+  rev('rev_photofrag', {
+    bg: (s) => pick(['beach-day', 'beach-dusk']),
+    enter: (s) => { if (TB.Almanac) { TB.Almanac.grantFor(s, 'frags'); TB.stat('hope', 2); } },
+    text: (s) => {
+      const g = s.lastGrant || {};
+      return [
+        'You take the courier\'s photograph out again — sun, salt, and the crash have been eating it since Day 1, and today another piece has silvered into legibility under your thumb, the emulsion giving up its secret at the exact rate the island gives up everything: slowly, and only to the patient.',
+        g.key ? '<em>' + g.name + '.</em>' : 'You study the pieces you already have, and put it away gently.',
+        g.line || '',
+        '(📔 The almanac keeps the fragments. Somewhere in them, a whole picture.)',
+      ].filter(Boolean);
+    },
+  });
 
   rev('rev_drift', { bg: 'beach-day', text: (s) => {
     const finds = [
