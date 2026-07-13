@@ -5,3 +5,7 @@ package-lock.json
 
 # Scratch/working files (screenshots, harness scripts, etc.)
 scratchpad/
+
+# playwright test screenshots (suites sometimes run with cwd at repo/game root)
+*.png
+!tidebound/art/*.png
