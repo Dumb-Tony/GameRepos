@@ -1,5 +1,5 @@
 /* =====================================================================
- * scenes-chapter2.js — Chapter Two: Foothold (Days 4–9).
+ * scenes-chapter2.js — Chapter Two: Foothold (Days 6–18).
  * Base-site threshold, the trust system made real, companion abilities,
  * the Boar King's raid, the first storm (with companion fear arcs),
  * the smoke inland, and the chapter-ending Smoke threshold.
@@ -33,7 +33,7 @@
     bg: 'beach-day',
     enter: (s) => {
       if (s.chapter >= 2) return; // reload guard
-      s.chapter = 2; s.day = 4; s.seg = 0;
+      s.chapter = 2; s.day = 6; s.seg = 0;
       if (s.companion && !TB.is('TRUST_INIT')) {
         s.trust = TB.clamp(18 + (s.interest[s.companion] || 0) * 5, 0, 45);
         TB.flag('TRUST_INIT');
@@ -43,7 +43,7 @@
       const c = s.companion;
       return [
         '<em>CHAPTER TWO — FOOTHOLD</em>',
-        'Day four dawns different. Not easier — different: the difference between falling and standing somewhere. You have fire' + (s.fire ? '' : ' — well, you\'ve had fire, and will again') + ', a roof of sorts, three days of hard schooling, and ' + (c ? NAMES[c] + ', watching you wake with the expression of a colleague waiting on a decision.' : 'nobody to consult but yourself, which at least keeps meetings short.'),
+        'Day six dawns different. Not easier — different: the difference between falling and standing somewhere. You have fire' + (s.fire ? '' : ' — well, you\'ve had fire, and will again') + ', a roof of sorts, five days of hard schooling, and ' + (c ? NAMES[c] + ', watching you wake with the expression of a colleague waiting on a decision.' : 'nobody to consult but yourself, which at least keeps meetings short.'),
         'And a decision is due. The crash beach was where you washed up, not where you chose. If this is going to be a <em>camp</em> — a base, a foothold, the address of your survival — it\'s time to pick the ground on purpose. You\'ve scouted three candidates.',
         'Each is a bargain. None is safe.',
       ];
@@ -318,16 +318,16 @@
 
   // ---- Chapter 2 scheduled events ---------------------------------------------
   TB.SCHEDULE.push(
-    { d: 5, s: 0, id: 'ev2_boarking' },
-    { d: 5, s: 2, id: 'ev2_bond', when: (s) => !!s.companion },
-    { d: 5, s: 2, id: 'ev2_solo', when: (s) => !s.companion },
-    { d: 6, s: 2, id: 'ev2_storm' },
-    { d: 7, s: 1, id: 'ev2_smoke' },
-    { d: 8, s: 0, id: 'ev2_heart', when: (s) => !!s.companion && s.trust >= 50 },
-    { d: 8, s: 0, id: 'ev2_heart_low', when: (s) => !!s.companion && s.trust < 50 },
-    { d: 8, s: 0, id: 'ev2_coco', when: (s) => !s.companion },
-    { d: 8, s: 3, id: 'ev2_kingtide', when: (s) => s.site === 'beach' },
-    { d: 9, s: 2, id: 'ch2_threshold' },
+    { d: 7, s: 0, id: 'ev2_boarking' },
+    { d: 9, s: 2, id: 'ev2_bond', when: (s) => !!s.companion },
+    { d: 9, s: 2, id: 'ev2_solo', when: (s) => !s.companion },
+    { d: 11, s: 2, id: 'ev2_storm' },
+    { d: 13, s: 1, id: 'ev2_smoke' },
+    { d: 15, s: 0, id: 'ev2_heart', when: (s) => !!s.companion && s.trust >= 50 },
+    { d: 15, s: 0, id: 'ev2_heart_low', when: (s) => !!s.companion && s.trust < 50 },
+    { d: 15, s: 0, id: 'ev2_coco', when: (s) => !s.companion },
+    { d: 16, s: 3, id: 'ev2_kingtide', when: (s) => s.site === 'beach' },
+    { d: 18, s: 2, id: 'ch2_threshold' },
   );
 
   // ---- The Boar King ------------------------------------------------------------

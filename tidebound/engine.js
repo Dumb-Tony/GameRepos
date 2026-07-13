@@ -24,6 +24,10 @@
 
   TB.SCENES = {};
   TB.SCHEDULE = [];         // filled by chapter files: {d, s, id, when?:fn}
+  // The 100-day calendar: chapter boundaries. Ch1 1-5 · Ch2 6-18 · Ch3 19-35 ·
+  // Ch4 36-52 · Ch5 (the Long Rain, a real season) 53-70 · Ch6 71-85 ·
+  // Ch7 86-100 — the Convergence lands on Day 100 itself.
+  TB.CAL = { clearing: 5, ch2: 6, ch2end: 18, ch3: 19, ch3end: 35, ch4: 36, ch4end: 52, ch5: 53, ch5end: 70, ch6: 71, ch7: 93, convergence: 100 };
   TB.SEGS = ['🌅 Dawn', '☀️ Day', '🌇 Dusk', '🌙 Night'];
   TB.clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
@@ -49,6 +53,7 @@
       fired: {},                        // scheduled events already run
       deathCause: null,
       mod: null,                        // NG+ run modifier: hard|silent|kind|chaos
+      _cal: 2,                          // save-calendar version (100-day)
     };
   };
 
@@ -114,13 +119,13 @@
       }
     }
     if (s.chapter === 1) {
-      if (s.day === 3 && s.seg === 3 && !TB.is('CLEARING_DONE')) return 'clearing';
-      if (s.day > 3) return 'slice_end'; // safety net; courtship normally hands off to ch2
+      if (s.day === TB.CAL.clearing && s.seg === 3 && !TB.is('CLEARING_DONE')) return 'clearing';
+      if (s.day > TB.CAL.clearing) return 'slice_end'; // safety net; courtship normally hands off to ch2
     }
-    if (s.chapter === 2 && s.day > 9) return 'ch2_end'; // safety net; the Smoke threshold normally ends the chapter
-    if (s.chapter === 3 && s.day > 15) return 'ch3_end'; // safety net; Old Grin's Toll normally ends the chapter
-    if (s.chapter === 4 && s.day > 21) return 'ch4_end'; // safety net; Vane's Question normally ends the chapter
-    if (s.chapter === 5 && s.day > 28) return 'ch5_end'; // safety net; each variant's finale normally ends the chapter
+    if (s.chapter === 2 && s.day > TB.CAL.ch2end) return 'ch2_end'; // safety net; the Smoke threshold normally ends the chapter
+    if (s.chapter === 3 && s.day > TB.CAL.ch3end) return 'ch3_end'; // safety net; Old Grin's Toll normally ends the chapter
+    if (s.chapter === 4 && s.day > TB.CAL.ch4end) return 'ch4_end'; // safety net; Vane's Question normally ends the chapter
+    if (s.chapter === 5 && s.day > TB.CAL.ch5end) return 'ch5_end'; // safety net; each variant's finale normally ends the chapter
     if (s.chapter >= 6) return s.deathCause ? 'death' : 'ch6_open'; // chapters 6+ are linear chains; advance() shouldn't be reached
     if (s.seg === 3) return s.chapter >= 2 ? 'night2' : 'night';
     if (TB.randomEvent) { const ev = TB.randomEvent(s); if (ev) return ev; } // the living island
@@ -141,6 +146,12 @@
       st.chapter = st.chapter || 1; st.trust = st.trust || 0; st.site = st.site || null;
       st.edda = st.edda || 0; st.disease = st.disease || null; st.ryo = st.ryo || 0;
       st.mod = st.mod || null;
+      if (!st._cal) { // migrate pre-100-day saves: keep within-chapter progress
+        const OLD = { 1: 1, 2: 4, 3: 10, 4: 16, 5: 22, 6: 29, 7: 34 };
+        const NEW = { 1: 1, 2: 6, 3: 19, 4: 36, 5: 53, 6: 71, 7: 93 };
+        st.day = (NEW[st.chapter] || 1) + Math.max(0, st.day - (OLD[st.chapter] || 1));
+        st._cal = 2;
+      }
       return st;
     } catch (e) { return null; }
   };

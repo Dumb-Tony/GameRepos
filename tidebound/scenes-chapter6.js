@@ -1,5 +1,5 @@
 /* =====================================================================
- * scenes-chapter6.js — Chapter Six: Ashes and Stairs (Days 29–33).
+ * scenes-chapter6.js — Chapter Six: Ashes and Stairs (Days 71–85).
  * The rains break; the mountain opens. A LINEAR expedition chapter:
  * the Terrace of Steps, the Tidewell Temple, the tremor ladder, the
  * Inner Green (admission gated on the run's accumulated regard), and
@@ -38,7 +38,7 @@
   // ---- Chapter open: the rains break -------------------------------------------------
   TB.scene('ch6_open', {
     bg: 'beach-day',
-    enter: (s) => { if (s.chapter < 6) { s.chapter = 6; s.day = 29; s.seg = 0; } },
+    enter: (s) => { if (s.chapter < 6) { s.chapter = 6; s.day = 71; s.seg = 0; } },
     text: (s) => [
       '<em>CHAPTER SIX — ASHES AND STAIRS</em>',
       'On the twenty-ninth morning you wake to a wrongness and take a full minute to name it: <em>silence</em>. The drumming has stopped. The ceiling has lifted. The world stands rinsed and dripping and impossibly green under a sky you\'d half forgotten, and the broken mountain — the whole chapter of it, crown to knee — stands clear against the washed blue like a door finally lit.',
@@ -167,7 +167,7 @@
     bg: 'temple',
     text: (s) => [
       '<em>THE TIDEWELL</em>',
-      'You come back down to the temple at dusk on the thirty-third day' + (TB.is('INNER_GREEN') ? ', with Tekau and Naia and half the Inner Green\'s council standing back at the nave\'s edge — this part, their bearing says, is walked alone' : '') + ', and the pool receives your lamplight and gives it back changed, seven beats at a time.',
+      'You come back down to the temple at dusk on the eighty-fourth day' + (TB.is('INNER_GREEN') ? ', with Tekau and Naia and half the Inner Green\'s council standing back at the nave\'s edge — this part, their bearing says, is walked alone' : '') + ', and the pool receives your lamplight and gives it back changed, seven beats at a time.',
       'And standing at the water\'s edge, at the exact spot where fifty generations of painted keepers stood, you finally understand what this place is for. The knowledge doesn\'t arrive as words. It arrives the way the tide arrives — total, patient, indifferent to doubt: the pool is the island\'s <em>ear</em>. What is said here, in the old way, with a hand in the water at the turn of the tide, the island hears. The Kaari didn\'t worship here. They <em>governed</em> here — one keeper at a time, one covenant at a time.',
       'The mountain grumbles, far below. The wound gutters at the bottom of everything. The water turns, and turns, and waits.',
       'Three doors, castaway.' + (TB.is('WOUND_SEEN') || TB.is('INCIDENT_FILES') ? '' : ' (Two of them you can see the shape of; one, only its edges — this island still holds knowledge you didn\'t go and get.)'),

@@ -139,7 +139,7 @@
   });
 
   // ---- NG+-only: the grotto journal → ending X3, THE LOOP ------------------
-  TB.SCHEDULE.push({ d: 11, s: 1, id: 'ev_loop', when: (s) => !!s.flags.NGPLUS && !TB.is('LOOP_KNOWN') });
+  TB.SCHEDULE.push({ d: 30, s: 1, id: 'ev_loop', when: (s) => !!s.flags.NGPLUS && !TB.is('LOOP_KNOWN') });
   TB.scene('ev_loop', {
     bg: 'tidepools',
     text: (s) => [

@@ -1,5 +1,5 @@
 /* =====================================================================
- * scenes-chapter1.js — Chapter One: The First Fire (Days 1–3).
+ * scenes-chapter1.js — Chapter One: The First Fire (Days 1–5).
  * The survival hub, the six animal encounters, the Clearing of Eyes
  * threshold, companion courtship vignettes, and the slice endings.
  *
@@ -46,7 +46,7 @@
       camp.push(s.shelter >= 2 ? 'Your shelter is snug and storm-braced.' : s.shelter === 1 ? 'Your lean-to stands — barely a roof, but yours.' : 'You still have no shelter worth the word.');
       camp.push(s.fire >= 1 ? 'Your fire mutters comfortably in its ring of stones.' : 'You have no fire.');
       t.push(camp.join(' '));
-      if (s.day === 3) t.push('Three days. The horizon has offered nothing but weather. Whatever you keep telling yourself about search parties is getting harder to say with a straight face.');
+      if (s.day === 4) t.push('Four days. The horizon has offered nothing but weather. Whatever you keep telling yourself about search parties is getting harder to say with a straight face.');
       t.push('What do you spend this part of the day on?');
       return t;
     },
@@ -185,11 +185,11 @@
     { d: 1, s: 2, id: 'ev_vela' },
     { d: 1, s: 3, id: 'ev_howls' },
     { d: 2, s: 0, id: 'ev_ipo' },
-    { d: 2, s: 2, id: 'ev_squall' },
-    { d: 2, s: 3, id: 'ev_buri' },
-    { d: 3, s: 0, id: 'ev_moa' },
-    { d: 3, s: 1, id: 'ev_kavi2' },
-    { d: 3, s: 2, id: 'ev_lights', when: (s) => TB.has('flaregun') },
+    { d: 3, s: 2, id: 'ev_squall' },
+    { d: 3, s: 3, id: 'ev_buri' },
+    { d: 4, s: 0, id: 'ev_moa' },
+    { d: 4, s: 1, id: 'ev_kavi2' },
+    { d: 4, s: 2, id: 'ev_lights', when: (s) => TB.has('flaregun') },
   );
 
   TB.scene('ev_vela', {
@@ -411,9 +411,9 @@
       const met = Object.keys(COURTS).filter((k) => s.met[k]);
       return [
         '<em>THE CLEARING OF EYES</em>',
-        'Dusk, the third day. You sit by your camp doing the honest arithmetic at last: no search plane has come. No ship has turned. Whatever happens next, it happens <em>here</em>, and it happens to you — and three days of this island have taught you exactly how long your two hands are.',
+        'Dusk, the fifth day. You sit by your camp doing the honest arithmetic at last: no search plane has come. No ship has turned. Whatever happens next, it happens <em>here</em>, and it happens to you — and five days of this island have taught you exactly how long your two hands are.',
         'And as the light goes long and gold, you realize you have company. You\'ve had company all along.',
-        'They are all, in their various ways, present: ' + met.map((k) => COURTS[k].name).join('; ') + '. Wild lives, orbiting your small fire of a life these three days, each for their own reasons. Curious. Hungry. Lonely, maybe — you\'re projecting, probably — or maybe not.',
+        'They are all, in their various ways, present: ' + met.map((k) => COURTS[k].name).join('; ') + '. Wild lives, orbiting your small fire of a life these five days, each for their own reasons. Curious. Hungry. Lonely, maybe — you\'re projecting, probably — or maybe not.',
         'Trust, out here, is the most expensive thing you can build, and you only have the hours to build it once. If you give your scarce time to one of them — food you can\'t spare, patience you can\'t spare, days you can\'t spare — one of these lives might tie itself to yours. For good.',
         TB.meta().runs > 0 ? '<em>(And — strange — the choosing feels rehearsed, like a step your feet already know. As if you have stood at this exact dusk before, and chosen, and lived whole lives on the far side of it. The feeling passes. The eyes wait.)</em>' : '',
         '<em>One.</em>',
@@ -449,7 +449,7 @@
     text: (s) => [
       'You take your food to the open sand between the camp and the treeline, sit down at his height, and wait.',
       'It takes most of the evening. He circles twice at the dark\'s edge; sits; lies down; gets up; and finally crosses the distance the way a man crosses a rope bridge — committed and hating it — until two hundred pounds of storm-grey wild dog is standing an arm\'s length away, reading your face like a track.',
-      (s.interest.kavi >= 3 ? 'The crab you threw him, the low easy talk, the scrap in the dark — he has been running those numbers for three days. Whatever total he reaches, it tips him: ' : 'You have given him little enough reason. But whatever he was cast out of cost him more: ') + 'he takes the fish from the sand beside your hand, gravely, without snatching — and then he does not leave.',
+      (s.interest.kavi >= 3 ? 'The crab you threw him, the low easy talk, the scrap in the dark — he has been running those numbers for days. Whatever total he reaches, it tips him: ' : 'You have given him little enough reason. But whatever he was cast out of cost him more: ') + 'he takes the fish from the sand beside your hand, gravely, without snatching — and then he does not leave.',
       'When you finally bank the fire and lie down, he arranges himself precisely at the edge of camp, back to you, scarred flank to the flames\' dying warmth, facing the treeline. On guard. You fall asleep to the sound of a wild thing breathing between you and the dark, and far away — one last time that night — the pack sings without him.',
       'He does not answer them.',
     ],
@@ -481,7 +481,7 @@
   TB.scene('court_vela', {
     bg: 'beach-dusk', who: { emoji: '🦅', name: 'Vela' },
     text: (s) => [
-      'You do not go to her. You have understood this much: nothing approaches a sea eagle. You go to the tide pools instead, spear the fattest mullet of your three days, and lay it — whole, untouched — on the high rock below the dead palm. Then you step back exactly ten paces and stand in plain view, empty-handed, in the evening light.',
+      'You do not go to her. You have understood this much: nothing approaches a sea eagle. You go to the tide pools instead, spear the fattest mullet of your five days, and lay it — whole, untouched — on the high rock below the dead palm. Then you step back exactly ten paces and stand in plain view, empty-handed, in the evening light.',
       'She makes you wait long enough to establish that waiting is happening. Then she drops from the palm in one silent falling arc, mantles over the fish, and eats — never once taking the amber eye off you. Payment received. Books balanced. That should be the whole transaction.',
       'Except that when she finishes, she doesn\'t leave. She sidles along the rock — an awkward, deliberate, un-flightlike walk — and turns her head to study you with the <em>pale</em> eye, the blind one, the one she shows nothing.',
       (s.interest.vela >= 2 ? 'She has watched you honor a debt before. Something in the ledger tips.' : 'Whatever she reads in you, it is sufficient — barely, provisionally, pending review.') + ' She stands one full minute in the last gold light, blind side offered like the most reluctant gift on earth. Then she is simply airborne, gone up the darkening sky toward the cliffs.',
@@ -502,7 +502,7 @@
       'He eats the offering in one biblical inhalation. Then he inspects the empty stone, inspects you, inspects the stone again — establishing the facts of the case — and, satisfied, performs the least wild act you have ever seen from a wild animal: he walks a circle exactly three times and collapses against your legs like scaffolding coming down.',
       'Two hundred pounds of bristled, sand-crusted, gently steaming pig, pinning you to the spot, asleep in under a minute. Trusting you with all of it, instantly and completely, the way he does everything.',
       (s.interest.buri >= 2 ? 'You think of him dozing in your camp that first night, rent paid in excavated crabs. Apparently that was the interview, and you passed.' : 'It occurs to you that you have been adopted, and that consent was never really on the agenda.') + ' Somewhere in the small hours he begins — softly at first, then with gathering orchestral confidence — to snore.',
-      'You fall asleep against a wild pig\'s back, warmer than you\'ve been in three days, listening to the lagoon keep time. It is completely ridiculous. It is the safest you have felt since the sky broke.',
+      'You fall asleep against a wild pig\'s back, warmer than you\'ve been in five days, listening to the lagoon keep time. It is completely ridiculous. It is the safest you have felt since the sky broke.',
     ],
     choices: [
       { t: '"Buri." Short, sturdy, shouts well across a beach.', sub: 'You\'ll be shouting it a lot.',
@@ -550,7 +550,7 @@
     bg: 'beach-night',
     text: [
       'You bank the fire alone, on purpose, and sit with the decision while the lagoon keeps its slow time.',
-      'It isn\'t coldness. It\'s arithmetic, and honesty: every mouth tied to yours is food you must find twice, every bond a hostage the island can take. You have watched this place for three days now. It is beautiful the way knives are beautiful. You will cross it faster alone, risk less, grieve less.',
+      'It isn\'t coldness. It\'s arithmetic, and honesty: every mouth tied to yours is food you must find twice, every bond a hostage the island can take. You have watched this place for five days now. It is beautiful the way knives are beautiful. You will cross it faster alone, risk less, grieve less.',
       'The grey dog sings somewhere inland with a pack that isn\'t his. The monkey\'s treetops go quiet. Small feet and large ones print the morning sand at the edges of your life, and you will let them stay at the edges: neighbors, all of them. Not family.',
       'Alone, then. Unbroken, if you can manage it. The night is enormous, and you are exactly one person, and you find — checking, the way you\'d check a knot — that this holds.',
     ],
@@ -563,7 +563,7 @@
   TB.scene('slice_end', {
     bg: 'beach-night',
     text: (s) => {
-      const t = ['<em>END OF CHAPTER ONE — THE FIRST FIRE</em>', 'The Ledger opens. This island forgets nothing; neither does this game. Your first three days, as the island will remember them:'];
+      const t = ['<em>END OF CHAPTER ONE — THE FIRST FIRE</em>', 'The Ledger opens. This island forgets nothing; neither does this game. Your first five days, as the island will remember them:'];
       const bg = { medic: 'a flight medic', photog: 'a wildlife photographer', cook: 'a line cook', engineer: 'a marine engineer' }[s.bgnd] || 'a stranger';
       t.push('— You came here as <em>' + bg + '</em>, and from the drowning fuselage you saved: ' + ['flaregun', 'medkit', 'toolbox', 'rations', 'case'].filter((k) => s.flags['SALV_' + k]).map((k) => ({ flaregun: 'the flare gun', medkit: 'the med-kit', toolbox: 'the toolbox', rations: 'the rations and tarp', case: 'the courier\'s case' })[k]).join(', ') + '.');
       if (s.companion) t.push('— At the Clearing of Eyes, of every wild life on this island, you chose <em>' + COMP_NAMES[s.companion] + '</em>. This single choice will bend everything that follows: where you can go, how you survive, what you learn, and how this story can end.');

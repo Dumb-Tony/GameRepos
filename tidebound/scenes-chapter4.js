@@ -1,5 +1,5 @@
 /* =====================================================================
- * scenes-chapter4.js — Chapter Four: The Hum (Days 16–21).
+ * scenes-chapter4.js — Chapter Four: The Hum (Days 36–52).
  * Station Halcyon (one room per expedition), Dr. Vane's staged journals,
  * the radio-parts chain, Ryo Nakata's conditional arrival, companion
  * station beats, and the chapter threshold: Vane's Question.
@@ -24,7 +24,7 @@
   // ---- Chapter open ---------------------------------------------------------------
   TB.scene('ch4_open', {
     bg: 'jungle',
-    enter: (s) => { if (s.chapter < 4) { s.chapter = 4; s.day = 16; s.seg = 0; } },
+    enter: (s) => { if (s.chapter < 4) { s.chapter = 4; s.day = 36; s.seg = 0; } },
     text: [
       '<em>CHAPTER FOUR — THE HUM</em>',
       'Day sixteen. The air has changed. You noticed it first at dawn — a heaviness riding in off the southern sea, a taste like coins — and Edda\'s word for it, delivered with a weather-eye and no comfort at all, was: <em>"Monsoon\'s coming. Weeks, not months. Whatever you mean to do about that mast, castaway, the sky won\'t hold the door forever."</em>',
@@ -71,7 +71,7 @@
   // ---- Station arrival --------------------------------------------------------------
   TB.scene('ch4_arrive', {
     bg: 'station',
-    enter: (s) => { if (!TB.is('STATION_OPENED')) { TB.flag('STATION_OPENED'); TB.route('depth', 1); if (s.seg === 0 && s.day === 16) TB.tickSegment(); } },
+    enter: (s) => { if (!TB.is('STATION_OPENED')) { TB.flag('STATION_OPENED'); TB.route('depth', 1); if (s.seg === 0 && s.day === 36) TB.tickSegment(); } },
     text: (s) => [
       'Station Halcyon, at the end of its swallowed service road, is a held breath fifty years long.',
       'Six pale prefab buildings on concrete pads, roofs green with moss-load, arranged around a yard the jungle has reclaimed to knee height. The mast leans over it all, guys slack, red rust weeping down its lattice into the trees. A flagless pole. A generator shed with its door ajar exactly as wide as a person leaving in a hurry. And painted on the largest building, ghost-letters under fifty wet seasons: <em>HALCYON RESEARCH STATION — SITE 9</em>.',
@@ -213,14 +213,14 @@
 
   // ---- Chapter 4 scheduled events -------------------------------------------------------
   TB.SCHEDULE.push(
-    { d: 17, s: 2, id: 'ev4_recorder', when: (s) => TB.is('STATION_OPENED') },
-    { d: 17, s: 2, id: 'ev4_west_wreck', when: (s) => !TB.is('EAST_OPEN') },
-    { d: 18, s: 1, id: 'ev4_ryo', when: (s) => s.route.signal >= 5 },
-    { d: 18, s: 1, id: 'ev4_noryo', when: (s) => s.route.signal < 5 },
-    { d: 19, s: 2, id: 'ev4_companion', when: (s) => !!s.companion && TB.is('STATION_OPENED') },
-    { d: 20, s: 3, id: 'ev4_pulse2' },
-    { d: 21, s: 2, id: 'ch4_threshold', when: (s) => TB.is('STATION_OPENED') },
-    { d: 21, s: 2, id: 'ch4_threshold_west', when: (s) => !TB.is('STATION_OPENED') },
+    { d: 38, s: 2, id: 'ev4_recorder', when: (s) => TB.is('STATION_OPENED') },
+    { d: 38, s: 2, id: 'ev4_west_wreck', when: (s) => !TB.is('EAST_OPEN') },
+    { d: 40, s: 1, id: 'ev4_ryo', when: (s) => s.route.signal >= 5 },
+    { d: 40, s: 1, id: 'ev4_noryo', when: (s) => s.route.signal < 5 },
+    { d: 44, s: 2, id: 'ev4_companion', when: (s) => !!s.companion && TB.is('STATION_OPENED') },
+    { d: 47, s: 3, id: 'ev4_pulse2' },
+    { d: 52, s: 2, id: 'ch4_threshold', when: (s) => TB.is('STATION_OPENED') },
+    { d: 52, s: 2, id: 'ch4_threshold_west', when: (s) => !TB.is('STATION_OPENED') },
   );
 
   TB.scene('ev4_recorder', {
@@ -334,7 +334,7 @@
     bg: 'station',
     text: (s) => [
       '<em>VANE\'S QUESTION</em>',
-      'Day twenty-one. You come back to the small ordered office one more time' + (TB.is('DRAWER_KNOWN') ? '' : ' — and this time, kneeling to steady yourself against the desk, you find what your earlier visits missed: a steel bottom drawer, locked, labeled in a firm hand gone brown with age: <em>"If found: burn unread. — I.V."</em>') + ', because the drawer has been standing in the corner of your mind for days like a held note.',
+      'Day fifty-two. You come back to the small ordered office one more time' + (TB.is('DRAWER_KNOWN') ? '' : ' — and this time, kneeling to steady yourself against the desk, you find what your earlier visits missed: a steel bottom drawer, locked, labeled in a firm hand gone brown with age: <em>"If found: burn unread. — I.V."</em>') + ', because the drawer has been standing in the corner of your mind for days like a held note.',
       'You know what\'s in it. Not the details — the <em>shape</em>: the torn pages. The Incident. What the drill did and what answered it; what stopped the island\'s heart for nine hours in March 1979 and dug two graves under Edda\'s flowering tree. The one chapter of this place\'s story that its own chronicler decided no one should read.',
       'She asked. In her own hand, knowing she\'d likely be dead when it was found, she <em>asked</em>.',
       'The lock is fifty years old and your pry-bar is right there. So is the station\'s fire barrel. So is the long path up a mountain to a woman who was there.',
@@ -399,7 +399,7 @@
     bg: 'beach-dusk',
     text: (s) => [
       '<em>THE VIGIL</em>',
-      'Day twenty-one. The monsoon wall stands in the south like a verdict being drafted, and your west-side kingdom is as ready as hands can make it: stores deep, walls braced, water solved' + (TB.is('RYO_MET') ? ', a mending sailor by your fire with a boat above the tideline' : '') + '.',
+      'Day fifty-two. The monsoon wall stands in the south like a verdict being drafted, and your west-side kingdom is as ready as hands can make it: stores deep, walls braced, water solved' + (TB.is('RYO_MET') ? ', a mending sailor by your fire with a boat above the tideline' : '') + '.',
       'What you don\'t have is the east: the station, its tools, its answers — the road not crossed. The season about to close will decide more than weather: it decides what kind of castaway comes out the other side of it.',
       'You give the last clear evening to the choice.',
     ],
@@ -417,7 +417,7 @@
   TB.scene('ch4_end', {
     bg: 'beach-night',
     text: (s) => {
-      const t = ['<em>END OF CHAPTER FOUR — THE HUM</em>', 'The Ledger\'s pages are filling faster now. Days sixteen through twenty-one:'];
+      const t = ['<em>END OF CHAPTER FOUR — THE HUM</em>', 'The Ledger\'s pages are filling faster now. Days thirty-six through fifty-two:'];
       if (TB.is('STATION_OPENED')) {
         t.push('— Station Halcyon stands open: the interrupted breakfast, the stores' + (TB.is('E_WING_OPEN') ? ', and the E wing — the crated transmitter, and the seventh rack, and stone that holds your reflection a half-beat late' : ', and an E-wing door still keeping the station\'s one locked thought') + '.');
         const parts = [TB.is('TRANSMITTER') && 'transmitter', TB.is('WIRE') && 'cable', TB.is('FUEL') && 'fuel'].filter(Boolean);
