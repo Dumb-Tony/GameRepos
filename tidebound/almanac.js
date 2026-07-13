@@ -60,8 +60,13 @@
     { id: 'deepvine', e: '🌀', name: 'The Walking Mangrove', imp: true, pred: (s) => TB.is('RIVER_KNOWN') || TB.is('GROVE_OPENED'), blurb: 'A mangrove that is never in the same place twice, surveyed root by root. Either the maps are wrong, or the tree keeps appointments. Edda\'s notes say only: "Leave it be. It\'s counting too."', hint: 'One tree on the river bank has moved. You are sure of it. Almost.' },
   ];
 
-  // scene-id → sighting (engine calls note() on every scene entry)
-  const SIGHT = { rev_heron: 'heron', rev_snake: 'snake', rev_hornbill: 'hornbill', rev_whales: 'whale', rev_hatching: 'turtle', ev_moa: 'hawk', ev2_boarking: 'boarking' };
+  // scene-id → sighting(s) (engine calls note() on every scene entry)
+  const SIGHT = {
+    rev_heron: 'heron', rev_snake: 'snake', rev_hornbill: 'hornbill', rev_whales: 'whale',
+    rev_hatching: 'turtle', ev_moa: 'hawk', ev2_boarking: 'boarking',
+    rev_turtletracks: 'turtle', rev_birdwar: ['hawk', 'tern'], rev_windshift: 'mirrorbird',
+    rev_boartrail: 'buri', rev_figriot: 'hornbill',
+  };
   const SIGHT_PREFIX = [[/^(ev3_grin|ch3_toll)/, 'grin']];
 
   // ---- collectible sets -----------------------------------------------------
@@ -131,7 +136,7 @@
   // ---- engine hook: sightings + end-of-run banking ---------------------------
   AL.note = function (id, s) {
     const sp = SIGHT[id] || (SIGHT_PREFIX.find(([re]) => re.test(id)) || [])[1];
-    if (sp) AL.markSeen(sp);
+    if (sp) for (const one of [].concat(sp)) AL.markSeen(one);
     if (id === 'ending' || id === 'death') AL.bank(s);
   };
   AL.bank = function (s) {

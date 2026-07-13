@@ -227,6 +227,36 @@
     { id: 'rev_orchid', w: 1.5, when: (s) => TB.is('EDDA_MET') && !TB.is('REV_ORCHID') },
     { id: 'rev_compidle', w: 4, when: (s) => !!s.companion },
     { id: 'rev_humflicker', w: 1, when: (s) => s.seg === 2 && !TB.is('REV_HUM') },
+    // ---- the 100-day expansion: weather days ----
+    { id: 'rev_heatstill', w: 1.8, when: (s) => s.chapter >= 2 && s.chapter <= 4 && s.seg === 1 },
+    { id: 'rev_squallpass', w: 1.8, when: (s) => s.chapter >= 2 && s.chapter <= 4 },
+    { id: 'rev_fogbank', w: 1.6, when: (s) => s.chapter >= 2 && s.seg === 0 },
+    { id: 'rev_windshift', w: 1.4, when: (s) => s.chapter >= 3 && !TB.is('FORECAST') },
+    { id: 'rev_coldsnap', w: 1.4, when: (s) => s.chapter >= 4 && s.seg === 2 },
+    // ---- region moments ----
+    { id: 'rev_reefglass', w: 1.5, when: (s) => s.chapter >= 2 && s.seg === 1 },
+    { id: 'rev_sandfall', w: 1.4, when: (s) => s.site !== 'fringe' },
+    { id: 'rev_figriot', w: 1.6, when: (s) => s.chapter >= 2 },
+    { id: 'rev_riverrise', w: 1.4, when: (s) => s.chapter >= 3 },
+    { id: 'rev_shellline', w: 1.5, when: (s) => s.seg === 0 },
+    // ---- companion vignettes, second set ----
+    { id: 'rev_compdream', w: 2.2, when: (s) => !!s.companion && s.seg === 2 },
+    { id: 'rev_compgift', w: 2, when: (s) => !!s.companion && s.trust >= 40 },
+    { id: 'rev_comptrouble', w: 2, when: (s) => !!s.companion },
+    // ---- wild encounters ----
+    { id: 'rev_boartrail', w: 1.4, when: (s) => s.chapter >= 2 && s.companion !== 'buri' },
+    { id: 'rev_birdwar', w: 1.4, when: (s) => s.chapter >= 2 },
+    { id: 'rev_turtletracks', w: 1.2, when: (s) => s.chapter >= 2 && s.seg === 0 && !TB.is('TURTLES') },
+    { id: 'rev_antmarch', w: 1.4, when: (s) => s.chapter >= 2 },
+    { id: 'rev_driftnet', w: 1.2, when: (s) => s.chapter >= 2 },
+    { id: 'rev_sourspring', w: 1.2, when: (s) => s.chapter >= 3 && s.site !== 'overhang' },
+    // ---- the uncanny file (rare wonders & watcher-signs) ----
+    { id: 'rev_sevenwave', w: 0.6, rare: true, when: (s) => s.chapter >= 2 },
+    { id: 'rev_mirage', w: 0.5, rare: true, when: (s) => s.chapter >= 3 && s.seg === 1 },
+    { id: 'rev_humtools', w: 0.6, rare: true, when: (s) => s.chapter >= 3 && s.seg === 2 },
+    { id: 'rev_cairn', w: 0.7, rare: true, when: (s) => s.chapter >= 2 && s.chapter <= 4 && !TB.is('NAIA_MET') },
+    { id: 'rev_nightbloom', w: 0.6, rare: true, when: (s) => s.seg === 2 },
+    { id: 'rev_meteor', w: 0.5, rare: true, when: (s) => s.chapter >= 2 && s.seg === 2 },
     // collectible finds (almanac.js sets) — eligible only while the set has gaps
     { id: 'rev_glyphstone', w: 1.2, when: (s) => s.chapter >= 2 && TB.Almanac && TB.Almanac.remaining(s, 'stones') },
     { id: 'rev_vanepage', w: 1.2, when: (s) => s.chapter >= 4 && TB.is('STATION_OPENED') && TB.Almanac && TB.Almanac.remaining(s, 'pages') },
@@ -258,6 +288,151 @@
   };
 
   const rev = (id, def) => { def.next = def.next || ((s) => backToCamp(s)); TB.scene(id, def); };
+
+  // ==================================================================
+  //  THE 100-DAY EXPANSION — Phase 2: the living island, doubled.
+  //  Weather days, region moments, companion vignettes, wild
+  //  encounters, and the uncanny file. Small effects live in enter().
+  // ==================================================================
+  // -- weather days --
+  rev('rev_heatstill', { bg: 'beach-day',
+    enter: (s) => { TB.stat('thirst', -6); TB.stat('energy', -3); },
+    text: (s) => [pick([
+      'The wind dies at mid-morning and does not come back, and the island becomes an oven with a sea view: the sand too hot to cross barefoot, the jungle\'s shade thick as syrup, the horizon dissolving into silver shimmer.',
+      'A dead-calm scorcher. Even the surf sounds flattened, and the tide pools go warm as bathwater — their citizens retreating under ledges with the put-upon air of commuters in a heat wave.',
+    ]), 'You do what everything with sense does: less. Work waits in the shade; the water gourd empties faster than it should; and at the worst of it you stand chest-deep in the sea like every other refugee from the sky, watching heat ripple over your kingdom.' + (s.companion ? ' Your companion\'s verdict on the day is unprintable in any species.' : '')] });
+  rev('rev_squallpass', { bg: 'beach-dusk',
+    enter: (s) => { TB.stat('thirst', 10); },
+    text: (s) => ['A squall line walks in off the sea with almost no warning — one minute of green-black light, then rain like a thrown bucket, the palms bowing in a body, the whole world gone loud and silver for a quarter hour.',
+      s.fire ? 'You throw the woven cover over the fire pit and stand guard over the coals like a hen, and the fire lives — smoking, insulted, alive.' : 'With no fire to defend, you simply stand out in it, mouth open, catching the sky\'s water like the free gift it is.',
+      'Then it\'s gone, trailing its grey skirts over the reef, and the island steams and drips and smells like the first day of the world. Every container you own is full.'] });
+  rev('rev_fogbank', { bg: 'beach-day',
+    enter: (s) => { TB.route('depth', 1); },
+    text: ['You wake into a world with the horizon missing: fog, thick and white and absolute, the sea reduced to a sound and the palms to sketches. On an island the charts can\'t hold, fog feels less like weather and more like <em>policy</em>.',
+      'Sound behaves wrong in it. The reef booms from new directions; a bird calls once and the call comes back a half-beat late, the way lamplight does off heartglass; and for one held moment you\'re certain — certain — you hear, far out over the water, seven soft strokes, like someone counting the island\'s pulse from the outside.',
+      'By mid-morning the sun burns it off, and the horizon reassembles as if it never left. You go about the day. You do not quite stop listening.'] });
+  rev('rev_windshift', { bg: 'cliff-camp',
+    enter: (s) => { if (!TB.is('FORECAST')) { TB.flag('FORECAST'); TB.route('roots', 1); } },
+    text: ['The wind swings into the north at midday — a cooler, drier air with a mineral edge — and the whole island changes posture: the birds re-rig their patrols, the surf shifts its beat on the reef, the palms show the silver undersides of their leaves.',
+      'And a starling-dark little bird you\'ve never consciously noticed sits up on your ridgepole and sings, at length, with tremendous conviction, a song full of drumming and hiss. Rain-sounds. Storm-sounds. There is no storm anywhere in the sky.',
+      'You\'ll remember this tomorrow, when the weather arrives sounding exactly like the song. The island posts its forecasts. You\'re learning where to read them.'] });
+  rev('rev_coldsnap', { bg: (s) => campBg2(s),
+    enter: (s) => { TB.stat('hope', 3); },
+    text: (s) => ['At dusk a river of cool air spills down off the mountain — the caldera exhaling — and for one evening the tropics forget themselves: goosebumps, visible breath, a sky rinsed so clear the stars come down to the horizon.',
+      s.fire ? 'The fire becomes the center of the universe, the way fires were always meant to be. You sit close, wrapped in everything you own, profoundly rich.' : 'You pile every dry frond you own into a nest and learn what your ancestors knew about the cold: it is an argument for tomorrow\'s fire that requires no further notes.',
+      'Somewhere up-slope the jungle creaks and resettles under the strange cool weight. The mountain breathes out all night, and the lagoon\'s glow burns the brighter for it, the way stars do.'] });
+  // -- region moments --
+  rev('rev_reefglass', { bg: 'tidepools',
+    enter: (s) => { TB.route('depth', 1); },
+    text: ['The sea produces one of its glass days: no swell, no wind, the water so transparent the reef seems to hang in air. You can count individual fish forty feet down. You can see the coral heads\' shadows on the sand like clouds.',
+      'And you can see — you spend a long time being sure — the way the deeper channels run: dark roads between the coral, all of them, every one, bending toward the same unseen point somewhere off the mountain\'s drowned flank. A harbor\'s worth of roads to a door no chart admits.',
+      'By afternoon the wind writes its usual scribble over the surface and the roads close. But you know where they run now. Knowing is a kind of key.'] });
+  rev('rev_sandfall', { bg: 'beach-day',
+    enter: (s) => { TB.stat('hunger', 6); },
+    text: ['A slab of the high dune lets go in the night — undermined by the last king tide — and calves onto the beach like a slow avalanche, and the collapse is a museum: black sand layered with storm-lines, old charcoal, shell middens, and the mineral glitter of years stacked on years.',
+      'You spend a morning sifting the fall like a beachcomber-archaeologist: crab colonies evicted and indignant (you collect the taxes), a seam of ancient cooking stones — someone kept fires on this beach long, long before you — and, absurdly, one sea-frosted marble, perfectly round, that you stand holding for a while and then put on the shelf beside Coco without examining the feeling too closely.',
+      'The island files nothing away forever. It just files it deep, and waits for weather.'] });
+  rev('rev_figriot', { bg: 'jungle',
+    enter: (s) => { TB.stat('hunger', 12); TB.state.food += 1; },
+    text: ['The big strangler fig calls a festival: overnight, every branch fruits at once, and by the time you arrive the canopy is a riot — parrots, doves, hornbills, monkeys, things you can\'t see and one thing you can\'t identify, all shouting jurisdiction at each other over a fortune in figs.',
+      'You wade in under the bombardment (some of it deliberate; you take a fig off the shoulder and hear, distinctly, laughing) and fill your bag from the lower boughs. There is enough. There is enough for everyone twice over — that\'s the point of the strategy; the tree drowns its tenants in plenty and their arguments plant its children for miles.',
+      'You leave the party still roaring. Days later you\'ll still be finding seeds in your gear, which is, of course, exactly what the fig intended.'] });
+  rev('rev_riverrise', { bg: 'river',
+    enter: (s) => { TB.stat('hunger', 8); },
+    text: ['The river runs milk-jade today — rain on the mountain last night, though your beach never saw a drop — and it runs a foot high and urgent, carrying leaf-wreck and drowned flowers and news from a country upstream you\'ve still barely met.',
+      'The fish go mad for it. Whatever the flood washes down, the mullet stack up at the color-line to receive it, and you take three from the queue with hardly an apology needed.',
+      'You stand a while watching the mountain\'s weather ride past your feet. Two worlds on one island, and the river the one honest courier between them.'] });
+  rev('rev_shellline', { bg: 'beach-day',
+    enter: (s) => { TB.stat('hope', 4); },
+    text: (s) => ['The night tide has drawn one clean line of shells down the whole length of your beach — a windrow of them, sorted by the water: cowries, sunset clams, spindles, one nautilus like a section of pearl staircase.',
+      'You walk the line slowly with your morning water, picking up nothing, or almost nothing. It\'s the arrangement that stops you: the sizes running small to large and back again, in waves, in — you count, and then decline to count again — sevens.',
+      s.met && s.met.nine ? 'At the line\'s end, on the last rock before the point, one shell stands upright on its spire, deliberately, impossibly balanced. The gallery-keeper\'s work. You leave the exhibit as you found it and pay with your attention.' : 'Probably the sea sorts things. Probably surf does this. You keep the nautilus, and the question.'] });
+  // -- companion vignettes, second set --
+  rev('rev_compdream', { bg: (s) => campBg2(s), text: (s) => [({
+      kavi: 'Kavi dreams at dusk by the fire: paws paddling, muzzle working through soft closed-mouth barks, ears semaphoring to an audience only he can see. Chasing something. Or leading somewhere. You watch until he settles, one paw over his nose, and you find you\'d give a real coconut to know whether the pack in his dream is the wild one or you.',
+      ipo: 'Ipo talks in his sleep. It\'s quiet — a low conversational chitter, rising sometimes into brief outrage, settling again — and it goes on for half an hour, a whole committee meeting conducted unconscious. Twice, distinctly, he makes the exact sound he makes at YOU when you\'ve done something slow. You are in his dreams, and you are still being reviewed.',
+      vela: 'Vela sleeps on her driftwood snag with her head under one wing — and tonight the wing twitches, the talons flex and grip, the whole ship of her banking against some dreamed wind. Whatever sky she\'s flying, she flies it one-eyed there too, and by the set of her shoulders she is winning.',
+      buri: 'Buri\'s dreams are seismic events: legs churning, great sighs, once an entire muffled squeal-argument delivered into the sand. Then, without waking, he relocates his whole tonnage six inches nearer your bedroll — precise as a docking ship — and resumes. Whatever he guards in his dreams, apparently it\'s you there too.',
+      moa: 'Moa roosts dead still — except tonight her head periscopes up at intervals, fast asleep, scanning a dreamed perimeter with closed eyes before folding away again. On duty in two worlds. You resolve, again, to be worth it in at least one.',
+      nine: 'You check the home pool at dusk and Nine is dreaming — you didn\'t know they could, but there\'s no other word: color washing over her mantle in slow waves, patterns you\'ve never seen awake, blooming and fading like weather on another planet. The reef\'s whole library, maybe, replaying. Or maybe a small strange dream about crabs. You watch until dark, honored past saying either way.',
+    })[s.companion]] });
+  rev('rev_compgift', { bg: (s) => campBg2(s), text: (s) => [({
+      kavi: 'Kavi brings you a gift with tremendous ceremony: carried gently the length of the beach, laid at your feet, one step back, sit, watch. It is a completely spherical pumice stone. It is, you realize as you take it up and he wags his whole spine, the exact size and heft of a ball. Ah. Not a gift, then — an INVITATION. You have work suddenly. The work is throwing.',
+      ipo: 'There is a mango on your bedroll. There has been no mango tree in your life for one hundred days. Ipo sits at the shelter\'s edge aggressively grooming one arm, radiating unconcern, watching you sidelong with both eyes. You ask no questions aloud — the customs arrangements are not your department — and you split it two ways, which was, of course, the tariff.',
+      vela: 'On your filleting rock this morning: one fish. Not her usual settlement — this one\'s a reef beauty, blue and gold, ornamental, entirely impractical. She\'s on her snag, watching. It takes you a moment: it isn\'t payment. She saw it, and it was beautiful, and she is the empress of this coast and can requisition beauty for whom she likes. You cook it anyway — waste is waste — but you keep the blue-gold skin, and she watches you keep it, satisfied.',
+      buri: 'Buri presents you with the finest thing he knows how to find: a truffle-dark tuber the size of your head, excavated from who knows what secret ledger of the jungle floor, carried to your fire in his jaws like a crown on a cushion. It is delicious. He watches every bite with the tearful pride of a grandmother.',
+      moa: 'Moa has decided your boot is a nest and has left one small perfect egg in it, and now stands guard over the arrangement daring you to have opinions. You have no opinions. You have breakfast, eventually, and an apology to a chicken, and one boot that is hers now. Fair terms.',
+      nine: 'The tide pool by your washing-rock has been curated overnight: your lost fishhook — lost WEEKS ago, a mile down the beach — sits at the center of a ring of white pebbles, returned with interest and, apparently, an aesthetic. You take the hook and leave the best whelk shell you own in trade. By evening the whelk is gone and the pebbles are arranged in a spiral. Commerce.',
+    })[s.companion]] });
+  rev('rev_comptrouble', { bg: (s) => campBg2(s), text: (s) => [({
+      kavi: 'A crisis at midday: Kavi, investigating the rock cleft below the point at low tide, gets his shoulders in and cannot get them out, and announces this to the entire island. By the time you reach him the tide has turned. It takes ten minutes, all your grease-fat, one sacrificed shirt and a lot of unhelpful advice from the gulls — and then he\'s free, ecstatic, soaked, and utterly unrepentant. There WAS a crab in there. That part, he maintains, was correct.',
+      ipo: 'Ipo starts a war with the tide. It keeps taking his cache-rock — every day, twice a day, with total disrespect — and today he stands on it as it floods, shrieking his best insults at the entire Pacific Ocean, holding his treasures over his head, refusing the concept. You wade out and offer your shoulder. He boards with the dignity of an admiral abandoning a rammed flagship, and glares at the sea all the way in. The war, you understand, is not over.',
+      vela: 'Vela misjudges — the only time you will ever see it. A gust off the cliff shoulder catches her mid-stoop and slaps her into the shallow lagoon like a thrown coat, and for three seconds the empress of the coast is a soaked, flapping, swearing calamity in eight inches of water. She recovers. She flies to her snag. She arranges herself. And she fixes you — you, specifically, and your face, specifically — with the golden eye. You did not see anything. There was nothing to see. You agree completely, out loud, twice.',
+      buri: 'Buri finds the fermented figs. You piece it together afterward — the raided cache, the sticky delight, the hours unaccounted for — but the presenting evidence is a three-hundred-pound boar processing home at dusk in long diagonals, hiccuping, deeply moved by everything, who then delivers a formal twenty-minute address to your canoe. You sit up with him while it wears off. He is mortified in the morning, in his way: quiet, careful, extremely helpful. The figs get a fence.',
+      moa: 'Moa declares war on your reflection. You\'ve propped the salvaged mirror-shard by the water barrels, and she has discovered the OTHER chicken — the impostor, the squatter, the enemy — and battle is joined at dawn, rejoined at noon, and escalated at dusk. The other chicken is a formidable opponent: exactly her equal, endlessly insolent. You end the war by turning the shard around. She patrols its back for two days, victorious, alert for the coward\'s return.',
+      nine: 'Nine steals your spear. Not borrows: steals — you set it down at the pool\'s edge for the length of one wave and it\'s gone, and a smug string of bubbles is the only receipt. It takes a day of negotiation (crabs, mostly, and sitting very still, and once, humiliatingly, applause) before it surfaces gently at your feet — polished, cleaner than you\'ve ever kept it, and with the binding re-whipped in some knot you don\'t know. She kept it a day and improved it. You can\'t even be angry. That, the bubbles suggest, was the lesson.',
+    })[s.companion]] });
+  // -- wild encounters --
+  rev('rev_boartrail', { bg: 'jungle',
+    enter: (s) => { TB.route('roots', 1); },
+    text: ['A sounder crosses your gathering-trail at mid-morning: two wild sows and a battalion of striped piglets, moving through the dapple in fast professional silence — until the piglets see you, and professionalism collapses into a squealing traffic incident.',
+      'You stand very still. The sows give you a long assessing look — the look of matrons the world over, weighing whether you are worth the trouble of an opinion — and decide against, and herd their chaos onward into the green.',
+      'The last piglet in line stops, looks at you with its whole face, and sneezes so hard it sits down. Then it\'s gone after the others. Some census entries take themselves.'] });
+  rev('rev_birdwar', { bg: 'cliff-camp',
+    enter: (s) => { TB.stat('hope', 3); },
+    text: ['A dogfight over the point at noon: the island hawk makes a pass at the tern colony, and the terns — paper-white, thirty grams apiece — rise as one white shout and ESCORT it from the airspace: wheeling, mobbing, riding its tail like sparks chasing a coal.',
+      'The hawk takes the loss with professional grace, rolling out over the sea lanes with terns peeling off in pairs when the point is made. Nobody died. Nobody expected to. It\'s a border ritual older than borders — everyone playing their part, filing their objections, keeping the great ledger of the air balanced.',
+      'The last tern back overflies your camp and hovers a moment, looking down. Noted, its eye says: you saw the whole thing, you\'re a witness now, and the colony\'s claim is on the record.'] });
+  rev('rev_turtletracks', { bg: 'beach-day',
+    enter: (s) => { if (!TB.is('TURTLES')) { TB.flag('TURTLES'); TB.route('depth', 1); TB.stat('hope', 4); } },
+    text: ['Dawn brings you tracks: two wide rutted lanes up from the tideline to the dune\'s soft shoulder and back again, like something wheeled came ashore in the night on ancient business.',
+      'At the top, a patch of disturbed sand the size of a table, smoothed over with heartbreaking care. A nest. She came up under the stars, alone, dropped her hundred hopes in the warm dark, hid them from everything including you, and went back to her whole vast ocean before first light.',
+      'You mark the spot in your Ledger and in your head, well back, the way you\'d guard a stranger\'s sleep. Somewhere off your reef, unthanked, an old queen swims on. The island keeps her vaults; now you keep the watch.'] });
+  rev('rev_antmarch', { bg: (s) => campBg2(s),
+    text: ['The ants relocate the republic through your camp: a glistening cable of them, thick as your wrist and forty feet long, pouring out of the treeline at mid-morning with the calm totality of civic works.',
+      'You do the only wise thing, which is nothing. The column flows around your fire stones, over one boot (a survey was required, apparently), under the shelter and out the far side, carrying eggs and grubs and once — riding a raft of workers like cargo — a violently indignant beetle they seem to have annexed en route.',
+      'By dusk they\'re gone to whatever better ground their surveyors flagged, and the jungle floor where they passed is swept cleaner than you have ever kept anything. Rain coming, Edda would say. The republic reads the sky better than kings.'] });
+  rev('rev_driftnet', { bg: 'tidepools',
+    enter: (s) => { TB.stat('energy', -8); TB.route('roots', 1); TB.stat('hope', 3); },
+    text: ['The tide brings in a ghost: forty feet of drift-net, torn loose from some fleet a thousand miles away, rolling in the shallows like a drowned thing — and wrapped in its skirts, still alive, one young turtle, one furious puffer, and a rainbow of small fish going quiet.',
+      'You spend a hard hour at low water with the knife, cutting the sea\'s prisoners loose in order of urgency. The turtle takes a long moment at the surface when it\'s free — one breath, another — and then bears away over the reef like a heart restarting. The puffer bites you. Fair.',
+      'The net itself you haul up the beach and stake down, dead where it can drown nothing ever again. Good line, though. Good floats. The sea sends you its garbage; you send it back your salvage arithmetic, and call the account even.'] });
+  rev('rev_sourspring', { bg: 'jungle',
+    enter: (s) => { TB.stat('thirst', -5); },
+    text: ['Your freshwater seep runs sour today — brackish, faintly mineral, the taste of stone with an opinion — and you spit the first mouthful and stand there recalibrating the day around the loss.',
+      'It happens, you\'ve learned: king tides push salt up under the sand\'s water table; the mountain\'s plumbing shifts its weight; springs sulk and recover. But it converts the afternoon into water-work — coconuts knocked down, rain-jars audited, the backup seep along the fringe checked and cleared of leaf-rot.',
+      'By evening the arithmetic balances, barely. The island keeps you honest about the one debt no castaway restructures. Tomorrow the seep will likely run sweet and innocent again, and neither of you will mention today.'] });
+  // -- the uncanny file --
+  rev('rev_sevenwave', { bg: 'beach-day',
+    enter: (s) => { TB.route('depth', 2); },
+    text: ['You notice it at your morning water and cannot afterward un-notice it: today, every seventh wave runs long. Not bigger — LONGER: a slow reaching stroke up the sand, past its six hurried siblings\' best marks, like a line being drawn deliberately, then withdrawn.',
+      'You test it, feeling foolish: pebble at the sixth wave\'s reach. The seventh takes it. Pebble a foot higher. The seventh takes it. All day, all tides, metronome-sure, the sea keeps its emphasis on the count.',
+      'The island has a pulse; you\'ve known that for weeks. Today, for one day, it let the pulse show in the water — or it wanted the beach measured. You write the high-water line in the Ledger, and the Ledger feels heavier for an hour.'] });
+  rev('rev_mirage', { bg: 'beach-day',
+    enter: (s) => { TB.route('depth', 2); TB.stat('hope', -2); },
+    text: ['At the flat blazing heart of the day, the horizon grows an island. You stand up. It stays: a green-backed silhouette off the southern glare, mountains and all, shimmering the way distant land shimmers — and familiar. Wrongly, stomach-droppingly familiar.',
+      'It\'s THIS island. The broken crown, the long southern shoulder, your own bay\'s notch — reflected out over the hot sea like a face in a window, looking back at itself. At you, standing on its beach, looking at it looking.',
+      'The books would say: superior mirage, heated air, light bent over water. The books have never stood where you\'re standing, watching an island that hides from every chart practice seeing itself from outside. By the time the wind picks up, the horizon is only horizon. You drink some water and sit down for a while anyway.'] });
+  rev('rev_humtools', { bg: (s) => campBg2(s),
+    enter: (s) => { TB.route('depth', 1); },
+    text: ['At dusk your tools begin, very quietly, to sing. The knife first — a hair-thin ringing off the blade where it hangs — then the multitool, the wire, the flare gun\'s barrel: every worked metal thing in camp humming one soft sympathetic note in the falling light.',
+      'You stand among your possessions like a man in a choir loft. Seven pulses, rest. Seven pulses, rest. The lagoon is glowing its slow answer down the beach, and your gear — the world\'s stuff, the crash\'s stuff, the salvage of the outside — is singing along to the island\'s bass line like it\'s been rehearsing behind your back.',
+      'It fades with the light. Everything is just metal again. But you handle the knife differently that evening — not afraid, exactly. Polite. Whatever the island\'s voice touches, it tunes.'] });
+  rev('rev_cairn', { bg: 'jungle',
+    enter: (s) => { TB.route('depth', 1); TB.flag('CAIRN_SEEN'); },
+    text: ['There is a cairn at the treeline that you did not build. Five stones, sea-smoothed, stacked in perfect balance at the head of your gathering trail — placed since yesterday, placed where you could not miss it, placed by hands.',
+      'You stand very still for a long time, listening to the jungle behave completely normally, which is somehow worse. Then you examine it. The stones are dry (carried, not rolled). The top stone is quartz-veined and lovely (chosen). And tucked into the gap between the third and fourth stones, folded small: one green leaf around a red seed. A message. In no language you know — but not in no language.',
+      'You leave the cairn standing and, after a full minute of internal debate, add a sixth stone to the top. By next morning your stone has been repositioned a quarter-turn — corrected, gently, by a better mason. Someone is teaching you. Someone has decided you might be teachable. The green keeps its eyes, and its eyes, it turns out, keep score.'] });
+  rev('rev_nightbloom', { bg: 'jungle-night',
+    enter: (s) => { TB.stat('hope', 5); },
+    text: ['The vine over the old deadfall has been nothing all season — a rope of dusty green you\'ve walked past a hundred times — and tonight, at moonrise, it opens: fifty white trumpets unfurling in the space of twenty minutes, pouring out a scent like honey and rain on hot stone.',
+      'The night shift arrives from everywhere: hawkmoths big as your palm, beetles in formal dress, small blurred things you never see by day, all of them drunk on it, working bloom to bloom in the moonlight like lamplighters.',
+      'It lasts one night. By dawn the trumpets hang spent and the scent is a rumor. A whole year\'s extravagance, budgeted for six dark hours and one lucky witness. You happened to be awake. The island does not do encores; you file it with the green flash, in the drawer marked PAID IN FULL.'] });
+  rev('rev_meteor', { bg: 'beach-night',
+    enter: (s) => { if (!TB.is('METEOR_WISH')) { TB.flag('METEOR_WISH'); TB.stat('hope', 6); } },
+    text: ['You\'re banking the fire when the sky splits: a meteor — a real one, a bolide, green-white and burning — drops across the whole southern sky, throws your shadow up the beach, and dies over the sea in a long dissolving scar of light.',
+      'The island holds its breath around the afterimage. Even the surf seems to lean back. And you do the thing eight thousand generations did before you, instantly, without deciding to: you wish.',
+      'You will not write the wish in the Ledger. But the Ledger, you suspect, took it down anyway — the island collects what falls on it, and tonight, briefly, that included a piece of the sky and one castaway\'s whole unguarded heart.'] });
 
   // ---- collectible finds (grants are reload-guarded inside Almanac.grantFor) ----
   rev('rev_glyphstone', {
