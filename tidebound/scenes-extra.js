@@ -218,7 +218,7 @@
 
   const POOL = [
     { id: 'rev_drift', w: 3, when: (s) => s.site !== 'fringe' || s.chapter < 2 },
-    { id: 'rev_bottle', w: 1.5, when: (s) => !TB.is('REV_BOTTLE3') },
+    { id: 'rev_bottle', w: 1.5, when: (s) => !TB.is('REV_BOTTLE7') },
     { id: 'rev_heron', w: 2, when: (s) => true },
     { id: 'rev_snake', w: 2, when: (s) => s.chapter >= 2 },
     { id: 'rev_hornbill', w: 2, when: (s) => s.site === 'fringe' || s.chapter >= 3 },
@@ -257,6 +257,10 @@
     { id: 'rev_cairn', w: 0.7, rare: true, when: (s) => s.chapter >= 2 && s.chapter <= 4 && !TB.is('NAIA_MET') },
     { id: 'rev_nightbloom', w: 0.6, rare: true, when: (s) => s.seg === 2 },
     { id: 'rev_meteor', w: 0.5, rare: true, when: (s) => s.chapter >= 2 && s.seg === 2 },
+    // ---- side-quest hooks (Phase 3) ----
+    { id: 'rev_blackbox', w: 0.8, rare: true, when: (s) => s.chapter >= 3 && !TB.is('BLACKBOX2') },
+    { id: 'rev_starfall', w: 0.9, rare: true, when: (s) => TB.is('METEOR_WISH') && s.chapter >= 3 },
+    { id: 'rev_watchergift', w: 0.9, rare: true, when: (s) => TB.is('CAIRN_SEEN') && !TB.is('NAIA_MET') && s.chapter >= 3 },
     // collectible finds (almanac.js sets) — eligible only while the set has gaps
     { id: 'rev_glyphstone', w: 1.2, when: (s) => s.chapter >= 2 && TB.Almanac && TB.Almanac.remaining(s, 'stones') },
     { id: 'rev_vanepage', w: 1.2, when: (s) => s.chapter >= 4 && TB.is('STATION_OPENED') && TB.Almanac && TB.Almanac.remaining(s, 'pages') },
@@ -434,6 +438,58 @@
       'The island holds its breath around the afterimage. Even the surf seems to lean back. And you do the thing eight thousand generations did before you, instantly, without deciding to: you wish.',
       'You will not write the wish in the Ledger. But the Ledger, you suspect, took it down anyway — the island collects what falls on it, and tonight, briefly, that included a piece of the sky and one castaway\'s whole unguarded heart.'] });
 
+  // -- Phase 3 side-quest events --
+  rev('rev_blackbox', { bg: 'beach-day',
+    enter: (s) => { if (!TB.is('BLACKBOX2')) { TB.flag('BLACKBOX2'); TB.route('depth', 2); } },
+    text: ['The storm-scoured stretch past the point — Bone Beach, you\'ve called it since the first week, for the bleached driftwood — gives up something the driftwood was hiding: a corner of international orange under a decade of sand.',
+      'You dig it out with your hands and sit back on your heels, not breathing right. A flight recorder. A <em>black box</em> — the old kind, corroded to lace at the seams, its registration plate scoured blank but for three stamped letters: <em>—CAL</em>.',
+      'It is not from your plane. Your crash is a hundred days old; this thing has been in the sand since before you could drive. Which means the sky has dropped people here before — and the island filed them, the way it files everything, under sand, under patience, under Bone Beach. The tape reels inside are intact. The station\'s workshop could read them. If you dare to hear it.'],
+  });
+  TB.scene('ev_blackbox2', {
+    bg: 'station',
+    enter: (s) => { if (!TB.is('BLACKBOX_HEARD')) { TB.flag('BLACKBOX_HEARD'); TB.route('signal', 1); TB.route('depth', 2); TB.stat('hope', -3); } },
+    text: (s) => [
+      'The station\'s workshop does it, in the end — the tape bath, the coaxed reels, the salvaged headphones — and you sit in the mess hall at dusk and listen to the last eleven minutes of a cargo flight that left the world in 1979.',
+      'It\'s a supply run. You understand slowly, cross-checking the dates against the wall calendar\'s frozen year: <em>Halcyon\'s</em> supply run — the one the files called "lost with all hands, weather presumed." Two voices, pilot and copilot, professional to the end: the compass swinging, the radio drowning in a hum they keep describing to each other in wonder rather than fear — <em>"like a choir, Marty. Under water."</em> — the fuel arithmetic, the decision to put down in the lee of an island that isn\'t on the chart.',
+      'The last minute is calm. That\'s the thing you\'ll carry: no screaming, no static-chewed panic. The pilot says the height, and the sea state, and then, softer, off-checklist, the words the island has been collecting from arriving mouths for centuries: <em>"…would you look at that. It\'s beautiful. Tell Voss we found it."</em>',
+      'The tape ends. The mess hall holds its fifty-year quiet around you. Tell Voss we found it. You look out the window at the mountain, and the mountain, as ever, declines to confirm what it keeps. But Bone Beach has its name for a reason now, and the reason has voices, and you write both of them into the Ledger where the island can see you doing it: <em>remembered.</em>',
+    ],
+    next: (s) => backToCamp(s),
+  });
+  rev('rev_starfall', { bg: 'tidepools',
+    enter: (s) => { if (!TB.is('STARIRON')) { TB.flag('STARIRON'); TB.stat('hope', 6); TB.route('depth', 1); } },
+    text: ['Low tide bares the reef flat farther than you\'ve ever seen it, and out at the raw edge of the world something is <em>wrong-colored</em>: a fist of blue-black metal, half-fused into the coral rock, still faintly warm to your disbelieving hand. The wish-star. Your wish-star — down from the sky\'s vault and delivered, like everything else, to the island\'s keeping.',
+      'It takes an hour to work free: a lump of star-iron the weight of a heart, its skin thumb-printed by its burn through the air. Iron that has never been in the ground. Iron from BEFORE grounds. The Kaari glyphs have a stroke that always puzzled you — a diagonal with a dot falling from it — and holding this, you\'d bet the Ledger you now know what it means.',
+      'You carry it home and set it by the fire, and if you\'re honest it changes the shape of the camp: a piece of the outside of everything, sitting quietly next to your coconut. What did you wish, that night on the dark beach? The island, apparently, heard — and answered the way it answers: not with the thing itself, but with proof that the sky can be kept a promise.'],
+  });
+  rev('rev_watchergift', { bg: 'camp-fringe',
+    enter: (s) => { if (!TB.is('NAIA_GIFT')) { TB.flag('NAIA_GIFT'); if (!TB.is('SALVE')) TB.flag('SALVE'); TB.stat('hope', 5); TB.route('depth', 1); } },
+    text: ['It\'s on the boundary stone at dawn, where the cairn-builder left the first lesson: a parcel, palm-leaf, folded the way you fold nothing, tied with a cord plaited from three fibers you can\'t name.',
+      'Inside: feverbark, stripped and dried, a season\'s worth. A wad of the green riverweed Edda renders into salve. And bedded in the middle, wrapped separately with what you can only call care: a honeycomb, still weeping gold at the cut.',
+      'No note. The green doesn\'t write. But you\'ve been fevered once or hurt once or close enough to both, and someone in the treeline kept the account, and this — medicine, and sweetness, in a knot you\'ll spend a week learning — is the green\'s whole message: <em>we would rather you lived.</em> You leave the boundary stone a cooked fish and your best shell in answer. By dusk, both are gone, and the cord, you notice, has been retied. Correctly.'],
+  });
+
+  // ---- Phase 3 hub actions: Crab Town + the black box ------------------------
+  const prevActs3 = TB.ch3Actions;
+  TB.ch3Actions = function (s) {
+    const c = prevActs3 ? prevActs3(s) : [];
+    if (!TB.is('CRAB_MAYOR')) c.push({
+      t: '🦀 Feed the Bone Beach crabs', sub: ((s.crabs || 0) >= 7 ? 'The polity now assembles BEFORE you arrive. Elections feel imminent.' : (s.crabs || 0) >= 3 ? 'Attendance is up. Word has spread among the citizenry.' : 'They administered this beach before you came. A little civic outreach.') + ' Energy −, hope +.',
+      do: () => { const s2 = TB.state; s2.crabs = (s2.crabs || 0) + 1; TB.stat('energy', -6); TB.stat('hope', 3); TB.stat('hunger', -3);
+        const n = s2.crabs;
+        const lines = n >= 10 ? ['You arrive at Bone Beach with the scrap-bucket and the entire crab nation is already in assembly: ranks of them, claws raised, arranged — you check twice — in a rough horseshoe with a gap at the center. A podium-shaped gap.', 'You feed them. They process past in order of seniority. And at the end, the largest — a scarlet veteran with one regrown claw whom you have privately been calling the Senator — climbs the driftwood stump, fixes you with both stalks, and clacks, three times, with unmistakable formality.', 'Motion carried. Whatever was just ratified, you were present for it, and the minutes, you suspect, will reflect that the ayes had it. <em>(The crabs of Bone Beach take governance seriously. Something has been decided about you.)</em>']
+          : n >= 5 ? ['The crab electorate now recognizes the scrap-bucket at two hundred yards. You are met at the wrack line by a delegation, escorted to the customary feeding flat, and observed with parliamentary attention while you distribute the budget.', 'One small crab attempts to make off with the entire allocation and is bodily corrected by two larger ones. Committee discipline. You are starting to know the factions by sight, which worries you precisely as much as it delights you.']
+          : ['You carry the day\'s scraps down to Bone Beach and hold your civic office hour: fish frames, coconut shreds, the questionable end of a breadfruit, distributed to a scuttling constituency that files out of the driftwood like a parliament summoned by bell.', 'They eat with democratic fury. Attendance is taken (by you) and complaints are lodged (by them, at each other, constantly). You leave with an empty bucket and the specific lightness of a person who has been, briefly and absurdly, of service.'];
+        if (n === 10) TB.flag('CRAB_MAYOR');
+        s2.out = { bg: 'tidepools', text: lines };
+        TB.tickSegment(); },
+      go: 'act_result' });
+    if (TB.is('BLACKBOX2') && !TB.is('BLACKBOX_HEARD') && TB.is('STATION_OPENED')) c.push({
+      t: '📼 Take the old recorder to the station', sub: 'The tape reels are intact. The workshop could read them. Eleven minutes of 1979.',
+      do: () => { TB.stat('energy', -8); TB.tickSegment(); }, go: 'ev_blackbox2' });
+    return c;
+  };
+
   // ---- collectible finds (grants are reload-guarded inside Almanac.grantFor) ----
   rev('rev_glyphstone', {
     bg: (s) => pick(['jungle', 'tidepools', 'river']),
@@ -487,12 +543,19 @@
   } });
 
   rev('rev_bottle', { bg: 'beach-dusk', text: (s) => {
-    const stage = TB.is('REV_BOTTLE2') ? 3 : TB.is('REV_BOTTLE1') ? 2 : 1;
+    const stage = TB.is('REV_BOTTLE6') ? 7 : TB.is('REV_BOTTLE5') ? 6 : TB.is('REV_BOTTLE4') ? 5 : TB.is('REV_BOTTLE3') ? 4 : TB.is('REV_BOTTLE2') ? 3 : TB.is('REV_BOTTLE1') ? 2 : 1;
     TB.flag('REV_BOTTLE' + stage);
     if (stage === 1) return ['A bottle in the surf — a real one, corked, paper inside. Your heart does the whole stupid dance while you work the cork.', 'It is a wine label. On the back, in ballpoint, in Portuguese, a decade faded: <em>"If found, tell Marta the fish soup needed more salt and I said so to the end. — R."</em>', 'You laugh alone on an empty beach for a good minute, and add the bottle to the windowsill. Whoever Marta is: it needed more salt. He said so to the end.'];
     if (stage === 2) return ['Another bottle, months-traveled by the state of it. Inside, a child\'s drawing: a house, a dog, a sun with sunglasses, and careful block letters: <em>TO THE OSHEN. FROM LEO. 7.</em>', 'You pin Leo\'s work to the shelter post at eye level, where art belongs. The dog is excellent. The ocean, for its part, delivered.'];
-    TB.stat('hope', 4); TB.route('signal', 1);
-    return ['A third bottle — and this one is EMPTY, except for a stub of pencil and a curl of dry paper. An invitation if you\'ve ever held one.', 'You think for a long time, and write the truest small thing you own, and cork it hard, and throw it far past the reef line on the ebb.', 'What you wrote is yours. The sea is a slow post but it has never once lost a letter — every bottle on your sill proves it. Somewhere, someday, a stranger on a tideline. You wave to them across the years, and go back to work.'];
+    if (stage === 3) { TB.stat('hope', 4); TB.route('signal', 1);
+      return ['A third bottle — and this one is EMPTY, except for a stub of pencil and a curl of dry paper. An invitation if you\'ve ever held one.', 'You think for a long time, and write the truest small thing you own, and cork it hard, and throw it far past the reef line on the ebb.', 'What you wrote is yours. The sea is a slow post but it has never once lost a letter — every bottle on your sill proves it. Somewhere, someday, a stranger on a tideline. You wave to them across the years, and go back to work.']; }
+    if (stage === 4) return ['Bottle the fourth: inside, a bar receipt from a harbor town you\'ve never heard of — four beers, one "MYSTERY PLATTER," a tip that suggests either great love or great error — and on the back, a phone number and five words: <em>"Call me if you surface. — D."</em>', 'You have no phone, no surface, and no idea who D. is, and you spend the whole evening composing what you\'d say anyway. The windowsill parliament grows by one. D. waits, wherever D. is, and something about that is company.'];
+    if (stage === 5) { TB.stat('hope', 8);
+      return ['The fifth bottle stops your heart: the paper inside is <em>yours</em>. Your own handwriting. The true small thing you wrote and threw past the reef — come back, months-traveled, barnacle-scarred.', 'Except. Below your words, in a stranger\'s hand, in pencil gone soft with damp: <em>"I found this on a beach four hundred miles from anywhere. I read it every day for a month before I understood it. You are not the only one at sea. Here is mine —"</em> and then their true small thing, which is not yours to repeat, and which you will carry to whatever end this island writes you.', 'The sea is a slow post. The sea is a FAITHFUL post. You sit on the tideline until dark with a stranger\'s heart in your two hands, exactly as they once sat with yours.']; }
+    if (stage === 6) { TB.route('depth', 2);
+      return ['The sixth bottle is old — hand-blown glass, wax seal gone amber, the cork a fossil. It takes surgery to open, and the paper inside is browned to autumn.', 'The hand is copperplate; the date is 1811; the language is a sailor\'s English written by a Portuguese officer, and it is very short: <em>"Third night becalmed. The island moves. I have taken its position four times and it will not hold still. God willing this reaches the Admiralty: do not chart it. It does not wish it. — F.C., R.D."</em>', '<em>R.D.</em> You look at the initials a long time. The Rosa Dourada\'s people knew — two hundred years before your compass ever spun, someone stood off this coast and understood exactly what you now understand. The Admiralty, evidently, never got the letter. The island saw to its own paperwork.']; }
+    TB.flag('BOTTLES_ALL'); TB.stat('hope', 5); TB.route('roots', 1);
+    return ['A seventh bottle — empty again, pencil again, paper again. The sea holding out its hand: <em>your turn.</em>', 'But you\'ve changed since the third bottle. You don\'t write to the world this time. You write to the NEXT one — the next castaway of Vessakai, whoever the sky drops here after you — everything that matters most, small enough for one page: where the sweet water runs, which fig tree lies, what the seventh beat is counting, who to trust at the clearing (all of them; that\'s the secret), and at the bottom, the only promise the island has ever kept to everyone: <em>you are not alone here. You never were.</em>', 'You don\'t throw this one to sea. You cork it hard and wedge it high in the cleft above the tideline, where landing eyes will find it. Seven bottles: three received, one returned, one answered, one warning, and yours — the windowsill parliament complete, and its final law passed unanimously: <em>keep each other.</em>'];
   } });
 
   rev('rev_heron', { bg: (s) => (TB.is('RIVER_KNOWN') && R() < 0.5 ? 'river' : 'beach-day'), text: (s) => {

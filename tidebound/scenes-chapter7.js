@@ -123,6 +123,8 @@
         t: '🌄 Stand at the tideline alone and claim the whole of it.', sub: 'No companion, no covenant, no rescue. Just the life you built with two hands.',
         do: () => { TB.state.endingId = 'ALONE_UNBROKEN'; }, go: 'ending' });
       if (!s.companion && TB.is('COCO')) c.push({ t: '🥥 …Run the whole plan past Coco first.', sub: 'He has been very patient.', do: () => { TB.state.endingId = 'COCO'; }, go: 'ending' });
+      if (TB.is('CRAB_MAYOR')) c.push({ t: '🦀 Attend the Bone Beach assembly. Your presence has been… requested.', sub: 'The crabs take governance seriously. Something was ratified. It appears to have been you.', do: () => { TB.state.endingId = 'CRAB_TOWN'; }, go: 'ending' });
+      if ((s.nuts || 0) >= 30 && (TB.is('VESSEL_READY') || TB.is('CONTACT_MADE') || TB.is('TIDEWELL_SILENCE'))) c.push({ t: '🥥 Leave — with the coconuts. ALL of the coconuts.', sub: (s.nuts) + ' coconuts processed this run. The manifest will be a problem. You have decided it will be the SHIP\'S problem.', do: () => { TB.state.endingId = 'COCONUT_MOGUL'; }, go: 'ending' });
       return c;
     },
   });
@@ -263,6 +265,18 @@
       'Life on her terms turns out to mean: gifts on the doorstep whose meanings you decode over years (the good shells are thanks; the crab claws are invoices; the sea-glass, you understand eventually, is <em>art</em>). It means being shown things — the nursery reefs, the current-doors, the drowned garden she tends below the third pool that no scientist will ever publish — at her pace, in her seasons, as you prove ready. It means learning to think tide-wise and moon-wise until your old land-clock rusts out of you entirely.',
       'The reef learns you the way the pack learned the fire-keeper: as a fixed strangeness that belongs. Octopuses who have never met you surface to watch you work, because watching you is, locally, a tradition now. You keep the garden. The garden, in its eight-armed, thousand-minded, salt-and-moonlight way, keeps you. Nobody anywhere has your life. That was the trade, and you\'d make it again every tide.',
     ] },
+    CRAB_TOWN: { icon: '😂', title: 'MAYOR OF CRAB TOWN', bg: 'tidepools', body: [
+      'You attend the assembly at slack tide, as summoned. The full polity is present — every crab on Bone Beach, ranked by seniority in the great horseshoe, the Senator presiding from the driftwood stump — and the agenda, translated over an hour of extremely formal clacking, is this: the office of First Upright Citizen (Provisional) has been established, the feeding record has been entered into evidence, and the vote (held earlier; you were not consulted; this is understood to be normal) was unanimous, minus one abstention on procedural grounds.',
+      'You serve, because there is no mechanism for refusal and because — be honest — you have never been elected to anything. The duties are real, by crab standards: the scrap-bucket on schedule, boundary disputes attended (you may not understand them, but you must ATTEND them), and once, memorably, a full state funeral for the Senator\'s predecessor\'s shell, which the whole government wore in succession before the sea took it, and at which you gave, to sustained clacking, the eulogy.',
+      'Your other life — the fire, the doors, the great choices — continues around your civic burden, and your Ledger fills with minutes. And on quiet evenings on the world\'s strangest beach, watching your constituency administer the tideline with democratic fury, you understand something true that no grander ending would have taught you: government is just feeding what you\'re responsible for, on schedule, whether or not it thanks you. The crabs of Bone Beach take governance seriously. So, now, does their mayor.',
+      '<em>(Achievement unlocked: the ayes had it. The ayes have ALWAYS had it.)</em>',
+    ] },
+    COCONUT_MOGUL: { icon: '😂', title: 'COCONUT MOGUL', bg: 'beach-day', body: [
+      'You leave with the coconuts. All of the coconuts: the drinking stock, the cured stock, the sprouted reserves, Coco\'s extended family, and the forty-one you husked yesterday purely to make the number rounder — lashed in cargo nets, stacked in a pyramid, dwarfing your actual survival gear by a factor the rescue crew will discuss in therapy.',
+      'The manifest dispute begins at the rail and follows you across an ocean: the coast guard lieutenant\'s form has no field for AGRICULTURAL EMPIRE, PALM, ORIGIN UNCHARTED; customs impounds, then un-impounds, then requests samples; an agricultural attaché becomes involved, then a lawyer, then — after the story leaks — a breakfast television program, on which you decline, with great dignity, to say one word about the island, while drinking from a coconut on air.',
+      'You do well, is the preposterous epilogue. Novelty-import license, a stall, then a shopfront, then a small absurd brand whose logo is a coconut with a painted face: the man who came back from nowhere with nothing but nuts, and made it a living. Your accountant advises you yearly to diversify. Yearly, over one ceremonial coconut, you refuse.',
+      '<span style="font-family: \'Comic Sans MS\', \'Comic Sans\', cursive;"><em>(The credits of this ending are rendered, as foretold, in Comic Sans. The island keeps its promises. All of them.)</em></span>',
+    ] },
     LOOP: { icon: '🌀', title: 'THE LOOP', bg: 'gullet', body: [
       'You go back to the grotto at king tide with the journal\'s last line in your teeth, and you kneel at the pool, and you ask it — out loud, feeling foolish for exactly four seconds — <em>who is counting with me?</em>',
       'And the pool answers the way the island has answered everything, all along, in every life: seven beats. But this time — knowing what you know, having written what you wrote, having <em>arrived</em> as many times as you have arrived — you finally hear the seventh beat for what it is. Not a door closing. A stroke of a tally. Something on the far side of the water is counting crossings, patiently, the way you count days in the Ledger: not to imprison. To <em>remember</em>. The island does not trap its castaways. It keeps them — the way you keep entries, the way the sea keeps salt — and what it has been humming since your first fire is not a lullaby and not a warning. It is a count, and the count includes you, and the count is not finished.',
@@ -277,7 +291,7 @@
 
   function epilogue(s, id) {
     const t = [];
-    const leaving = id === 'RESCUE' || id === 'SAIL_BLESSED' || id === 'RYO_BOAT' || id === 'LONG_SWIM' || id === 'ROSAS_RANSOM' || id === 'REGRET' || id === 'EMPTY_HORIZON' || id === 'CARTOGRAPHER';
+    const leaving = id === 'RESCUE' || id === 'SAIL_BLESSED' || id === 'RYO_BOAT' || id === 'LONG_SWIM' || id === 'ROSAS_RANSOM' || id === 'REGRET' || id === 'EMPTY_HORIZON' || id === 'CARTOGRAPHER' || id === 'COCONUT_MOGUL';
     const companionCovered = id === 'THREE_SPRINGS' || id === 'LAST_PACK' || id === 'TRICKSTER' || id === 'WIND_TAKES' || id === 'SOUNDER' || id === 'ROOSTER_DAWN' || id === 'NINES_GARDEN'; // their cores ARE the companion's fate
     if (id === 'TIDE_PRICE') {
       // the one ending whose epilogue the player doesn't live to keep — it
