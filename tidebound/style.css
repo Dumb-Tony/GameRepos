@@ -235,11 +235,11 @@ body {
 .f-health { background: var(--c-health); } .f-hunger { background: var(--c-hunger); }
 .f-thirst { background: var(--c-thirst); } .f-energy { background: var(--c-energy); }
 .f-hope   { background: var(--c-hope); }
-#kitBtn, #sndBtn {
+#kitBtn, #almBtn, #sndBtn, #menuBtn {
   background: #ffffff1f; border: 1px solid #ffffff38; color: inherit;
   font-size: 16px; border-radius: 8px; padding: 3px 10px; cursor: pointer;
 }
-#kitBtn:hover, #sndBtn:hover { background: #ffffff33; }
+#kitBtn:hover, #almBtn:hover, #sndBtn:hover, #menuBtn:hover { background: #ffffff33; }
 
 /* ===== VN panel ===================================================== */
 #stage {
@@ -437,14 +437,15 @@ body {
 /* ===== small screens =============================================== */
 @media (max-width: 560px) {
   /* HUD becomes two rows: [clock ..... buttons] / [all five meters] */
-  #hud { flex-wrap: wrap; row-gap: 5px; padding: 6px 8px 5px;
+  #hud { flex-wrap: wrap; row-gap: 5px; column-gap: 7px; padding: 6px 8px 5px;
     background: linear-gradient(#04101ae6, #04101a00); }
   .clock { order: 1; font-size: 12.5px; }
   #kitBtn { order: 2; margin-left: auto; }
-  #sndBtn { order: 3; }
-  #menuBtn { order: 4; }
-  #kitBtn, #sndBtn, #menuBtn { font-size: 13px; padding: 2px 8px; }
-  .meters { order: 5; flex-basis: 100%; flex-wrap: nowrap; gap: 6px; }
+  #almBtn { order: 3; }
+  #sndBtn { order: 4; }
+  #menuBtn { order: 5; }
+  #kitBtn, #almBtn, #sndBtn, #menuBtn { font-size: 13px; padding: 2px 7px; }
+  .meters { order: 6; flex-basis: 100%; flex-wrap: nowrap; gap: 6px; }
   .meter { flex: 1 1 0; min-width: 0; }
   .bar { width: auto; flex: 1 1 0; min-width: 0; }
   .mi { font-size: 11px; }

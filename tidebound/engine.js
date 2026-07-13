@@ -419,6 +419,7 @@
     });
     $('moreHint').addEventListener('click', showNextParagraph);
     $('kitBtn').addEventListener('click', openKit);
+    $('almBtn').addEventListener('click', () => { if (TB.Almanac) TB.Almanac.open(); });
     $('sndBtn').addEventListener('click', TB.Audio.toggleMute);
     $('sndBtn').textContent = TB.Audio.muted() ? '🔇' : '🔊';
     window.addEventListener('pointerdown', function once() { TB.Audio.kick(); window.removeEventListener('pointerdown', once); });
