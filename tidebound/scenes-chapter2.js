@@ -121,6 +121,7 @@
         t: s.site === 'overhang' ? '💧 Haul water and coconuts up the track' : '🥥 Coconuts — drink and eat',
         sub: s.site === 'overhang' ? 'The overhang\'s daily tax. Energy −−, thirst restored.' : 'The palms keep providing. Energy −, thirst restored.',
         do: () => { const s2 = TB.state; TB.stat('thirst', 34); TB.stat('hunger', 10); TB.stat('energy', s2.site === 'overhang' ? -12 : -8);
+          if (s2.site !== 'overhang') s2.nuts = (s2.nuts || 0) + 2;
           s2.out = { bg, text: [s2.site === 'overhang' ? pick([
             'Down the goat-track, load, up the goat-track — twice. Your calves have opinions; the gourds sweat cool against your back. From the ledge you drink looking down at the whole shining lagoon, which almost makes carrying a personal ocean uphill feel reasonable.',
             'The water run, morning edition. You know every root-step of the goat-track now, every resting ledge, the exact spot where the wind arrives to dry your back. The gourds ride up full and heavy. Civilization, one trip at a time.',
