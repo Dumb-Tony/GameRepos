@@ -189,6 +189,15 @@
       // New infections stoke the trend (a region catching on is a viral moment).
       this.addHeat(res.newlyInfected * C.HEAT_GAIN_INFECT, false);
 
+      // Infection-moment DNA bubbles: the instant a fresh region catches the
+      // rot, pop a juicy viral bubble ON it — the Plague-Inc "new country =
+      // orange bubble" reward that makes watching the map pay off. Fires once
+      // per region, the first time it crosses OUTBREAK_AT.
+      this._outbreakBubbles();
+      // Government response theater: announce the borders/app-stores slamming
+      // shut (they used to close silently) with a map alert ping.
+      this._processClosures(res.closures);
+
       // Virality income: new infections + a severity trickle, amplified while
       // you're trending. This is the payoff for riding a hot wave.
       let gain = res.newlyInfected * C.VIR_INFECT + this.severity() * this.world.infectedPeople() * C.VIR_SEVERITY * dt;
@@ -219,6 +228,7 @@
       this._timers(dt);
       this.events.update(dt);
       this._milestones();
+      this._holdoutBeats();
       this.checkAchievements();
       this._checkEnd();
 
@@ -266,7 +276,53 @@
       const { c, x, y } = this._bubbleAt();
       const e = ['🔥', '💯', '🤯', '💀', '🗿', '📈', '✨'][(this.rnd() * 7) | 0];
       this.viralBubbles.push({ x, y, country: c, emoji: e, reward: C.VIRAL_BUBBLE_REWARD[0] + this.rnd() * (C.VIRAL_BUBBLE_REWARD[1] - C.VIRAL_BUBBLE_REWARD[0]), ttl: 6, maxTtl: 6 });
-      if (this.viralBubbles.length > 5) this.viralBubbles.shift();
+      if (this.viralBubbles.length > 6) this.viralBubbles.shift();
+    }
+    // A fresh-outbreak jackpot bubble planted on the country that just caught on.
+    _outbreakBubbles() {
+      const at = C.OUTBREAK_AT != null ? C.OUTBREAK_AT : 0.04;
+      let spawned = 0;
+      for (const c of this.world.countries) {
+        if (c._outbreakBubbled || c.total() < at || c.px === undefined) continue;
+        c._outbreakBubbled = true;
+        if (spawned++ >= 2) continue;   // don't flood if several cross in one tick
+        const mult = C.OUTBREAK_BUBBLE_MULT != null ? C.OUTBREAK_BUBBLE_MULT : 1.9;
+        const rw = (C.VIRAL_BUBBLE_REWARD[0] + this.rnd() * (C.VIRAL_BUBBLE_REWARD[1] - C.VIRAL_BUBBLE_REWARD[0])) * mult;
+        this.viralBubbles.push({ x: c.px + (this.rnd() - 0.5) * 20, y: c.py - c.r - 16, country: c,
+          emoji: '🧠', reward: rw, ttl: 7, maxTtl: 7, outbreak: true });
+        if (this.viralBubbles.length > 6) this.viralBubbles.shift();
+        if (this.ui && this.ui.onOutbreak) this.ui.onOutbreak(c);
+      }
+    }
+    // Announce border/app-store closures as escalating government beats with a
+    // map alert ping. Throttled so a wave of closures scrolls, not spams.
+    _processClosures(cl) {
+      if (!cl || !cl.length) return;
+      this._ms = this._ms || {};
+      // Pick the most dramatic closure this step: a region that JUST went fully
+      // dark, else the biggest country slamming a route shut.
+      let pick = cl.find((x) => !x.c.airOpen && !x.c.seaOpen && !x.c.landOpen && !x.c._sealedBeat);
+      const sealed = !!pick;
+      if (sealed) pick.c._sealedBeat = true;
+      else pick = cl.slice().sort((a, b) => (b.c.pop * (1 + b.c.wealth)) - (a.c.pop * (1 + a.c.wealth)))[0];
+      const c = pick.c;
+      if (!this.headless && this.world && c.px !== undefined) this.world.addBurst(c.px, c.py, '#ff5c8a', true);
+      // First closure of the run is a pausing beat — the world starts fighting.
+      if (!this._ms.firstClose) {
+        this._ms.firstClose = true; this._lastClosureBeat = this.elapsed;
+        this.majorEvent('🧱', `${c.name} fights back — first to wall off its feeds to stop the rot. Evolve Border Pierce.`, 'bad');
+        return;
+      }
+      // Throttle ALL further closure chatter to one scrolling beat per gap — a
+      // mass-lockdown wave scrolls steadily instead of dumping 30 at once.
+      const gap = C.CLOSURE_BEAT_GAP != null ? C.CLOSURE_BEAT_GAP : 6;
+      if (this.elapsed - (this._lastClosureBeat || -99) < gap) return;
+      this._lastClosureBeat = this.elapsed;
+      const msg = sealed ? `${c.name} has gone FULLY offline — total digital lockdown.`
+        : pick.kind === 'air' ? `${c.name} pulled the app from its stores.`
+        : pick.kind === 'sea' ? `${c.name} is blocking the rot at its ports.`
+        : `${c.name} shut its borders to slow the brain rot.`;
+      this.onEvent(sealed ? '🔒' : '🚧', msg, 'bad');
     }
     spawnCureBubble() {
       // Cure bubbles surface near wealthy, aware countries (the researchers).
@@ -339,6 +395,26 @@
       if (this.cure >= 25) fire('c25', '🧪', 'The Cure ("Touch-Grass Campaign") reaches 25%. Ad councils are mobilizing.', 'bad');
       if (this.cure >= 50 && !this.cureEndgame) { this.cureEndgame = true; fire('c50', '⚠️', 'THE CURE IS AT 50%. Humanity is fighting back — funding surges and borders slam shut. Finish this, fast.', 'bad'); }
       if (this.cure >= 75) fire('c75', '🚨', 'The Cure hits 75%. It is very nearly over for the brain rot. De-evolve loud symptoms and stall it!', 'bad');
+      const sealed = this.world.countries.filter((c) => !c.airOpen && !c.seaOpen && !c.landOpen).length;
+      if (sealed >= 5) fire('sealed5', '🧱', 'Governments worldwide are slamming the door — five regions have gone fully dark. Evolve Border Pierce or the last holdouts stay clean.', 'bad');
+    }
+    // The holdout nemesis: late game, dramatize the last regions still touching
+    // grass — the genre's Madagascar/Greenland joke. Names the most-resistant
+    // clean region as the villain and marks it on the map (this.holdout).
+    _holdoutBeats() {
+      this.holdout = null;
+      const gb = this.globalBrainrot();
+      if (gb < 62) return;
+      this._ms = this._ms || {};
+      const clean = this.world.countries.filter((c) => c.total() < 0.55 && !c.isSaturated());
+      clean.sort((a, b) => a.total() - b.total());   // most-resistant first
+      const n = clean.length, top = clean[0];
+      if (!top) return;
+      if (n <= 3) this.holdout = top;   // mark it on the map once it's a real standoff
+      const fire = (k, emoji, msg, tone) => { if (!this._ms[k]) { this._ms[k] = true; this.majorEvent(emoji, msg, tone); } };
+      if (n <= 5) fire('hold5', '🌍', `The rot owns the planet — but ${n} regions still touch grass. ${top.name} is holding out hardest.`, 'good');
+      if (n <= 3) fire('hold3', '😤', `Down to ${n} clean regions. ${top.name} has become the internet's final boss.`, 'good');
+      if (n === 1) fire('hold1', '🏝️', `${top.name.toUpperCase()} STANDS ALONE — it touched grass, closed the app store, and refuses to skibidi. Break it and the world is yours.`, 'good');
     }
 
     // ---- readouts -----------------------------------------------------

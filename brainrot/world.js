@@ -83,6 +83,7 @@
       const letS = Math.max(0, ev.let);
       const sm = ctx.spreadMult || 1;   // Trend Heat spread multiplier
       let newly = 0, internalNew = 0, crossNew = 0;   // (last two: telemetry only)
+      const closures = [];   // {c, kind} — routes that slammed shut this step
 
       for (const c of this.countries) {
         const h = c.healthy();
@@ -113,9 +114,9 @@
         c.awareness = clamp(c.total() * 0.55 + sevS * 0.03 + ctx.globalAwareness * 0.45, 0, 1);
         if (c.detected && ctx.lockdownPressure > 0) {
           const p = C.LOCKDOWN_STEP * diff.lockdown * (0.4 + c.wealth * 0.6 + c.moderation * 0.6) * ctx.lockdownPressure * c.awareness;
-          if (c.airOpen && ctx.rnd() < p) c.airOpen = false;
-          else if (c.seaOpen && ctx.rnd() < p * 0.8) c.seaOpen = false;
-          else if (c.landOpen && ctx.rnd() < p * 0.6) c.landOpen = false;
+          if (c.airOpen && ctx.rnd() < p) { c.airOpen = false; closures.push({ c, kind: 'air' }); }
+          else if (c.seaOpen && ctx.rnd() < p * 0.8) { c.seaOpen = false; closures.push({ c, kind: 'sea' }); }
+          else if (c.landOpen && ctx.rnd() < p * 0.6) { c.landOpen = false; closures.push({ c, kind: 'land' }); }
         }
       }
 
@@ -162,7 +163,7 @@
       let research = 0;
       for (const c of this.countries) research += c.wealth * (0.25 + c.moderation * 0.75) * c.total() * c.pop;
       research /= this.totalPop;
-      return { newlyInfected: newly, research, internalNew, crossNew };
+      return { newlyInfected: newly, research, internalNew, crossNew, closures };
     }
 
     // ---- aggregate readouts -------------------------------------------
@@ -286,7 +287,7 @@
       if (game.phase === 'select' && game.hoverCountry && game.hoverCountry.pxRings && game.hoverCountry !== game.selected) { ctx.save(); ctx.lineWidth = 1.6; ctx.strokeStyle = '#ff4bd8'; this._path(ctx, game.hoverCountry.pxRings); ctx.stroke(); ctx.restore(); }
 
       for (const c of this.countries) this._marker(ctx, c, game, t);
-      for (const b of game.viralBubbles) this._bubble(ctx, b, t, '#f2c94c', 'flame');
+      for (const b of game.viralBubbles) this._bubble(ctx, b, t, b.outbreak ? '#ff8be6' : '#f2c94c', b.outbreak ? 'brain' : 'flame', b.outbreak);
       for (const b of game.cureBubbles) this._bubble(ctx, b, t, '#4ea1ff', 'flask');
       this._glitch(ctx, this.globalBrainrot(), t);
     }
@@ -364,6 +365,14 @@
     _marker(ctx, c, game, t) {
       const total = c.total(), stage = c.stage(), inf = total > 0.02, terminal = c.necrotic > 0.85;
       const Spr = BR.Sprites;
+      // Holdout nemesis: the last resistant region gets a golden pulsing crown
+      // ring so the player can find the final boss on a fully-rotted map.
+      if (game.holdout === c) {
+        const pl = 0.5 + 0.5 * Math.sin(t * 3.5);
+        ctx.save(); ctx.globalAlpha = 0.55 + 0.4 * pl; ctx.strokeStyle = '#ffd85c'; ctx.shadowColor = '#ffd85c'; ctx.shadowBlur = 12;
+        ctx.lineWidth = 2.2; ctx.beginPath(); ctx.arc(c.px, c.py, c.r + 6 + pl * 3, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+        if (Spr) Spr.draw(ctx, 'star', c.px, c.py - c.r - 10, 13, '#ffd85c', 6);
+      }
       // biohazard pulse behind a saturated (but not yet terminal) country
       if (Spr && total > 0.88 && !terminal) { const pl = 0.5 + 0.5 * Math.sin(t * 3 + c.id); ctx.save(); ctx.globalAlpha = 0.12 + 0.16 * pl; Spr.draw(ctx, 'biohazard', c.px, c.py, c.r * 3.4, '#8fd14a', false); ctx.restore(); }
       // pin
@@ -379,6 +388,13 @@
       } else { ctx.font = `${Math.round(c.r * 1.15)}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(c.emoji, c.px + wob, c.py); }
       // closed-border padlock badge
       if (!c.airOpen || !c.seaOpen || !c.landOpen) { if (Spr) Spr.draw(ctx, 'lock', c.px + c.r + 4, c.py - c.r - 3, 11, '#ff5c8a'); }
+      // research-lab badge: a rich, aware region is actively building the Cure.
+      // Blinks brighter the closer the Cure gets — the visible source of the race.
+      if (Spr && game.cure > 6 && c.detected && c.wealth > 0.62 && !terminal) {
+        const pl = 0.55 + 0.45 * Math.sin(t * 4 + c.id * 2);
+        ctx.save(); ctx.globalAlpha = 0.65 + 0.35 * pl * (game.cure / 100);
+        Spr.draw(ctx, 'flask', c.px - c.r - 4, c.py - c.r - 3, 11, '#4ea1ff', c.r * 0.3 * pl); ctx.restore();
+      }
       // label (name always subtle; % when infected) with outline for legibility
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       const lbl = (s, y, color, weight) => { ctx.font = `${weight} 10px Inter, system-ui, sans-serif`; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(0,0,0,0.72)'; ctx.strokeText(s, c.px, y); ctx.fillStyle = color; ctx.fillText(s, c.px, y); };
@@ -389,19 +405,22 @@
       if (total > 0.01) lbl(BR.fmtPct(c.brainrotPct()), c.py + c.r + 19, stage.color, '800');
     }
 
-    _bubble(ctx, m, t, color, icon) {
+    _bubble(ctx, m, t, color, icon, big) {
       const life = clamp(m.ttl / m.maxTtl, 0, 1), pulse = 1 + Math.sin(t * 6 + m.x) * 0.1;
-      const y = m.y - Math.sin(t * 3 + m.x) * 3, r = 15 * pulse;
+      const y = m.y - Math.sin(t * 3 + m.x) * 3, r = (big ? 19 : 15) * pulse;
       ctx.save();
+      // a fresh-outbreak bubble gets a standing halo ring so it grabs the eye
+      if (big) { ctx.globalAlpha = 0.5 * life; ctx.strokeStyle = color; ctx.lineWidth = 1.4; ctx.setLineDash([3, 4]);
+        ctx.beginPath(); ctx.arc(m.x, y, r + 6 + Math.sin(t * 2 + m.x) * 2, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]); }
       // glowing disc
-      ctx.globalAlpha = 0.28 + 0.22 * life; ctx.fillStyle = color; ctx.shadowColor = color; ctx.shadowBlur = 14;
+      ctx.globalAlpha = 0.28 + 0.22 * life; ctx.fillStyle = color; ctx.shadowColor = color; ctx.shadowBlur = big ? 20 : 14;
       ctx.beginPath(); ctx.arc(m.x, y, r, 0, Math.PI * 2); ctx.fill();
-      ctx.shadowBlur = 0; ctx.globalAlpha = 0.85 * (0.6 + 0.4 * life); ctx.strokeStyle = color; ctx.lineWidth = 1.8;
+      ctx.shadowBlur = 0; ctx.globalAlpha = 0.85 * (0.6 + 0.4 * life); ctx.strokeStyle = color; ctx.lineWidth = big ? 2.4 : 1.8;
       ctx.beginPath(); ctx.arc(m.x, y, r, 0, Math.PI * 2); ctx.stroke();
       // expanding "about to pop" ring as it nears expiry
       if (life < 0.4) { ctx.globalAlpha = life * 1.6; ctx.beginPath(); ctx.arc(m.x, y, r + (0.4 - life) * 40, 0, Math.PI * 2); ctx.stroke(); }
       ctx.globalAlpha = 1; ctx.restore();
-      if (BR.Sprites) BR.Sprites.draw(ctx, icon || 'flame', m.x, y, 17, '#0a0e1a', false);
+      if (BR.Sprites) BR.Sprites.draw(ctx, icon || 'flame', m.x, y, big ? 21 : 17, '#0a0e1a', false);
     }
 
     _glitch(ctx, brainrot, t) {

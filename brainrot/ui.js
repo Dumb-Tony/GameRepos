@@ -598,6 +598,16 @@
       const cf = $('cureFill'); cf.style.width = g.cure + '%';
       cf.style.background = g.cure > 66 ? 'linear-gradient(90deg,#ff4bd8,#ff2d6f)' : g.cure > 33 ? 'linear-gradient(90deg,#b57bff,#ff6bd6)' : 'linear-gradient(90deg,#4be7ff,#5ffbe0)';
       $('cureVal').textContent = BR.fmtPct(g.cure); $('cureLabel').textContent = g.cureLabel();
+      const rr = $('raceRead');
+      if (rr) {
+        if (!g.world.anyDetected() && g.cure < 0.5) { rr.textContent = ''; rr.className = 'race-read'; }
+        else {
+          const you = g.globalBrainrot(), lead = you - g.cure;
+          const state = lead > 12 ? ['winning', 'good'] : lead > -8 ? ['neck & neck', 'mid'] : ['losing', 'bad'];
+          rr.innerHTML = `you <b>${BR.fmtPct(you)}</b> · <span class="rr-tag rr-${state[1]}">${state[0]}</span>`;
+          rr.className = 'race-read on';
+        }
+      }
       const cb = $('curebar'); if (cb) { cb.classList.toggle('danger', g.cure >= 80); cb.classList.toggle('endgame', !!g.cureEndgame && g.cure < 100); }
       // Cure-endgame banner: once the world is fighting back in earnest.
       const eb = $('endgameBanner');
@@ -809,7 +819,9 @@
       this._panelKey = key;
       if (!c) { host.innerHTML = '<div class="cp-empty">☣️ Click a region on the map to see its pros &amp; cons, then release the brainrot there.</div>'; return; }
       const st = c.stage(), pc = this._prosCons(c);
-      host.innerHTML = `<div class="cp-head"><div class="cp-emoji">${spr('country', c.name, 34, st.color)}</div><div><div class="cp-name">${c.name}</div><span class="cp-stage" style="background:${st.color}22;color:${st.color}">${st.name}</span></div></div>
+      const rs = BR.readStart ? BR.readStart(c) : null;
+      const verdict = rs ? `<span class="cp-verdict v-${rs.tone}">${rs.label}</span>` : '';
+      host.innerHTML = `<div class="cp-head"><div class="cp-emoji">${spr('country', c.name, 34, st.color)}</div><div><div class="cp-name">${c.name}</div><span class="cp-stage" style="background:${st.color}22;color:${st.color}">${st.name}</span>${verdict}</div></div>
         <div class="pc"><div class="pc-h good">✔ Pros</div>${pc.pros.map((p) => `<div class="pc-row good">+ ${p}</div>`).join('')}<div class="pc-h bad">✘ Cons</div>${pc.cons.map((p) => `<div class="pc-row bad">– ${p}</div>`).join('')}</div>
         ${this._bar('💰 Wealth', c.wealth, '#f2c94c')}${this._bar('📶 Internet', c.internet, '#4ea1ff')}${this._bar('🏛️ Censorship', c.moderation, '#b06cf0')}${this._bar('🗣️ Meme-native', c.english, '#43c6ac')}
         <button class="release-btn" id="btnRelease">☣️ Release the Brainrot here</button>`;
@@ -836,7 +848,8 @@
         <div class="seg"><span class="seg-fill nec" id="cpopNec"></span><span class="seg-fill inf" id="cpopInf"></span></div>
         <div class="cpop-row"><span class="k-inf" id="cpopIP"></span><span class="k-nec" id="cpopNP"></span><span class="k-hea" id="cpopHP"></span></div>
         <div class="cpop-pop">Pop ${fmt(c.pop * 1e6)} · age ${c.age}</div>
-        <div class="cpop-links" id="cpopLinks"></div>`;
+        <div class="cpop-links" id="cpopLinks"></div>
+        <div class="cpop-read" id="cpopRead"></div>`;
       const x = $('cpopX'); if (x) x.addEventListener('click', (e) => { e.stopPropagation(); this._hideCountryPopup(); });
       p.classList.add('show'); this._tickPopup();
     }
@@ -851,6 +864,13 @@
       seth('cpopHP', spr('hud', 'healthy', 12, '#5ffbe0') + ' ' + BR.fmtPct(c.healthy() * 100));
       const se = $('cpopStage'); if (se) { const st = c.stage(); se.textContent = st.name; se.style.color = st.color; }
       const le = $('cpopLinks'); if (le) le.innerHTML = `${this._lnk(c.airOpen, 'plane')}${this._lnk(c.seaOpen, 'ship')}${this._lnk(c.landOpen, 'road')}${c.detected ? this._lnk(false, 'eye', 'seen') : ''}`;
+      const re = $('cpopRead');
+      if (re && BR.readCountry) {
+        const r = BR.readCountry(c, this.game.ev);
+        const ic = { done: '✅', ripping: '🔥', ready: '🟢', slow: '🟡', blocked: '🛑' }[r.tone] || '•';
+        re.className = 'cpop-read t-' + r.tone;
+        re.innerHTML = `<span class="cr-why">${ic} ${r.why}</span>` + (r.fix ? `<span class="cr-fix">${r.fix}</span>` : '');
+      }
     }
     _positionPopup() {
       const p = $('countryPopup'), c = this.popupCountry; if (!p || !c || c.px === undefined) return;
