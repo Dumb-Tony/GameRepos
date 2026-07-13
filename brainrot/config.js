@@ -72,8 +72,11 @@
     START_VIRALITY: 32,
     VIR_INFECT: 0.045,      // per million newly infected — the main income source
     VIR_SEVERITY: 0.00006,  // tiny passive trickle (was the runaway money printer)
-    BUBBLE_MIN: 7, BUBBLE_MAX: 22,      // seconds between virality bubbles
+    BUBBLE_MIN: 7, BUBBLE_MAX: 22,      // seconds between ambient virality bubbles
     VIRAL_BUBBLE_REWARD: [4, 14],
+    OUTBREAK_AT: 0.04,                  // a region "breaks out" at 4% — plants a jackpot bubble
+    OUTBREAK_BUBBLE_MULT: 1.9,          // new-country bubbles pay ~2× an ambient one
+    CLOSURE_BEAT_GAP: 6,                // min seconds between government-closure news beats
 
     // --- Trend Heat (viral momentum) ----------------------------------
     // A meter that spikes on viral moments (new regions catching on, bubbles,

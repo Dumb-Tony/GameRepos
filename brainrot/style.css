@@ -351,8 +351,12 @@ body::after{
 /* ===== v2 additions ================================================= */
 /* Cure bar strip — humanity's threat meter, front and centre */
 #curebar{ flex:0 0 auto; padding:7px 16px 9px; background:linear-gradient(180deg,#12152b,#0e1124); border-bottom:1px solid var(--line); box-shadow:var(--hair); position:relative; }
-.cure-head{ display:flex; justify-content:space-between; font-size:12px; font-weight:700; color:var(--dim); margin-bottom:5px; letter-spacing:.3px; }
+.cure-head{ display:flex; justify-content:space-between; align-items:center; font-size:12px; font-weight:700; color:var(--dim); margin-bottom:5px; letter-spacing:.3px; }
 .cure-head b{ color:var(--txt); }
+.race-read{ font-size:11px; font-weight:700; color:var(--dim2); letter-spacing:.2px; margin-left:auto; margin-right:10px; }
+.race-read b{ color:var(--txt); }
+.race-read .rr-tag{ padding:1px 7px; border-radius:20px; font-size:10px; }
+.rr-tag.rr-good{ background:#5ffbe022; color:#5ffbe0; } .rr-tag.rr-mid{ background:#f2c94c22; color:#f2c94c; } .rr-tag.rr-bad{ background:#ff6b8a22; color:#ff6b8a; }
 #cureVal{ font-variant-numeric:tabular-nums; font-weight:800; color:var(--txt); }
 .cure-track{ height:11px; background:#0a0c1a; border:1px solid var(--line); border-radius:7px; overflow:hidden; position:relative; }
 /* faint tick marks so progress reads at a glance */
@@ -536,6 +540,16 @@ body::after{
 .cpop-pop{ font-size:10px; color:var(--dim2); margin-bottom:5px; }
 .cpop-links{ display:flex; gap:8px; font-size:11px; }
 .cpop-links .open{ opacity:1; } .cpop-links .shut{ opacity:.45; filter:grayscale(1); color:var(--coral); }
+.cpop-read{ margin-top:7px; padding:6px 8px; border-radius:8px; border:1px solid var(--line); background:var(--panel2); font-size:10px; line-height:1.35; }
+.cpop-read .cr-why{ display:block; font-weight:700; color:var(--txt); }
+.cpop-read .cr-fix{ display:block; margin-top:3px; color:var(--dim); }
+.cpop-read.t-blocked{ border-color:#ff6b8a55; background:#ff6b8a12; }
+.cpop-read.t-slow{ border-color:#f2c94c55; background:#f2c94c10; }
+.cpop-read.t-ready{ border-color:#5ffbe044; background:#5ffbe00e; }
+.cpop-read.t-ripping{ border-color:#ff4bd855; background:#ff4bd812; }
+.cpop-read.t-done{ opacity:.7; }
+.cp-verdict{ display:inline-block; margin-left:6px; font-size:10px; font-weight:800; padding:2px 8px; border-radius:20px; vertical-align:middle; }
+.cp-verdict.v-good{ background:#5ffbe022; color:#5ffbe0; } .cp-verdict.v-mid{ background:#f2c94c22; color:#f2c94c; } .cp-verdict.v-bad{ background:#ff6b8a22; color:#ff6b8a; }
 
 .dp-stats{ display:flex; justify-content:space-between; gap:6px; font-size:11px; color:var(--dim); background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
 .dp-stats b{ font-variant-numeric:tabular-nums; }

@@ -157,4 +157,67 @@
   }
   BR.Country = Country;
 
+  // ---- strategy read: WHY a region resists + what to evolve ------------
+  // The heart of the Plague-Inc teaching loop. Given a country and the
+  // current evolved stats, return the single dominant thing slowing the rot
+  // here and the exact upgrade that counters it. Build-aware: as you evolve
+  // Meme Translation, the language line stops being the blocker, and so on.
+  //   tone: 'done' | 'ripping' | 'ready' | 'slow' | 'blocked'
+  BR.readCountry = function (c, ev) {
+    ev = ev || BR.baseEv();
+    const cl = (v) => clamp(v || 0, 0, 1);
+    const total = c.total();
+    if (c.isSaturated() || total >= 0.995) return { tone: 'done', why: 'Fully cooked — nothing left to rot.', fix: '' };
+
+    const reasons = [];
+    // Hard gate: the platform is being walled off (only blocks a region the
+    // rot hasn't taken root in yet — once it's inside, borders don't matter).
+    const shut = (!c.airOpen) + (!c.seaOpen) + (!c.landOpen);
+    if (c.detected && shut > 0 && total < 0.02) {
+      const need = cl(ev.borderPierce) < 0.5;
+      reasons.push({ w: 0.72 + shut * 0.08, tag: 'borders',
+        why: shut >= 3 ? 'Borders sealed — the app is banned here.' : 'Slamming its borders shut.',
+        fix: need ? 'Evolve Cross-Platform Reposting or VPN Mesh (Border Pierce).' : 'Border Pierce is working — it\'ll seep through.' });
+    }
+    // Language gate — the classic "needs Water/Air transmission" of PI.
+    const langBlock = (1 - c.english) * (1 - cl(ev.languagePierce));
+    if (langBlock > 0.25) reasons.push({ w: 0.62 * langBlock, tag: 'lang',
+      why: 'Not meme-native — the slang doesn\'t translate.', fix: 'Evolve Meme Translation or Multilingual Memes.' });
+    // Low-connectivity gate.
+    const offBlock = (1 - c.internet) * (1 - cl(ev.offlineReach));
+    if (offBlock > 0.25) reasons.push({ w: 0.42 * offBlock, tag: 'offline',
+      why: 'Too few are online to reach.', fix: 'Evolve IRL Meme Osmosis or Off-Grid Reach.' });
+    // Censorship: high-moderation states scrub it faster than it spreads.
+    if (c.moderation > 0.6 && cl(ev.moderationResist) < 0.5) reasons.push({ w: 0.45 * c.moderation, tag: 'censor',
+      why: 'State censorship keeps deleting it.', fix: 'Evolve Encrypted Chats or Moderation Resistance.' });
+    // Skeptical, meme-resistant population.
+    const base = 0.20 + 0.55 * c.internet + 0.60 * c.youth;
+    const skepPen = base > 0 ? (0.55 * c.skepticism * (ev.skepticScale || 1)) / base : 0;
+    if (c.skepticism > 0.45 && skepPen > 0.35) reasons.push({ w: 0.5 * cl(skepPen), tag: 'skeptic',
+      why: 'Skeptical, meme-resistant crowd.', fix: 'Push raw Infectivity — Algorithm Amplification helps.' });
+    // Demographic mismatch: an older region while your vectors skew young.
+    if (c.youth < 0.5 && cl(ev.old) < 0.25) reasons.push({ w: 0.32, tag: 'old',
+      why: 'Older population — your vectors skew young.', fix: 'Evolve Boomer Shares or Smart-TV Autoplay.' });
+
+    if (!reasons.length) {
+      if (total < 0.008) return { tone: 'ready', why: 'Wide open — just needs a link to reach it.', fix: '' };
+      return { tone: 'ripping', why: 'Rotting freely — no resistance here.', fix: '' };
+    }
+    reasons.sort((a, b) => b.w - a.w);
+    const top = reasons[0];
+    return { tone: top.w > 0.34 ? 'blocked' : 'slow', why: top.why, fix: top.fix, tag: top.tag };
+  };
+
+  // Pre-game start read: an at-a-glance difficulty verdict for patient zero.
+  BR.readStart = function (c) {
+    // Ease of getting the rot ROLLING from here (spread substrate).
+    const ease = clamp(0.15 + 0.4 * c.internet + 0.4 * c.youth + 0.15 * c.english
+      - 0.35 * c.skepticism - 0.3 * c.moderation + Math.min(0.25, c.pop / 1600), 0, 1);
+    // How fast the world fights back if you start here + who it connects to.
+    const cureRisk = clamp(0.5 * c.wealth + 0.5 * c.moderation, 0, 1);
+    const label = ease > 0.62 ? 'Easy start' : ease > 0.4 ? 'Fair start' : 'Hard start';
+    const tone = ease > 0.62 ? 'good' : ease > 0.4 ? 'mid' : 'bad';
+    return { ease, cureRisk, label, tone };
+  };
+
 })(typeof window !== 'undefined' ? window : globalThis);
