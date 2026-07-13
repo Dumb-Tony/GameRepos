@@ -257,6 +257,8 @@
     { id: 'rev_cairn', w: 0.7, rare: true, when: (s) => s.chapter >= 2 && s.chapter <= 4 && !TB.is('NAIA_MET') },
     { id: 'rev_nightbloom', w: 0.6, rare: true, when: (s) => s.seg === 2 },
     { id: 'rev_meteor', w: 0.5, rare: true, when: (s) => s.chapter >= 2 && s.seg === 2 },
+    // the fever-dream cycle (scenes-milestones.js): sickness finally pays lore
+    { id: 'ev_feverdream', w: 14, when: (s) => s.disease === 'fever' && !TB.is('FEVERDREAM3') && !!TB.SCENES.ev_feverdream },
     // ---- side-quest hooks (Phase 3) ----
     { id: 'rev_blackbox', w: 0.8, rare: true, when: (s) => s.chapter >= 3 && !TB.is('BLACKBOX2') },
     { id: 'rev_starfall', w: 0.9, rare: true, when: (s) => TB.is('METEOR_WISH') && s.chapter >= 3 },
