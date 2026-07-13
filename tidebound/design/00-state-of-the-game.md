@@ -97,6 +97,12 @@ crossfade via `mixFor(bg, state)`; a 260ms scheduler sprinkles one-shots (birds 
 cicadas dusk, crickets/frogs night, gulls, drips, fire, thunder in Ch5) and renders
 the **seven-beat hum** (7 low pulses + rest) where the lagoon glows. Animal calls in
 `CALLS`, triggered per scene entry from portraits (engine's `animalCallFor`).
+**Music:** a generative adaptive score (also in `audio.js`) — each scene maps to a
+MOOD (title/day/night/storm/deep/ending/death) via `moodFor(bg, state)`; each mood
+has a chord progression + pentatonic pluck scale + pacing (MIDI note numbers in
+`MOODS`). Soft detuned-pad phrases with kalimba-ish plucks, then a rest so the
+ambience breathes; title & ending moods carry a fixed motif. Own toggle
+`settings.music`, bus `musBus`. `A.mood()` + `A._mchords` exist for tests.
 Everything try/catch'd; starts on first gesture; honors settings + mute.
 
 **Testing:** headless Chromium (playwright-core, executablePath

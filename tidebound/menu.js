@@ -59,7 +59,7 @@
   function render() {
     const s = TB.Audio.settings();
     $('mVol').value = s.vol; $('mBright').value = s.bright;
-    $('mAmb').checked = !!s.amb; $('mSfx').checked = !!s.sfx;
+    $('mAmb').checked = !!s.amb; $('mSfx').checked = !!s.sfx; $('mMus').checked = !!s.music;
     document.querySelectorAll('#mThemes .mSwatch').forEach((b) => b.classList.toggle('sel', b.dataset.pick === s.theme));
     document.querySelectorAll('#mBars .mSwatch').forEach((b) => b.classList.toggle('sel', b.dataset.pick === s.bars));
     const inGame = TB.state && TB.state.scene !== 'title';
@@ -97,6 +97,7 @@
       $('mBright').addEventListener('input', (e) => setSetting({ bright: +e.target.value }));
       $('mAmb').addEventListener('change', (e) => setSetting({ amb: e.target.checked }));
       $('mSfx').addEventListener('change', (e) => setSetting({ sfx: e.target.checked }));
+      $('mMus').addEventListener('change', (e) => setSetting({ music: e.target.checked }));
       buildSwatches('mThemes', THEMES, 'theme');
       buildSwatches('mBars', BARS, 'bars');
       for (let i = 1; i <= 3; i++) {
