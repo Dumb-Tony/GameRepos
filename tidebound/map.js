@@ -203,10 +203,10 @@
   TB.scene('wayfinder', {
     bg: (s) => (s.site === 'fringe' ? 'camp-fringe' : s.site === 'overhang' ? 'cliff-camp' : 'beach-day'),
     text: (s) => {
-      const found = Object.keys(REGIONS).filter((id) => discovered(id, s)).length;
-      return ['<em>🗺️ THE WAYFINDER</em> — You spread the working chart, sailcloth and charcoal and a hundred days\' worth of hard-won ink, and weight its corners against the wind. ' + found + ' of ' + Object.keys(REGIONS).length + ' regions charted; the rest of the island waits in outline.',
-        '<span id="mapWrap">' + svg(s) + '<span id="mapHint">Tap a charted region — or choose below. The silhouettes are still out there.</span></span>',
-        'An expedition spends the rest of this part of the day. Where does it go?'];
+      const found = Object.keys(REGIONS).filter((id) => explorable(id, s)).length;
+      const total = Object.keys(REGIONS).length - 1; // the Crown charts itself, on its own terms
+      return ['<em>🗺️ THE WAYFINDER</em> — You spread the working chart, sailcloth and charcoal and a hundred days\' worth of hard-won ink, and weight its corners against the wind. ' + found + ' of ' + total + ' regions charted; the rest of the island waits in outline. An expedition spends this part of the day — where does it go?',
+        '<span id="mapWrap">' + svg(s) + '<span id="mapHint">Tap a charted region — or choose below. The silhouettes are still out there.</span></span>'];
     },
     choices: (s) => {
       const c = Object.keys(REGIONS).filter((id) => explorable(id, s)).map((id) => {
