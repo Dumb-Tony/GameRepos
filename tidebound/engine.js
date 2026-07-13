@@ -258,6 +258,7 @@
       };
       box.appendChild(b);
     }
+    box.scrollTop = 0; // first option always in view when choices appear
   }
 
   TB.go = function (id) {

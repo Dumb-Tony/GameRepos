@@ -228,6 +228,10 @@ body {
 
 #choices { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; overflow-y: auto; flex: 1 1 auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 #choices button { flex-shrink: 0; }
+/* when choices are on screen, cap the dialogue's share of the panel so
+   the buttons always get real space (dialogue scrolls instead) */
+#panel:has(#choices button) #textLog { max-height: 40vh; max-height: 40dvh; }
+#choices:not(:empty) { border-top: 1px solid #ffffff24; padding-top: 10px; }
 #choices button {
   text-align: left; font: inherit; font-size: 16px; color: inherit;
   background: #ffffff14; border: 1px solid #ffffff30; border-radius: 10px;
@@ -315,7 +319,11 @@ body {
   .game-title { font-size: 30px; letter-spacing: 5px; }
   #panel { max-height: 66vh; max-height: 66dvh; padding: 14px 14px 10px; }
   #stage { padding: 8px; padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
-  #choices button { padding: 11px 12px; font-size: 15px; }
+  #choices button { padding: 11px 12px; font-size: 15px; background: #ffffff1e; }
+  /* phones: dialogue gets at most ~a third of the screen once buttons
+     exist — the choices own the rest of the panel */
+  #panel:has(#choices button) #textLog { max-height: 26vh; max-height: 26dvh; }
+  #choices:not(:empty) { min-height: 96px; }
   #portrait { margin: 0 0 6px 4px; padding: 4px 10px 4px 6px; }
   #portraitImg { width: 56px; height: 56px; }
   #portraitEmoji { font-size: 30px; }
