@@ -215,23 +215,73 @@
     $('portraitName').textContent = who.name || '';
   }
 
+  // ---- text reveal (+ backlog history, + optional typewriter) ------------
+  const history = []; // this session's read paragraphs, for the 📖 backlog
+  TB.history = history;
+  let typing = null; // {p, segs, si, ci, timer, done}
+
+  function cancelTyping() { if (typing) { clearInterval(typing.timer); typing = null; } }
+  function finishTyping() {
+    if (!typing) return;
+    const t = typing; cancelTyping();
+    t.p.innerHTML = t.html; // snap to the complete paragraph
+    t.done();
+  }
+  TB.isTyping = function () { return !!typing; };
+
+  // types plain text + <em> spans character by character; any other markup
+  // falls back to an instant reveal
+  function typeInto(p, html, done) {
+    if (/<(?!\/?em>)[a-z!]/i.test(html)) { p.innerHTML = html; done(); return; }
+    const segs = [];
+    let em = false;
+    for (const tok of html.split(/(<em>|<\/em>)/)) {
+      if (tok === '<em>') em = true;
+      else if (tok === '</em>') em = false;
+      else if (tok) segs.push({ t: tok, em });
+    }
+    typing = { p, html, done, segs, si: 0, ci: 0, node: null };
+    const log = $('textLog');
+    typing.timer = setInterval(function () {
+      if (!typing) return;
+      for (let k = 0; k < 2; k++) { // two characters per tick
+        const seg = typing.segs[typing.si];
+        if (!seg) { finishTyping(); return; }
+        if (!typing.node) {
+          typing.node = seg.em ? document.createElement('em') : document.createTextNode('');
+          typing.p.appendChild(typing.node);
+        }
+        typing.node.textContent = seg.t.slice(0, ++typing.ci);
+        if (typing.ci >= seg.t.length) { typing.si++; typing.ci = 0; typing.node = null; }
+      }
+      log.scrollTop = log.scrollHeight;
+    }, 14);
+  }
+
   function showNextParagraph() {
+    if (typing) { finishTyping(); return; } // a click completes the line first
     if (!queue.length) return;
     const log = $('textLog');
     for (const p of log.children) p.classList.add('faded');
     const html = queue.shift();
     const p = document.createElement('p');
-    p.innerHTML = html;
     log.appendChild(p);
-    log.scrollTop = log.scrollHeight;
-    if (queue.length) {
-      $('moreHint').classList.remove('hidden');
-      $('panel').classList.add('clickable');
-    } else {
-      $('moreHint').classList.add('hidden');
-      $('panel').classList.remove('clickable');
-      showChoices();
-    }
+    history.push({ d: TB.state.day, sc: TB.state.scene, h: html });
+    if (history.length > 500) history.splice(0, history.length - 500);
+    const done = function () {
+      log.scrollTop = log.scrollHeight;
+      if (queue.length) {
+        $('moreHint').classList.remove('hidden');
+        $('panel').classList.add('clickable');
+      } else {
+        $('moreHint').classList.add('hidden');
+        $('panel').classList.remove('clickable');
+        showChoices();
+      }
+    };
+    const tw = TB.Audio && TB.Audio.settings && TB.Audio.settings().type;
+    if (tw) { log.scrollTop = log.scrollHeight; typeInto(p, html, done); }
+    else { p.innerHTML = html; done(); }
   }
 
   function resolve(v, s) { return typeof v === 'function' ? v(s) : v; }
@@ -284,6 +334,7 @@
     if (TB.Audio) { const sp = animalCallFor(def, who, id); if (sp) TB.Audio.call(sp, id); }
     s.hudOn = def.hud === false ? false : s.hudOn;
     TB.renderHud();
+    cancelTyping(); // never type into a cleared log
     $('textLog').innerHTML = '';
     $('choices').innerHTML = '';
     queue = (resolve(def.text, s) || ['…']).slice();
@@ -347,7 +398,7 @@
   TB.start = function () {
     TB.state = TB.newState();
     $('panel').addEventListener('click', function (e) {
-      if (queue.length && !e.target.closest('#choices')) showNextParagraph();
+      if ((queue.length || typing) && !e.target.closest('#choices')) showNextParagraph();
     });
     $('moreHint').addEventListener('click', showNextParagraph);
     $('kitBtn').addEventListener('click', openKit);
@@ -357,7 +408,7 @@
     TB.Menu.init();
     $('kitClose').addEventListener('click', () => $('kitOverlay').classList.add('hidden'));
     $('kitOverlay').addEventListener('click', (e) => { if (e.target.id === 'kitOverlay') e.target.classList.add('hidden'); });
-    window.addEventListener('keydown', (e) => { if ((e.key === ' ' || e.key === 'Enter') && queue.length) { e.preventDefault(); showNextParagraph(); } });
+    window.addEventListener('keydown', (e) => { if ((e.key === ' ' || e.key === 'Enter') && (queue.length || typing)) { e.preventDefault(); showNextParagraph(); } });
     TB.go('title');
   };
 
@@ -366,6 +417,8 @@
     if (!st) { TB.go('title'); return; }
     TB.state = st;
     TB.renderHud();
+    // returning to a run in progress? one screen of "the story so far" first
+    if (st.day >= 3 && st.scene !== 'recap' && TB.SCENES.recap) { st._resume = st.scene; TB.go('recap'); return; }
     TB.go(st.scene);
   };
 })(window);

@@ -205,4 +205,39 @@
       },
     ],
   });
+
+  // ---- THE STORY SO FAR — one recap screen when a save is continued -------
+  const CH_NAMES = { 1: 'The First Fire', 2: 'Foothold', 3: 'The Green Deep', 4: 'The Hum', 5: 'The Long Rain', 6: 'Ashes and Stairs', 7: 'Convergence' };
+  const COMP_RECAP = {
+    kavi: 'Kavi 🐕 — the storm-grey dog who chose your fire', ipo: 'Ipo 🐒 — the thief who pays in kind',
+    vela: 'Vela 🦅 — the one-eyed empress of Kestrel Cliffs', buri: 'Buri 🐗 — a warm boulder with opinions',
+    moa: 'Moa 🐔 — the bravest heart on the island', nine: 'Nine 🐙 — the tide pools\' oldest question',
+  };
+  const RECAP_DEEDS = {
+    EDDA_MET: 'you found the hermit of the mountain', RYO_MET: 'you salvaged a sailor and his boat',
+    INNER_GREEN: 'the hidden town opened its door', CONTACT_MADE: 'a living voice answered the radio',
+    CASE_OPEN: 'the courier\'s case gave up its answer', ROSA_DONE: 'you dove a dead ship for its gold',
+    KING_ALLY: 'the Boar King holds your treaty', GRIN_ESCORTED: 'Old Grin\'s toll stands paid',
+    VISION_SEEN: 'the temple showed you the Sundering', HEARTGLASS: 'you carried heart-glass out of the deep',
+    TIDEWELL_KEEP: 'you took the covenant at the pool', OTHER_HEARD: 'the nine-beat station spoke',
+    HOME_NAMED: 'your camp earned a name', FLOCK: 'one brave hen became a flock',
+    HATCHLING: 'you saved the high nest\'s egg', KAARI_SEEDS: 'the old colors grow in your rows',
+  };
+  TB.scene('recap', {
+    bg: (s) => (s.chapter >= 2 ? 'camp-fringe' : 'beach-day'),
+    text: (s) => {
+      const t = ['<em>THE STORY SO FAR</em>',
+        'Day ' + s.day + ' on Vessakai — Chapter ' + s.chapter + ', <em>' + (CH_NAMES[s.chapter] || 'the island') + '</em>.'];
+      t.push(s.companion ? 'At your side: ' + COMP_RECAP[s.companion] + '.' : 'You walk the solo route — you, the island, and whatever watches from the treeline.');
+      const deeds = Object.keys(s.flags).filter((f) => RECAP_DEEDS[f]).slice(-3).map((f) => RECAP_DEEDS[f]);
+      if (deeds.length) t.push('The Ledger\'s freshest ink: ' + deeds.join('; ') + '.');
+      const st = s.stats;
+      const low = Object.keys(st).reduce((a, b) => (st[a] <= st[b] ? a : b));
+      if (st[low] <= 40) t.push('And your body files one report before anything else: ' + ({ health: 'you are hurt, and pretending otherwise', hunger: 'you are hungry enough to be stupid about it', thirst: 'you need water more than you need plans', energy: 'you are running on fumes and stubbornness', hope: 'the gray weather is inside you today' }[low]) + '.');
+      t.push('The fire is where you left it. The island kept your place.');
+      return t;
+    },
+    nextLabel: '⛵ Back to the island ➤',
+    next: (s) => { const r = s._resume || 'camp'; delete s._resume; return r; },
+  });
 })(window);
