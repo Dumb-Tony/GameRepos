@@ -594,6 +594,8 @@
       return t;
     },
     choices: [
+      { t: '📜 Save your run card', sub: 'Even the endings that end you are worth keeping.',
+        do: (s) => { if (TB.RunCard) TB.RunCard.download(s); } },
       { t: '🌅 Try the island again', sub: 'The Ledger remembers. So do you, now.',
         do: () => { TB.wipe(); TB.state = TB.newState(); }, go: 'title' },
     ],

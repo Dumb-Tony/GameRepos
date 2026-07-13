@@ -44,7 +44,10 @@ remain canonical for tone and facts.
 
 **Stack:** plain HTML/CSS/JS, zero dependencies, no build step. Files:
 `index.html` · `style.css` · `engine.js` (core) · `audio.js` (soundscape) ·
-`menu.js` (TAB menu) · `scenes-prologue.js` · `scenes-chapter1..7.js`.
+`menu.js` (TAB menu) · `runcard.js` (shareable run cards: `TB.RunCard.render(state)`
+canvas 1080×1350 / `.download(state)` PNG, offered as 📜 choices on the `ending` and
+`death` scenes; palettes per ending bg, deeds picked from the Ledger) ·
+`scenes-prologue.js` · `scenes-chapter1..7.js`.
 Global namespace `window.TB`. Cache-bust query `?v=N` on every asset — bump on release.
 
 **Scene format** (registered via `TB.scene(id, def)`):

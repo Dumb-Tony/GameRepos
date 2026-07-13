@@ -341,6 +341,8 @@
     choices: (s) => {
       const c = [];
       if (s.endingId === 'COCO') c.push({ t: '↩️ Return to the fire, and the doors', sub: 'Properly briefed.', go: 'convergence' });
+      c.push({ t: '📜 Save your run card', sub: 'A keepsake image of this life — download it, keep it, brag with it.',
+        do: (s2) => { if (TB.RunCard) TB.RunCard.download(s2); } });
       c.push({ t: '🌊 Begin another life on Vessakai', sub: 'Different past, different companion, different doors.',
         do: () => { TB.wipe(); TB.state = TB.newState(); }, go: 'title' });
       return c;
