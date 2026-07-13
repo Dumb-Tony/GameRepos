@@ -282,8 +282,10 @@
     const html = queue.shift();
     const p = document.createElement('p');
     log.appendChild(p);
-    history.push({ d: TB.state.day, sc: TB.state.scene, h: html });
-    if (history.length > 500) history.splice(0, history.length - 500);
+    if (html.indexOf('id="mapWrap"') === -1) { // the chart is UI, not story — keep it out of the backlog
+      history.push({ d: TB.state.day, sc: TB.state.scene, h: html });
+      if (history.length > 500) history.splice(0, history.length - 500);
+    }
     const done = function () {
       log.scrollTop = log.scrollHeight;
       if (queue.length) {

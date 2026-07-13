@@ -394,6 +394,25 @@ body {
   font-size: 13px; font-family: system-ui, sans-serif;
 }
 
+/* ===== the wayfinder (chart, rendered inside the panel) ============= */
+#mapWrap { display: block; max-width: 520px; margin: 2px auto 0; }
+#mapSvg { width: 100%; height: auto; display: block; border-radius: 10px; border: 1px solid #ffffff24; }
+.mapReg { cursor: pointer; }
+.mapReg ellipse { fill: #04101a66; stroke: #ffe9b866; stroke-width: 1.5; transition: fill .15s, stroke .15s; }
+.mapReg:hover ellipse { fill: #2fe0c930; stroke: #2fe0c9; }
+.mapEmoji { font-size: 15px; text-anchor: middle; dominant-baseline: middle; pointer-events: none; }
+.mapLabel {
+  font: 10px system-ui, sans-serif; fill: #f2ede2; text-anchor: middle;
+  paint-order: stroke; stroke: #04101a; stroke-width: 3px; pointer-events: none;
+}
+.mapLocked ellipse { fill: #02070cbb; stroke: #ffffff22; }
+.mapLocked .mapLabel { fill: #8fa3ad; font-style: italic; }
+.mapTitle { font: 600 12px Georgia, serif; fill: #ffe9b8; letter-spacing: 2px; }
+#mapHint { display: block; font: 11.5px system-ui, sans-serif; opacity: .65; text-align: center; padding: 5px 4px 0; }
+@media (max-width: 560px) {
+  .mapLabel { font-size: 11px; }
+}
+
 /* ===== field almanac =============================================== */
 #almOverlay {
   position: fixed; inset: 0; z-index: 13; background: #020a12cc;

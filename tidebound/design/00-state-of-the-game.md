@@ -64,6 +64,17 @@ Engine `_go` calls `TB.Almanac.note(sceneId)` for sightings + banks at
 ending/death; finds arrive via scenes-extra POOL events rev_glyphstone /
 rev_vanepage / rev_photofrag using reload-guarded `grantFor` (state.lastGrant).
 Overlay: 📔 menu button, 5 tabs, set-completion lore cards.) ·
+`map.js` (THE WAYFINDER: clickable SVG chart of Vessakai rendered INSIDE the
+wayfinder scene's text (never overlaps buttons); 12 regions in `M.REGIONS`
+{x,y,disc(),first[],fx1,deck[{t,fx}]}, fog-of-war via disc(), caldera
+permanently locked ('It sends for them'); expeditions via `M.run(id)` —
+`state.visits[region]` picks first-visit set-piece vs rotating deck, effects +
+collectible geography (stones: fringe/deepgreen/river/grotto, pages: station,
+frags: bay/bonebeach via Almanac.grantFor), s.out→act_result, tickSegment; hub
+action '🗺️ Chart an expedition' unshifted onto TB.ch3Actions (map.js loads LAST)
++ direct entry in ch1 camp; chart taps delegate through #textLog to click the
+matching choice; generated art `art/bg-map.webp` layers over the painted SVG,
+degrading silently; chart paragraphs excluded from the backlog history) ·
 `scenes-prologue.js` · `scenes-chapter1..7.js`.
 Global namespace `window.TB`. Cache-bust query `?v=N` on every asset — bump on release.
 
