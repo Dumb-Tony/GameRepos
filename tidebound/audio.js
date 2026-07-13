@@ -24,9 +24,10 @@
   let schedTimer = null, humNext = 0, curMix = {}, curBgName = '';
 
   // ---- settings -------------------------------------------------------
+  const DEFAULTS = { vol: 70, bright: 100, amb: true, sfx: true, theme: 'midnight', bars: 'island' };
   A.settings = function () {
-    try { return Object.assign({ vol: 70, bright: 100, amb: true, sfx: true }, JSON.parse(localStorage.getItem('tidebound.settings') || '{}')); }
-    catch (e) { return { vol: 70, bright: 100, amb: true, sfx: true }; }
+    try { return Object.assign({}, DEFAULTS, JSON.parse(localStorage.getItem('tidebound.settings') || '{}')); }
+    catch (e) { return Object.assign({}, DEFAULTS); }
   };
   A.saveSettings = function (s) { try { localStorage.setItem('tidebound.settings', JSON.stringify(s)); } catch (e) {} };
   A.muted = function () { try { return localStorage.getItem('tidebound.snd') === 'off'; } catch (e) { return false; } };
@@ -38,6 +39,7 @@
     if (sfxBus) sfxBus.gain.setTargetAtTime(s.sfx ? 1 : 0, ctx ? ctx.currentTime : 0, 0.1);
     const bd = document.getElementById('backdrop');
     if (bd) bd.style.filter = 'brightness(' + (s.bright / 100) + ')';
+    try { document.body.dataset.theme = s.theme; document.body.dataset.bars = s.bars; } catch (e) {}
   };
 
   // ---- graph ------------------------------------------------------------
