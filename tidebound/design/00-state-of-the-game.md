@@ -100,8 +100,14 @@ Ch2 6–18 · Ch3 19–35 · Ch4 36–52 · Ch5 (the Long Rain season) 53–70 �
 Ch7 93→100 (convergence enter pins day 100). ALL SCHEDULE entries use these
 absolute days; safety nets in advance() use TB.CAL.chNend. Old (pre-100-day)
 saves migrate in loadSave via `_cal` version stamp: newDay = NEW[ch] + (day −
-OLD[ch]). Owner mandate for the expansion: 100 days must feel like 100 NEW days —
-density scales with length (Phases 2–4: events, side quests, lore/milestones).
+OLD[ch]). Owner mandate: 100 days must feel like 100 NEW days. Delivered:
+Phase 2 (25 living-island events, pool ~42), Phase 3 (seven bottles, black box
+'Tell Voss we found it', star-iron, watcher's parcel, Crab Town action → 😂
+CRAB_TOWN, nut counter → 😂 COCONUT_MOGUL; 36 cores), Phase 4
+(`scenes-milestones.js`: d10 first rain, d25 first month, d30/45 Edda's story
+(sets EDDA_GRAVES), d42 Great King Tide (the drowned stair), d48 Ryo's yarn,
+d50 halfway vigil, d65 stillnight; + 3-stage fever-dream lore cycle via POOL,
+w14 while fevered).
 Settings include **color themes**: `theme` (text boxes — midnight/driftwood/lagoon/
 ember/abyss) and `bars` (status-bar palette — island/tropic/seaglass/signal), picked
 via swatches in the TAB menu (`menu.js` THEMES/BARS), stamped on
