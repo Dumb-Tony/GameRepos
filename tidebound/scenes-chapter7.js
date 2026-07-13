@@ -115,6 +115,9 @@
           t: '🗺️ Leave — and come back heavy: expedition, instruments, the whole found world.', sub: 'The Cartographer\'s Return. Some doors punish knocking.',
           do: () => { TB.state.endingId = 'CARTOGRAPHER'; }, go: 'ending' });
       }
+      if (s.flags.NGPLUS && TB.is('LOOP_KNOWN')) c.push({
+        t: '🌀 Go back to the grotto. Ask the pool who is counting with you.', sub: 'The journal in your handwriting. The seventh beat. The Loop.',
+        do: () => { TB.state.endingId = 'LOOP'; }, go: 'ending' });
       if (!s.companion && s.stats.hope >= 75 && TB.is('HOME3')) c.push({
         t: '🌄 Stand at the tideline alone and claim the whole of it.', sub: 'No companion, no covenant, no rescue. Just the life you built with two hands.',
         do: () => { TB.state.endingId = 'ALONE_UNBROKEN'; }, go: 'ending' });
@@ -259,6 +262,11 @@
       'Life on her terms turns out to mean: gifts on the doorstep whose meanings you decode over years (the good shells are thanks; the crab claws are invoices; the sea-glass, you understand eventually, is <em>art</em>). It means being shown things — the nursery reefs, the current-doors, the drowned garden she tends below the third pool that no scientist will ever publish — at her pace, in her seasons, as you prove ready. It means learning to think tide-wise and moon-wise until your old land-clock rusts out of you entirely.',
       'The reef learns you the way the pack learned the fire-keeper: as a fixed strangeness that belongs. Octopuses who have never met you surface to watch you work, because watching you is, locally, a tradition now. You keep the garden. The garden, in its eight-armed, thousand-minded, salt-and-moonlight way, keeps you. Nobody anywhere has your life. That was the trade, and you\'d make it again every tide.',
     ] },
+    LOOP: { icon: '🌀', title: 'THE LOOP', bg: 'gullet', body: [
+      'You go back to the grotto at king tide with the journal\'s last line in your teeth, and you kneel at the pool, and you ask it — out loud, feeling foolish for exactly four seconds — <em>who is counting with me?</em>',
+      'And the pool answers the way the island has answered everything, all along, in every life: seven beats. But this time — knowing what you know, having written what you wrote, having <em>arrived</em> as many times as you have arrived — you finally hear the seventh beat for what it is. Not a door closing. A stroke of a tally. Something on the far side of the water is counting crossings, patiently, the way you count days in the Ledger: not to imprison. To <em>remember</em>. The island does not trap its castaways. It keeps them — the way you keep entries, the way the sea keeps salt — and what it has been humming since your first fire is not a lullaby and not a warning. It is a count, and the count includes you, and the count is not finished.',
+      'You write the new last entry with your own hand, for your own eyes, for the next time: <em>"It isn\'t a loop. It\'s a ledger. We are being kept — carefully. Find out what for. I\'ll start."</em> And you put the tin box back on the shelf, and you walk out into the ninety-ninth morning of this life or the first morning of the next — the distinction, you suspect, was always the island\'s to make — and for the first time in any of your lives, the Hum sounds <em>glad</em>.',
+    ] },
     ALONE_UNBROKEN: { icon: '🌅', title: 'ALONE, UNBROKEN', bg: 'beach-day', body: [
       'No companion ever chose you, or you never chose one — the clearing had its afternoon, and you walked home alone, and the island watched what you did with that. What you did with that was: everything. Every fence, every filter, every fire, every yard of thatch and every jar of stores, one pair of hands, one stubborn ledger-keeping heart, one hundred days.',
       'This is the hardest ordinary life on the island and you built it without witnesses — which means you built it without the thing witnesses provide, the cheap fuel of being seen — and so the island, which measures such things exactly, paid you in the rarer coin: competence that answers to no one, quiet that stopped being empty somewhere around Day 60, and a self so thoroughly yours that rescue, rescue itself, has become a thing you could take or leave. You know which. You knew at dusk tonight, at the tideline, when the choosing came due and your heart came back level.',
@@ -343,8 +351,10 @@
       if (s.endingId === 'COCO') c.push({ t: '↩️ Return to the fire, and the doors', sub: 'Properly briefed.', go: 'convergence' });
       c.push({ t: '📜 Save your run card', sub: 'A keepsake image of this life — download it, keep it, brag with it.',
         do: (s2) => { if (TB.RunCard) TB.RunCard.download(s2); } });
+      if (TB.Loops && !TB.is('LOOP_BANKED')) c.push({
+        t: '🎁 Choose a keepsake for the next loop', sub: 'One made-true thing crosses the water with what you know.', go: 'keepsake' });
       c.push({ t: '🌊 Begin another life on Vessakai', sub: 'Different past, different companion, different doors.',
-        do: () => { TB.wipe(); TB.state = TB.newState(); }, go: 'title' });
+        do: () => { if (TB.Loops) TB.Loops.bank(TB.state, null); TB.wipe(); TB.state = TB.newState(); }, go: 'title' });
       return c;
     },
   });

@@ -47,7 +47,15 @@ remain canonical for tone and facts.
 `menu.js` (TAB menu) · `runcard.js` (shareable run cards: `TB.RunCard.render(state)`
 canvas 1080×1350 / `.download(state)` PNG, offered as 📜 choices on the `ending` and
 `death` scenes; palettes per ending bg, deeds picked from the Ledger) ·
-`scenes-prologue.js` · `scenes-chapter1..7.js`.
+`loops.js` (Driftwood Loops NG+: store `tidebound.loops.v1` {loops, keepsake, know};
+`TB.Loops.bank(state, keepsakeId?)` at every ending/death (guard flag LOOP_BANKED),
+`applyNew(state)` stamps NGPLUS + KNOW_* + keepsake perk on fresh runs; scenes
+`loops_menu` (title button when loops>0; modifiers set `state.mod` =
+hard|silent|kind|chaos), `keepsake` (offered at endings), `ev_loop` grotto journal
+(SCHEDULE d11 s1, NG+ only → LOOP_KNOWN → convergence gate → ending LOOP).
+Modifier teeth: engine tickSegment (kind ×0.6 drains, hard = monsoon from ch4),
+scenes-extra randomEvent (chaos 0.36 roll + rare ×3), ch1 clearing (silent = solo
+only)) · `scenes-prologue.js` · `scenes-chapter1..7.js`.
 Global namespace `window.TB`. Cache-bust query `?v=N` on every asset — bump on release.
 
 **Scene format** (registered via `TB.scene(id, def)`):

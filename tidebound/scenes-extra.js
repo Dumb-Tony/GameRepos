@@ -235,7 +235,8 @@
   ];
 
   TB.randomEvent = function (s) {
-    if (s.day <= 1 || s.seg >= 3 || R() > 0.18) return null;
+    const chaos = s.mod === 'chaos'; // NG+ modifier: the living island, doubled
+    if (s.day <= 1 || s.seg >= 3 || R() > (chaos ? 0.36 : 0.18)) return null;
     s.rlast = s.rlast || [];
     const eligible = POOL.filter((e) => {
       if (s.rlast.indexOf(e.id) >= 0) return false;
@@ -243,9 +244,10 @@
       try { return e.when(s); } catch (err) { return false; }
     });
     if (!eligible.length) return null;
-    let total = 0; for (const e of eligible) total += e.w;
+    const wOf = (e) => e.w * (chaos && e.rare ? 3 : 1);
+    let total = 0; for (const e of eligible) total += wOf(e);
     let roll = R() * total, chosen = eligible[0];
-    for (const e of eligible) { roll -= e.w; if (roll <= 0) { chosen = e; break; } }
+    for (const e of eligible) { roll -= wOf(e); if (roll <= 0) { chosen = e; break; } }
     if (chosen.rare) TB.flag('DONE_' + chosen.id);
     s.rlast.push(chosen.id); if (s.rlast.length > 4) s.rlast.shift();
     return chosen.id;

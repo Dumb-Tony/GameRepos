@@ -48,6 +48,7 @@
       pools: 0,                         // tide-pool visits (Nine gate)
       fired: {},                        // scheduled events already run
       deathCause: null,
+      mod: null,                        // NG+ run modifier: hard|silent|kind|chaos
     };
   };
 
@@ -79,12 +80,15 @@
   // Consumes one segment: base metabolic tick, then starvation/thirst harm.
   TB.tickSegment = function () {
     const s = TB.state;
-    const monsoon = s.chapter === 5; // the Long Rain: water everywhere, food scarce, everything heavier
-    s.stats.hunger = TB.clamp(s.stats.hunger - (monsoon ? 8 : 6), 0, 100);
-    s.stats.thirst = TB.clamp(s.stats.thirst - (monsoon ? 3 : s.site === 'overhang' ? 8 : 6), 0, 100);
-    s.stats.energy = TB.clamp(s.stats.energy - (monsoon ? 4 : 3), 0, 100);
-    if (s.stats.hunger === 0) s.stats.health = TB.clamp(s.stats.health - 8, 0, 100);
-    if (s.stats.thirst === 0) s.stats.health = TB.clamp(s.stats.health - 12, 0, 100);
+    // the Long Rain: water everywhere, food scarce, everything heavier.
+    // Hard Season (NG+ modifier) starts it a chapter early; Kind Tide softens all drains.
+    const monsoon = s.chapter === 5 || (s.mod === 'hard' && s.chapter >= 4);
+    const k = s.mod === 'kind' ? 0.6 : 1;
+    s.stats.hunger = TB.clamp(s.stats.hunger - (monsoon ? 8 : 6) * k, 0, 100);
+    s.stats.thirst = TB.clamp(s.stats.thirst - (monsoon ? 3 : s.site === 'overhang' ? 8 : 6) * k, 0, 100);
+    s.stats.energy = TB.clamp(s.stats.energy - (monsoon ? 4 : 3) * k, 0, 100);
+    if (s.stats.hunger === 0) s.stats.health = TB.clamp(s.stats.health - 8 * k, 0, 100);
+    if (s.stats.thirst === 0) s.stats.health = TB.clamp(s.stats.health - 12 * k, 0, 100);
     if (s.injury) s.stats.health = TB.clamp(s.stats.health - 2, 0, 100);
     if (s.disease === 'fever') {
       s.stats.health = TB.clamp(s.stats.health - 1, 0, 100);
@@ -136,6 +140,7 @@
       // migrate saves from before later chapters existed
       st.chapter = st.chapter || 1; st.trust = st.trust || 0; st.site = st.site || null;
       st.edda = st.edda || 0; st.disease = st.disease || null; st.ryo = st.ryo || 0;
+      st.mod = st.mod || null;
       return st;
     } catch (e) { return null; }
   };
