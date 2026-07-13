@@ -27,13 +27,13 @@
 
   // ---- quest triggers (clean slots; all gated on companion + trust) ------------
   TB.SCHEDULE.push(
-    { d: 12, s: 0, id: 'q_kavi_1', when: (s) => s.companion === 'kavi' && s.trust >= 40 },
-    { d: 12, s: 1, id: 'q_buri_1', when: (s) => s.companion === 'buri' && s.trust >= 40 },
-    { d: 13, s: 0, id: 'q_vela_1', when: (s) => s.companion === 'vela' && s.trust >= 40 },
-    { d: 13, s: 2, id: 'q_nine_1', when: (s) => s.companion === 'nine' && s.trust >= 45 },
-    { d: 14, s: 1, id: 'q_moa_1', when: (s) => s.companion === 'moa' && s.trust >= 40 },
-    { d: 14, s: 2, id: 'q_ipo_1', when: (s) => s.companion === 'ipo' && s.trust >= 45 },
-    { d: 17, s: 0, id: 'q_vela_3', when: (s) => TB.is('Q_VELA_EGGS') && !TB.is('Q_VELA_DONE') },
+    { d: 23, s: 0, id: 'q_kavi_1', when: (s) => s.companion === 'kavi' && s.trust >= 40 },
+    { d: 23, s: 1, id: 'q_buri_1', when: (s) => s.companion === 'buri' && s.trust >= 40 },
+    { d: 25, s: 0, id: 'q_vela_1', when: (s) => s.companion === 'vela' && s.trust >= 40 },
+    { d: 25, s: 2, id: 'q_nine_1', when: (s) => s.companion === 'nine' && s.trust >= 45 },
+    { d: 26, s: 1, id: 'q_moa_1', when: (s) => s.companion === 'moa' && s.trust >= 40 },
+    { d: 26, s: 2, id: 'q_ipo_1', when: (s) => s.companion === 'ipo' && s.trust >= 45 },
+    { d: 40, s: 0, id: 'q_vela_3', when: (s) => TB.is('Q_VELA_EGGS') && !TB.is('Q_VELA_DONE') },
   );
 
   // ---- quest actions (hub decorator) ----------------------------------------------

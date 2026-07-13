@@ -16,7 +16,7 @@
   // ---- Chapter open: the aftermath week ------------------------------------------------
   TB.scene('ch7_open', {
     bg: (s) => (TB.is('TIDEWELL_SILENCE') ? 'beach-day' : TB.is('TIDEWELL_KEEP') ? 'temple' : 'beach-night'),
-    enter: (s) => { if (s.chapter < 7) { s.chapter = 7; s.day = 34; s.seg = 0; } },
+    enter: (s) => { if (s.chapter < 7) { s.chapter = 7; s.day = 93; s.seg = 0; } },
     text: (s) => {
       const t = ['<em>CHAPTER SEVEN — CONVERGENCE</em>', 'The week after the mountain is the strangest of your life, and you measure strangeness differently now.'];
       if (TB.is('TIDEWELL_SILENCE')) t.push('The island changes key around you, day by day: the lagoon\'s glow fading like a lamp turned down slow, the compass needle settling — actually settling, trembling toward a true and ordinary north — and on the sixth morning, high and glinting and impossible, an aircraft alters course. A wing dips. Someone, seven miles up, has seen an island that was never there before, and somewhere in the world a chart is being corrected, and after the chart, ships.', 'You have perhaps days. The world is coming, with everything the world brings, and every life on this island — yours, Edda\'s, the Green\'s two thousand — is about to be found with you.');
@@ -33,6 +33,7 @@
   // ---- THE CONVERGENCE -------------------------------------------------------------------
   TB.scene('convergence', {
     bg: 'beach-dusk',
+    enter: (s) => { if (s.day < 100) { s.day = 100; s.seg = 2; } }, // the hundred days come due, literally
     text: (s) => [
       '<em>THE CONVERGENCE</em>',
       'You give it the honest setting: dusk, the tideline, the whole bright toy of your world laid out — the camp' + (TB.is('HOME_NAMED') ? ' (no: <em>' + homeName() + '</em>; it earned the name)' : '') + ', the smoke of your fire' + (TB.is('EDDA_WINTER') ? ', Edda\'s second smoke beside it' : '') + (TB.is('RYO_MET') ? ', the Kingfisher\'s patched mast against the sky' : '') + ', the mountain behind everything with its broken crown and its kept secrets.',

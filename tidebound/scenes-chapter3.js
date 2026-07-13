@@ -1,5 +1,5 @@
 /* =====================================================================
- * scenes-chapter3.js — Chapter Three: The Green Deep (Days 10–15).
+ * scenes-chapter3.js — Chapter Three: The Green Deep (Days 19–35).
  * Edda Voss met properly (three openings by the Smoke decision), her
  * grove as a visitable location, the Silverthread river, marsh fever,
  * the Boar King thread continued, heart scenes II, and the chapter
@@ -36,7 +36,7 @@
     bg: 'jungle',
     enter: (s) => {
       if (s.chapter >= 3) return; // reload guard
-      s.chapter = 3; s.day = 10; s.seg = 0;
+      s.chapter = 3; s.day = 19; s.seg = 0;
     },
     text: [
       '<em>CHAPTER THREE — THE GREEN DEEP</em>',
@@ -252,16 +252,16 @@
 
   // ---- Chapter 3 scheduled events -----------------------------------------------------
   TB.SCHEDULE.push(
-    { d: 10, s: 2, id: 'ev3_river' },
-    { d: 11, s: 0, id: 'ev3_eddavisit', when: (s) => TB.is('SMOKE_IGNORED') && !TB.is('EDDA_MET') },
-    { d: 11, s: 2, id: 'ev3_fever', when: (s) => TB.is('FEVER_SEED') && !TB.is('SALVE') && !s.disease },
-    { d: 12, s: 2, id: 'ev3_grin1' },
-    { d: 13, s: 1, id: 'ev3_king2' },
-    { d: 13, s: 3, id: 'ev3_pulse' },
-    { d: 14, s: 0, id: 'ev3_heart2', when: (s) => !!s.companion && s.trust >= 75 },
-    { d: 14, s: 0, id: 'ev3_heart2_low', when: (s) => !!s.companion && s.trust < 75 },
-    { d: 14, s: 0, id: 'ev3_coco2', when: (s) => !s.companion },
-    { d: 15, s: 2, id: 'ch3_threshold' },
+    { d: 20, s: 2, id: 'ev3_river' },
+    { d: 21, s: 0, id: 'ev3_eddavisit', when: (s) => TB.is('SMOKE_IGNORED') && !TB.is('EDDA_MET') },
+    { d: 22, s: 2, id: 'ev3_fever', when: (s) => TB.is('FEVER_SEED') && !TB.is('SALVE') && !s.disease },
+    { d: 24, s: 2, id: 'ev3_grin1' },
+    { d: 27, s: 1, id: 'ev3_king2' },
+    { d: 28, s: 3, id: 'ev3_pulse' },
+    { d: 31, s: 0, id: 'ev3_heart2', when: (s) => !!s.companion && s.trust >= 75 },
+    { d: 31, s: 0, id: 'ev3_heart2_low', when: (s) => !!s.companion && s.trust < 75 },
+    { d: 31, s: 0, id: 'ev3_coco2', when: (s) => !s.companion },
+    { d: 35, s: 2, id: 'ch3_threshold' },
   );
 
   // ---- The river --------------------------------------------------------------------

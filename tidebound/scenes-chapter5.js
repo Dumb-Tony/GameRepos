@@ -1,9 +1,9 @@
 /* =====================================================================
- * scenes-chapter5.js — Chapter Five: The Long Rain (Days 22–28).
+ * scenes-chapter5.js — Chapter Five: The Long Rain (Days 53–70).
  * The monsoon crucible. The player commits the season to one master
  * plan — THE COUNTDOWN (sea), THE HOMESTEAD (roots), or THE DESCENT
- * (depth) — and the chapter's spine events (d23/25/27) and finale
- * (d28) run that variant, over shared monsoon survival, the cyclone
+ * (depth) — and the chapter's spine events (d56/60/66) and finale
+ * (d69) run that variant, over shared monsoon survival, the cyclone
  * night, and Edda's failing season.
  * =================================================================== */
 (function (G) {
@@ -27,10 +27,10 @@
   // ---- Chapter open: the season's master plan ------------------------------------------
   TB.scene('ch5_open', {
     bg: 'beach-dusk',
-    enter: (s) => { if (s.chapter < 5) { s.chapter = 5; s.day = 22; s.seg = 0; } },
+    enter: (s) => { if (s.chapter < 5) { s.chapter = 5; s.day = 53; s.seg = 0; } },
     text: (s) => [
       '<em>CHAPTER FIVE — THE LONG RAIN</em>',
-      'It arrives on the twenty-second day, not as a storm but as a <em>change of government</em>: the southern wall walks ashore at dawn and the sky becomes a low grey ceiling that has no further interest in negotiation. Rain — warm, vertical, endless — becomes the medium you live in. The lagoon\'s glow blurs to a haze. Thunder moves in upstairs, permanently, like bad neighbors.',
+      'It arrives on the fifty-third day, not as a storm but as a <em>change of government</em>: the southern wall walks ashore at dawn and the sky becomes a low grey ceiling that has no further interest in negotiation. Rain — warm, vertical, endless — becomes the medium you live in. The lagoon\'s glow blurs to a haze. Thunder moves in upstairs, permanently, like bad neighbors.',
       'Edda\'s verdict, shouted cheerfully over the drumming when you last saw her: <em>"Eight weeks of this, castaway, give or take the mountain\'s mood. The rain solves your water and rots everything else. Whatever you meant to do with your season — you do it IN this, or not at all."</em>',
       'She\'s right, and you feel it: the monsoon is a crucible, and a crucible only shapes what commits. Your hands, your hours, your allies\' strength — one master plan gets them. The Ledger\'s tally so far — Signal ' + s.route.signal + ' · Roots ' + s.route.roots + ' · Depth ' + s.route.depth + ' — leans where it leans. The choice is still yours.',
     ],
@@ -57,18 +57,18 @@
 
   // ---- Chapter 5 scheduled events -------------------------------------------------------
   TB.SCHEDULE.push(
-    { d: 23, s: 2, id: 'ev5_sea1', when: (s) => s.plan === 'sea' },
-    { d: 23, s: 2, id: 'ev5_home1', when: (s) => s.plan === 'home' },
-    { d: 23, s: 2, id: 'ev5_way1', when: (s) => s.plan === 'deep' },
-    { d: 24, s: 3, id: 'ev5_cyclone' },
-    { d: 25, s: 1, id: 'ev5_sea2', when: (s) => s.plan === 'sea' },
-    { d: 25, s: 1, id: 'ev5_home2', when: (s) => s.plan === 'home' },
-    { d: 25, s: 1, id: 'ev5_way2', when: (s) => s.plan === 'deep' },
-    { d: 26, s: 0, id: 'ev5_edda' },
-    { d: 27, s: 2, id: 'ev5_sea3', when: (s) => s.plan === 'sea' },
-    { d: 27, s: 2, id: 'ev5_home3', when: (s) => s.plan === 'home' },
-    { d: 27, s: 2, id: 'ev5_way3', when: (s) => s.plan === 'deep' },
-    { d: 28, s: 2, id: 'ch5_finale' },
+    { d: 56, s: 2, id: 'ev5_sea1', when: (s) => s.plan === 'sea' },
+    { d: 56, s: 2, id: 'ev5_home1', when: (s) => s.plan === 'home' },
+    { d: 56, s: 2, id: 'ev5_way1', when: (s) => s.plan === 'deep' },
+    { d: 58, s: 3, id: 'ev5_cyclone' },
+    { d: 60, s: 1, id: 'ev5_sea2', when: (s) => s.plan === 'sea' },
+    { d: 60, s: 1, id: 'ev5_home2', when: (s) => s.plan === 'home' },
+    { d: 60, s: 1, id: 'ev5_way2', when: (s) => s.plan === 'deep' },
+    { d: 63, s: 0, id: 'ev5_edda' },
+    { d: 66, s: 2, id: 'ev5_sea3', when: (s) => s.plan === 'sea' },
+    { d: 66, s: 2, id: 'ev5_home3', when: (s) => s.plan === 'home' },
+    { d: 66, s: 2, id: 'ev5_way3', when: (s) => s.plan === 'deep' },
+    { d: 69, s: 2, id: 'ch5_finale' },
   );
 
   // ==================================================================
@@ -93,8 +93,8 @@
     bg: 'beach-day', who: (s) => (TB.is('RYO_MET') ? RYO : null),
     text: (s) => [
       TB.is('RYO_MET')
-        ? 'The Kingfisher swims on the twenty-fifth day. You and Ryo walk her down the rollers into the lagoon between squalls and she takes the water like an apology accepted — low, patched, graceless, and <em>floating</em>, bailing-bucket dry through a full hour of sea trial inside the reef.'
-        : 'The raft swims on the twenty-fifth day. You walk her down the rollers between squalls and pole out into the lagoon, and she carries you — you, your weight, your gear-weight, a deliberate soaking capsize test and remount — through a full hour of trial inside the reef.',
+        ? 'The Kingfisher swims on the sixtieth day. You and Ryo walk her down the rollers into the lagoon between squalls and she takes the water like an apology accepted — low, patched, graceless, and <em>floating</em>, bailing-bucket dry through a full hour of sea trial inside the reef.'
+        : 'The raft swims on the sixtieth day. You walk her down the rollers between squalls and pole out into the lagoon, and she carries you — you, your weight, your gear-weight, a deliberate soaking capsize test and remount — through a full hour of trial inside the reef.',
       TB.is('RYO_MET') ? 'Ryo brings her about at the reef gate and holds there a moment, bow to the open sea, canvas trembling, and you watch him look at the horizon the way the starving look at bread. "After the rains," he says — steady, a promise to the boat as much as you. "First fair window. She\'ll be ready. Will—" and he doesn\'t finish it, again, and the question stands in the cockpit between you like a third sailor.' : 'At the reef gate you hold a moment, bow to the open sea, and let yourself feel the full size of what a working vessel means: that door out there is no longer locked. Only closed, and weathered, and yours to choose.',
       'The monsoon slams the window shut within the hour, of course. But the sea trial holds in your chest all day, bright as the flare you did or didn\'t fire: <em>it can be done.</em>',
     ],
@@ -106,7 +106,7 @@
     bg: (s) => (TB.is('RADIO_DONE') ? 'station' : 'beach-night'),
     text: (s) => {
       if (TB.is('RADIO_DONE')) return [
-        'The twenty-seventh night, you keep vigil at the radio with a flask of Edda\'s tea and the chart recorder\'s drum turning beside you like a patient heart' + (TB.is('WINDOW_PLAN') ? ', waiting for the skip.' : ', still hunting the thought you can\'t finish — until, past midnight, watching the needle draw its seventh tooth, it finishes itself: <em>the skips. Speak in the rests.</em>'),
+        'The sixty-sixth night, you keep vigil at the radio with a flask of Edda\'s tea and the chart recorder\'s drum turning beside you like a patient heart' + (TB.is('WINDOW_PLAN') ? ', waiting for the skip.' : ', still hunting the thought you can\'t finish — until, past midnight, watching the needle draw its seventh tooth, it finishes itself: <em>the skips. Speak in the rests.</em>'),
         'At 2:14 the needle drops flat.',
         'You key the transmitter into dead air — <em>"MAYDAY MAYDAY MAYDAY, this is survivor of downed aircraft, island position unknown, at least two souls, DO YOU COPY"</em> — once, twice, the black window standing open around your voice like held breath—',
         '—and the phones crackle, distant as another life, human as a heartbeat: <em>"—station calling MAYDAY, copy you broken, say again your posi—"</em>',
@@ -161,7 +161,7 @@
   TB.scene('ev5_home3', {
     bg: 'camp-fringe', who: BOAR_KING,
     text: (s) => {
-      const t = ['On the twenty-seventh dusk, the Boar King comes to the homestead — and this time is not like the other times.',
+      const t = ['On the sixty-sixth dusk, the Boar King comes to the homestead — and this time is not like the other times.',
         'He comes slow. He comes <em>light</em> — the monsoon has stripped him; the scar-plated bulk hangs on him now like borrowed armor, and the small furious eyes have gone hollow at the rims. The flood has drowned the tuber flats; the mast crop rotted early; the inland is starving its king.',
         'He stops at your boundary — at the exact line of it, which he has never once honored before — and stands in the rain, swaying slightly, watching your fire and your fat granary. Not raiding. <em>Standing.</em> Asking, in the only grammar a king has left when the kingdom fails.'];
       return t;
@@ -188,7 +188,7 @@
   TB.scene('ev5_way1', {
     bg: 'river',
     text: (s) => [
-      'You wake on the twenty-third day already listening, and the river tells you before the sky does: the surge is easing. The first great lull of the season — the first of three, if the monsoon keeps its usual book — arrives at dusk.',
+      'You wake on the fifty-sixth day already listening, and the river tells you before the sky does: the surge is easing. The first great lull of the season — the first of three, if the monsoon keeps its usual book — arrives at dusk.',
       'This is what you chose when the rain began. The Descent: the throat under the mountain, the wound that skips, the plan every surge-lull now belongs to. So you spend the day the way a plan deserves — lamps trimmed and oiled, spare brand wrapped dry, chalk for the high-water marks, line coiled over one shoulder' + (s.companion ? ', your companion watching the kit come together and understanding, in the way of animals before weather, exactly what kind of day this is' : '') + ' — and at slack light you walk the river path upstream, to where the waterfall stands guard over the grotto\'s dark gap.',
       'The grotto breathes at you. Slow, wet, seven to the exhale. Behind the falling water, the gap waits — and for one long moment you stand on the honest surface of the world with the kit on your back, and let yourself understand that you are about to leave it.',
     ],
@@ -198,7 +198,7 @@
   TB.scene('ev5_way2', {
     bg: 'river',
     text: (s) => [
-      'The second lull comes on the twenty-fifth morning, and this time you know the road.',
+      'The second lull comes on the sixtieth morning, and this time you know the road.',
       'You kit up in the grey first light — lamps, line, chalk, the dry-wrapped brand — and add what the first descent taught you to want: food you can eat one-handed, and a second coil of line, because the throat goes deeper than one coil\'s worth of trust. ' + (TB.is('GULLET_MAP') ? 'Vane\'s tide tables give you the lull\'s exact width, which is the difference between an expedition and a dare.' : 'You gave yesterday\'s watch to the grotto\'s breathing, counting its exhales against the tide, and you think — think — you have the lull\'s width. It will have to do.'),
       'The waterfall is thinner today, the gap behind it wider, and the breathing from below has a new note in it — lower, more interested — as if the island noticed the chalk marks you left and has been reading them. You check the lamp once more than you need to, and go in.',
     ],
@@ -208,7 +208,7 @@
   TB.scene('ev5_way3', {
     bg: 'river',
     text: (s) => [
-      'The twenty-seventh brings the season\'s deepest lull — the monsoon drawing one long breath before its last act — and you have known for two days what you would spend it on: the Heartroom. The wound itself. The bottom of the plan.',
+      'The sixty-sixth brings the season\'s deepest lull — the monsoon drawing one long breath before its last act — and you have known for two days what you would spend it on: the Heartroom. The wound itself. The bottom of the plan.',
       'You pack like a person intending to come back: every lamp, both coils, the chalk worn to a stub, food, the med-roll' + (TB.is('HEARTGLASS') ? ', and the heartglass spur, which has pulsed on your shelf like a kept promise since you carried it out' : '') + '. ' + (s.companion ? 'At the fire, your companion does the arithmetic of the kit and stations themselves at the path\'s mouth — coming as far as the grotto, then keeping the surface, keeping the light, keeping the way home open. Someone has to hold the door.' : 'You bank the fire high before you go — a light to come home to, lit by the only hands available for the job.'),
       'The river path, the waterfall, the breathing gap: familiar now, which the deep part of you knows enough to distrust. Third time down. Deepest line yet. The grotto exhales its seven-beat welcome, and you answer it out loud — "yes, yes, I\'m coming" — and step through the water into the dark.',
     ],
@@ -219,7 +219,7 @@
   TB.scene('ev5_deep1', {
     bg: 'gullet',
     text: (s) => [
-      'The Gullet takes you on the twenty-third day, at the surge-lull ' + (TB.is('GULLET_MAP') ? 'Vane\'s tide tables name to the minute' : 'you\'ve gambled out of three days of watching the grotto breathe') + ': behind the waterfall, through the gap, down the throat of the island.',
+      'The Gullet takes you on the fifty-sixth day, at the surge-lull ' + (TB.is('GULLET_MAP') ? 'Vane\'s tide tables name to the minute' : 'you\'ve gambled out of three days of watching the grotto breathe') + ': behind the waterfall, through the gap, down the throat of the island.',
       'It is a drowned world that empties twice a day and resents it. Walls sea-smoothed a hundred feet above the sea; galleries that boom with the far surge like a held word; and everywhere, threading the black rock in veins and lenses — <em>heartglass</em>, dark and glassy, catching your lamp and returning it a half-beat late, so that you walk in a crowd of your own delayed reflections.',
       s.companion === 'ipo' ? 'And Ipo — Ipo of the shrieking dark-terrors, Ipo who bolted from the temple shadows of every scary story you\'ve told yourself about this — Ipo walks INTO it ahead of you. He carries the spare brand in both small hands, teeth chattering audibly, tail wrapped around your arm like a mooring line, and he does not bolt. You are limping on a reef-cut; someone had to lead; the mathematics of that reached him before his fear did. It is the bravest thing you have ever watched anyone do at knee height.' : s.companion === 'nine' ? 'You expected to enter alone — and then, in the first sea-pool inside the throat, a shape rises against your lamp: Nine. She has come in from the reef side, through channels only she could thread, and she is <em>lit</em> — faintly, unmistakably, her mantle running slow waves of the same seven-beat glow as the walls. In here, she doesn\'t reflect the island\'s pulse. She keeps time with it.' : 'The seven-beat pulse doesn\'t glow down here — it <em>sounds</em>: felt in the breastbone, in the water, in the rock under your palms, the island\'s voice heard at last from inside the instrument.',
       'You go as deep as the lull allows and mark your high-water line like a debt, and climb out with the surge already talking behind you. Day one of the throat. It knows you were there.',
@@ -268,7 +268,7 @@
       'You are still standing in it, cold to the bones in a way the water doesn\'t explain, when the voice comes from the dark behind you — human, young, accented like nothing you\'ve ever heard, in careful, furious English:',
       '<em>"Stop."</em>',
       'She steps into your lamplight like she\'s been part of the dark all along — early twenties, barefoot on wet stone that has been cutting your boots, dressed in woven stuff the color of the walls, a heartglass lamp cold in one hand and a very functional bone knife loose in the other. And her face is a war: fear, discipline, and a curiosity so fierce it keeps breaking through the other two.',
-      '"Edda\'s words," she says — tapping her own mouth: <em>explaining herself</em>, absurdly, in the middle of it. "I learn from listening. Many years, listening her." The knife-hand gestures — controlled, precise — at the guttering wound, the bore, the whole flickering room. "The last ones who touched — the island closed their door on them. You—" and here the fury slips and the curiosity floods through, helpless, and she looks at you the way you looked at the Gallery of Hands: "—<em>you</em> put your hand in the hollow. We watched. I watched. Since the first fire on your beach, castaway. Twenty-eight days, I watch you." A breath. The knife goes away. "So. Not further. Please. And — hello."',
+      '"Edda\'s words," she says — tapping her own mouth: <em>explaining herself</em>, absurdly, in the middle of it. "I learn from listening. Many years, listening her." The knife-hand gestures — controlled, precise — at the guttering wound, the bore, the whole flickering room. "The last ones who touched — the island closed their door on them. You—" and here the fury slips and the curiosity floods through, helpless, and she looks at you the way you looked at the Gallery of Hands: "—<em>you</em> put your hand in the hollow. We watched. I watched. Since the first fire on your beach, castaway. Sixty-six days, I watch you." A breath. The knife goes away. "So. Not further. Please. And — hello."',
       '<em>The watcher has a face now.</em>',
     ],
     enter: (s) => { if (!TB.is('DEEP3')) { TB.flag('DEEP3'); TB.flag('NAIA_MET'); TB.flag('WOUND_SEEN'); TB.route('depth', 3); } },

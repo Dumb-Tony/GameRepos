@@ -95,6 +95,13 @@ companion, disease/injury, endingId. Autosave per scene to localStorage
 `tidebound.save.v1` (skipped on title); manual slots `tidebound.slot1..3`; cross-run
 `tidebound.meta.v1`; settings `tidebound.settings` + master mute `tidebound.snd`.
 `loadSave()` migrates old saves — add defaults there when adding state fields.
+**The 100-day calendar (`TB.CAL` in engine.js):** Ch1 days 1–5 (Clearing d5) ·
+Ch2 6–18 · Ch3 19–35 · Ch4 36–52 · Ch5 (the Long Rain season) 53–70 · Ch6 71–85 ·
+Ch7 93→100 (convergence enter pins day 100). ALL SCHEDULE entries use these
+absolute days; safety nets in advance() use TB.CAL.chNend. Old (pre-100-day)
+saves migrate in loadSave via `_cal` version stamp: newDay = NEW[ch] + (day −
+OLD[ch]). Owner mandate for the expansion: 100 days must feel like 100 NEW days —
+density scales with length (Phases 2–4: events, side quests, lore/milestones).
 Settings include **color themes**: `theme` (text boxes — midnight/driftwood/lagoon/
 ember/abyss) and `bars` (status-bar palette — island/tropic/seaglass/signal), picked
 via swatches in the TAB menu (`menu.js` THEMES/BARS), stamped on
