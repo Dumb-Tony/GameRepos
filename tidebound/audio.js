@@ -9,6 +9,11 @@
  *    cicadas, fire crackle, monsoon thunder).
  *  - CALLS: stylized animal one-shots when a creature's portrait
  *    appears (companions, wild encounters, the Boar King).
+ *  - MUSIC: a generative adaptive score. Each scene maps to a MOOD
+ *    (title/day/night/storm/deep/ending/death) with its own chord
+ *    progression, pentatonic pluck scale, and pacing; soft pads play a
+ *    phrase, kalimba-ish plucks decorate it, then the music rests and
+ *    breathes before the next phrase. Own menu toggle (settings.music).
  *
  * All levels honor the settings in localStorage 'tidebound.settings'
  * and the master mute in 'tidebound.snd'. Everything is try/catch
@@ -19,12 +24,12 @@
   const TB = (G.TB = G.TB || {});
   const A = (TB.Audio = {});
 
-  let ctx = null, master = null, ambBus = null, sfxBus = null;
+  let ctx = null, master = null, ambBus = null, sfxBus = null, musBus = null;
   const layers = {};       // name -> {gain, target}
   let schedTimer = null, humNext = 0, curMix = {}, curBgName = '';
 
   // ---- settings -------------------------------------------------------
-  const DEFAULTS = { vol: 70, bright: 100, amb: true, sfx: true, theme: 'midnight', bars: 'island' };
+  const DEFAULTS = { vol: 70, bright: 100, amb: true, sfx: true, music: true, theme: 'midnight', bars: 'island' };
   A.settings = function () {
     try { return Object.assign({}, DEFAULTS, JSON.parse(localStorage.getItem('tidebound.settings') || '{}')); }
     catch (e) { return Object.assign({}, DEFAULTS); }
@@ -37,6 +42,8 @@
     if (master) master.gain.setTargetAtTime(A.muted() ? 0 : (s.vol / 100) * 0.9, ctx.currentTime, 0.1);
     if (ambBus) ambBus.gain.setTargetAtTime(s.amb ? 1 : 0, ctx ? ctx.currentTime : 0, 0.1);
     if (sfxBus) sfxBus.gain.setTargetAtTime(s.sfx ? 1 : 0, ctx ? ctx.currentTime : 0, 0.1);
+    musOn = !!s.music;
+    if (musBus) musBus.gain.setTargetAtTime(musOn ? 0.85 : 0, ctx ? ctx.currentTime : 0, 0.4);
     const bd = document.getElementById('backdrop');
     if (bd) bd.style.filter = 'brightness(' + (s.bright / 100) + ')';
     try { document.body.dataset.theme = s.theme; document.body.dataset.bars = s.bars; } catch (e) {}
@@ -67,6 +74,7 @@
       master = ctx.createGain(); master.connect(ctx.destination);
       ambBus = ctx.createGain(); ambBus.connect(master);
       sfxBus = ctx.createGain(); sfxBus.connect(master);
+      musBus = ctx.createGain(); musBus.gain.value = 0; musBus.connect(master);
 
       // -- continuous layers --
       mkLayer('surf', (out) => {
@@ -132,6 +140,7 @@
   function tick() {
     if (!ctx || ctx.state !== 'running') return;
     const t = ctx.currentTime, m = curMix;
+    try { musTick(t); } catch (e) { /* music must never kill the game */ }
     try {
       if (m.birds && Math.random() < 0.055 * m.birds) { // little gliss whistles
         const f = 1400 + Math.random() * 1600, n = 2 + ((Math.random() * 3) | 0);
@@ -208,6 +217,7 @@
   A.setScene = function (bgName, s) {
     curBgName = bgName;
     curMix = mixFor(bgName, s);
+    setMood(moodFor(bgName, s));
     if (!ctx) return;
     try {
       const t = ctx.currentTime;
@@ -216,6 +226,111 @@
       }
     } catch (e) {}
   };
+
+  // ---- music ----------------------------------------------------------------
+  // Chords/scales are MIDI note numbers. A phrase = the whole progression
+  // played once on soft pads (plucks sprinkled over it, an optional motif
+  // sung once at the top), then the music rests for `rest` seconds so the
+  // island ambience gets the foreground back.
+  const NOTE = (m) => 440 * Math.pow(2, (m - 69) / 12);
+  const MOODS = {
+    title: { // the beach at golden hour — Am, F, C, G
+      prog: [[57, 64, 69, 72], [53, 60, 65, 69], [48, 55, 64, 72], [55, 62, 67, 71]],
+      scale: [69, 72, 74, 76, 79, 81], dur: 7, rest: 5, pad: 0.042, pluck: 0.10, plevel: 0.05,
+      motif: [[76, 0], [74, 0.55], [72, 1.1], [69, 1.9], [72, 2.75], [74, 3.3], [81, 4.4]],
+    },
+    day: { // wandering — C, Am7, F, G
+      prog: [[48, 60, 64, 67], [45, 57, 64, 67], [41, 57, 60, 65], [43, 59, 62, 67]],
+      scale: [72, 74, 76, 79, 81, 84], dur: 6.5, rest: 16, pad: 0.034, pluck: 0.13, plevel: 0.045,
+    },
+    night: { // sparse, low, wide gaps
+      prog: [[45, 57, 60, 64], [41, 53, 60, 65], [43, 55, 62, 67]],
+      scale: [64, 67, 69, 72, 76], dur: 9, rest: 24, pad: 0.03, pluck: 0.05, plevel: 0.035,
+    },
+    storm: { // the long rain — Dm, Bb, Gm, A
+      prog: [[50, 57, 62, 65], [46, 58, 62, 65], [43, 55, 58, 62], [45, 57, 61, 64]],
+      scale: [62, 65, 69, 74], dur: 8, rest: 11, pad: 0.05, pluck: 0.04, plevel: 0.04,
+    },
+    deep: { // gullet/temple/caldera — rooted on A to sit inside the 54Hz hum
+      prog: [[45, 57, 64, 71], [43, 55, 62, 71], [41, 53, 60, 69], [40, 52, 59, 67]],
+      scale: [76, 79, 81, 83, 88], dur: 10, rest: 8, pad: 0.05, pluck: 0.07, plevel: 0.038,
+    },
+    ending: { // resolution — C, G/B, Am add9, F
+      prog: [[48, 60, 64, 67], [47, 59, 62, 67], [45, 57, 64, 71], [41, 57, 60, 65]],
+      scale: [72, 76, 79, 81, 84], dur: 7, rest: 4, pad: 0.05, pluck: 0.15, plevel: 0.05,
+      motif: [[72, 0], [76, 0.5], [79, 1.05], [84, 1.9], [79, 2.75], [76, 3.3], [72, 4.2]],
+    },
+    death: { // a slow exhale, no plucks
+      prog: [[45, 52, 60, 64], [41, 48, 57, 65], [43, 50, 58, 62]],
+      scale: [], dur: 11, rest: 16, pad: 0.045, pluck: 0, plevel: 0,
+    },
+  };
+  let musOn = true, musMood = '', musIdx = 0, musNext = 0, musPhraseEnd = 0;
+
+  function moodFor(bg, s) {
+    if (s && s.scene === 'death') return 'death';
+    if (s && s.scene === 'ending') return 'ending';
+    if (bg === 'title' || bg === 'sky' || bg === 'ocean-night') return 'title';
+    if (s && s.chapter === 5) return 'storm';
+    if (bg === 'gullet' || bg === 'temple' || bg === 'caldera') return 'deep';
+    if (s && s.seg === 3) return 'night';
+    return 'day';
+  }
+  function setMood(m) {
+    if (m === musMood) return;
+    musMood = m; musIdx = 0;
+    // let the current pad tail ring out, then the new mood takes over;
+    // death/ending answer the scene right away
+    const soon = (m === 'death' || m === 'ending') ? 0.5 : 2.2;
+    if (ctx) musNext = Math.min(musNext, ctx.currentTime + soon), musPhraseEnd = 0;
+  }
+  A.mood = function () { return musMood; }; // for tests
+
+  function pad(t0, midi, dur, peak) {
+    const f = NOTE(midi);
+    const o1 = ctx.createOscillator(), o2 = ctx.createOscillator();
+    const lp = ctx.createBiquadFilter(), g = ctx.createGain();
+    o1.type = 'triangle'; o1.frequency.value = f;
+    o2.type = 'sine'; o2.frequency.value = f * 1.004; // gentle chorus shimmer
+    lp.type = 'lowpass'; lp.frequency.value = Math.min(1800, f * 4);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(peak, t0 + dur * 0.35);
+    g.gain.setValueAtTime(peak, t0 + dur * 0.6);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur * 1.15);
+    o1.connect(lp); o2.connect(lp); lp.connect(g); g.connect(musBus);
+    o1.start(t0); o2.start(t0);
+    o1.stop(t0 + dur * 1.2 + 0.1); o2.stop(t0 + dur * 1.2 + 0.1);
+  }
+  function pluck(t0, midi, peak) { // kalimba-ish: pure tone + fast bright partial
+    const f = NOTE(midi);
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'sine'; o.frequency.value = f;
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(peak, t0 + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.9);
+    const o2 = ctx.createOscillator(), g2 = ctx.createGain();
+    o2.type = 'sine'; o2.frequency.value = f * 3.01;
+    g2.gain.setValueAtTime(0.0001, t0);
+    g2.gain.exponentialRampToValueAtTime(peak * 0.25, t0 + 0.008);
+    g2.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.25);
+    o.connect(g); g.connect(musBus); o2.connect(g2); g2.connect(musBus);
+    o.start(t0); o.stop(t0 + 1.1); o2.start(t0); o2.stop(t0 + 0.4);
+  }
+  function musTick(t) {
+    if (!musOn || !musMood) return;
+    const M = MOODS[musMood]; if (!M) return;
+    if (t >= musNext) { // next chord of the phrase
+      const chord = M.prog[musIdx];
+      A._mchords = (A._mchords || 0) + 1; // debug/test counter
+      for (const n of chord) pad(t + 0.05, n, M.dur, M.pad);
+      if (musIdx === 0 && M.motif) for (const [n, dt] of M.motif) pluck(t + 0.6 + dt, n, M.plevel * 1.25);
+      musIdx++;
+      if (musIdx >= M.prog.length) { musIdx = 0; musNext = t + M.dur + M.rest; musPhraseEnd = t + M.dur * 1.1; }
+      else { musNext = t + M.dur; musPhraseEnd = musNext + M.dur; }
+    } else if (t < musPhraseEnd && M.pluck && Math.random() < M.pluck) {
+      pluck(t + 0.02, M.scale[(Math.random() * M.scale.length) | 0], M.plevel);
+    }
+  }
 
   // ---- animal calls ---------------------------------------------------------------
   const CALLS = {
