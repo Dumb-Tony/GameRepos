@@ -58,8 +58,8 @@
 
   function render() {
     const s = TB.Audio.settings();
-    $('mVol').value = s.vol; $('mBright').value = s.bright;
-    $('mAmb').checked = !!s.amb; $('mSfx').checked = !!s.sfx; $('mMus').checked = !!s.music;
+    $('mVol').value = s.vol; $('mBright').value = s.bright; $('mText').value = s.tsize || 100;
+    $('mAmb').checked = !!s.amb; $('mSfx').checked = !!s.sfx; $('mMus').checked = !!s.music; $('mType').checked = !!s.type;
     document.querySelectorAll('#mThemes .mSwatch').forEach((b) => b.classList.toggle('sel', b.dataset.pick === s.theme));
     document.querySelectorAll('#mBars .mSwatch').forEach((b) => b.classList.toggle('sel', b.dataset.pick === s.bars));
     const inGame = TB.state && TB.state.scene !== 'title';
@@ -81,6 +81,21 @@
     TB.Audio.applySettings();
   }
 
+  // the 📖 backlog: everything read this session, grouped by island day
+  function showBacklog() {
+    const body = $('logBody');
+    body.innerHTML = '';
+    const hist = TB.history || [];
+    if (!hist.length) body.innerHTML = '<div class="none">Nothing read yet this session — the backlog fills as you play.</div>';
+    let lastDay = null;
+    for (const e of hist) {
+      if (e.d !== lastDay) { lastDay = e.d; const h = document.createElement('h3'); h.textContent = '— Day ' + e.d + ' —'; body.appendChild(h); }
+      const p = document.createElement('p'); p.innerHTML = e.h; body.appendChild(p);
+    }
+    $('logOverlay').classList.remove('hidden');
+    body.scrollTop = body.scrollHeight; // land on the freshest text
+  }
+
   const Menu = (TB.Menu = {
     open() { render(); $('menuOverlay').classList.remove('hidden'); },
     close() { $('menuOverlay').classList.add('hidden'); },
@@ -98,6 +113,11 @@
       $('mAmb').addEventListener('change', (e) => setSetting({ amb: e.target.checked }));
       $('mSfx').addEventListener('change', (e) => setSetting({ sfx: e.target.checked }));
       $('mMus').addEventListener('change', (e) => setSetting({ music: e.target.checked }));
+      $('mText').addEventListener('input', (e) => setSetting({ tsize: +e.target.value }));
+      $('mType').addEventListener('change', (e) => setSetting({ type: e.target.checked }));
+      $('menuLog').addEventListener('click', () => { Menu.close(); showBacklog(); });
+      $('logClose').addEventListener('click', () => $('logOverlay').classList.add('hidden'));
+      $('logOverlay').addEventListener('click', (e) => { if (e.target.id === 'logOverlay') e.target.classList.add('hidden'); });
       buildSwatches('mThemes', THEMES, 'theme');
       buildSwatches('mBars', BARS, 'bars');
       for (let i = 1; i <= 3; i++) {

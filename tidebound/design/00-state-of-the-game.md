@@ -83,6 +83,14 @@ ember/abyss) and `bars` (status-bar palette — island/tropic/seaglass/signal), 
 via swatches in the TAB menu (`menu.js` THEMES/BARS), stamped on
 `<body data-theme data-bars>` by `TB.Audio.applySettings`, and realized as CSS
 custom-property blocks at the top of `style.css`.
+**QoL:** `tsize` (text size 85–120%, CSS var `--tscale`) and `type` (typewriter
+reveal — engine `typeInto()` types plain+`<em>` text char-by-char, click snaps
+complete, cancelled on scene change; other markup falls back to instant).
+`TB.history` (session-only, cap 500) feeds the 📖 backlog overlay (menu button →
+`#logOverlay`, grouped by day). `TB.continueGame` shows the generated `recap`
+scene ("The story so far", in scenes-prologue.js: chapter name, companion,
+freshest RECAP_DEEDS flags, lowest-stat warning) for saves with day ≥ 3, then
+resumes `state._resume`.
 
 **Art pipeline (important — sandbox egress is blocked to the CDN):** generated art
 lives ONLY in flat `tidebound/art/`, referenced by filename. To add art: generate

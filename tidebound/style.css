@@ -271,7 +271,7 @@ body {
   color: var(--panel-text);
 }
 #textLog { overflow-y: auto; scroll-behavior: smooth; flex: 0 1 auto; min-height: 3.5em; -webkit-overflow-scrolling: touch; }
-#textLog p { font-size: 17px; line-height: 1.62; margin-bottom: 12px; }
+#textLog p { font-size: calc(17px * var(--tscale, 1)); line-height: 1.62; margin-bottom: 12px; }
 #textLog p.faded { opacity: .52; }
 #textLog p:last-child { margin-bottom: 4px; }
 #textLog em { color: var(--panel-em); }
@@ -368,6 +368,32 @@ body {
 .mBtns { display: flex; justify-content: space-between; margin-top: 16px; }
 .mBtns button { padding: 8px 18px; font-size: 14px; }
 
+/* ===== story backlog =============================================== */
+#logOverlay {
+  position: fixed; inset: 0; z-index: 13; background: #020a12cc;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+#logOverlay.hidden { display: none; }
+#logCard {
+  background: #071726; border: 1px solid #ffffff33; border-radius: 16px;
+  padding: 22px 26px; max-width: 640px; width: 100%; max-height: 84vh;
+  display: flex; flex-direction: column;
+}
+#logCard h2 { font-size: 17px; margin-bottom: 10px; color: #ffe9b8; }
+#logBody { overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1; min-height: 0; }
+#logBody h3 {
+  font-family: system-ui, sans-serif; font-size: 12px; letter-spacing: 2px;
+  text-transform: uppercase; opacity: .55; margin: 14px 0 6px; text-align: center;
+}
+#logBody p { font-size: 14.5px; line-height: 1.55; margin-bottom: 9px; opacity: .88; }
+#logBody p em { color: #ffe9b8; }
+#logBody .none { opacity: .55; font-style: italic; font-size: 14px; }
+#logClose {
+  margin-top: 14px; align-self: flex-end; font: inherit; color: inherit; cursor: pointer;
+  background: #ffffff1f; border: 1px solid #ffffff38; border-radius: 8px; padding: 7px 16px;
+  font-size: 13px; font-family: system-ui, sans-serif;
+}
+
 /* ===== small screens =============================================== */
 @media (max-width: 560px) {
   /* HUD becomes two rows: [clock ..... buttons] / [all five meters] */
@@ -383,7 +409,7 @@ body {
   .bar { width: auto; flex: 1 1 0; min-width: 0; }
   .mi { font-size: 11px; }
 
-  #textLog p { font-size: 15.5px; line-height: 1.55; }
+  #textLog p { font-size: calc(15.5px * var(--tscale, 1)); line-height: 1.55; }
   .game-title { font-size: 30px; letter-spacing: 5px; }
   #panel { max-height: 66vh; max-height: 66dvh; padding: 14px 14px 10px; }
   #stage { padding: 8px; padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
