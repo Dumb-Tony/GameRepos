@@ -59,15 +59,15 @@
   TB.SCHEDULE.push(
     { d: 23, s: 2, id: 'ev5_sea1', when: (s) => s.plan === 'sea' },
     { d: 23, s: 2, id: 'ev5_home1', when: (s) => s.plan === 'home' },
-    { d: 23, s: 2, id: 'ev5_deep1', when: (s) => s.plan === 'deep' },
+    { d: 23, s: 2, id: 'ev5_way1', when: (s) => s.plan === 'deep' },
     { d: 24, s: 3, id: 'ev5_cyclone' },
     { d: 25, s: 1, id: 'ev5_sea2', when: (s) => s.plan === 'sea' },
     { d: 25, s: 1, id: 'ev5_home2', when: (s) => s.plan === 'home' },
-    { d: 25, s: 1, id: 'ev5_deep2', when: (s) => s.plan === 'deep' },
+    { d: 25, s: 1, id: 'ev5_way2', when: (s) => s.plan === 'deep' },
     { d: 26, s: 0, id: 'ev5_edda' },
     { d: 27, s: 2, id: 'ev5_sea3', when: (s) => s.plan === 'sea' },
     { d: 27, s: 2, id: 'ev5_home3', when: (s) => s.plan === 'home' },
-    { d: 27, s: 2, id: 'ev5_deep3', when: (s) => s.plan === 'deep' },
+    { d: 27, s: 2, id: 'ev5_way3', when: (s) => s.plan === 'deep' },
     { d: 28, s: 2, id: 'ch5_finale' },
   );
 
@@ -182,6 +182,40 @@
   // ==================================================================
   //  VARIANT C — THE DESCENT
   // ==================================================================
+  // Each descent begins on the surface, on purpose: wake, remember the
+  // plan, gear up, walk the river path — the player WALKS to the Gullet
+  // and chooses to go down. The uncanny is saved for inside.
+  TB.scene('ev5_way1', {
+    bg: 'river',
+    text: (s) => [
+      'You wake on the twenty-third day already listening, and the river tells you before the sky does: the surge is easing. The first great lull of the season — the first of three, if the monsoon keeps its usual book — arrives at dusk.',
+      'This is what you chose when the rain began. The Descent: the throat under the mountain, the wound that skips, the plan every surge-lull now belongs to. So you spend the day the way a plan deserves — lamps trimmed and oiled, spare brand wrapped dry, chalk for the high-water marks, line coiled over one shoulder' + (s.companion ? ', your companion watching the kit come together and understanding, in the way of animals before weather, exactly what kind of day this is' : '') + ' — and at slack light you walk the river path upstream, to where the waterfall stands guard over the grotto\'s dark gap.',
+      'The grotto breathes at you. Slow, wet, seven to the exhale. Behind the falling water, the gap waits — and for one long moment you stand on the honest surface of the world with the kit on your back, and let yourself understand that you are about to leave it.',
+    ],
+    nextLabel: '🕳️ Behind the waterfall, and down ➤',
+    next: 'ev5_deep1',
+  });
+  TB.scene('ev5_way2', {
+    bg: 'river',
+    text: (s) => [
+      'The second lull comes on the twenty-fifth morning, and this time you know the road.',
+      'You kit up in the grey first light — lamps, line, chalk, the dry-wrapped brand — and add what the first descent taught you to want: food you can eat one-handed, and a second coil of line, because the throat goes deeper than one coil\'s worth of trust. ' + (TB.is('GULLET_MAP') ? 'Vane\'s tide tables give you the lull\'s exact width, which is the difference between an expedition and a dare.' : 'You gave yesterday\'s watch to the grotto\'s breathing, counting its exhales against the tide, and you think — think — you have the lull\'s width. It will have to do.'),
+      'The waterfall is thinner today, the gap behind it wider, and the breathing from below has a new note in it — lower, more interested — as if the island noticed the chalk marks you left and has been reading them. You check the lamp once more than you need to, and go in.',
+    ],
+    nextLabel: '🕳️ Down the throat again ➤',
+    next: 'ev5_deep2',
+  });
+  TB.scene('ev5_way3', {
+    bg: 'river',
+    text: (s) => [
+      'The twenty-seventh brings the season\'s deepest lull — the monsoon drawing one long breath before its last act — and you have known for two days what you would spend it on: the Heartroom. The wound itself. The bottom of the plan.',
+      'You pack like a person intending to come back: every lamp, both coils, the chalk worn to a stub, food, the med-roll' + (TB.is('HEARTGLASS') ? ', and the heartglass spur, which has pulsed on your shelf like a kept promise since you carried it out' : '') + '. ' + (s.companion ? 'At the fire, your companion does the arithmetic of the kit and stations themselves at the path\'s mouth — coming as far as the grotto, then keeping the surface, keeping the light, keeping the way home open. Someone has to hold the door.' : 'You bank the fire high before you go — a light to come home to, lit by the only hands available for the job.'),
+      'The river path, the waterfall, the breathing gap: familiar now, which the deep part of you knows enough to distrust. Third time down. Deepest line yet. The grotto exhales its seven-beat welcome, and you answer it out loud — "yes, yes, I\'m coming" — and step through the water into the dark.',
+    ],
+    nextLabel: '🕳️ To the Heartroom ➤',
+    next: 'ev5_deep3',
+  });
+
   TB.scene('ev5_deep1', {
     bg: 'gullet',
     text: (s) => [
