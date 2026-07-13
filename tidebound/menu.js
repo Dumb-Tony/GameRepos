@@ -12,6 +12,40 @@
   const $ = (id) => document.getElementById(id);
   const SLOT = (i) => 'tidebound.slot' + i;
 
+  // Color themes: swatch pickers write settings.theme / settings.bars and
+  // TB.Audio.applySettings stamps them onto <body data-theme data-bars>,
+  // where style.css's CSS-variable blocks take over.
+  const THEMES = [
+    { id: 'midnight', name: 'Midnight', chip: '#0b1c2c' },
+    { id: 'driftwood', name: 'Driftwood', chip: '#efe4c8' },
+    { id: 'lagoon', name: 'Lagoon', chip: '#0a3a33' },
+    { id: 'ember', name: 'Ember', chip: '#3a1e10' },
+    { id: 'abyss', name: 'Abyss', chip: '#000000' },
+  ];
+  const BARS = [
+    { id: 'island', name: 'Island', colors: ['#e35d6a', '#e0a558', '#58aee0', '#b9d857', '#d5a7e8'] },
+    { id: 'tropic', name: 'Tropic', colors: ['#ff4d67', '#ffa726', '#29d3f5', '#8ef05e', '#d67cff'] },
+    { id: 'seaglass', name: 'Seaglass', colors: ['#f0a3ab', '#f0cf9e', '#a3d5f0', '#d5eda0', '#e8c6f5'] },
+    { id: 'signal', name: 'Signal', colors: ['#d55e00', '#f0e442', '#56b4e9', '#009e73', '#cc79a7'] },
+  ];
+  function stripes(colors) { // five hard stops for the bar-palette chip
+    const w = 100 / colors.length;
+    return 'linear-gradient(90deg,' + colors.map((c, i) => c + ' ' + (i * w) + '% ' + ((i + 1) * w) + '%').join(',') + ')';
+  }
+  function buildSwatches(holderId, list, key) {
+    const holder = $(holderId);
+    list.forEach((t) => {
+      const b = document.createElement('button');
+      b.className = 'mSwatch'; b.dataset.pick = t.id;
+      const chip = document.createElement('span');
+      chip.className = 'chip';
+      chip.style.background = t.colors ? stripes(t.colors) : t.chip;
+      b.appendChild(chip); b.appendChild(document.createTextNode(t.name));
+      b.addEventListener('click', () => { const p = {}; p[key] = t.id; setSetting(p); render(); });
+      holder.appendChild(b);
+    });
+  }
+
   function slotMeta(i) {
     try {
       const raw = localStorage.getItem(SLOT(i));
@@ -26,6 +60,8 @@
     const s = TB.Audio.settings();
     $('mVol').value = s.vol; $('mBright').value = s.bright;
     $('mAmb').checked = !!s.amb; $('mSfx').checked = !!s.sfx;
+    document.querySelectorAll('#mThemes .mSwatch').forEach((b) => b.classList.toggle('sel', b.dataset.pick === s.theme));
+    document.querySelectorAll('#mBars .mSwatch').forEach((b) => b.classList.toggle('sel', b.dataset.pick === s.bars));
     const inGame = TB.state && TB.state.scene !== 'title';
     for (let i = 1; i <= 3; i++) {
       const meta = slotMeta(i);
@@ -61,6 +97,8 @@
       $('mBright').addEventListener('input', (e) => setSetting({ bright: +e.target.value }));
       $('mAmb').addEventListener('change', (e) => setSetting({ amb: e.target.checked }));
       $('mSfx').addEventListener('change', (e) => setSetting({ sfx: e.target.checked }));
+      buildSwatches('mThemes', THEMES, 'theme');
+      buildSwatches('mBars', BARS, 'bars');
       for (let i = 1; i <= 3; i++) {
         (function (n) {
           $('slotSave' + n).addEventListener('click', () => {

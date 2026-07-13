@@ -75,6 +75,11 @@ companion, disease/injury, endingId. Autosave per scene to localStorage
 `tidebound.save.v1` (skipped on title); manual slots `tidebound.slot1..3`; cross-run
 `tidebound.meta.v1`; settings `tidebound.settings` + master mute `tidebound.snd`.
 `loadSave()` migrates old saves — add defaults there when adding state fields.
+Settings include **color themes**: `theme` (text boxes — midnight/driftwood/lagoon/
+ember/abyss) and `bars` (status-bar palette — island/tropic/seaglass/signal), picked
+via swatches in the TAB menu (`menu.js` THEMES/BARS), stamped on
+`<body data-theme data-bars>` by `TB.Audio.applySettings`, and realized as CSS
+custom-property blocks at the top of `style.css`.
 
 **Art pipeline (important — sandbox egress is blocked to the CDN):** generated art
 lives ONLY in flat `tidebound/art/`, referenced by filename. To add art: generate

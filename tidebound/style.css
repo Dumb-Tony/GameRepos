@@ -4,6 +4,61 @@
  * =================================================================== */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
+
+/* ===== Color themes ==================================================
+ * Two independent axes, both picked from the in-game menu and persisted
+ * in tidebound.settings: body[data-theme] restyles the text boxes
+ * (dialogue panel, portrait plate, choice buttons) and body[data-bars]
+ * recolors the five status-bar fills. Defaults match the classic look. */
+:root {
+  --panel-bg: #04101ae0; --panel-border: #ffffff2e;
+  --panel-text: #f2ede2; --panel-em: #ffe9b8;
+  --btn-bg: #ffffff14; --btn-bg-hover: #ffffff2b;
+  --btn-border: #ffffff30; --btn-bg-strong: #ffffff1f;
+  --divider: #ffffff24;
+  --c-health: #e35d6a; --c-hunger: #e0a558; --c-thirst: #58aee0;
+  --c-energy: #b9d857; --c-hope: #d5a7e8;
+}
+body[data-theme="driftwood"] { /* sun-bleached parchment */
+  --panel-bg: #f0e6ccf0; --panel-border: #7a5c3547;
+  --panel-text: #2e2417; --panel-em: #8a4a1a;
+  --btn-bg: #5c3d1a14; --btn-bg-hover: #5c3d1a2e;
+  --btn-border: #5c3d1a47; --btn-bg-strong: #5c3d1a1f;
+  --divider: #5c3d1a33;
+}
+body[data-theme="lagoon"] { /* the glowing lagoon at night */
+  --panel-bg: #042420e8; --panel-border: #2fe0c942;
+  --panel-text: #e8f5ee; --panel-em: #9ff5d9;
+  --btn-bg: #2fe0c914; --btn-bg-hover: #2fe0c930;
+  --btn-border: #2fe0c945; --btn-bg-strong: #2fe0c91f;
+  --divider: #2fe0c933;
+}
+body[data-theme="ember"] { /* firelight at camp */
+  --panel-bg: #20100ae8; --panel-border: #ffb37a3d;
+  --panel-text: #f5e8dc; --panel-em: #ffca8f;
+  --btn-bg: #ff9d5e17; --btn-bg-hover: #ff9d5e33;
+  --btn-border: #ff9d5e47; --btn-bg-strong: #ff9d5e22;
+  --divider: #ff9d5e33;
+}
+body[data-theme="abyss"] { /* high contrast */
+  --panel-bg: #000000f2; --panel-border: #ffffff59;
+  --panel-text: #ffffff; --panel-em: #ffe28a;
+  --btn-bg: #ffffff1a; --btn-bg-hover: #ffffff3b;
+  --btn-border: #ffffff59; --btn-bg-strong: #ffffff26;
+  --divider: #ffffff40;
+}
+body[data-bars="tropic"] { /* vivid */
+  --c-health: #ff4d67; --c-hunger: #ffa726; --c-thirst: #29d3f5;
+  --c-energy: #8ef05e; --c-hope: #d67cff;
+}
+body[data-bars="seaglass"] { /* soft pastels */
+  --c-health: #f0a3ab; --c-hunger: #f0cf9e; --c-thirst: #a3d5f0;
+  --c-energy: #d5eda0; --c-hope: #e8c6f5;
+}
+body[data-bars="signal"] { /* colorblind-friendly (Okabe–Ito) */
+  --c-health: #d55e00; --c-hunger: #f0e442; --c-thirst: #56b4e9;
+  --c-energy: #009e73; --c-hope: #cc79a7;
+}
 body {
   font-family: Georgia, 'Times New Roman', serif;
   color: #f2ede2;
@@ -177,9 +232,9 @@ body {
 .mi { font-size: 13px; }
 .bar { width: 64px; height: 8px; border-radius: 5px; background: #ffffff26; overflow: hidden; }
 .fill { height: 100%; width: 100%; border-radius: 5px; transition: width .5s; }
-.f-health { background: #e35d6a; } .f-hunger { background: #e0a558; }
-.f-thirst { background: #58aee0; } .f-energy { background: #b9d857; }
-.f-hope   { background: #d5a7e8; }
+.f-health { background: var(--c-health); } .f-hunger { background: var(--c-hunger); }
+.f-thirst { background: var(--c-thirst); } .f-energy { background: var(--c-energy); }
+.f-hope   { background: var(--c-hope); }
 #kitBtn, #sndBtn {
   background: #ffffff1f; border: 1px solid #ffffff38; color: inherit;
   font-size: 16px; border-radius: 8px; padding: 3px 10px; cursor: pointer;
@@ -198,26 +253,28 @@ body {
 #portrait {
   align-self: flex-start; margin: 0 0 8px 10px;
   display: flex; align-items: center; gap: 10px;
-  background: #04101ad9; border: 1px solid #ffffff2e; border-radius: 14px;
+  background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 14px;
   padding: 6px 14px 6px 8px;
+  color: var(--panel-text);
 }
 #portrait.hidden { display: none; }
 #portraitEmoji { font-size: 40px; line-height: 1; }
 #portraitEmoji.hidden { display: none; }
-#portraitImg { width: 76px; height: 76px; border-radius: 12px; object-fit: cover; border: 1px solid #ffffff2e; }
+#portraitImg { width: 76px; height: 76px; border-radius: 12px; object-fit: cover; border: 1px solid var(--panel-border); }
 #portraitImg.hidden { display: none; }
 #portraitName { font-family: system-ui, sans-serif; font-size: 14px; opacity: .9; }
 #panel {
-  background: #04101ae0; border: 1px solid #ffffff2e; border-radius: 16px;
+  background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 16px;
   padding: 18px 20px 14px; display: flex; flex-direction: column;
   max-height: 62vh; max-height: 62dvh;
   box-shadow: 0 12px 40px #00000080;
+  color: var(--panel-text);
 }
 #textLog { overflow-y: auto; scroll-behavior: smooth; flex: 0 1 auto; min-height: 3.5em; -webkit-overflow-scrolling: touch; }
 #textLog p { font-size: 17px; line-height: 1.62; margin-bottom: 12px; }
 #textLog p.faded { opacity: .52; }
 #textLog p:last-child { margin-bottom: 4px; }
-#textLog em { color: #ffe9b8; }
+#textLog em { color: var(--panel-em); }
 #moreHint {
   align-self: center; font-size: 12px; opacity: .6; cursor: pointer;
   animation: bob 1.4s ease-in-out infinite; padding: 2px 20px;
@@ -231,18 +288,18 @@ body {
 /* when choices are on screen, cap the dialogue's share of the panel so
    the buttons always get real space (dialogue scrolls instead) */
 #panel:has(#choices button) #textLog { max-height: 40vh; max-height: 40dvh; }
-#choices:not(:empty) { border-top: 1px solid #ffffff24; padding-top: 10px; }
+#choices:not(:empty) { border-top: 1px solid var(--divider); padding-top: 10px; }
 #choices button {
   text-align: left; font: inherit; font-size: 16px; color: inherit;
-  background: #ffffff14; border: 1px solid #ffffff30; border-radius: 10px;
+  background: var(--btn-bg); border: 1px solid var(--btn-border); border-radius: 10px;
   padding: 10px 14px; cursor: pointer; transition: background .15s, transform .05s;
 }
-#choices button:hover { background: #ffffff2b; }
+#choices button:hover { background: var(--btn-bg-hover); }
 #choices button:active { transform: scale(.99); }
 #choices .sub { display: block; font-family: system-ui, sans-serif; font-size: 12.5px; opacity: .62; margin-top: 3px; }
 
 /* title screen buttons get a splashier look */
-#choices button.title-btn { text-align: center; font-size: 18px; padding: 13px; background: #ffffff1f; }
+#choices button.title-btn { text-align: center; font-size: 18px; padding: 13px; background: var(--btn-bg-strong); }
 .game-title { display: block; font-size: 44px; letter-spacing: 8px; text-align: center; text-shadow: 0 4px 24px #000a; }
 .game-sub { display: block; text-align: center; font-style: italic; opacity: .82; }
 
@@ -284,6 +341,17 @@ body {
 .mChecks { gap: 26px; font-family: system-ui, sans-serif; font-size: 14px; }
 .mChecks label { min-width: 0; display: flex; align-items: center; gap: 7px; }
 .mChecks input { accent-color: #2fe0c9; }
+.mThemeRow { flex-wrap: wrap; align-items: flex-start; }
+.mThemeRow > label { padding-top: 4px; }
+.mSwatches { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; min-width: 0; }
+#menuCard button.mSwatch {
+  display: flex; align-items: center; gap: 7px; padding: 4px 10px; border-radius: 8px;
+}
+.mSwatch .chip {
+  width: 24px; height: 14px; border-radius: 4px; flex-shrink: 0;
+  border: 1px solid #ffffff45;
+}
+#menuCard button.mSwatch.sel { outline: 2px solid #2fe0c9; background: #ffffff2e; }
 .mSlot {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
   padding: 8px 10px; margin: 6px 0; background: #ffffff0d; border: 1px solid #ffffff1f;
@@ -319,7 +387,7 @@ body {
   .game-title { font-size: 30px; letter-spacing: 5px; }
   #panel { max-height: 66vh; max-height: 66dvh; padding: 14px 14px 10px; }
   #stage { padding: 8px; padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
-  #choices button { padding: 11px 12px; font-size: 15px; background: #ffffff1e; }
+  #choices button { padding: 11px 12px; font-size: 15px; background: var(--btn-bg-strong); }
   /* phones: dialogue gets at most ~a third of the screen once buttons
      exist — the choices own the rest of the panel */
   #panel:has(#choices button) #textLog { max-height: 26vh; max-height: 26dvh; }
