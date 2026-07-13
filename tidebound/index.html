@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Tidebound — a survival visual novel</title>
-<link rel="stylesheet" href="style.css?v=15">
+<link rel="stylesheet" href="style.css?v=16">
 </head>
 <body>
 
@@ -85,7 +85,7 @@ window.onerror = function (msg, src, line) {
     <div class="mSlot"><span id="slotLabel1">—</span><span class="mSlotBtns"><button id="slotSave1">Save</button><button id="slotLoad1">Load</button></span></div>
     <div class="mSlot"><span id="slotLabel2">—</span><span class="mSlotBtns"><button id="slotSave2">Save</button><button id="slotLoad2">Load</button></span></div>
     <div class="mSlot"><span id="slotLabel3">—</span><span class="mSlotBtns"><button id="slotSave3">Save</button><button id="slotLoad3">Load</button></span></div>
-    <div class="mBtns"><button id="menuLog">📖 Backlog</button><button id="menuTitle">🏝️ Title screen</button><button id="menuClose">Resume ➤</button></div>
+    <div class="mBtns"><button id="menuAlm">📔 Almanac</button><button id="menuLog">📖 Backlog</button><button id="menuTitle">🏝️ Title screen</button><button id="menuClose">Resume ➤</button></div>
   </div>
 </div>
 
@@ -98,21 +98,33 @@ window.onerror = function (msg, src, line) {
   </div>
 </div>
 
-<script src="engine.js?v=15"></script>
-<script src="audio.js?v=15"></script>
-<script src="menu.js?v=15"></script>
-<script src="runcard.js?v=15"></script>
-<script src="loops.js?v=15"></script>
-<script src="scenes-prologue.js?v=15"></script>
-<script src="scenes-chapter1.js?v=15"></script>
-<script src="scenes-chapter2.js?v=15"></script>
-<script src="scenes-chapter3.js?v=15"></script>
-<script src="scenes-chapter4.js?v=15"></script>
-<script src="scenes-chapter5.js?v=15"></script>
-<script src="scenes-chapter6.js?v=15"></script>
-<script src="scenes-chapter7.js?v=15"></script>
-<script src="scenes-extra.js?v=15"></script>
-<script src="scenes-quests.js?v=15"></script>
+<!-- ===== FIELD ALMANAC (from the menu) ===== -->
+<div id="almOverlay" class="hidden">
+  <div id="almCard">
+    <h2>📔 Field Almanac <span class="menuHint">— carries across every life</span></h2>
+    <div id="almCounts"></div>
+    <div id="almTabs"></div>
+    <div id="almBody"></div>
+    <button id="almClose">Close</button>
+  </div>
+</div>
+
+<script src="engine.js?v=16"></script>
+<script src="audio.js?v=16"></script>
+<script src="menu.js?v=16"></script>
+<script src="runcard.js?v=16"></script>
+<script src="loops.js?v=16"></script>
+<script src="almanac.js?v=16"></script>
+<script src="scenes-prologue.js?v=16"></script>
+<script src="scenes-chapter1.js?v=16"></script>
+<script src="scenes-chapter2.js?v=16"></script>
+<script src="scenes-chapter3.js?v=16"></script>
+<script src="scenes-chapter4.js?v=16"></script>
+<script src="scenes-chapter5.js?v=16"></script>
+<script src="scenes-chapter6.js?v=16"></script>
+<script src="scenes-chapter7.js?v=16"></script>
+<script src="scenes-extra.js?v=16"></script>
+<script src="scenes-quests.js?v=16"></script>
 <script>window.TB.start();</script>
 </body>
 </html>
