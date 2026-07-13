@@ -35,6 +35,9 @@
       if (TB.hasSave() && TB.loadSave().scene !== 'title') {
         list.unshift({ t: '📖 Continue', cls: 'title-btn', go: () => { TB.continueGame(); return null; } });
       }
+      if (TB.Loops && TB.Loops.data().loops > 0) {
+        list.push({ t: '🌀 Driftwood Loops', cls: 'title-btn', go: 'loops_menu' });
+      }
       return list;
     },
   });

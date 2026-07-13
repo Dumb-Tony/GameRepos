@@ -420,6 +420,14 @@
       ].filter(Boolean);
     },
     choices: (s) => {
+      if (s.mod === 'silent') { // NG+ Silent Island: the eyes keep their distance this loop
+        return [{
+          t: '🧍 Alone, then. The island asked for this loop unwitnessed.',
+          sub: 'Silent Island: the wild watches from further back this life. The solo route, enforced.',
+          do: () => { TB.flag('CLEARING_DONE'); TB.flag('SOLO_ROUTE'); TB.route('roots', 1); },
+          go: 'court_none',
+        }];
+      }
       const list = Object.keys(COURTS).filter((k) => s.met[k]).map((k) => ({
         t: COURTS[k].t, sub: COURTS[k].sub,
         do: () => { const s2 = TB.state; s2.companion = k; TB.flag('CLEARING_DONE'); },
@@ -597,7 +605,7 @@
       { t: '📜 Save your run card', sub: 'Even the endings that end you are worth keeping.',
         do: (s) => { if (TB.RunCard) TB.RunCard.download(s); } },
       { t: '🌅 Try the island again', sub: 'The Ledger remembers. So do you, now.',
-        do: () => { TB.wipe(); TB.state = TB.newState(); }, go: 'title' },
+        do: () => { if (TB.Loops) TB.Loops.bank(TB.state, null); TB.wipe(); TB.state = TB.newState(); }, go: 'title' },
     ],
   });
 })(window);
