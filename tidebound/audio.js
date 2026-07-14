@@ -264,7 +264,7 @@
     if (recDead[key] || recPending[key] || !ctx || typeof fetch !== 'function') return;
     if (location.protocol === 'file:') { recDead[key] = true; return; } // no fetch off disk — pure synth there
     recPending[key] = true;
-    fetch('art/' + REC_FILE[key] + '.m4a')
+    fetch('art/' + REC_FILE[key] + '.mp3')
       .then((r) => { if (!r.ok) throw new Error('http ' + r.status); return r.arrayBuffer(); })
       .then((ab) => ctx.decodeAudioData(ab))
       .then((buf) => { recBufs[key] = buf; delete recPending[key]; if (cb) cb(); })

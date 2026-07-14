@@ -37,9 +37,10 @@ jobs:
             echo "== $name"
             case "$name" in
               amb-*|mus-*)
-                # recorded ambience / music: normalize to quiet AAC loops
+                # recorded ambience / music: normalize to quiet MP3 loops
+                # (MP3 decodes everywhere incl. free-codec Chromium builds; AAC does not)
                 curl -fsSL --retry 3 --retry-delay 2 -o /tmp/src.audio "$url"
-                ffmpeg -nostdin -y -loglevel error -i /tmp/src.audio -af "loudnorm=I=-20:TP=-3" -c:a aac -b:a 96k -movflags +faststart "$name"
+                ffmpeg -nostdin -y -loglevel error -i /tmp/src.audio -af "loudnorm=I=-20:TP=-3" -c:a libmp3lame -b:a 112k "$name"
                 continue ;;
             esac
             curl -fsSL --retry 3 --retry-delay 2 -o /tmp/src.png "$url"
