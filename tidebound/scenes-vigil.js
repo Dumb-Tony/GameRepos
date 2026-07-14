@@ -17,6 +17,7 @@
     const c = prevActs ? prevActs(s) : [];
     const st = s.vigil | 0;
     if (TB.is('OTHER_HEARD') && st < 5 && s.vigilDay !== s.day) c.push({
+      grp: 'story',
       t: '📻 Keep the nine-beat vigil' + (st ? ' (' + (st + 1) + ')' : ''),
       sub: ['She said "listening, out." Listening means schedules. Find hers.', 'Two keepers, four seconds a night. There is so much to trade.', 'Her window was empty last vigil. And the one before.', 'She promised you a number tonight: how many quiet places the world is keeping.', 'One thing left to settle between two lighthouses: the terms.'][st],
       do: () => { const s2 = TB.state; s2.vigilDay = s2.day; s2.vigil = (s2.vigil | 0) + 1; TB.stat('energy', -5); TB.tickSegment(); },

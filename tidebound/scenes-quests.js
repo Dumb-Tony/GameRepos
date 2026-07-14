@@ -41,24 +41,31 @@
   TB.ch3Actions = function (s) {
     const c = prevActions(s);
     if (TB.is('Q_KAVI_ACTIVE') && !TB.is('Q_KAVI_DONE')) c.push({
+      grp: 'story',
       t: '🦴 Dig with Kavi at the old dune', sub: 'Whatever he\'s found down there, he won\'t leave it — and he wants you with him.',
       do: () => { TB.stat('energy', -10); TB.tickSegment(); }, go: 'q_kavi_2' });
     if (TB.is('Q_IPO_ACTIVE') && !TB.is('Q_IPO_STATUS')) c.push({
+      grp: 'story',
       t: '🐒 Engineer Ipo\'s comeback', sub: 'Salt a "discovery" where the troop will witness the finding. Politics is theater; you know a showman.',
       do: () => { TB.stat('energy', -6); TB.tickSegment(); }, go: 'q_ipo_2' });
     if (TB.is('Q_IPO_STATUS') && !TB.is('Q_IPO_DONE')) c.push({
+      grp: 'story',
       t: '🐒 The mirror gambit', sub: 'Give him the one prop no macaque on this island can counterfeit: light itself.',
       do: () => { TB.tickSegment(); }, go: 'q_ipo_3' });
     if (TB.is('Q_BURI_ACTIVE') && !TB.is('Q_BURI_DONE')) c.push({
+      grp: 'story',
       t: '⛏️ Excavate the cellar with Buri', sub: TB.is('Q_BURI_STAGE') ? 'The stair is clear. The back chamber waits.' : 'Stone-lined, cool-breathing, deliberately sealed. The Kaari built this.',
       do: () => { TB.stat('energy', -12); TB.tickSegment(); }, go: 'q_buri_2' });
     if (TB.is('Q_MOA_ACTIVE') && !TB.is('FLOCK')) c.push({
+      grp: 'story',
       t: '🐔 Help Moa gather the flock', sub: TB.is('Q_MOA_STAGE') ? 'The coop stands. Recruitment continues, by drill sergeant.' : 'Two scraggly hens already shadow her. She has plans. You are the infrastructure.',
       do: () => { TB.stat('energy', -8); TB.tickSegment(); }, go: 'q_moa_2' });
     if (TB.is('FLOCK') && TB.is('EDDA_GRAVES') && !TB.is('Q_ROOSTER_DONE')) c.push({
+      grp: 'story',
       t: '🐓 Take the young rooster up to Edda', sub: 'You know about Aleksander. You know exactly what you\'re doing.',
       do: () => { TB.stat('energy', -6); TB.tickSegment(); }, go: 'q_rooster' });
     if (TB.is('Q_NINE_ACTIVE') && ((s.flags.NINE_TRICKS || 0) < 3)) c.push({
+      grp: 'story',
       t: '🐙 Teach Nine a trick (' + (s.flags.NINE_TRICKS || 0) + '/3)', sub: 'She has asked, in her way. Choose the curriculum with care — she never forgets, and she never UN-learns.',
       do: () => { TB.stat('energy', -6); TB.tickSegment(); }, go: 'q_nine_2' });
     return c;

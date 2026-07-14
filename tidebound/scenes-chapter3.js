@@ -123,6 +123,7 @@
     const c = [];
     // (the grove trek lives on the Wayfinder chart now — map.js routes it to this file's 'grove' scene)
     if (TB.is('RIVER_KNOWN')) c.push({
+      grp: 'daily',
       t: '🏞️ Haul water from the Silverthread', sub: 'Cold, clean, and endless. The island\'s artery is yours now.',
       do: () => { const s2 = TB.state; TB.stat('thirst', 40); TB.stat('energy', s2.site === 'overhang' ? -10 : -6); TB.stat('health', 2);
         s2.out = { bg: 'river', text: [[
@@ -135,6 +136,7 @@
     });
     // (the Green Deep push and mangrove scout now live on the Wayfinder chart — map.js)
     if (s.disease === 'fever' && TB.is('BG_MEDIC') && (s.inv.medkit || 0) >= 2) c.push({
+      grp: 'top',
       t: '🩺 Burn the fever out yourself', sub: 'Antipyretics, fluids, and a medic\'s discipline. Costs two kit uses.',
       do: () => { const s2 = TB.state; TB.item('medkit', -2); s2.disease = null; TB.stat('health', -5); TB.stat('hope', 4);
         s2.out = { bg: campBg2(s2), text: ['You treat yourself the way you\'d treat a stranger: ruthlessly. Fluids on schedule, the kit\'s antipyretics split and rationed, cold compresses through the worst of the spikes, and no heroics about staying on your feet.', 'It takes a day you can\'t spare and most of the kit. On the far side of it you are wrung out, five pounds lighter — and <em>clear</em>. The fever\'s hooks are out.'] };

@@ -29,23 +29,28 @@
   TB.ch3Actions = function (s) {
     const c = prevActions(s);
     if (TB.has('case') && !TB.is('CASE_OPEN')) c.push({
+      grp: 'story',
       t: '💼 The courier\'s case', sub: TB.is('CASE_EDDA') ? '"Some locks are the only honest warning you get." It has waited long enough.' : 'Locked. Heavy. Not food. Still yours.',
       do: () => { TB.tickSegment(); }, go: 'case_scene',
     });
     if (TB.is('CASE_OPEN') && TB.is('DOSSIER') && TB.is('EDDA_MET') && !TB.is('SPONSORS_KNOWN')) c.push({
+      grp: 'story',
       t: '💼 Take the dossier up to Edda', sub: 'She went pale at the crest on the lock. She should see what was under it.',
       do: () => { TB.stat('energy', -6); TB.tickSegment(); }, go: 'case_edda',
     });
     if (TB.is('CHART_ROSA') && s.chapter >= 4 && !TB.is('ROSA_DONE')) c.push({
+      grp: 'story',
       t: '🗺️ Follow the courier\'s chart — the Rosa Dourada', sub: TB.is('CHART_TORN') ? 'What survives of the chart marks a reef on the north shore. Half the annotations burned with the smashing.' : 'An oilskin chart, older than the case: a wreck marked on the north reef, annotated in two centuries of hands.',
       do: () => { TB.stat('energy', -10); TB.tickSegment(); }, go: 'rosa_dive',
     });
     if (TB.is('RADIO_DONE') && !TB.is('OTHER_HEARD')) c.push({
+      grp: 'story',
       t: '📻 Night vigil at the radio — listen, don\'t speak', sub: TB.is('LISTEN1') ? 'There was something under the static last time. You have to know.' : 'The skips are windows. Windows work both ways.',
       do: () => { TB.stat('energy', -5); TB.tickSegment(); }, go: 'radio_listen',
     });
     // the courier's funeral: only once you know the WHOLE of his story
     if (TB.is('CASE_OPEN') && !TB.is('COURIER_RESTED') && TB.Almanac && TB.Almanac.counts().frags >= 9) c.push({
+      grp: 'story',
       t: '🕯️ Build the courier a cairn', sub: 'Case opened, photograph whole. You know the entire story now. Nobody else on Earth does.',
       do: () => { TB.stat('energy', -8); TB.tickSegment(); }, go: 'courier_rest',
     });
@@ -505,6 +510,7 @@
   TB.ch3Actions = function (s) {
     const c = prevActs3 ? prevActs3(s) : [];
     if (!TB.is('CRAB_MAYOR')) c.push({
+      grp: 'daily',
       t: '🦀 Feed the Bone Beach crabs', sub: ((s.crabs || 0) >= 7 ? 'The polity now assembles BEFORE you arrive. Elections feel imminent.' : (s.crabs || 0) >= 3 ? 'Attendance is up. Word has spread among the citizenry.' : 'They administered this beach before you came. A little civic outreach.') + ' Energy −, hope +.',
       do: () => { const s2 = TB.state; s2.crabs = (s2.crabs || 0) + 1; TB.stat('energy', -6); TB.stat('hope', 3); TB.stat('hunger', -3);
         const n = s2.crabs;
@@ -516,6 +522,7 @@
         TB.tickSegment(); },
       go: 'act_result' });
     if (TB.is('BLACKBOX2') && !TB.is('BLACKBOX_HEARD') && TB.is('STATION_OPENED')) c.push({
+      grp: 'story',
       t: '📼 Take the old recorder to the station', sub: 'The tape reels are intact. The workshop could read them. Eleven minutes of 1979.',
       do: () => { TB.stat('energy', -8); TB.tickSegment(); }, go: 'ev_blackbox2' });
     return c;

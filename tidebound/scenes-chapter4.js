@@ -93,11 +93,13 @@
   TB.ch3Actions = function (s) {
     const c = prevActions(s);
     if (s.chapter >= 4 && TB.is('EAST_OPEN')) c.push({
+      grp: 'story',
       t: '📡 Expedition to Station Halcyon', sub: 'The crossing, the rise, and one building\'s worth of daylight.',
       do: () => { TB.stat('energy', -6); TB.tickSegment(); }, go: 'station',
     });
     if (TB.is('RYO_MET') && s.chapter >= 4) {
       if (s.ryo < 40) c.push({
+        grp: 'story',
         t: '⛵ Tend to Ryo', sub: 'Water, food, fresh dressings, and someone to talk at. He\'s a talker.',
         do: () => { const s2 = TB.state; s2.ryo = TB.clamp(s2.ryo + 7, 0, 100); TB.stat('hunger', -4); TB.stat('hope', 2);
           s2.out = { bg: campBg2(s2), text: [s2.ryo >= 40
@@ -107,6 +109,7 @@
         go: 'act_result',
       });
       else c.push({
+        grp: 'story',
         t: '⛵ Work the Kingfisher with Ryo', sub: 'Two sets of hands on a broken boat. He talks the whole time. It helps.',
         do: () => { const s2 = TB.state; s2.ryo = TB.clamp(s2.ryo + 3, 0, 100); TB.stat('energy', -8); TB.route('signal', 2); TB.flag('BOAT_WORKED');
           const stage = TB.is('BOAT2') ? 3 : TB.is('BOAT1') ? 2 : 1;

@@ -311,6 +311,37 @@
 
   function resolve(v, s) { return typeof v === 'function' ? v(s) : v; }
 
+  // ---- camp hub organizer -----------------------------------------------------
+  // Sorts a hub action list into pinned / story / daily / camp groups, inserts
+  // header rows (rendered as .chHdr dividers by showChoices), and badges story
+  // actions the player hasn't tried yet this life. Actions opt in via `grp`;
+  // untagged actions are treated as story so nothing new ever gets buried.
+  TB.hubOrganize = function (c, s) {
+    const ORD = { top: 0, story: 1, daily: 2, camp: 3 };
+    const HDR = { story: '⭐ Threads to pull', daily: '🧺 The day’s work', camp: '🏕️ Camp & recovery' };
+    const keyOf = (t) => String(t).replace(/<[^>]*>/g, '').replace(/\([^)]*\)/g, '').replace(/\d+\s*\/\s*\d+/g, '').trim();
+    s.seenActs = s.seenActs || {};
+    const list = c.map((a, i) => ({ a, i, g: ORD[a.grp] !== undefined ? a.grp : 'story' }));
+    list.sort((x, y) => (ORD[x.g] - ORD[y.g]) || (x.i - y.i));
+    const out = [];
+    let last = null;
+    for (const it of list) {
+      if (it.g !== last && HDR[it.g]) out.push({ hdr: HDR[it.g] });
+      last = it.g;
+      const a = it.a;
+      if (it.g === 'story') {
+        const k = keyOf(a.t);
+        if (!s.seenActs[k]) {
+          a.t += ' <span class="newBadge">new</span>';
+          const prevDo = a.do;
+          a.do = function (st) { (st || TB.state).seenActs[k] = 1; if (prevDo) prevDo(st); };
+        }
+      }
+      out.push(a);
+    }
+    return out;
+  };
+
   function showChoices() {
     const s = TB.state;
     const box = $('choices');
@@ -323,6 +354,13 @@
       list = [{ t: currentDef.nextLabel || 'Continue ➤', go: currentDef.next }];
     }
     for (const c of list) {
+      if (c.hdr) { // section divider (camp hub grouping) — not a button
+        const d = document.createElement('div');
+        d.className = 'chHdr';
+        d.textContent = c.hdr;
+        box.appendChild(d);
+        continue;
+      }
       const b = document.createElement('button');
       b.innerHTML = c.t + (c.sub ? '<span class="sub">' + c.sub + '</span>' : '');
       if (c.cls) b.className = c.cls;
