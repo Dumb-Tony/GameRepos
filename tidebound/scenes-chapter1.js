@@ -375,7 +375,7 @@
   TB.scene('ev_lights', {
     bg: 'beach-dusk',
     text: [
-      'Dusk, day three. You\'re coaxing the evening chores along when your whole body freezes before your mind knows why.',
+      'Dusk, day four. You\'re coaxing the evening chores along when your whole body freezes before your mind knows why.',
       'A light. Out on the darkening horizon — a single pale light, low on the water, crawling from south to north. A ship. Far, terribly far, but <em>real</em>: the first human-made thing you\'ve seen move since the crash.',
       'The flare gun is in your hand before you remember crossing the camp. One flare. One argument with the horizon. At this distance, in this light… maybe they\'re looking this way. Maybe nobody\'s on deck at all.',
       'You will only get to make this argument once.',

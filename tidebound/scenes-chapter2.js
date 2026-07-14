@@ -343,7 +343,7 @@
     },
     text: (s) => {
       const guarded = s.companion === 'kavi' || s.companion === 'buri';
-      const t = ['You wake on day five to a camp that has been <em>edited</em>.'];
+      const t = ['You wake on day seven to a camp that has been <em>edited</em>.'];
       if (guarded) {
         t.push(s.companion === 'kavi'
           ? 'You saw him, in the night — because Kavi saw him first. The growl woke you like a hand on the shoulder: low, continuous, deadly serious. And there at the treeline, filling it, stood the biggest boar you have ever seen or heard credibly described — grey-black, plated in scar, one tusk broken to a fighting stump, watching your camp with small, furious, <em>calculating</em> eyes.'
@@ -377,7 +377,7 @@
     bg: campBg2, who: (s) => WHO[s.companion],
     text: (s) => {
       const v = {
-        kavi: ['At dusk Kavi does something new: he brings you a stick. Not to throw — he\'s no one\'s puppy — he lays it on your woodpile. Then another. He has watched you gather wood for five days, worked out that it matters, and decided to be implicated.', 'You say thank you like it\'s normal. He looks away like it\'s nothing. The woodpile grows all week.'],
+        kavi: ['At dusk Kavi does something new: he brings you a stick. Not to throw — he\'s no one\'s puppy — he lays it on your woodpile. Then another. He has watched you gather wood for a week and more, worked out that it matters, and decided to be implicated.', 'You say thank you like it\'s normal. He looks away like it\'s nothing. The woodpile grows all week.'],
         ipo: ['At dusk you catch Ipo teaching himself to strike the lighter — flick, fail, flick, fail — with a scholar\'s frown. When he finally raises a flame he doesn\'t crow. He looks straight at you, checks you saw, and puts it out responsibly.', 'It occurs to you that you are being <em>studied for later usefulness</em>, and that from him, this is devotion.'],
         vela: ['At dusk Vela drops from the snag and walks — that grave, unwieldy walk — a full circle around your camp, inspecting it: fire, stores, shelter, you. An audit.', 'At the end she stands a moment on the high stone, both eyes on you, and issues one short note you haven\'t heard before. Then she\'s gone up the dark. You have the unaccountable feeling you just passed something.'],
         buri: ['At dusk Buri presents you with a problem: he has carried the entire root-ball of a fallen sapling into camp, beaming, and it is in the fire pit. The negotiation to remove it takes twenty minutes and two figs.', 'Later you realize what it was: you hauled wood yesterday, so today <em>he</em> hauled wood. The size of the heart in that barrel is going to be a problem, and you already know whose.'],
@@ -479,7 +479,7 @@
   TB.scene('ev2_smoke', {
     bg: 'jungle',
     text: (s) => [
-      'Day seven, mid-morning, you\'re working with your eyes down when the back of your neck reports before your mind does: <em>something in the sky has changed.</em>',
+      'Day thirteen, mid-morning, you\'re working with your eyes down when the back of your neck reports before your mind does: <em>something in the sky has changed.</em>',
       'Inland, above the deep green — up where the land climbs toward the broken mountain — a thread of smoke stands in the washed post-storm air. Thin. Grey. Vertical. <em>Banked</em>.',
       s.companion === 'vela' ? 'Vela follows your stare and does not react at all — and that lands late but hard: she isn\'t surprised. She has known that fire her whole life. It\'s part of her map, filed with the cliffs and the thermals: furniture.' : 'A wildfire sprawls and browns. A signal fire billows and dies. This does neither. This is a <em>kept</em> fire, a hearth fire, tended by hands that have tended it so long it burns with table manners.',
       'You are not alone on this island. You never were.',
@@ -500,12 +500,12 @@
     bg: campBg2, who: (s) => WHO[s.companion],
     text: (s) => {
       const v = {
-        kavi: ['It happens on the eighth morning, without announcement: Kavi crosses the camp, lies down against your leg, and rolls — deliberately, watching your face — to bare the burned flank. The scar tissue is slick and hairless, older than your acquaintance, shaped like a long paw of flame.', 'You rest your hand on it, light as you know how. He exhales — a long, unbuilding breath, years going out of it — and sleeps, there, under the hand on his worst place.', 'Whatever cast him out and whatever burned him, he has decided you are not it.'],
-        ipo: ['On the eighth morning Ipo sits on your shoulder, takes your ear in one hand for security, and begins — with terrible tenderness and total concentration — to groom your hair. Parting, inspecting, smoothing. Finding you acceptable, strand by strand.', 'Grooming, you dimly know, is not payment among his kind. It is <em>membership</em>. Somewhere between the crash and this morning, you were adopted, and the paperwork is being finished on your scalp.', 'You sit very still, absurdly moved, while the smallest showman on the island tells you the one thing he\'ll never perform: <em>mine</em>.'],
-        vela: ['On the eighth morning Vela does not leave the fish on the high stone. She stands over it and waits, watching you, until you understand and come — and then she steps back exactly one pace and lets you take it <em>from under her</em>.', 'Then, business concluded, she does the impossible thing: sidles, feather-light for something so heavy, and presses her wind-cold head once against your jaw. One second. Two.', 'Then she\'s gone to the snag, glaring at the sea as if daring it to have witnessed. The books, you understand, no longer balance. She has begun to extend you <em>credit</em>.'],
-        buri: ['On the eighth morning Buri is missing at breakfast — until you follow the sound of industrious ruin and find him at the treeline, digging like a machine, and beside the crater a mound of truffles the size of your two hands.', 'He has been at it since first light. When you arrive he steps back from the mound and looks up at you, filthy, beaming, and it is unmistakably a <em>presentation</em>: for the crab you shared, for the rack he cost you, for every meal since. Restitution, pig-style, with interest.', 'You eat one raw right there, and his tail helicopter is the happiest thing on the island.'],
-        moa: ['On the eighth morning you sit down by the fire and Moa, without ceremony, steps into your lap, turns twice, and folds herself down like a small copper cat. And sleeps. In daylight. In the open.', 'You know what daylight sleep costs a prey animal — she has spent every hour of her life on watch, and she is spending this one <em>off duty, on you</em>, because somewhere in her fast small heart it has been settled that you watch well enough for two.', 'You sit unmoving until your legs die of pins, and consider it the best lease you\'ve ever signed.'],
-        nine: ['On the eighth morning Nine plays the game back at you. You reach into the pool to give her the crab, and the crab is refused — set aside, one arm firm on your wrist, and then she pours herself up out of the water and touches, one by one, your knuckles, your palm, the pale scar the reef gave you. Reading the week off your skin.', 'And then, unmistakably, she copies your fire-tending gesture — the little two-fingered coax you do at the coals — with a curl of kelp against a stone. Watches you see it. Does it again.', '<em>I know you</em>, says the whole alien length of her, in the only grammar there is. <em>I have been studying, and I know you.</em>'],
+        kavi: ['It happens on the fifteenth morning, without announcement: Kavi crosses the camp, lies down against your leg, and rolls — deliberately, watching your face — to bare the burned flank. The scar tissue is slick and hairless, older than your acquaintance, shaped like a long paw of flame.', 'You rest your hand on it, light as you know how. He exhales — a long, unbuilding breath, years going out of it — and sleeps, there, under the hand on his worst place.', 'Whatever cast him out and whatever burned him, he has decided you are not it.'],
+        ipo: ['On the fifteenth morning Ipo sits on your shoulder, takes your ear in one hand for security, and begins — with terrible tenderness and total concentration — to groom your hair. Parting, inspecting, smoothing. Finding you acceptable, strand by strand.', 'Grooming, you dimly know, is not payment among his kind. It is <em>membership</em>. Somewhere between the crash and this morning, you were adopted, and the paperwork is being finished on your scalp.', 'You sit very still, absurdly moved, while the smallest showman on the island tells you the one thing he\'ll never perform: <em>mine</em>.'],
+        vela: ['On the fifteenth morning Vela does not leave the fish on the high stone. She stands over it and waits, watching you, until you understand and come — and then she steps back exactly one pace and lets you take it <em>from under her</em>.', 'Then, business concluded, she does the impossible thing: sidles, feather-light for something so heavy, and presses her wind-cold head once against your jaw. One second. Two.', 'Then she\'s gone to the snag, glaring at the sea as if daring it to have witnessed. The books, you understand, no longer balance. She has begun to extend you <em>credit</em>.'],
+        buri: ['On the fifteenth morning Buri is missing at breakfast — until you follow the sound of industrious ruin and find him at the treeline, digging like a machine, and beside the crater a mound of truffles the size of your two hands.', 'He has been at it since first light. When you arrive he steps back from the mound and looks up at you, filthy, beaming, and it is unmistakably a <em>presentation</em>: for the crab you shared, for the rack he cost you, for every meal since. Restitution, pig-style, with interest.', 'You eat one raw right there, and his tail helicopter is the happiest thing on the island.'],
+        moa: ['On the fifteenth morning you sit down by the fire and Moa, without ceremony, steps into your lap, turns twice, and folds herself down like a small copper cat. And sleeps. In daylight. In the open.', 'You know what daylight sleep costs a prey animal — she has spent every hour of her life on watch, and she is spending this one <em>off duty, on you</em>, because somewhere in her fast small heart it has been settled that you watch well enough for two.', 'You sit unmoving until your legs die of pins, and consider it the best lease you\'ve ever signed.'],
+        nine: ['On the fifteenth morning Nine plays the game back at you. You reach into the pool to give her the crab, and the crab is refused — set aside, one arm firm on your wrist, and then she pours herself up out of the water and touches, one by one, your knuckles, your palm, the pale scar the reef gave you. Reading the week off your skin.', 'And then, unmistakably, she copies your fire-tending gesture — the little two-fingered coax you do at the coals — with a curl of kelp against a stone. Watches you see it. Does it again.', '<em>I know you</em>, says the whole alien length of her, in the only grammar there is. <em>I have been studying, and I know you.</em>'],
       };
       return v[s.companion];
     },
@@ -515,7 +515,7 @@
   TB.scene('ev2_heart_low', {
     bg: campBg2, who: (s) => WHO[s.companion],
     text: (s) => [
-      'On the eighth morning you catch ' + NAMES[s.companion] + ' watching you from the old first distance — the day-three distance — and you feel the gap you haven\'t closed.',
+      'On the fifteenth morning you catch ' + NAMES[s.companion] + ' watching you from the old first distance — the day-three distance — and you feel the gap you haven\'t closed.',
       'Trust, out here, is the most expensive thing you can build, and you\'ve been spending your hours on walls and stores and smoke instead. Fair choices. Survivable choices. But the wild keeps honest books: you get exactly the bond you feed.',
       'There is still time. There is not unlimited time.',
     ],
@@ -525,7 +525,7 @@
   TB.scene('ev2_coco', {
     bg: campBg2,
     text: (s) => [
-      'On the eighth morning you find yourself explaining your fortification plan — out loud, with gestures — to the coconut with the face.',
+      'On the fifteenth morning you find yourself explaining your fortification plan — out loud, with gestures — to the coconut with the face.',
       TB.is('COCO') ? 'Coco (the name happened at some point; you don\'t recall consenting) regards you with his three-pored expression of measured confidence. You move him to the flat stone with the good view of the works. He has earned it. He is, you would testify, a remarkable listener.' : 'It has three dark pores arranged like a face, and the face — you would swear this before a court — looks <em>interested</em>. You set it upright on the flat stone. "Don\'t just sit there," you tell it, and get back to work, oddly heartened.',
       'This is either perfectly healthy or the opposite, and you have decided, executively, not to look into it.',
     ],
@@ -557,9 +557,9 @@
     bg: 'beach-dusk',
     text: (s) => [
       '<em>THE SMOKE</em>',
-      'Dusk, day nine. Six days of foothold behind you: ' + (s.shelter >= 3 ? 'a fortified camp' : 'a working camp') + ', ' + (s.companion ? 'a bond growing real enough to plan around' : 'a solitude you\'ve built into a structure') + ', and inland — patient, banked, unanswered — <em>that fire</em>.',
+      'Dusk, day eighteen. Two weeks of foothold behind you: ' + (s.shelter >= 3 ? 'a fortified camp' : 'a working camp') + ', ' + (s.companion ? 'a bond growing real enough to plan around' : 'a solitude you\'ve built into a structure') + ', and inland — patient, banked, unanswered — <em>that fire</em>.',
       'You\'ve run every version of it. A castaway like you, decades deeper. A hermit who chose this. Someone the island keeps. Someone the island <em>couldn\'t get rid of</em>. Every version knows things that would take you years and cost you fingers to learn alone.',
-      'Every version also watched your smoke for six days and never came.',
+      'Every version also watched your smoke for thirteen days and never came.',
       'The monsoon months are out there past the horizon somewhere, and knowledge has a season too. What do you do about the fire on the mountain?',
     ],
     choices: [
@@ -614,7 +614,7 @@
     bg: 'beach-night',
     text: [
       'You choose the sea. Whatever the mountain knows, it isn\'t a way home — and you have finite hours, finite hands, and one horizon that matters.',
-      'You spend the ninth night building your answer to it: the signal pyre rebuilt taller on the point, tinder-dry under its rain cap, ready to turn one match into a pillar visible from the shipping lanes you have to believe are out there. Your SOS renewed. Your mirror-glass angled and stacked.',
+      'You spend the eighteenth night building your answer to it: the signal pyre rebuilt taller on the point, tinder-dry under its rain cap, ready to turn one match into a pillar visible from the shipping lanes you have to believe are out there. Your SOS renewed. Your mirror-glass angled and stacked.',
       'And yet, banking your fire at midnight, you catch yourself looking inland one more time. The thread of the mountain\'s smoke is invisible in the dark — but somewhere up there it burns, tended by hands that saw your fire and chose the same silence you\'re choosing now.',
       'Two fires on one island, each deciding the other can wait. The island keeps its own counsel about how that usually goes.',
       '<em>To be continued.</em>',
@@ -632,7 +632,7 @@
       t.push('— You chose your ground: <em>' + ({ beach: 'the crash beach, eyes on the horizon', fringe: 'the jungle fringe, deep in the green', overhang: 'the cliff overhang, stone above and the world below' }[s.site || 'beach']) + '</em>.');
       if (s.companion) {
         const tierWord = ['wary of you still', 'tolerating you, and pretending otherwise', 'bonded to you — it shows in everything', 'devoted to you past all argument', 'kindred'][TB.tier()];
-        t.push('— ' + COMP_TITLE[s.companion] + ' is ' + tierWord + '.' + (TB.is('HEART1_DONE') ? ' The eighth morning happened. Neither of you will mention it. Both of you are changed by it.' : ''));
+        t.push('— ' + COMP_TITLE[s.companion] + ' is ' + tierWord + '.' + (TB.is('HEART1_DONE') ? ' The fifteenth morning happened. Neither of you will mention it. Both of you are changed by it.' : ''));
       } else {
         t.push('— You are alone by choice, and the choice still holds.' + (TB.is('COCO_TALKED') ? ' Coco has been briefed on all major decisions.' : ''));
       }

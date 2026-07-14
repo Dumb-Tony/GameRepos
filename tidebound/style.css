@@ -582,3 +582,13 @@ body {
 #trophyToast.show { opacity: 1; transform: translate(-50%, 0); }
 #trophyToast .ttTag { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #ffd65c; }
 #trophyToast .ttName { font-size: 14.5px; color: var(--ink, #eef6f9); }
+
+/* ===== BEACH-FINDS (trinkets.js): the backpack shelf + find note ===== */
+.tkNote { opacity: .55; font-size: .82em; font-style: italic; }
+.tkRow { display: flex; gap: 10px; align-items: flex-start; padding: 7px 0; border-bottom: 1px solid var(--divider); }
+.tkRow:last-child { border-bottom: 0; }
+.tkIcon { font-size: 20px; line-height: 1.3; flex: 0 0 auto; }
+.tkBody { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tkName { font-weight: bold; }
+.tkPaid { opacity: .6; font-size: .85em; }
+.tkLine { opacity: .78; font-size: .88em; line-height: 1.45; }

@@ -210,7 +210,7 @@
         body.appendChild(entryRow(e, got[t.id] ? t.name : '— unearned —', got[t.id] ? t.sub : t.hint, !got[t.id]));
       }
       const tc = TB.Trophies.counts();
-      if (tc.got === tc.total) { const done = document.createElement('div'); done.className = 'almDone'; done.innerHTML = '<em>The shelf, full.</em> Twenty-six ways of paying attention, all paid. The island has no more medals to hand you — only mornings.'; body.appendChild(done); }
+      if (tc.got === tc.total) { const done = document.createElement('div'); done.className = 'almDone'; done.innerHTML = '<em>The shelf, full.</em> Every way of paying attention, paid. The island has no more medals to hand you — only mornings.'; body.appendChild(done); }
     }
     // header counts
     const tCounts = TB.Trophies ? ' · Trophies ' + TB.Trophies.counts().got + '/' + TB.Trophies.counts().total : '';

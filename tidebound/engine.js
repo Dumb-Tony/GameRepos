@@ -371,6 +371,7 @@
     rations: '🥫 Rations', tarp: '🟦 Tarpaulin', case: '💼 Locked courier case',
     lighter: '🔥 Lighter', knife: '🔪 Chef\'s knife', camera: '📷 Camera (cracked lens)',
     multitool: '🛠️ Multitool', coconut: '🥥 Coconut', photo: '🖼️ A stranger\'s photograph',
+    canteen: '🍶 Steel canteen',
   };
   function openKit() {
     const s = TB.state;
@@ -380,8 +381,25 @@
     if (!keys.length) items.innerHTML = '<div class="none">Empty hands, full ocean.</div>';
     for (const k of keys) {
       const d = document.createElement('div');
-      d.textContent = (ITEM_NAMES[k] || k) + (s.inv[k] > 1 ? ' ×' + s.inv[k] : '');
+      d.textContent = (ITEM_NAMES[k] || k) + (s.inv[k] > 1 ? ' ×' + s.inv[k] : '')
+        + (k === 'canteen' ? ' — ' + ((s.canteenSips | 0) === 2 ? 'full, two good drinks' : (s.canteenSips | 0) === 1 ? 'one drink left' : 'empty; the river refills it in passing') : '');
       items.appendChild(d);
+    }
+    // ✨ beach-finds shelf (trinkets.js)
+    const tk = $('kitTrinkets');
+    if (tk) {
+      tk.innerHTML = '';
+      const cat = (TB.Trinkets && TB.Trinkets.CATALOG) || [];
+      const owned = cat.filter((t) => s.trinkets && s.trinkets[t.id]);
+      const cnt = $('kitTkCount');
+      if (cnt) cnt.textContent = owned.length ? '— ' + owned.length + ' of ' + cat.length + ' this life' : '';
+      if (!owned.length) tk.innerHTML = '<div class="none">The island\'s little gifts will gather here. Work the shore; wade the pools; look down.</div>';
+      for (const t of owned) {
+        const d = document.createElement('div');
+        d.className = 'tkRow';
+        d.innerHTML = '<span class="tkIcon">' + t.e + '</span><span class="tkBody"><span class="tkName">' + t.name.replace(/^(a|an) /, (m) => m[0].toUpperCase() + m.slice(1)) + (s.flags['TPAID_' + t.id] ? ' <em class="tkPaid">· Edda knows it</em>' : '') + '</span><span class="tkLine">' + t.line + '</span></span>';
+        tk.appendChild(d);
+      }
     }
     const facts = $('kitFacts');
     facts.innerHTML = '';

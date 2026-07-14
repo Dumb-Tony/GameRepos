@@ -104,6 +104,22 @@ explicit opt-in respected); audio applySettings calls FX.refresh()) ·
 'tidebound.ach.v1' {got}; engine checks on every scene entry after
 recordEnd; unlock toasts queue one at a time top-center (#trophyToast);
 renders as the 🏆 sixth tab of the Field Almanac) ·
+`trinkets.js` (BEACH-FINDS & THE CANTEEN, loads LAST: 22-trinket catalog
+in s.trinkets (per-run), granted by ONE hook — a wrap of
+act_result.enter, reload-guarded via s.lastFind, rolling 22% per
+chore/expedition themed by s.out.bg (shore/wade/mud/forage/deep;
+skips story-routed results with s.out.go). Finds pay hope+3 and note
+'(kept — 🎒)'. The sea's FIRST shore gift is always the steel canteen:
+2 free sips (+26 thirst, NO segment cost — drink action unshifted onto
+ch3Actions AND ch1 camp), auto-refilled whenever a result's bg is
+river/gullet (Silverthread hauls, river/grotto expeditions). Payoffs:
+9 trinkets carry bespoke Edda reactions ('🎁 take it up to Edda' hub
+action, one per trip, TPAID_* once each, edda+4 + per-gift efx);
+4 Kaari-old trinkets flag OLD_THINGS_HOME at ch6_temple (+1 regard —
+counts toward Inner Green admission) with a returning-beat in
+ch6_inner; backpack UI = the 🎒 kit overlay, renamed 'Your backpack',
+with canteen fullness + a Beach-finds shelf; trophies Magpie +
+The Wrack-Line Ledger → shelf now 28) ·
 `scenes-prologue.js` · `scenes-chapter1..7.js`.
 Regional music motifs: audio.js MOTIFS — twelve per-region pluck
 phrases; map.js M.run calls TB.Audio.motif(regionId) once per arrival

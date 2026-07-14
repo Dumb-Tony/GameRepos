@@ -27,7 +27,7 @@
     enter: (s) => { if (s.chapter < 4) { s.chapter = 4; s.day = 36; s.seg = 0; } },
     text: [
       '<em>CHAPTER FOUR — THE HUM</em>',
-      'Day sixteen. The air has changed. You noticed it first at dawn — a heaviness riding in off the southern sea, a taste like coins — and Edda\'s word for it, delivered with a weather-eye and no comfort at all, was: <em>"Monsoon\'s coming. Weeks, not months. Whatever you mean to do about that mast, castaway, the sky won\'t hold the door forever."</em>',
+      'Day thirty-six. The air has changed. You noticed it first at dawn — a heaviness riding in off the southern sea, a taste like coins — and Edda\'s word for it, delivered with a weather-eye and no comfort at all, was: <em>"Monsoon\'s coming. Weeks, not months. Whatever you mean to do about that mast, castaway, the sky won\'t hold the door forever."</em>',
     ],
     next: (s) => (TB.is('EAST_OPEN') ? 'ch4_arrive' : 'ch4_west_offer'),
     nextLabel: 'Begin ➤',
