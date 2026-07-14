@@ -336,6 +336,39 @@
     }
   }
 
+  // ---- regional motifs -------------------------------------------------------------
+  // Each Wayfinder region owns a short signature phrase — a handful of
+  // plucks in its own character, played once per arrival (map.js calls
+  // A.motif(regionId) from M.run). Rides the music bus, so it honors the
+  // music toggle and the master mute. [midi, dt-seconds] pairs.
+  const MOTIFS = {
+    bay:       [[60, 0], [64, 0.3], [67, 0.6], [72, 1.05]],                 // home water: a rising arrival
+    tidepools: [[84, 0], [81, 0.22], [84, 0.44], [88, 0.8]],                // quick curious dabs, high
+    bonebeach: [[50, 0], [53, 0.55], [50, 1.1]],                            // hollow and sparse, like wind in ribs
+    fringe:    [[64, 0], [67, 0.3], [69, 0.65], [67, 1.0]],                 // the familiar green, swaying
+    deepgreen: [[52, 0], [55, 0.45], [58, 0.9], [57, 1.35]],                // a dark climb with a wrong turn
+    cliffs:    [[67, 0], [74, 0.35], [79, 0.75]],                           // open fifths thrown to the wind
+    river:     [[81, 0], [79, 0.18], [76, 0.36], [74, 0.54], [72, 0.72]],   // silver running downhill
+    mangrove:  [[47, 0], [53, 0.6], [48, 1.2]],                             // swamp-slow, a tritone of patience
+    grove:     [[62, 0], [66, 0.3], [69, 0.6], [74, 1.0]],                  // hearth-warm, Edda's kettle
+    station:   [[70, 0], [70, 0.3], [69, 0.7], [70, 1.15]],                 // a machine remembering its one note
+    grotto:    [[45, 0], [52, 0.55], [57, 1.1]],                            // deep, A-rooted, hum-adjacent
+    caldera:   [[57, 0], [58, 0.5], [57, 1.0], [52, 1.6]],                  // solemn keening at the Crown
+  };
+  let lastMotifKey = '';
+  A.motif = function (region) {
+    if (!ctx || ctx.state !== 'running' || !musOn || !MOTIFS[region]) return;
+    const s = TB.state;
+    const key = region + '@' + (s ? s.day + '.' + s.seg : '');
+    if (key === lastMotifKey) return; // one phrase per arrival, reload-safe
+    lastMotifKey = key;
+    try {
+      const t = ctx.currentTime + 0.15;
+      for (const [n, dt] of MOTIFS[region]) pluck(t + dt, n, 0.07);
+    } catch (e) {}
+  };
+  A._motifs = MOTIFS; // for tests
+
   // ---- animal calls ---------------------------------------------------------------
   const CALLS = {
     kavi: (t) => { // two soft woofs

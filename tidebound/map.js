@@ -179,6 +179,7 @@
   M.run = function (id) {
     const s = TB.state, Rg = REGIONS[id];
     if (!Rg || Rg.locked) return;
+    try { if (TB.Audio && TB.Audio.motif) TB.Audio.motif(id); } catch (e) {} // the region's signature phrase
     // regions with story mechanics take priority over the sightseeing decks
     if (id === 'grove' && TB.is('GROVE_OPENED')) { // the real grove scene (tea, Edda, incidents)
       TB.stat('energy', -6); TB.tickSegment(); TB.go('grove'); return;
