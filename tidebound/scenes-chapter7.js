@@ -81,6 +81,12 @@
       if (TB.is('CASE_OPEN') && TB.is('COURIER_RESTED') && (TB.is('VESSEL_READY') || TB.is('CONTACT_MADE') || TB.is('TIDEWELL_SILENCE'))) c.push({
         t: '📮 Leave as the courier — two deliveries, then done.', sub: 'The Last Delivery. The dossier to the deep; the photograph to a pier called KAI—.',
         do: () => { TB.state.endingId = 'LAST_DELIVERY'; }, go: 'ending' });
+      if (TB.is('TOWER_BUILT') && !TB.is('TIDEWELL_SILENCE')) c.push({
+        t: '🗼 Keep the light. Give your stay to the sea\'s strays.', sub: 'Keeper of the Light. Somebody used to burn it for the collected. Somebody does again.',
+        do: () => { TB.state.endingId = 'LIGHTKEEPER'; }, go: 'ending' });
+      if (!TB.is('TIDEWELL_SILENCE') && (TB.is('WOUND_SEEN') || TB.is('HEARTGLASS') || TB.is('GULLET2') || TB.is('SUNDERING_SEEN')) && s.route.depth >= 15) c.push({
+        t: '🔕 Go down one last time — and break the seam.', sub: '⚠️ The Hum Silenced. Every compass true, every radio clear, every door open. Nothing that is done down there can be undone.',
+        do: () => { TB.state.endingId = 'HUM_SILENCED'; }, go: 'ending' });
       if (TB.is('OTHER_HEARD') && !TB.is('TIDEWELL_SILENCE')) c.push({
         t: '📻 Stay — and answer the nine-beat station. Keep the archipelago\'s watch.', sub: '"There are more of us than two."',
         do: () => { TB.state.endingId = 'OTHER_SIGNAL'; }, go: 'ending' });
@@ -344,9 +350,35 @@
     return t;
   } };
 
+  // KEEPER OF THE LIGHT (S4): the fire-tower kept, the stay dedicated.
+  CORES.LIGHTKEEPER = { icon: '🗼', title: 'KEEPER OF THE LIGHT', bg: 'cliff-camp', body: (s) => {
+    const t = [
+      'You choose the tower the way the tower, you suspect, chose you: quietly, on the hundredth dusk, standing in the fire-bowl\'s fan of light with the whole dark sea spread out underneath — the one patch of this world where your two hands unambiguously matter every single night.',
+      'The work is simple and it is endless and it is <em>yours</em>: oil rendered and lockered, char split and stacked, the lens-glass wiped at dusk, the light struck at full dark and banked at dawn. The island collects the lost — it always has; you are standing proof — and the Kaari built this tower because collecting is gentler when somebody keeps a light on the last mile. For four hundred years the post stood empty. It doesn\'t now.',
+      'They come. Not often — the island is choosy — but they come: a dory out of a squall with two half-drowned brothers who speak no language you know and need none for what you\'re holding (blankets, fire, soup); a sailboat\'s tender, oarless; one night, impossibly, a swimmer. You are the first thing each of them sees of Vessakai: a light that was burning for them before they knew they were coming. What the wreck was to you, you are now to the water. There is a name for this trade and you finally understand you have been apprenticing for it since Day 1.',
+    ];
+    if (s.companion) t.push('— ' + NAMES[s.companion] + ' keeps the post with you, of course — first assistant keeper in the tower\'s long ledger, master of the dusk patrol, and, on the hard nights when the sea gives back nothing but weather, the reason the silence up there never once feels like solitude.');
+    if (TB.is('RYO_MET')) t.push('— Ryo, harbormaster below, works the water end of the trade: the light finds them and the Kingfisher fetches them in. Between your fire and his hull, the island\'s oldest kindness runs like a ferry service. "Lighthouse and lifeboat," he says, immensely satisfied. "Every sea should be so lucky."');
+    t.push('And twice a year, at the equinoxes, you find oil in the keeping-lockers you did not render — pressed, fragrant, in jars older than the country you were born in. The Inner Green, paying the light\'s tithe the way their grandmothers did. The post is recognized. The post was never really empty, you understand at last: it was waiting, the way the island waits, for someone to stop being rescued and start being the rescue.',
+      'Some clear nights the tower\'s fan and the lagoon\'s seven-beat glow lie across the water at the same time, and where they cross they make — briefly, entirely — a road.');
+    return t;
+  } };
+
+  // THE HUM SILENCED (M3): the epilogue does not editorialize.
+  CORES.HUM_SILENCED = { icon: '🔕', title: 'THE HUM SILENCED', bg: 'gullet', body: (s) => [
+    'You go down at the lull with the drill-bar across your back and the lamp you know how to trust, past the Gallery of Hands, past your own high-water marks, to the seam where the island keeps its voice.',
+    'You have thought about it for thirty days and the thinking changes nothing at the bottom: the seam is a hand\'s width of living light in black stone, and it is the veil, and the fog, and the spun compasses, and the drowned radios, and the door that will not stay found — and one honest hour with a steel bar ends it. You take the hour.',
+    'The heartglass does not shatter like glass. It goes out like a note — one long descending tone through the rock, through the water, through the soles of your feet, falling and falling until it passes under hearing, and then the Gullet is only a cave, and the water in it is only water, and the dark behind your lamp is only dark.',
+    'On the surface: the lagoon lies flat and ordinary under the stars. Your compass needle crosses the beach and settles, trembling, on true north, and stays. The radio, when you kneel to it at the station, is clear from band to band — no skips, no sevens, just the open, crowded, human static of the whole talking world.',
+    'The freighter takes nine days. The helicopter, after it, forty minutes. Rescue, once the island can be pointed at, is a logistics problem, and the world is very good at logistics.',
+    'Within the year there is an anchorage. Within the decade, a chart with a name on it that is not Vessakai, and flights twice a week, and a resort brochure that calls the caldera "dramatic." The Inner Green empties inland one moonless night before the first surveyors reach the rim — four hundred people into the folded country, and where they go the world never learns, because the world stopped being the kind of thing that couldn\'t find them, and they knew it first.',
+    'Edda does not come down to see you off.',
+    'Every compass you ever own again points true.',
+  ] };
+
   function epilogue(s, id) {
     const t = [];
-    const leaving = id === 'RESCUE' || id === 'SAIL_BLESSED' || id === 'RYO_BOAT' || id === 'LONG_SWIM' || id === 'ROSAS_RANSOM' || id === 'REGRET' || id === 'EMPTY_HORIZON' || id === 'CARTOGRAPHER' || id === 'COCONUT_MOGUL' || id === 'LAST_DELIVERY';
+    const leaving = id === 'RESCUE' || id === 'SAIL_BLESSED' || id === 'RYO_BOAT' || id === 'LONG_SWIM' || id === 'ROSAS_RANSOM' || id === 'REGRET' || id === 'EMPTY_HORIZON' || id === 'CARTOGRAPHER' || id === 'COCONUT_MOGUL' || id === 'LAST_DELIVERY' || id === 'HUM_SILENCED';
     const companionCovered = id === 'THREE_SPRINGS' || id === 'LAST_PACK' || id === 'TRICKSTER' || id === 'WIND_TAKES' || id === 'SOUNDER' || id === 'ROOSTER_DAWN' || id === 'NINES_GARDEN' || id === 'ISLANDS_OWN'; // their cores ARE the companion's fate
     if (id === 'ISLANDS_OWN' && TB.is('EDDA_MET')) t.push('— Edda hears it before you finish saying it — she always hears it — and sets down the pestle and looks at you for a long, still moment. "Forty years," she says at last, "I wondered what that pool was holding the post open <em>for</em>. It was never waiting for a better human." A snort, at herself, at everything. "It was waiting for you to introduce them." She takes tea up the mountain every new moon after. She is, every time, received.');
     if (id === 'TIDE_PRICE') {
@@ -396,6 +428,7 @@
     if (!TB.is('E_WING_OPEN') && TB.is('STATION_OPENED')) roads.push('a steel door in the east kept its room');
     if (TB.has('case') && !TB.is('CASE_OPEN')) roads.push('a locked courier\'s case kept its answer to the end');
     if (TB.is('CASE_OPEN') && !TB.is('COURIER_RESTED')) roads.push('a courier\'s story ended without a stone to hold it');
+    if (TB.is('TOWER_FOUND') && !TB.is('TOWER_BUILT')) roads.push('a fire-tower waited dark on the Kestrel coast');
     if (TB.is('GEMS') && !TB.is('GEMS_RETURNED') && !TB.is('ROSAS_RANSOM')) roads.push('twelve cut stones stayed on the wrong side of the mountain');
     if (TB.is('CHART_ROSA') && !TB.is('ROSA_DONE')) roads.push('a marked wreck on the north reef kept two centuries of gold');
     if (TB.is('LISTEN1') && !TB.is('OTHER_HEARD')) roads.push('something under the static waited for a second vigil that never came');

@@ -362,7 +362,25 @@
         do: (s) => { TB.route('roots', 2); TB.stat('energy', -6); TB.flag('KING_WALLED'); }, go: 'ev2_boarking3' },
       { t: 'Leave an offering at the treeline. Some tolls are cheaper paid.', sub: 'Feed the mountain and it may not come to dine.',
         do: (s) => { TB.stat('hunger', -6); TB.flag('KING_TITHED'); TB.route('depth', 1); TB.stat('hope', 2); }, go: 'ev2_boarking4' },
+      { t: '⚔️ Hunt it down today. End this before it begins.', sub: '⚠️ You know nothing about it yet, and it has plainly survived everything this island ever sent. Strong, rested, and backed, you might live to learn better. Otherwise this is how castaways become notches.',
+        do: (s) => {
+          const s2 = TB.state;
+          const backed = s2.companion === 'kavi' || s2.companion === 'buri';
+          if (backed && s2.stats.health >= 60 && s2.stats.energy >= 45) { TB.flag('KING_FACED'); s2.injury = 'laceration'; TB.stat('health', -30); TB.stat('energy', -20); TB.stat('hope', -4); TB.route('depth', 1); }
+          else { s2.deathCause = 'boarking'; }
+        }, go: (s) => (TB.state.deathCause ? 'death' : 'ev2_boarkface') },
     ],
+  });
+
+  TB.scene('ev2_boarkface', {
+    bg: 'jungle', who: BOAR_KING,
+    text: (s) => [
+      'You find him because he lets you. That much is clear within the first hundred meters of the trail: the prints get fresher too fast, the rooting-sign too neat, and then the jungle opens into a wallow-clearing and he is simply THERE, facing you, having chosen the ground, the light, and the moment you\'d arrive.',
+      s.companion === 'kavi' ? 'What follows is not a fight. It is an audit with tusks. Kavi\'s speed is the only reason it isn\'t an execution — twice the grey shape cuts the charge\'s angle, screaming pack-fury, buying you the half-seconds your spear-arm needs to matter at all—' : 'What follows is not a fight. It is an audit with tusks, and Buri is the only reason it isn\'t an execution — planting his young bulk in the charge-lane, taking a hit meant for you with a CRACK you feel in your own ribs, giving you the half-seconds your spear-arm needs to matter at all—',
+      'And then, having opened your leg to the bone-ache and flattened your spear-side into the mud — having established, beyond appeal, exactly what he could do — the Boar King stops. Steps back. Looks at the two of you, bleeding and defiant and DONE, with those small calculating eyes, and delivers his verdict: one long breath out through the scarred snout, contempt and something else. Something almost like marking a ledger: <em>paid enough.</em>',
+      'He walks away unhurried. He does not look back. You have learned the only thing the trail was ever going to teach: the inland dark has a landlord, the rent is real, and today — at a price you\'ll be repaying for a week — he chose to make you a tenant instead of a notch.',
+    ],
+    next: (s) => { TB.tickSegment(); return TB.advance(); },
   });
   TB.scene('ev2_boarking2', { bg: 'jungle', who: (s) => (TB.is('KING_SEEN') ? BOAR_KING : null),
     text: (s) => [

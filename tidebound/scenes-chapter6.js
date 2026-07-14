@@ -126,10 +126,14 @@
       'Then the ground shrugs. Not violently — a long, muscular roll, like something enormous turning over in shallow sleep — but it goes ON, seven, eight, nine seconds, while the stair\'s ancient stones grate and settle and a slab of cliff lets go somewhere across the valley with a boom like the E-wing door.',
       'Then stillness. Then, distinctly, twenty minutes later: again, smaller. And in the evening: again.',
       'A ladder of tremors, climbing.' + (TB.is('WOUND_SEEN') ? ' And you have seen the rungs\' source with your own lamp: the guttering seam, the spiderweb crack around Halcyon\'s bore, the wound that never healed — flickering now in your memory in exact time with the ground\'s complaint. The island isn\'t stirring in its sleep. It\'s <em>favoring an injury</em>.' : TB.is('INCIDENT_FILES') ? ' Vane\'s last page stands up in your memory in her deliberate architecture: <em>If it ever begins skipping — I hope no one is here to read what that means.</em> You are here. You are reading it.' : ' The skipping pulse, the stuttering lagoon, and now the ground itself. Whatever conversation the island has been having with itself all month, it is getting louder.'),
-      TB.is('INNER_INVITED') ? 'Naia\'s face, through all of it, is the worst part: not surprised. Grim, and young, and <em>unsurprised</em>. "Since the rains started," she says. "Worse each week. It is why the old ones agreed to see you at all, castaway. Come. We are close, and they will want the daylight."' : 'You make the night\'s camp on bedrock, away from anything that can fall, and sleep in your boots with the ground\'s pulse in your teeth.',
+      TB.is('INNER_INVITED') ? 'Naia\'s face, through all of it, is the worst part: not surprised. Grim, and young, and <em>unsurprised</em>. "Since the rains started," she says. "Worse each week. It is why the old ones agreed to see you at all, castaway. Come. We are close — <em>at daylight</em>. The old ones wait for daylight. So does the mountain."' : 'The summit is close now — a few hours\' hard scramble, no more. The tremor ladder says the mountain would rather you didn\'t take them tonight.',
     ],
-    nextLabel: 'The last ascent ➤',
-    next: chain('ch6_inner', 2),
+    choices: (s) => [
+      { t: '🌙 Camp on bedrock. Climb at first light.', sub: 'The mountain has asked politely, three times, all day.',
+        do: () => { for (let i = 0; i < 2; i++) TB.tickSegment(); }, go: 'ch6_inner' },
+      { t: '🌋 Push for the rim tonight. The summit is CLOSE.', sub: '⚠️ A ladder of tremors, climbing, and crack-new rock in the dark. The people who live here wait for daylight, and they have four hundred years of reasons.',
+        do: () => { TB.state.deathCause = 'ash'; }, go: 'death' },
+    ],
   });
 
   // ---- The Inner Green / the rim ---------------------------------------------------------------

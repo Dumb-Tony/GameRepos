@@ -187,6 +187,8 @@
     if (id === 'deepgreen' && s.chapter >= 3 && !TB.is('GLYPH3')) { runGlyphPush(s); return; }
     if (id === 'mangrove' && TB.is('GRIN_MET') && !TB.is('GRIN_SCOUTED') && !TB.is('CLEARING_DONE3')) { runGrinScout(s); return; }
     if (id === 'grotto' && TB.is('GEMS') && !TB.is('GEMS_RETURNED') && s.chapter >= 4) { runGemsReturn(s); return; }
+    if (id === 'cliffs' && s.chapter >= 3 && (s.visits.cliffs || 0) >= 1 && !TB.is('CLIFF_LEDGE')) { runCliffLedge(s); return; }
+    if (id === 'cliffs' && s.chapter >= 3 && TB.is('CLIFF_LEDGE') && !TB.is('TOWER_FOUND')) { runTowerFind(s); return; }
     TB.stat('energy', -9);
     s.visits = s.visits || {};
     const n = s.visits[id] || 0;
@@ -220,6 +222,25 @@
     else { TB.flag('GLYPH3'); lines.push('The third stone stands where the land begins to climb toward the broken mountain, and it is different: taller, uncut by weather, its spiral inlaid with something dark and glassy that holds your reflection wrong — a half-beat behind, you\'d swear, like an echo of you.', 'Below the spiral, one line of the old writing has been re-cut — <em>recently</em>. Within years, not centuries. The chisel marks are still bright.', 'Someone still reads these.'); }
     if (!s.companion && R() < 0.3 && !TB.is('BG_ENGINEER')) { TB.stat('energy', -6); lines.push('You lose the way back twice — the Green Deep folds behind you like water — and pay for the shortcut in hours and scratches.'); }
     s.out = { bg: 'jungle', text: lines };
+    TB.tickSegment();
+  }
+  function runCliffLedge(s) {
+    // second cliffs expedition finds the egg-ledge — the choice (and THE
+    // FALL) live in the cliff_ledge scene (scenes-ways.js)
+    TB.stat('energy', -6);
+    s.visits.cliffs = (s.visits.cliffs || 0) + 1;
+    s.out = { bg: 'cliff-camp', text: ['You work the Kestrel coast further out than you\'ve gone before, past the empress\'s ledge, to where the cliff face bellies over the sea and the wind never once stops talking.'], go: 'cliff_ledge' };
+    TB.tickSegment();
+  }
+  function runTowerFind(s) {
+    // third cliffs expedition: the Kaari fire-tower (Keeper of the Light)
+    TB.stat('energy', -7); TB.flag('TOWER_FOUND'); TB.route('signal', 1); TB.route('depth', 1); TB.stat('hope', 5);
+    s.visits.cliffs = (s.visits.cliffs || 0) + 1;
+    s.out = { bg: 'cliff-camp', text: [
+      'Past the egg-ledges, on the highest knuckle of the Kestrel coast, you find what the wind has been hiding in plain sight: a <em>tower</em>. Kaari-built, dry-stone, squat as a molar and older than every map — its top course tumbled, its spiral stair choked with nettle and bird-bone, and its crown, when you climb into it, unmistakable: a fire-bowl. A great carved basin, glazed inside with four centuries of soot.',
+      'A light-tower. Not for ships to find the island — nothing helps ships find this island — but the other way around: for the island to bring its own boats home through the veil. The counting songs mention it, you realize; Edda\'s stories mention it; the sea\'s strays, the collected, the driftwood people. Somebody used to burn a light for them.',
+      'The bowl is intact. The stair can be cleared. The wind up here would feed a fire like a bellows. Somebody could keep this light again.',
+    ] };
     TB.tickSegment();
   }
   function runGemsReturn(s) {
