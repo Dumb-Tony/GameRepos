@@ -629,3 +629,9 @@ body {
   border: 7px solid #efe7d2; box-shadow: 0 8px 30px rgba(0, 0, 0, .5);
   transform: rotate(-.6deg);
 }
+
+/* ===== KEEPSAKE BOX (keepsakes.js): the run-card museum ===== */
+.almKeepsake { cursor: pointer; }
+.almKeepsake:hover .almName { text-decoration: underline; }
+.almCardWrap { text-align: center; padding: 10px 0; }
+.almCardImg { width: 100%; max-width: 300px; border-radius: 10px; box-shadow: 0 8px 26px rgba(0, 0, 0, .5); }

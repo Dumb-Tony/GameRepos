@@ -82,6 +82,11 @@
     ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
   }
 
+  RC.titleFor = function (s) {
+    if (s.deathCause) return { icon: '🌑', title: DEATH_TITLES[s.deathCause] || 'THE ISLAND KEEPS' };
+    const core = TB.CORES && TB.CORES[s.endingId];
+    return { icon: core ? core.icon : '🏝️', title: core ? core.title : 'TIDEBOUND' };
+  };
   RC.render = function (s) {
     const dead = !!s.deathCause;
     const core = !dead && TB.CORES && TB.CORES[s.endingId];
