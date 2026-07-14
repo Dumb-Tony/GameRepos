@@ -650,3 +650,54 @@ body {
   color: #1d1607; background: linear-gradient(180deg, #ffd65c, #e8ab2e);
   padding: 2.5px 6px 2px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0, 0, 0, .35);
 }
+
+/* ===== TITLE SCREEN GLOW-UP ===== */
+/* the painted art breathes — a slow drift-zoom, stilled for reduced motion */
+.bg-title .art { animation: titleDrift 46s ease-in-out infinite alternate; }
+@keyframes titleDrift { from { transform: scale(1); } to { transform: scale(1.07) translateY(-1.4%); } }
+@media (prefers-reduced-motion: reduce) { .bg-title .art { animation: none; } }
+
+/* the panel steps out of the art's way: glassy, centered, frameless */
+#backdrop.bg-title ~ #stage #panel {
+  background: linear-gradient(#04101a2e, #04101a8c 65%);
+  border-color: #ffffff14; box-shadow: none;
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  max-height: 80vh; max-height: 80dvh;
+  align-items: center; text-align: center;
+}
+#backdrop.bg-title ~ #stage #textLog { width: 100%; }
+#backdrop.bg-title ~ #stage #choices { width: min(440px, 100%); }
+#backdrop.bg-title ~ #stage #choices:not(:empty) { border-top: none; padding-top: 4px; }
+
+/* the wordmark: gilded, breathing */
+.game-title { font-size: 54px; letter-spacing: 10px; margin-top: 6px; }
+.game-title .gtWord {
+  background: linear-gradient(180deg, #fdf6df 8%, #ffd65c 52%, #e8973a 96%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: none; /* the parent's shadow would bleed through transparent glyphs */
+  animation: titleGlow 6.5s ease-in-out infinite;
+}
+.game-title .gtWave { display: inline-block; animation: titleBob 5s ease-in-out infinite; }
+@keyframes titleGlow {
+  0%, 100% { filter: drop-shadow(0 3px 14px #000000a0) drop-shadow(0 0 10px #ffd65c1c); }
+  50% { filter: drop-shadow(0 3px 14px #000000a0) drop-shadow(0 0 24px #ffd65c4d); }
+}
+@keyframes titleBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@media (prefers-reduced-motion: reduce) { .game-title .gtWord, .game-title .gtWave { animation: none; } }
+
+/* the island's ledger, worn as quiet medals */
+.titleChips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 10px auto 0; max-width: 520px; }
+.titleChips-wrap { max-width: 640px; }
+.tChip {
+  font: 12.5px/1.35 system-ui, sans-serif; letter-spacing: .3px; white-space: nowrap;
+  background: #04101a99; border: 1px solid #ffd65c38; color: #f2ead2;
+  padding: 4px 11px; border-radius: 999px;
+}
+
+/* secondary title buttons: present, not shouting */
+#choices button.title-btn-quiet { font-size: 14.5px; padding: 8px 12px; opacity: .88; background: var(--btn-bg); }
+
+@media (max-width: 560px) {
+  .game-title { font-size: 34px; letter-spacing: 6px; }
+  #backdrop.bg-title ~ #stage #panel { max-height: 84vh; max-height: 84dvh; }
+}

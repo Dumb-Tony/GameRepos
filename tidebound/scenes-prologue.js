@@ -13,22 +13,28 @@
     bg: 'title', hud: false,
     text: (s) => {
       const t = [
-        '<span class="game-title">🌊 TIDEBOUND</span>',
+        '<span class="game-title"><span class="gtWave">🌊</span> <span class="gtWord">TIDEBOUND</span></span>',
         '<span class="game-sub">a survival visual novel</span>',
         '<span class="game-sub">One island. One companion. Every choice has a price.</span>',
       ];
+      // the island's ledger, worn as quiet medals — chips instead of a wall of text
       const m = TB.meta();
       if (m.runs > 0) {
-        const found = Object.keys(m.endings);
-        const deaths = Object.values(m.deaths).reduce((a, b) => a + b, 0);
-        t.push('<span class="game-sub">🌀 The island remembers ' + m.runs + (m.runs === 1 ? ' life' : ' lives') + (deaths ? ' (' + deaths + ' kept forever)' : '') + ' · endings found: ' + found.length + '/' + Object.keys(TB.CORES || {}).length + '</span>');
-        if (found.length && TB.CORES) t.push('<span class="game-sub">' + found.map((id) => (TB.CORES[id] ? TB.CORES[id].icon + ' ' + TB.CORES[id].title : id)).join(' · ') + '</span>');
+        const chips = [];
+        const ks = TB.Keepsakes ? TB.Keepsakes.stats() : null;
+        chips.push('🌀 ' + m.runs + (m.runs === 1 ? ' life' : ' lives'));
+        if (ks && ks.days) chips.push('☀️ ' + ks.days + ' island days');
+        chips.push('🏁 ' + Object.keys(m.endings).length + '/' + Object.keys(TB.CORES || {}).length + ' endings');
+        if (TB.Trophies) { const tc = TB.Trophies.counts(); if (tc.got) chips.push('🏆 ' + tc.got + '/' + tc.total); }
+        if (ks && ks.fav) chips.push('❤️ ' + ({ kavi: 'Kavi', ipo: 'Ipo', vela: 'Vela', buri: 'Buri', moa: 'Moa', nine: 'Nine' }[ks.fav] || ks.fav));
+        t.push('<span class="titleChips">' + chips.map((c) => '<span class="tChip">' + c + '</span>').join('') + '</span>');
       }
       return t;
     },
     choices: (s) => {
+      const m = TB.meta();
       const list = [{
-        t: '🛫 Begin', cls: 'title-btn',
+        t: m.runs > 0 ? '🛫 Begin a new life' : '🛫 Begin', cls: 'title-btn',
         do: () => { TB.wipe(); TB.state = TB.newState(); },
         go: 'falling',
       }];
@@ -38,8 +44,38 @@
       if (TB.Loops && TB.Loops.data().loops > 0) {
         list.push({ t: '🌀 Driftwood Loops', cls: 'title-btn', go: 'loops_menu' });
       }
+      if (m.runs > 0 && Object.keys(m.endings).length) {
+        list.push({ t: '🏁 The ways it has ended', cls: 'title-btn title-btn-quiet', go: 'title_gallery' });
+      }
+      if (m.runs > 0) {
+        list.push({ t: '📔 Field Almanac', cls: 'title-btn title-btn-quiet', go: () => { if (TB.Almanac) TB.Almanac.open(); return null; } });
+      }
       return list;
     },
+  });
+
+  // ---- the gallery of endings (title, once any are found) -----------------
+  TB.scene('title_gallery', {
+    bg: 'title', hud: false,
+    text: (s) => {
+      const m = TB.meta();
+      const found = Object.keys(m.endings);
+      const total = Object.keys(TB.CORES || {}).length;
+      const t = [
+        '<em>🏁 THE WAYS IT HAS ENDED</em>',
+        'The island keeps every ending the way the tide keeps glass: worn smooth, given back. ' + found.length + ' of ' + total + ' found.',
+      ];
+      if (TB.CORES) {
+        t.push('<span class="titleChips titleChips-wrap">' + found
+          .map((id) => (TB.CORES[id] ? '<span class="tChip">' + TB.CORES[id].icon + ' ' + TB.CORES[id].title + '</span>' : ''))
+          .filter(Boolean).join('') + '</span>');
+        if (found.length < total) t.push('<span class="game-sub">' + (total - found.length) + ' still out there, past the reef of what you\'ve tried.</span>');
+      }
+      const deaths = Object.values(m.deaths || {}).reduce((a, b) => a + b, 0);
+      if (deaths) t.push('<span class="game-sub">…and ' + deaths + (deaths === 1 ? ' life' : ' lives') + ' the island kept before the story was done.</span>');
+      return t;
+    },
+    choices: [{ t: '↩️ Back', cls: 'title-btn title-btn-quiet', go: 'title' }],
   });
 
   // ---- The crash --------------------------------------------------------
