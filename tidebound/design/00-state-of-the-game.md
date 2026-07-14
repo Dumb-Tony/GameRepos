@@ -120,6 +120,14 @@ counts toward Inner Green admission) with a returning-beat in
 ch6_inner; backpack UI = the 🎒 kit overlay, renamed 'Your backpack',
 with canteen fullness + a Beach-finds shelf; trophies Magpie +
 The Wrack-Line Ledger → shelf now 28) ·
+`tutorial.js` (THE ISLAND TOUR: 8-step spotlight walkthrough — clock,
+meters, panel, 🗺️ Wayfinder, 🎒 backpack, 📔 almanac, ☰ menu, send-off —
+on the FIRST camp morning (wraps camp.enter, day<=1 && ch<=1). One div
+with a giant box-shadow is the spotlight; click anywhere advances; Skip
+ends. Once per device ('tidebound.tut.v1', marked at first show);
+replayable via the menu's 🎓 button (TB.Tut.start(true)). HIDDEN from
+the Playwright harness via navigator.webdriver — set localStorage
+'tidebound.tut.force'='1' before boot to test the tour itself) ·
 `scenes-prologue.js` · `scenes-chapter1..7.js`.
 Regional music motifs: audio.js MOTIFS — twelve per-region pluck
 phrases; map.js M.run calls TB.Audio.motif(regionId) once per arrival
