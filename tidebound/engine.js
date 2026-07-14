@@ -95,6 +95,8 @@
     if (s.stats.hunger === 0) s.stats.health = TB.clamp(s.stats.health - 8 * k, 0, 100);
     if (s.stats.thirst === 0) s.stats.health = TB.clamp(s.stats.health - 12 * k, 0, 100);
     if (s.injury) s.stats.health = TB.clamp(s.stats.health - 2, 0, 100);
+    // an untended companion heals on the wild's own schedule — nobody dies
+    if (s.chInjured && s.day - s.chInjured.day >= 5) { s.chInjured = null; s.flags.PERIL_SELFHEALED = true; }
     if (s.disease === 'fever') {
       s.stats.health = TB.clamp(s.stats.health - 1, 0, 100);
       if (s.stats.energy > 55) s.stats.energy = 55; // the fever's ceiling

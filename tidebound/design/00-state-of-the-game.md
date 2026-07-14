@@ -4,7 +4,7 @@
 > with the twelve design docs that follow it — is everything needed to pick up
 > Tidebound with the same vision. It records what is BUILT (and how), where it
 > deviates from the original design, the code and writing conventions, and the
-> roadmap in priority order. Last updated: **2026-07-12**, after PR #5.
+> roadmap in priority order. Last updated: **2026-07-14** (Wayfinder v2 + Scars, Not Graves).
 
 ## 1. Project snapshot
 
@@ -23,7 +23,7 @@ compressed realization. Deviations a resuming developer must know:
 | Designed | Built | Notes |
 |---|---|---|
 | ~100 in-game days | **34 days** (Ch1 d1–3 · Ch2 d4–9 · Ch3 d10–15 · Ch4 d16–21 · Ch5 d22–28 · Ch6 d29–33 · Ch7 d34) | Chapter *content* kept; day counts compressed. Expanding day ranges is pure tuning if desired. |
-| 49 endings | **33 CORES endings** (RESCUE, STAY_OPEN, BROKER, HOME, VILLAGE, JOIN, KEEPER, COVENANT, TWO_WORLDS, SAIL_BLESSED, RYO_BOAT, LONG_SWIM, WHOLE_SKY, COCO, THREE_SPRINGS, LAST_PACK, TRICKSTER, ROSAS_RANSOM, OTHER_SIGNAL, FIRST_KAARI, + the Endings Expansion in ch7: REGRET, EMPTY_HORIZON, CARTOGRAPHER, REMAIN, HERMIT_HEIR, ILSA_ANSWER, DROWNED_DOOR, TIDE_PRICE, WIND_TAKES, SOUNDER, ROOSTER_DAWN, NINES_GARDEN, ALONE_UNBROKEN) + 8 death endings (thirst, hunger, injury, undertow, fever, grin, despair, dark) | Ending engine is parameterized — new endings = CORES entry (scenes-extra.js appends via TB.CORES) + convergence mapping. Still unbuilt from design/09: C2 Good Boy (needs companion-death event), X3 The Loop (NG+), J1/J2 jokes (need counters — fit the collectibles update), D9/D10 death causes, S7 What Remains (needs loss flags). |
+| 49 endings | **33 CORES endings** (RESCUE, STAY_OPEN, BROKER, HOME, VILLAGE, JOIN, KEEPER, COVENANT, TWO_WORLDS, SAIL_BLESSED, RYO_BOAT, LONG_SWIM, WHOLE_SKY, COCO, THREE_SPRINGS, LAST_PACK, TRICKSTER, ROSAS_RANSOM, OTHER_SIGNAL, FIRST_KAARI, + the Endings Expansion in ch7: REGRET, EMPTY_HORIZON, CARTOGRAPHER, REMAIN, HERMIT_HEIR, ILSA_ANSWER, DROWNED_DOOR, TIDE_PRICE, WIND_TAKES, SOUNDER, ROOSTER_DAWN, NINES_GARDEN, ALONE_UNBROKEN) + 8 death endings (thirst, hunger, injury, undertow, fever, grin, despair, dark) | Ending engine is parameterized — new endings = CORES entry (scenes-extra.js appends via TB.CORES) + convergence mapping. Now 37 cores: Phase-3 jokes (CRAB_TOWN, COCONUT_MOGUL), X3 The Loop (NG+), and S7 WHAT_REMAINS (via the Scars-Not-Graves peril arc — PERIL_HEALED/PERIL_SELFHEALED, not a death). Still unbuilt from design/09: D9/D10 death causes. C2 Good Boy is VETOED by the owner — companions never die; peril arcs are the sanctioned substitute. |
 | Trust 0–100, 5 tiers, per-companion | ✅ As designed (`s.trust`, `TB.tier()`), plus `s.edda` and `s.ryo` human-relationship tracks | Never shown as numbers; behavioral text only. |
 | Route points Signal/Roots/Depth | ✅ As designed (`s.route`) — steer Ch5 variant choice framing + Convergence options | |
 | Island Regard | **`TB.regard()`** — computed from ~8 mercy/restraint/bond flags rather than a running counter | Gates Inner Green admission (≥4) and the keeper covenant. |
@@ -64,17 +64,34 @@ Engine `_go` calls `TB.Almanac.note(sceneId)` for sightings + banks at
 ending/death; finds arrive via scenes-extra POOL events rev_glyphstone /
 rev_vanepage / rev_photofrag using reload-guarded `grantFor` (state.lastGrant).
 Overlay: 📔 menu button, 5 tabs, set-completion lore cards.) ·
-`map.js` (THE WAYFINDER: clickable SVG chart of Vessakai rendered INSIDE the
+`map.js` (THE WAYFINDER v2: clickable SVG chart of Vessakai rendered INSIDE the
 wayfinder scene's text (never overlaps buttons); 12 regions in `M.REGIONS`
 {x,y,disc(),first[],fx1,deck[{t,fx}]}, fog-of-war via disc(), caldera
-permanently locked ('It sends for them'); expeditions via `M.run(id)` —
+permanently locked ('It sends for them'); THE DOOR is the 🗺️ `#mapBtn` HUD
+button — live only from camp/camp2 (`.mapBtnNo` shake elsewhere), no hub-list
+entry; THE PICKER is the chart itself — region taps delegate through #textLog
+→ `M.run(id)` → `TB.go('act_result')`; wayfinder choices are Fold-only;
 `state.visits[region]` picks first-visit set-piece vs rotating deck, effects +
 collectible geography (stones: fringe/deepgreen/river/grotto, pages: station,
-frags: bay/bonebeach via Almanac.grantFor), s.out→act_result, tickSegment; hub
-action '🗺️ Chart an expedition' unshifted onto TB.ch3Actions (map.js loads LAST)
-+ direct entry in ch1 camp; chart taps delegate through #textLog to click the
-matching choice; generated art `art/bg-map.webp` layers over the painted SVG,
-degrading silently; chart paragraphs excluded from the backlog history) ·
+frags: bay/bonebeach via Almanac.grantFor), s.out→act_result, tickSegment;
+region-priority story mechanics ported OFF the chores list: deepgreen runs the
+glyph pushes (GLYPH1→2→3, original ch3 prose, then deck), mangrove runs the
+Grin scout (GRIN_SCOUTED), grove routes to the real `grove` scene once
+GROVE_OPENED; the ch3Actions chores list keeps only true camp utilities
+(Silverthread haul, crabs, tending); generated art `art/bg-map.webp` layers
+over the painted SVG, degrading silently; chart paragraphs excluded from the
+backlog history; in-panel CSS: `#mapSvg{aspect-ratio:440/320}`,
+`#panel:has(#mapWrap){max-height:88dvh}` + `#textLog{flex:0 0 auto}`) ·
+`scenes-peril.js` (SCARS, NOT GRAVES: `ev_peril` POOL event (w:4; gates
+companion && trust≥50 && ch3–5 && once per run) — the companion takes a real,
+species-specific hit (6 fully-written arcs in `PERIL`: boar charge, canopy
+fall, squall crash, gore-line, hawk defense, king-low stranding); sets
+`s.chInjured={day,tends}`, hope −6; a '🩹 Tend to X' ch3Actions decorator action
+runs 3 distinct tending stages (bond +4 each) → `peril_whole` (PERIL_HEALED,
+trust +10); untended, engine tickSegment quietly self-heals after 5 days
+(PERIL_SELFHEALED). NOBODY DIES — owner's explicit order ("too attached to
+Kavi"). Either scar flag + companion gates the 37th core WHAT_REMAINS at
+convergence: choosing to stay because you nearly lost this once) ·
 `scenes-prologue.js` · `scenes-chapter1..7.js`.
 Global namespace `window.TB`. Cache-bust query `?v=N` on every asset — bump on release.
 

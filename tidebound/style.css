@@ -235,11 +235,13 @@ body {
 .f-health { background: var(--c-health); } .f-hunger { background: var(--c-hunger); }
 .f-thirst { background: var(--c-thirst); } .f-energy { background: var(--c-energy); }
 .f-hope   { background: var(--c-hope); }
-#kitBtn, #almBtn, #sndBtn, #menuBtn {
+#kitBtn, #mapBtn, #almBtn, #sndBtn, #menuBtn {
   background: #ffffff1f; border: 1px solid #ffffff38; color: inherit;
   font-size: 16px; border-radius: 8px; padding: 3px 10px; cursor: pointer;
 }
-#kitBtn:hover, #almBtn:hover, #sndBtn:hover, #menuBtn:hover { background: #ffffff33; }
+#kitBtn:hover, #mapBtn:hover, #almBtn:hover, #sndBtn:hover, #menuBtn:hover { background: #ffffff33; }
+#mapBtn.mapBtnNo { animation: mapno .35s ease; }
+@keyframes mapno { 25% { transform: translateX(-3px); } 50% { transform: translateX(3px); } 75% { transform: translateX(-2px); } }
 
 /* ===== VN panel ===================================================== */
 #stage {
@@ -466,11 +468,12 @@ body {
     background: linear-gradient(#04101ae6, #04101a00); }
   .clock { order: 1; font-size: 12.5px; }
   #kitBtn { order: 2; margin-left: auto; }
-  #almBtn { order: 3; }
-  #sndBtn { order: 4; }
-  #menuBtn { order: 5; }
-  #kitBtn, #almBtn, #sndBtn, #menuBtn { font-size: 13px; padding: 2px 7px; }
-  .meters { order: 6; flex-basis: 100%; flex-wrap: nowrap; gap: 6px; }
+  #mapBtn { order: 3; }
+  #almBtn { order: 4; }
+  #sndBtn { order: 5; }
+  #menuBtn { order: 6; }
+  #kitBtn, #mapBtn, #almBtn, #sndBtn, #menuBtn { font-size: 13px; padding: 2px 6px; }
+  .meters { order: 7; flex-basis: 100%; flex-wrap: nowrap; gap: 6px; }
   .meter { flex: 1 1 0; min-width: 0; }
   .bar { width: auto; flex: 1 1 0; min-width: 0; }
   .mi { font-size: 11px; }
