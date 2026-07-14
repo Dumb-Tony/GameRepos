@@ -119,6 +119,7 @@
       $('mWfx').addEventListener('change', (e) => setSetting({ wfx: e.target.checked }));
       $('menuLog').addEventListener('click', () => { Menu.close(); showBacklog(); });
       $('menuAlm').addEventListener('click', () => { Menu.close(); if (TB.Almanac) TB.Almanac.open(); });
+      $('menuTour').addEventListener('click', () => { Menu.close(); if (TB.Tut) TB.Tut.start(true); });
       $('logClose').addEventListener('click', () => $('logOverlay').classList.add('hidden'));
       $('logOverlay').addEventListener('click', (e) => { if (e.target.id === 'logOverlay') e.target.classList.add('hidden'); });
       buildSwatches('mThemes', THEMES, 'theme');

@@ -593,3 +593,30 @@ body {
 .tkPaid { opacity: .6; font-size: .85em; }
 .tkLine { opacity: .78; font-size: .88em; line-height: 1.45; }
 .tkImg { width: 46px; height: 46px; border-radius: 9px; object-fit: cover; flex: 0 0 auto; border: 1px solid var(--divider); }
+
+/* ===== THE ISLAND TOUR (tutorial.js) ===== */
+#tutOverlay { position: fixed; inset: 0; z-index: 70; }
+#tutSpot {
+  position: absolute; border-radius: 12px; pointer-events: none;
+  box-shadow: 0 0 0 200vmax rgba(3, 10, 18, .78);
+  border: 2px solid rgba(255, 214, 92, .9);
+  transition: left .35s ease, top .35s ease, width .35s ease, height .35s ease;
+}
+#tutCard {
+  position: absolute; max-width: 340px; padding: 13px 16px 11px;
+  background: var(--panel-bg); border: 1px solid rgba(255, 214, 92, .5);
+  border-radius: 12px; box-shadow: 0 8px 30px rgba(0, 0, 0, .5);
+  color: var(--panel-text); font-family: Georgia, 'Times New Roman', serif;
+}
+#tutCard h3 { font-size: 15px; color: #ffd65c; letter-spacing: .5px; margin-bottom: 5px; font-family: system-ui, sans-serif; }
+#tutCard p { font-size: 14.5px; line-height: 1.5; }
+#tutCard p em { color: var(--panel-em); }
+#tutBtns { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; gap: 10px; }
+#tutDots { font: 12px system-ui, sans-serif; opacity: .6; }
+#tutBtns button {
+  font: 13px system-ui, sans-serif; padding: 5px 12px; margin-left: 8px; cursor: pointer;
+  background: var(--btn-bg-strong); color: var(--panel-text);
+  border: 1px solid var(--btn-border); border-radius: 8px;
+}
+#tutBtns #tutNext { border-color: rgba(255, 214, 92, .6); color: #ffd65c; }
+@media (max-width: 560px) { #tutCard { max-width: min(340px, calc(100vw - 24px)); } }
