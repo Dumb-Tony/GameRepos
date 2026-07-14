@@ -404,7 +404,7 @@
     $('choices').innerHTML = '';
     queue = (resolve(def.text, s) || ['…']).slice();
     showNextParagraph();
-    if (id !== 'title') TB.save(); // saving on the title screen would clobber a real run
+    if (id !== 'title' && id !== 'title_gallery' && id !== 'loops_menu') TB.save(); // saving on the title screens would clobber a real run
   };
 
   // ---- kit overlay ------------------------------------------------------
