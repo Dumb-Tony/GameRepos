@@ -397,7 +397,12 @@
       for (const t of owned) {
         const d = document.createElement('div');
         d.className = 'tkRow';
-        d.innerHTML = '<span class="tkIcon">' + t.e + '</span><span class="tkBody"><span class="tkName">' + t.name.replace(/^(a|an) /, (m) => m[0].toUpperCase() + m.slice(1)) + (s.flags['TPAID_' + t.id] ? ' <em class="tkPaid">· Edda knows it</em>' : '') + '</span><span class="tkLine">' + t.line + '</span></span>';
+        d.innerHTML = '<span class="tkBody"><span class="tkName">' + t.name.replace(/^(a|an) /, (m) => m[0].toUpperCase() + m.slice(1)) + (s.flags['TPAID_' + t.id] ? ' <em class="tkPaid">· Edda knows it</em>' : '') + '</span><span class="tkLine">' + t.line + '</span></span>';
+        // painted icon from art/, degrading to the emoji if absent
+        const img = document.createElement('img');
+        img.className = 'tkImg'; img.alt = ''; img.src = 'art/tk-' + t.id + '.webp';
+        img.onerror = function () { const e = document.createElement('span'); e.className = 'tkIcon'; e.textContent = t.e; img.replaceWith(e); };
+        d.insertBefore(img, d.firstChild);
         tk.appendChild(d);
       }
     }
