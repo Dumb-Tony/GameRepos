@@ -186,6 +186,7 @@
     }
     if (id === 'deepgreen' && s.chapter >= 3 && !TB.is('GLYPH3')) { runGlyphPush(s); return; }
     if (id === 'mangrove' && TB.is('GRIN_MET') && !TB.is('GRIN_SCOUTED') && !TB.is('CLEARING_DONE3')) { runGrinScout(s); return; }
+    if (id === 'grotto' && TB.is('GEMS') && !TB.is('GEMS_RETURNED') && s.chapter >= 4) { runGemsReturn(s); return; }
     TB.stat('energy', -9);
     s.visits = s.visits || {};
     const n = s.visits[id] || 0;
@@ -219,6 +220,18 @@
     else { TB.flag('GLYPH3'); lines.push('The third stone stands where the land begins to climb toward the broken mountain, and it is different: taller, uncut by weather, its spiral inlaid with something dark and glassy that holds your reflection wrong — a half-beat behind, you\'d swear, like an echo of you.', 'Below the spiral, one line of the old writing has been re-cut — <em>recently</em>. Within years, not centuries. The chisel marks are still bright.', 'Someone still reads these.'); }
     if (!s.companion && R() < 0.3 && !TB.is('BG_ENGINEER')) { TB.stat('energy', -6); lines.push('You lose the way back twice — the Green Deep folds behind you like water — and pay for the shortcut in hours and scratches.'); }
     s.out = { bg: 'jungle', text: lines };
+    TB.tickSegment();
+  }
+  function runGemsReturn(s) {
+    // the courier case's cut heartglass, carried back to the seam it was stolen from
+    TB.stat('energy', -8); TB.flag('GEMS_RETURNED'); TB.stat('hope', 6); TB.route('depth', 1);
+    s.visits = s.visits || {}; s.visits.grotto = (s.visits.grotto || 0) + 1;
+    s.out = { bg: 'gullet', text: [
+      'You take the lead-lined pouch behind the falls at the tide-clock\'s kindest hour, into the breathing dark where the island keeps its veins — twelve cut stones that were shipped out as samples fifty years ago and came home as <em>jewelry</em>.',
+      'There is a seam in the grotto\'s far wall where the heartglass runs living and uncut, bleeding its half-beat light. You wedge the stones into it one at a time, deep as your fingers can push, facet against raw vein — wrong shape meeting right place — and you say nothing, because what would you even say. Sorry somebody priced you?',
+      'On the twelfth stone the Hum changes. Not louder. <em>Rounder</em> — the way a room changes when the last person expected finally arrives and sits down. The seventh beat, when it comes, holds a half-breath longer than you\'ve ever heard it hold.',
+      'You walk out lighter by a pound of stolen light, into rain that feels, briefly and unaccountably, like applause.',
+    ] };
     TB.tickSegment();
   }
   function runGrinScout(s) {

@@ -78,6 +78,9 @@
       if (treasure && (TB.is('VESSEL_READY') || TB.is('CONTACT_MADE') || TB.is('TIDEWELL_SILENCE'))) c.push({
         t: '🪙 Leave RICH — the Rosa\'s gold, the cut stones, the whole ransom.', sub: 'The world out there prices everything. Arrive holding the prices.',
         do: () => { TB.state.endingId = 'ROSAS_RANSOM'; }, go: 'ending' });
+      if (TB.is('CASE_OPEN') && TB.is('COURIER_RESTED') && (TB.is('VESSEL_READY') || TB.is('CONTACT_MADE') || TB.is('TIDEWELL_SILENCE'))) c.push({
+        t: '📮 Leave as the courier — two deliveries, then done.', sub: 'The Last Delivery. The dossier to the deep; the photograph to a pier called KAI—.',
+        do: () => { TB.state.endingId = 'LAST_DELIVERY'; }, go: 'ending' });
       if (TB.is('OTHER_HEARD') && !TB.is('TIDEWELL_SILENCE')) c.push({
         t: '📻 Stay — and answer the nine-beat station. Keep the archipelago\'s watch.', sub: '"There are more of us than two."',
         do: () => { TB.state.endingId = 'OTHER_SIGNAL'; }, go: 'ending' });
@@ -322,9 +325,28 @@
     ];
   } };
 
+  // THE LAST DELIVERY: leave as the courier, not a castaway — finish
+  // both of his errands. body is a function (the gems' fate varies).
+  CORES.LAST_DELIVERY = { icon: '📮', title: 'THE LAST DELIVERY', bg: 'beach-dusk', body: (s) => {
+    const gems = TB.is('GEMS') && !TB.is('GEMS_RETURNED') && !TB.is('ROSAS_RANSOM');
+    const t = [
+      'You leave the way the courier arrived: with cargo, a manifest, and no interest whatsoever in the word <em>rescue</em>. Rescue is for castaways. You checked the Ledger this morning, and you are something else now — you are a man\'s unfinished errand, walking.',
+      'The dossier goes over the rail on the second night out, lashed around a ballast stone: Meridian\'s fifty-year hunt for Site 9, its satellite maps and shipping reports and its catalogued testimonies, sinking through four thousand meters of dark in about as many seconds. You memorized every page first. Know your enemy. Drown their maps.',
+    ];
+    if (TB.is('GEMS_RETURNED')) t.push('The stones you had already carried home yourself — back down the throat, back into the seam, weeks ago. Your hands were empty of them before you ever raised a sail, and the whole crossing you keep catching yourself flexing your fingers, feeling the lightness. Some cargo weighs the most after you put it down correctly.');
+    else if (gems) t.push('The gems ride with you as far as the first city with an honest harbor — where an envelope with no return address delivers eleven cut stones and forty photostatted pages of provenance to a marine-fraud investigator famous for ending exactly this kind of company. The twelfth stone you keep, dark and wrong and beautiful, as a reminder of what gets sold when nobody guards a seam. Some receipts you frame.');
+    t.push(
+      'The pier takes four months to find, because the name-board was never finished: <em>KAI—</em>, half-painted, exactly as the photograph promised, on a working waterfront in a town small enough to still know its own stories. You walk it at first light with the case in your hand, and your heart going like the seventh beat.',
+      'She is grey now. She knows what the case means the moment she sees it — cases like that only finish their journeys in someone else\'s grip — and she takes the photograph from you with both hands and sits down slowly on the harbor bench, and you tell her the whole of it: the nine years, the one aircraft the island would take, the last banking turn. That he was looking at the island, not the water. That he said <em>"There you are"</em> — glad, going home.',
+      'She looks at the horizon for a long time. "Then it kept him," she says at last. "It always kept him. I only ever had the loan." And then, with the photograph flat against her sternum like something returned to a socket: "Thank you for carrying the last mile."',
+      'In your sea-bag, wrapped in oilskin, rides the courier\'s old chart of Vessakai — yours now, by every law of salvage and errand. You are not a castaway who escaped. You are a courier between two worlds, and the island reads manifests. Couriers, the old annotations suggest, get let back.'
+    );
+    return t;
+  } };
+
   function epilogue(s, id) {
     const t = [];
-    const leaving = id === 'RESCUE' || id === 'SAIL_BLESSED' || id === 'RYO_BOAT' || id === 'LONG_SWIM' || id === 'ROSAS_RANSOM' || id === 'REGRET' || id === 'EMPTY_HORIZON' || id === 'CARTOGRAPHER' || id === 'COCONUT_MOGUL';
+    const leaving = id === 'RESCUE' || id === 'SAIL_BLESSED' || id === 'RYO_BOAT' || id === 'LONG_SWIM' || id === 'ROSAS_RANSOM' || id === 'REGRET' || id === 'EMPTY_HORIZON' || id === 'CARTOGRAPHER' || id === 'COCONUT_MOGUL' || id === 'LAST_DELIVERY';
     const companionCovered = id === 'THREE_SPRINGS' || id === 'LAST_PACK' || id === 'TRICKSTER' || id === 'WIND_TAKES' || id === 'SOUNDER' || id === 'ROOSTER_DAWN' || id === 'NINES_GARDEN' || id === 'ISLANDS_OWN'; // their cores ARE the companion's fate
     if (id === 'ISLANDS_OWN' && TB.is('EDDA_MET')) t.push('— Edda hears it before you finish saying it — she always hears it — and sets down the pestle and looks at you for a long, still moment. "Forty years," she says at last, "I wondered what that pool was holding the post open <em>for</em>. It was never waiting for a better human." A snort, at herself, at everything. "It was waiting for you to introduce them." She takes tea up the mountain every new moon after. She is, every time, received.');
     if (id === 'TIDE_PRICE') {
@@ -356,6 +378,8 @@
     if (TB.is('TREASURE_LEFT')) t.push('— The Rosa Dourada keeps her gold and her crew, undisturbed. You never once regretted the empty hands; the knowing where it sleeps turned out to be the whole treasure.');
     else if ((TB.is('TREASURE_SOME') || TB.is('TREASURE_ALL')) && id !== 'ROSAS_RANSOM' && !leaving) t.push('— A dead ship\'s gold sits in a jar on your shelf, funding nothing, meaning everything: proof that on this island you finally learned the difference between what glitters and what keeps.');
     if (TB.is('OTHER_HEARD') && id !== 'OTHER_SIGNAL' && !leaving) t.push('— And some nights, at the radio, in the skips: the nine-beat station, keeping her vigil across the hidden world. You are two lighthouses who know each other\'s light.');
+    if (TB.is('COURIER_RESTED') && !leaving) t.push('— The courier\'s cairn keeps the point above the bay, facing the water he crossed nine years to recross. You read the whole photograph to the sea the day you built it, so somebody on this side of the horizon would have heard the story out loud once. The tide leaves things at its foot sometimes — shells, glass, once a perfect white feather — and you have stopped pretending that\'s coincidence.');
+    if (TB.is('GEMS_RETURNED') && id !== 'LAST_DELIVERY') t.push('— And under the mountain, twelve cut stones sleep back in the seam they were stolen from. The Hum never says thank you. But it holds the seventh beat a shade longer over the bay, some nights, and you have decided to hear that however you need to.');
     // quest afterglow
     if (TB.is('Q_KAVI_DONE')) t.push('— On the singing ridge, on the highest stone, a brass collar weathers in the wind: BOSUN, 1887, found and carried home. The pack sings over it on clear nights. First of the line, last debt paid.');
     if (TB.is('HATCHLING') && !leaving && id !== 'WIND_TAKES') t.push('— The gargoyle from the high nest grows into an eagle the cliffs will talk about for thirty years — huge, loud, and convinced to the end of its days that your shoulder is furniture. Vela pretends not to be proud. Vela is entirely proud.');
@@ -371,6 +395,8 @@
     if (s.companion !== 'nine') roads.push('something in the tide pools watched a castaway who never looked twice');
     if (!TB.is('E_WING_OPEN') && TB.is('STATION_OPENED')) roads.push('a steel door in the east kept its room');
     if (TB.has('case') && !TB.is('CASE_OPEN')) roads.push('a locked courier\'s case kept its answer to the end');
+    if (TB.is('CASE_OPEN') && !TB.is('COURIER_RESTED')) roads.push('a courier\'s story ended without a stone to hold it');
+    if (TB.is('GEMS') && !TB.is('GEMS_RETURNED') && !TB.is('ROSAS_RANSOM')) roads.push('twelve cut stones stayed on the wrong side of the mountain');
     if (TB.is('CHART_ROSA') && !TB.is('ROSA_DONE')) roads.push('a marked wreck on the north reef kept two centuries of gold');
     if (TB.is('LISTEN1') && !TB.is('OTHER_HEARD')) roads.push('something under the static waited for a second vigil that never came');
     if (!TB.is('INNER_GREEN')) roads.push('a hidden town fed its fires unvisited');
