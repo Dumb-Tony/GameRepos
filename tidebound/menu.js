@@ -60,6 +60,7 @@
     const s = TB.Audio.settings();
     $('mVol').value = s.vol; $('mBright').value = s.bright; $('mText').value = s.tsize || 100;
     $('mAmb').checked = !!s.amb; $('mSfx').checked = !!s.sfx; $('mMus').checked = !!s.music; $('mType').checked = !!s.type;
+    if ($('mRec')) $('mRec').checked = s.rec !== false;
     $('mWfx').checked = ('wfx' in s) ? !!s.wfx : (TB.FX ? TB.FX.enabled() : true);
     document.querySelectorAll('#mThemes .mSwatch').forEach((b) => b.classList.toggle('sel', b.dataset.pick === s.theme));
     document.querySelectorAll('#mBars .mSwatch').forEach((b) => b.classList.toggle('sel', b.dataset.pick === s.bars));
@@ -117,6 +118,7 @@
       $('mText').addEventListener('input', (e) => setSetting({ tsize: +e.target.value }));
       $('mType').addEventListener('change', (e) => setSetting({ type: e.target.checked }));
       $('mWfx').addEventListener('change', (e) => setSetting({ wfx: e.target.checked }));
+      if ($('mRec')) $('mRec').addEventListener('change', (e) => setSetting({ rec: e.target.checked }));
       $('menuLog').addEventListener('click', () => { Menu.close(); showBacklog(); });
       $('menuAlm').addEventListener('click', () => { Menu.close(); if (TB.Almanac) TB.Almanac.open(); });
       $('menuTour').addEventListener('click', () => { Menu.close(); if (TB.Tut) TB.Tut.start(true); });
