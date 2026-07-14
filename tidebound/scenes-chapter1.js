@@ -64,10 +64,6 @@
           TB.tickSegment(); },
         go: 'act_result',
       });
-      if (TB.SCENES.wayfinder) c.push({
-        t: '🗺️ Chart an expedition', sub: 'Spread the Wayfinder and pick a region. The island is bigger than the camp.',
-        go: 'wayfinder',
-      });
       c.push({
         t: '🌿 Forage the treeline', sub: 'Fruit, crabs, grubs if you\'re honest with yourself. Energy −, food +.',
         do: () => {

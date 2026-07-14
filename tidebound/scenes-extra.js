@@ -259,6 +259,8 @@
     { id: 'rev_meteor', w: 0.5, rare: true, when: (s) => s.chapter >= 2 && s.seg === 2 },
     // the fever-dream cycle (scenes-milestones.js): sickness finally pays lore
     { id: 'ev_feverdream', w: 14, when: (s) => s.disease === 'fever' && !TB.is('FEVERDREAM3') && !!TB.SCENES.ev_feverdream },
+    // scars, not graves (scenes-peril.js): the near-miss, once per run
+    { id: 'ev_peril', w: 4, when: (s) => !!s.companion && s.trust >= 50 && s.chapter >= 3 && s.chapter <= 5 && !TB.is('PERIL_DONE') && !s.chInjured && !!TB.SCENES.ev_peril },
     // ---- side-quest hooks (Phase 3) ----
     { id: 'rev_blackbox', w: 0.8, rare: true, when: (s) => s.chapter >= 3 && !TB.is('BLACKBOX2') },
     { id: 'rev_starfall', w: 0.9, rare: true, when: (s) => TB.is('METEOR_WISH') && s.chapter >= 3 },

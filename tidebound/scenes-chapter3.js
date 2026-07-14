@@ -121,10 +121,7 @@
   TB.ch3Actions = function (s) {
     if (s.chapter < 3) return [];
     const c = [];
-    if (TB.is('GROVE_OPENED')) c.push({
-      t: '👵 Trek up to Edda\'s grove', sub: 'Half a day of mountain path. Food, knowledge, and the company she claims not to offer.',
-      do: () => { TB.stat('energy', -6); TB.tickSegment(); }, go: 'grove',
-    });
+    // (the grove trek lives on the Wayfinder chart now — map.js routes it to this file's 'grove' scene)
     if (TB.is('RIVER_KNOWN')) c.push({
       t: '🏞️ Haul water from the Silverthread', sub: 'Cold, clean, and endless. The island\'s artery is yours now.',
       do: () => { const s2 = TB.state; TB.stat('thirst', 40); TB.stat('energy', s2.site === 'overhang' ? -10 : -6); TB.stat('health', 2);
@@ -136,26 +133,7 @@
         TB.flag('CLAY'); TB.tickSegment(); },
       go: 'act_result',
     });
-    c.push({
-      t: '🌴 Push into the Green Deep', sub: 'The true jungle: hardwoods, ruins, and things half-buried in green.',
-      do: () => { const s2 = TB.state; TB.stat('energy', s2.companion === 'kavi' ? -8 : -12); TB.route('depth', 1);
-        const g = TB.is('GLYPH2') ? 3 : TB.is('GLYPH1') ? 2 : 1;
-        const lines = [];
-        if (g === 1) { TB.flag('GLYPH1'); lines.push('Hours in, in the green cathedral dark where the canopy closes like water overhead, you find it: a standing stone the height of your chest, moss-shouldered, carved past weathering with a deep-cut <em>spiral</em> — and around the spiral, rows of smaller marks that are unmistakably, impossibly, <em>writing</em>.', 'People made this. Long-ago people, unhurried people, people with time to carve. You put your palm flat on the spiral' + (s2.companion === 'nine' ? ' — the same spiral Nine traced in the sand, and the jungle goes very quiet while you fail to explain that to yourself' : '') + ', and the stone is warm past what the shade should allow.'); }
-        else if (g === 2) { TB.flag('GLYPH2'); lines.push('You find the second stone by learning to look: a fallen one this time, half-swallowed, its spiral fern-split but legible. And past it — your breath goes — a <em>terrace wall</em>, dry-laid stone running dead level through the chaos of roots for fifty yards before the jungle takes it back.', 'Fields. These were fields. Someone farmed this island — cleared it, walled it, worked it — long enough ago that hundred-foot trees now stand in the furrows. Where did they go?'); }
-        else { TB.flag('GLYPH3'); lines.push('The third stone stands where the land begins to climb toward the broken mountain, and it is different: taller, uncut by weather, its spiral inlaid with something dark and glassy that holds your reflection wrong — a half-beat behind, you\'d swear, like an echo of you.', 'Below the spiral, one line of the old writing has been re-cut — <em>recently</em>. Within years, not centuries. The chisel marks are still bright.', 'Someone still reads these.'); }
-        if (!s2.companion && R() < 0.3 && !TB.is('BG_ENGINEER')) { TB.stat('energy', -6); lines.push('You lose the way back twice — the Green Deep folds behind you like water — and pay for the shortcut in hours and scratches.'); }
-        s2.out = { bg: 'jungle', text: lines };
-        TB.tickSegment(); },
-      go: 'act_result',
-    });
-    if (TB.is('GRIN_MET') && !TB.is('CLEARING_DONE3')) c.push({
-      t: '🐊 Scout the mangrove edge', sub: 'Learn the landlord\'s habits from a respectful distance.',
-      do: () => { const s2 = TB.state; TB.stat('energy', -8); TB.flag('GRIN_SCOUTED'); TB.route('depth', 1);
-        s2.out = { bg: 'mangrove', text: ['You spend the hours on high roots with a sightline and an exit, watching the East Passage\'s landlord run his estate. He has habits: the deep channel at the ford is his larder; the mud bar is his throne between the tide\'s offices; and at first light, cold-blooded and logy, he hauls out and does not care to work.', 'Knowledge with teeth in it. A crossing exists inside what you now know — for someone punctual, quiet, and lucky.'] };
-        TB.tickSegment(); },
-      go: 'act_result',
-    });
+    // (the Green Deep push and mangrove scout now live on the Wayfinder chart — map.js)
     if (s.disease === 'fever' && TB.is('BG_MEDIC') && (s.inv.medkit || 0) >= 2) c.push({
       t: '🩺 Burn the fever out yourself', sub: 'Antipyretics, fluids, and a medic\'s discipline. Costs two kit uses.',
       do: () => { const s2 = TB.state; TB.item('medkit', -2); s2.disease = null; TB.stat('health', -5); TB.stat('hope', 4);

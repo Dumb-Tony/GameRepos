@@ -1,9 +1,11 @@
 /* =====================================================================
  * map.js — THE WAYFINDER. A clickable chart of Vessakai as the
- * exploration hub. The '🗺️ Chart an expedition' camp action opens the
- * `wayfinder` scene: its choices are the discovered regions (so the
- * game stays fully playable as text), and the painted SVG chart floats
- * above, synced — clicking a region on the map clicks its choice.
+ * exploration hub. The 🗺️ HUD button (live from any camp hub) opens
+ * the `wayfinder` scene; the chart IS the picker — tapping a charted
+ * region mounts the expedition directly. The old hub scout actions
+ * (Green Deep glyph pushes, the mangrove Grin scout, the grove trek)
+ * live here now as region-priority behaviors, so the chores list
+ * stays camp-specific.
  * Fog of war: regions render as dark silhouettes with '?' until
  * discovered (by chapter, flags, or NG+ carried knowledge).
  * Each region holds a first-visit set-piece and a rotating deck of
@@ -173,10 +175,17 @@
   const discovered = (id, s) => { try { return REGIONS[id].disc(s); } catch (e) { return false; } };
   const explorable = (id, s) => id !== 'caldera' && discovered(id, s);
 
-  // ---- run an expedition (called from the wayfinder choices) ---------------------
+  // ---- run an expedition (from chart taps; the map IS the picker) ----------------
   M.run = function (id) {
     const s = TB.state, Rg = REGIONS[id];
     if (!Rg || Rg.locked) return;
+    try { if (TB.Audio && TB.Audio.motif) TB.Audio.motif(id); } catch (e) {} // the region's signature phrase
+    // regions with story mechanics take priority over the sightseeing decks
+    if (id === 'grove' && TB.is('GROVE_OPENED')) { // the real grove scene (tea, Edda, incidents)
+      TB.stat('energy', -6); TB.tickSegment(); TB.go('grove'); return;
+    }
+    if (id === 'deepgreen' && s.chapter >= 3 && !TB.is('GLYPH3')) { runGlyphPush(s); return; }
+    if (id === 'mangrove' && TB.is('GRIN_MET') && !TB.is('GRIN_SCOUTED') && !TB.is('CLEARING_DONE3')) { runGrinScout(s); return; }
     TB.stat('energy', -9);
     s.visits = s.visits || {};
     const n = s.visits[id] || 0;
@@ -199,33 +208,50 @@
     TB.tickSegment();
   };
 
+  // ported from the old ch3 hub actions — the map is their home now
+  function runGlyphPush(s) {
+    TB.stat('energy', s.companion === 'kavi' ? -8 : -12); TB.route('depth', 1);
+    s.visits = s.visits || {}; s.visits.deepgreen = (s.visits.deepgreen || 0) + 1;
+    const g = TB.is('GLYPH2') ? 3 : TB.is('GLYPH1') ? 2 : 1;
+    const lines = [];
+    if (g === 1) { TB.flag('GLYPH1'); lines.push('Hours in, in the green cathedral dark where the canopy closes like water overhead, you find it: a standing stone the height of your chest, moss-shouldered, carved past weathering with a deep-cut <em>spiral</em> — and around the spiral, rows of smaller marks that are unmistakably, impossibly, <em>writing</em>.', 'People made this. Long-ago people, unhurried people, people with time to carve. You put your palm flat on the spiral' + (s.companion === 'nine' ? ' — the same spiral Nine traced in the sand, and the jungle goes very quiet while you fail to explain that to yourself' : '') + ', and the stone is warm past what the shade should allow.'); }
+    else if (g === 2) { TB.flag('GLYPH2'); lines.push('You find the second stone by learning to look: a fallen one this time, half-swallowed, its spiral fern-split but legible. And past it — your breath goes — a <em>terrace wall</em>, dry-laid stone running dead level through the chaos of roots for fifty yards before the jungle takes it back.', 'Fields. These were fields. Someone farmed this island — cleared it, walled it, worked it — long enough ago that hundred-foot trees now stand in the furrows. Where did they go?'); }
+    else { TB.flag('GLYPH3'); lines.push('The third stone stands where the land begins to climb toward the broken mountain, and it is different: taller, uncut by weather, its spiral inlaid with something dark and glassy that holds your reflection wrong — a half-beat behind, you\'d swear, like an echo of you.', 'Below the spiral, one line of the old writing has been re-cut — <em>recently</em>. Within years, not centuries. The chisel marks are still bright.', 'Someone still reads these.'); }
+    if (!s.companion && R() < 0.3 && !TB.is('BG_ENGINEER')) { TB.stat('energy', -6); lines.push('You lose the way back twice — the Green Deep folds behind you like water — and pay for the shortcut in hours and scratches.'); }
+    s.out = { bg: 'jungle', text: lines };
+    TB.tickSegment();
+  }
+  function runGrinScout(s) {
+    TB.stat('energy', -8); TB.flag('GRIN_SCOUTED'); TB.route('depth', 1);
+    s.visits = s.visits || {}; s.visits.mangrove = (s.visits.mangrove || 0) + 1;
+    s.out = { bg: 'mangrove', text: ['You spend the hours on high roots with a sightline and an exit, watching the East Passage\'s landlord run his estate. He has habits: the deep channel at the ford is his larder; the mud bar is his throne between the tide\'s offices; and at first light, cold-blooded and logy, he hauls out and does not care to work.', 'Knowledge with teeth in it. A crossing exists inside what you now know — for someone punctual, quiet, and lucky.'] };
+    TB.tickSegment();
+  }
+
   // ---- the wayfinder scene (the chart renders INSIDE the panel) ----------------------
   TB.scene('wayfinder', {
     bg: (s) => (s.site === 'fringe' ? 'camp-fringe' : s.site === 'overhang' ? 'cliff-camp' : 'beach-day'),
     text: (s) => {
       const found = Object.keys(REGIONS).filter((id) => explorable(id, s)).length;
       const total = Object.keys(REGIONS).length - 1; // the Crown charts itself, on its own terms
-      return ['<em>🗺️ THE WAYFINDER</em> — You spread the working chart, sailcloth and charcoal and a hundred days\' worth of hard-won ink, and weight its corners against the wind. ' + found + ' of ' + total + ' regions charted; the rest of the island waits in outline. An expedition spends this part of the day — where does it go?',
-        '<span id="mapWrap">' + svg(s) + '<span id="mapHint">Tap a charted region — or choose below. The silhouettes are still out there.</span></span>'];
+      return ['<em>🗺️ THE WAYFINDER</em> — You spread the working chart, sailcloth and charcoal and a hundred days\' worth of hard-won ink, and weight its corners against the wind. ' + found + ' of ' + total + ' regions charted; the rest of the island waits in outline. An expedition spends this part of the day — <em>tap where it goes.</em>',
+        '<span id="mapWrap">' + svg(s) + '<span id="mapHint">Tap a charted region to set out. The silhouettes are still out there.</span></span>'];
     },
-    choices: (s) => {
-      const c = Object.keys(REGIONS).filter((id) => explorable(id, s)).map((id) => {
-        const Rg = REGIONS[id], n = (s.visits || {})[id] || 0;
-        return { t: Rg.e + ' ' + Rg.name + (n ? '' : ' — unexplored'), sub: Rg.sub + (n ? ' (' + n + (n === 1 ? ' visit' : ' visits') + ')' : ''),
-          do: () => M.run(id), go: 'act_result' };
-      });
-      c.push({ t: '↩️ Fold the chart', sub: 'The day\'s other work is waiting.', do: () => M.hide(), go: (s2) => (TB.state.chapter >= 2 ? 'camp2' : 'camp') });
-      return c;
-    },
+    choices: (s) => [
+      { t: '↩️ Fold the chart', sub: 'The day\'s other work is waiting.', do: () => M.hide(), go: (s2) => (TB.state.chapter >= 2 ? 'camp2' : 'camp') },
+    ],
   });
 
-  // hub action, appended to the shared decorator chain (loads after all scene files)
-  const prevActs = TB.ch3Actions;
-  TB.ch3Actions = function (s) {
-    const c = prevActs ? prevActs(s) : [];
-    c.unshift({ t: '🗺️ Chart an expedition', sub: 'Spread the Wayfinder and pick a region. The island is bigger than the camp.', do: () => {}, go: 'wayfinder' });
-    return c;
-  };
+  // the 🗺️ HUD button is the door — live from any camp hub
+  const HUBS = { camp: 1, camp2: 1 };
+  const mapBtn = $('mapBtn');
+  if (mapBtn) mapBtn.addEventListener('click', () => {
+    const sc = TB.state && TB.state.scene;
+    if (sc === 'wayfinder') return;
+    if (HUBS[sc]) { TB.go('wayfinder'); return; }
+    mapBtn.classList.add('mapBtnNo');
+    setTimeout(() => mapBtn.classList.remove('mapBtnNo'), 400);
+  });
 
   // ---- the chart itself (SVG overlay, synced to the scene's choices) ------------------
   function svg(s) {
@@ -269,9 +295,9 @@
     const hint = $('mapHint');
     if (id === 'caldera') { if (hint) hint.textContent = 'The Broken Crown does not receive visitors. It sends for them.'; return; }
     if (!discovered(id, TB.state)) { if (hint) hint.textContent = 'Uncharted. The island will introduce you when you\'ve earned the introduction.'; return; }
-    for (let i = 0; i < 8 && !document.querySelector('#choices button'); i++) $('panel').click();
-    const btn = [...document.querySelectorAll('#choices button')].find((b) => b.textContent.includes(REGIONS[id].name));
-    if (btn) btn.click();
+    if (TB.state.scene !== 'wayfinder') return;
+    M.run(id); // sets s.out (or routes itself) and spends the segment…
+    if (TB.state.scene === 'wayfinder') TB.go('act_result'); // …then the result plays
   });
   M.hide = function () {}; // the chart lives in the scene text now; nothing to hide
 })(window);

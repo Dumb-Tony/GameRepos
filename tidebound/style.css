@@ -235,11 +235,13 @@ body {
 .f-health { background: var(--c-health); } .f-hunger { background: var(--c-hunger); }
 .f-thirst { background: var(--c-thirst); } .f-energy { background: var(--c-energy); }
 .f-hope   { background: var(--c-hope); }
-#kitBtn, #almBtn, #sndBtn, #menuBtn {
+#kitBtn, #mapBtn, #almBtn, #sndBtn, #menuBtn {
   background: #ffffff1f; border: 1px solid #ffffff38; color: inherit;
   font-size: 16px; border-radius: 8px; padding: 3px 10px; cursor: pointer;
 }
-#kitBtn:hover, #almBtn:hover, #sndBtn:hover, #menuBtn:hover { background: #ffffff33; }
+#kitBtn:hover, #mapBtn:hover, #almBtn:hover, #sndBtn:hover, #menuBtn:hover { background: #ffffff33; }
+#mapBtn.mapBtnNo { animation: mapno .35s ease; }
+@keyframes mapno { 25% { transform: translateX(-3px); } 50% { transform: translateX(3px); } 75% { transform: translateX(-2px); } }
 
 /* ===== VN panel ===================================================== */
 #stage {
@@ -466,11 +468,12 @@ body {
     background: linear-gradient(#04101ae6, #04101a00); }
   .clock { order: 1; font-size: 12.5px; }
   #kitBtn { order: 2; margin-left: auto; }
-  #almBtn { order: 3; }
-  #sndBtn { order: 4; }
-  #menuBtn { order: 5; }
-  #kitBtn, #almBtn, #sndBtn, #menuBtn { font-size: 13px; padding: 2px 7px; }
-  .meters { order: 6; flex-basis: 100%; flex-wrap: nowrap; gap: 6px; }
+  #mapBtn { order: 3; }
+  #almBtn { order: 4; }
+  #sndBtn { order: 5; }
+  #menuBtn { order: 6; }
+  #kitBtn, #mapBtn, #almBtn, #sndBtn, #menuBtn { font-size: 13px; padding: 2px 6px; }
+  .meters { order: 7; flex-basis: 100%; flex-wrap: nowrap; gap: 6px; }
   .meter { flex: 1 1 0; min-width: 0; }
   .bar { width: auto; flex: 1 1 0; min-width: 0; }
   .mi { font-size: 11px; }
@@ -495,3 +498,87 @@ body {
   #panel:has(#choices button):has(#mapWrap) #textLog,
   #panel:has(#mapWrap) #textLog { max-height: none; flex: 0 0 auto; }
 }
+
+/* ===== VISIBLE WEATHER (fx.js) — a pointer-transparent layer in #backdrop ===== */
+#fx { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+/* storm light: the whole scene dims under rain */
+#fx::before {
+  content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity 2.5s;
+  background: linear-gradient(rgba(52, 66, 88, .42), rgba(36, 46, 66, .32));
+}
+#fx.fxRainOn::before { opacity: 1; }
+#fxRain, #fxRain2 { position: absolute; inset: -30% -10% 0; opacity: 0; transition: opacity 2.5s; }
+#fxRain {
+  background-image: repeating-linear-gradient(78deg, transparent 0 7px, rgba(195, 220, 240, .28) 7px 8px, transparent 8px 15px);
+  background-size: 220px 340px; animation: fxFall .55s linear infinite;
+}
+#fxRain2 {
+  background-image: repeating-linear-gradient(76deg, transparent 0 12px, rgba(205, 230, 250, .16) 12px 13px, transparent 13px 26px);
+  background-size: 300px 520px; animation: fxFall2 .85s linear infinite;
+}
+#fx.fxRainOn #fxRain { opacity: .75; }
+#fx.fxRainOn #fxRain2 { opacity: .6; }
+@keyframes fxFall  { from { background-position: 0 0; } to { background-position: -70px 340px; } }
+@keyframes fxFall2 { from { background-position: 0 0; } to { background-position: -100px 520px; } }
+
+#fxBolt {
+  position: absolute; inset: 0; opacity: 0;
+  background: radial-gradient(ellipse at 62% -10%, rgba(255, 255, 255, .95), rgba(190, 205, 255, .35) 40%, rgba(120, 140, 200, .12) 62%, transparent 78%);
+}
+#fxBolt.flash { animation: fxFlash .8s ease-out; }
+@keyframes fxFlash {
+  0% { opacity: 0; } 5% { opacity: .9; } 11% { opacity: .12; }
+  17% { opacity: .6; } 30% { opacity: .08; } 42% { opacity: 0; } 100% { opacity: 0; }
+}
+
+#fxFlies { position: absolute; inset: 0; opacity: 0; transition: opacity 2s; }
+#fx.fxFliesOn #fxFlies { opacity: 1; }
+.fxFly {
+  position: absolute; width: 4px; height: 4px; border-radius: 50%;
+  background: #e4ffb0; box-shadow: 0 0 7px 2px rgba(198, 244, 140, .75);
+  opacity: 0; animation-name: fxFly; animation-timing-function: ease-in-out; animation-iteration-count: infinite;
+}
+@keyframes fxFly {
+  0%   { transform: translate(0, 0); opacity: 0; }
+  12%  { opacity: .95; }
+  35%  { opacity: .25; }
+  55%  { transform: translate(var(--dx), var(--dy)); opacity: .85; }
+  78%  { opacity: .15; }
+  100% { transform: translate(calc(var(--dx) * 1.6), calc(var(--dy) * .4)); opacity: 0; }
+}
+
+/* the lagoon's seven-beat glow: 7 pulses on the hum's 0.62s step, then the rest */
+#fxGlow {
+  position: absolute; left: 50%; bottom: 4%; width: 130%; height: 46%;
+  transform: translateX(-50%); border-radius: 50%; opacity: 0; transition: opacity 2.5s;
+  background: radial-gradient(ellipse at center, rgba(64, 224, 208, .34), rgba(64, 200, 208, .12) 45%, transparent 70%);
+  mix-blend-mode: screen;
+}
+#fx.fxGlowOn #fxGlow { opacity: 1; animation: fxHum 6.74s linear infinite; }
+#fx.fxGlowDeep #fxGlow {
+  bottom: 16%; height: 62%;
+  background: radial-gradient(ellipse at center, rgba(94, 180, 255, .30), rgba(80, 150, 230, .10) 45%, transparent 70%);
+}
+@keyframes fxHum {
+  0% { opacity: .2; } 2% { opacity: .55; } 6.5% { opacity: .2; }
+  9.2% { opacity: .2; } 11.2% { opacity: .55; } 15.7% { opacity: .2; }
+  18.4% { opacity: .2; } 20.4% { opacity: .55; } 24.9% { opacity: .2; }
+  27.6% { opacity: .2; } 29.6% { opacity: .55; } 34.1% { opacity: .2; }
+  36.8% { opacity: .2; } 38.8% { opacity: .55; } 43.3% { opacity: .2; }
+  46% { opacity: .2; } 48% { opacity: .55; } 52.5% { opacity: .2; }
+  55.2% { opacity: .2; } 57.2% { opacity: .55; } 61.7% { opacity: .2; }
+  66% { opacity: .14; } 100% { opacity: .14; }
+}
+
+/* ===== TROPHY TOAST (trophies.js) ===== */
+#trophyToast {
+  position: fixed; top: 52px; left: 50%; transform: translate(-50%, -18px);
+  display: flex; align-items: center; gap: 10px; padding: 8px 16px;
+  background: var(--panel-bg, rgba(12, 24, 34, .92)); border: 1px solid rgba(255, 214, 92, .55);
+  border-radius: 999px; box-shadow: 0 6px 24px rgba(0, 0, 0, .45);
+  font-family: system-ui, sans-serif; z-index: 60; opacity: 0; pointer-events: none;
+  transition: opacity .45s, transform .45s;
+}
+#trophyToast.show { opacity: 1; transform: translate(-50%, 0); }
+#trophyToast .ttTag { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #ffd65c; }
+#trophyToast .ttName { font-size: 14.5px; color: var(--ink, #eef6f9); }

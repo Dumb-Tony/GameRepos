@@ -162,7 +162,7 @@
   };
 
   // ---- the overlay ------------------------------------------------------------
-  const TABS = [['species', '🐾 Species'], ['stones', '🗿 Stones'], ['pages', '📄 Pages'], ['recipes', '🍲 Recipes'], ['photo', '🖼️ The Photograph']];
+  const TABS = [['species', '🐾 Species'], ['stones', '🗿 Stones'], ['pages', '📄 Pages'], ['recipes', '🍲 Recipes'], ['photo', '🖼️ The Photograph'], ['trophies', '🏆 Trophies']];
   let curTab = 'species';
 
   function entryRow(icon, title, text, dim) {
@@ -203,9 +203,18 @@
     else if (curTab === 'recipes') setTab(RECIPES, c.recipes, c.recipesTotal, '<em>Edda\'s kitchen, entire.</em> Six recipes and the seventh no card can hold: someone to cook them for.');
     else if (curTab === 'photo') {
       setTab(FRAGS, c.frags, c.fragsTotal, '<em>The photograph, whole.</em> A woman on a pier called KAI—something, nine monsoons ago, laughing at a broad-shouldered man with a case chained to his wrist. He had been here. He spent nine years finding his way back to her promise. And when the island rose off the bow at last, he looked at it — not the water, the ISLAND — and said: <em>"There you are."</em> You carry the photograph now. Whatever you do with the rest of your days here — someone was coming home.');
+    } else if (curTab === 'trophies' && TB.Trophies) {
+      const got = TB.Trophies.data().got;
+      for (const t of TB.Trophies.LIST) {
+        const e = document.createElement('span'); e.className = 'almEmoji'; e.textContent = got[t.id] ? t.e : '❔';
+        body.appendChild(entryRow(e, got[t.id] ? t.name : '— unearned —', got[t.id] ? t.sub : t.hint, !got[t.id]));
+      }
+      const tc = TB.Trophies.counts();
+      if (tc.got === tc.total) { const done = document.createElement('div'); done.className = 'almDone'; done.innerHTML = '<em>The shelf, full.</em> Twenty-six ways of paying attention, all paid. The island has no more medals to hand you — only mornings.'; body.appendChild(done); }
     }
     // header counts
-    $('almCounts').textContent = 'Species ' + c.species + '/' + c.speciesTotal + ' · Stones ' + c.stones + '/' + c.stonesTotal + ' · Pages ' + c.pages + '/' + c.pagesTotal + ' · Recipes ' + c.recipes + '/' + c.recipesTotal + ' · Photograph ' + c.frags + '/' + c.fragsTotal;
+    const tCounts = TB.Trophies ? ' · Trophies ' + TB.Trophies.counts().got + '/' + TB.Trophies.counts().total : '';
+    $('almCounts').textContent = 'Species ' + c.species + '/' + c.speciesTotal + ' · Stones ' + c.stones + '/' + c.stonesTotal + ' · Pages ' + c.pages + '/' + c.pagesTotal + ' · Recipes ' + c.recipes + '/' + c.recipesTotal + ' · Photograph ' + c.frags + '/' + c.fragsTotal + tCounts;
     for (const b of document.querySelectorAll('#almTabs button')) b.classList.toggle('sel', b.dataset.tab === curTab);
   }
 

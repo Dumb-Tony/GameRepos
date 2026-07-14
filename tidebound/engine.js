@@ -95,6 +95,8 @@
     if (s.stats.hunger === 0) s.stats.health = TB.clamp(s.stats.health - 8 * k, 0, 100);
     if (s.stats.thirst === 0) s.stats.health = TB.clamp(s.stats.health - 12 * k, 0, 100);
     if (s.injury) s.stats.health = TB.clamp(s.stats.health - 2, 0, 100);
+    // an untended companion heals on the wild's own schedule — nobody dies
+    if (s.chInjured && s.day - s.chInjured.day >= 5) { s.chInjured = null; s.flags.PERIL_SELFHEALED = true; }
     if (s.disease === 'fever') {
       s.stats.health = TB.clamp(s.stats.health - 1, 0, 100);
       if (s.stats.energy > 55) s.stats.energy = 55; // the fever's ceiling
@@ -197,6 +199,7 @@
   function setBackdrop(name) {
     $('backdrop').className = 'bg-' + (name || 'beach-day');
     if (TB.Audio) TB.Audio.setScene(name || 'beach-day', TB.state);
+    if (TB.FX) TB.FX.setScene(name || 'beach-day', TB.state);
   }
 
   // which stylized call a scene should make when its portrait appears
@@ -347,6 +350,7 @@
     if (s.deathCause && id !== 'death' && id !== 'title') { TB.go('death'); return; }
     if (id === 'ending' && s.endingId) TB.recordEnd('ending', s.endingId);
     if (id === 'death' && s.deathCause) TB.recordEnd('death', s.deathCause);
+    if (TB.Trophies && id !== 'title') { try { TB.Trophies.check(s); } catch (e) {} } // 🏆 after recordEnd, so ending counts are fresh
     setBackdrop(resolve(def.bg, s));
     const who = resolve(def.who, s);
     setPortrait(who);
