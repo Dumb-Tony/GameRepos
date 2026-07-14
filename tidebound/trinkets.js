@@ -115,6 +115,7 @@
   // ---- the canteen sip + Edda's eye: hub actions ------------------------------
   function drinkAction(s) {
     return {
+      grp: 'top',
       t: '🍶 Drink from the canteen' + ((s.canteenSips | 0) > 1 ? '' : ' — last of it'),
       sub: 'Cold running water, no walk required. Costs nothing; refills whenever you touch the river.',
       do: () => {
@@ -135,6 +136,7 @@
     if (TB.has('canteen') && (s.canteenSips | 0) > 0 && s.stats.thirst < 88) c.unshift(drinkAction(s));
     const gift = TB.is('GROVE_OPENED') ? nextGift(s) : null;
     if (gift) c.push({
+      grp: 'story',
       t: '🎁 Take the ' + gift.short + ' up to Edda',
       sub: 'She notices old things. Sometimes she pays; she always explains.',
       do: () => {

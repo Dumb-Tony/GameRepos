@@ -54,6 +54,7 @@
     if (TB.is('TOWER_FOUND') && !TB.is('TOWER_BUILT')) {
       const st = s.tower | 0;
       c.push({
+        grp: 'story',
         t: '🗼 Work on the fire-tower' + (st ? ' (day ' + (st + 1) + ' of 3)' : ''),
         sub: st === 0 ? 'Clear the stair; re-seat the crown. The bowl is intact — somebody could keep this light again.' : st === 1 ? 'The lens-work: reef-glass and every bright thing you own, into a four-century-old design.' : 'Oil, char, rain-cap — and the first true lighting since the Sundering.',
         do: () => {

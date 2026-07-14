@@ -118,6 +118,7 @@
       const bg = campBg2(s);
       // --- water & food core ---
       c.push({
+        grp: 'daily',
         t: s.site === 'overhang' ? '💧 Haul water and coconuts up the track' : '🥥 Coconuts — drink and eat',
         sub: s.site === 'overhang' ? 'The overhang\'s daily tax. Energy −−, thirst restored.' : 'The palms keep providing. Energy −, thirst restored.',
         do: () => { const s2 = TB.state; TB.stat('thirst', 34); TB.stat('hunger', 10); TB.stat('energy', s2.site === 'overhang' ? -12 : -8);
@@ -135,6 +136,7 @@
         go: 'act_result',
       });
       c.push({
+        grp: 'daily',
         t: '🌿 Forage', sub: (s.site === 'fringe' ? 'The fringe is generous. ' : '') + 'Fruit, crabs, roots. Energy −, food +.',
         do: () => { const s2 = TB.state; const bonus = s2.site === 'fringe' ? 6 : 0; TB.stat('energy', -8); TB.stat('hunger', 16 + bonus); TB.stat('thirst', 3);
           s2.out = { bg: s2.site === 'beach' ? 'jungle' : bg, text: [pick([
@@ -147,6 +149,7 @@
         go: 'act_result',
       });
       c.push({
+        grp: 'daily',
         t: '🎣 Spearfish the shallows', sub: (s.site === 'beach' ? 'Your home water. ' : 'A walk to the water first. ') + 'Protein, if your aim holds.',
         do: () => { const s2 = TB.state; const skill = (s2.site === 'beach' ? 0.75 : 0.6) + (s2.companion === 'vela' && s2.trust >= 40 ? 0.2 : 0);
           TB.stat('energy', -9);
@@ -166,6 +169,7 @@
       });
       // --- camp works ---
       if (s.shelter < 3) c.push({
+        grp: 'camp',
         t: s.shelter >= 2 ? '🛡️ Fortify the camp' : '⛺ Rebuild the shelter',
         sub: s.shelter >= 2 ? 'Palisade, raised cache, storm-bracing. Roots put down on purpose.' : 'Get a roof worth the word again.',
         do: () => { const s2 = TB.state; const cost = (TB.has('toolbox') || TB.is('BG_ENGINEER') ? -10 : -14) + (s2.companion === 'buri' && s2.trust >= 40 ? 4 : 0);
@@ -175,6 +179,7 @@
         go: 'act_result',
       });
       if (s.fire < 1) c.push({
+        grp: 'camp',
         t: '🔥 Make fire', sub: TB.has('lighter') ? 'The lighter, reclaimed and priceless.' : 'Friction and stubbornness.',
         do: () => { const s2 = TB.state; TB.stat('energy', -12);
           const p = TB.has('lighter') ? 1 : (0.55 + (TB.is('BG_ENGINEER') ? 0.2 : 0) + (TB.has('toolbox') ? 0.15 : 0));
@@ -184,6 +189,7 @@
         go: 'act_result',
       });
       if (s.injury && TB.has('medkit')) c.push({
+        grp: 'top',
         t: '🩹 Clean and dress your wound', sub: 'Uses the med-kit.',
         do: () => { const s2 = TB.state; TB.item('medkit', -1); s2.injury = null; TB.stat('health', 10); TB.stat('hope', 3);
           s2.out = { bg, text: ['Clean, dress, breathe. Out here, clean is the whole war — you keep winning it on purpose.'] };
@@ -191,6 +197,7 @@
         go: 'act_result',
       });
       if (s.fire >= 1 && s.stats.hunger < 85) c.push({
+        grp: 'daily',
         t: '🍲 Cook a real meal', sub: 'Fire plus patience equals personhood.',
         do: () => { const s2 = TB.state; const cook = TB.is('BG_COOK'); TB.stat('energy', -6); TB.stat('hunger', (cook ? 34 : 25) + (s2.food > 0 ? 6 : 0)); if (s2.food > 0) s2.food -= 1; TB.stat('hope', cook ? 7 : 5); TB.stat('thirst', 4);
           if (s2.companion) TB.bond(2);
@@ -201,6 +208,7 @@
       // --- companion actions ---
       if (s.companion) {
         c.push({
+          grp: 'daily',
           t: '❤️ Spend time with ' + NAMES[s.companion],
           sub: 'Food shared, patience spent, trust built. Nothing else gets done.',
           do: () => { const s2 = TB.state; TB.bond(5); TB.stat('hope', 3); TB.stat('hunger', -4);
@@ -242,10 +250,11 @@
               return { bg: 'tidepools', text: ['You swim the inner reef with Nine flowing ahead of you, pointing — actually pointing, one arm extended, at things your ape eyes miss: today, ' + f + ', freed from the coral with a patience no human hand could copy.', 'She takes her wage in crab and attention, and escorts you back to the shallows like a harbor pilot.'] }; } },
         };
         const a = abil[s.companion];
-        if (a) c.push({ t: a.t, sub: a.sub,
+        if (a) c.push({ grp: 'daily', t: a.t, sub: a.sub,
           do: () => { const s2 = TB.state; s2.out = a.fn(s2); TB.tickSegment(); }, go: 'act_result' });
       } else {
         c.push({
+          grp: 'camp',
           t: '🧍 Keep your own counsel', sub: 'Rest, order, and the discipline of being enough.',
           do: () => { const s2 = TB.state; TB.stat('energy', 10); TB.stat('hope', 4);
             s2.out = { bg, text: ['You mend, sort, sharpen, stack. Solitude, you\'re learning, is a structure too — it holds if you build it daily.', s2.day >= 6 && !TB.is('COCO') ? 'Among the water gourds you notice one coconut with three dark pores arranged, unmistakably, like a face. It has been watching you work this whole time, and its expression suggests it finds your methods sound.' : ''].filter(Boolean) };
@@ -255,6 +264,7 @@
         });
       }
       if (TB.is('SMOKE_SEEN')) c.push({
+        grp: 'story',
         t: '🔭 Study the smoke inland', sub: 'Learn what a fire an hour\'s trek away can teach from here.',
         do: () => { const s2 = TB.state; TB.stat('energy', -4); TB.route('depth', 1);
           s2.out = { bg: 'jungle', text: ['You watch it through the noon and into the slant light: thin, steady, banked and tended — not a wildfire, not a signal. A <em>hearth</em>. Whoever feeds it has fed it for years; you can tell by how little it wanders.', 'Someone on this island knows how to live here. The question you keep circling is why they haven\'t come to look at <em>your</em> smoke.'] };
@@ -262,6 +272,7 @@
         go: 'act_result',
       });
       c.push({
+        grp: 'camp',
         t: '😴 Rest' + (s.injury ? ' and tend your wound' : ''), sub: s.injury ? 'No kit — just rest, clean seawater, and time. It may knit.' : 'Recovery is also production.',
         do: () => { const s2 = TB.state; TB.stat('energy', 16); TB.stat('hope', 2); TB.stat('health', s2.injury ? 0 : 3);
           if (s2.injury && (s2.fire ? R() < 0.45 : R() < 0.25)) { s2.injury = null; TB.stat('health', 6);
@@ -276,7 +287,7 @@
         go: 'act_result',
       });
       if (TB.ch3Actions) c.push(...TB.ch3Actions(s)); // later chapters extend the hub
-      return c;
+      return TB.hubOrganize ? TB.hubOrganize(c, s) : c;
     },
   });
 

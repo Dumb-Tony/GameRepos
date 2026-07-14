@@ -132,6 +132,25 @@ the Playwright harness via navigator.webdriver — set localStorage
 Regional music motifs: audio.js MOTIFS — twelve per-region pluck
 phrases; map.js M.run calls TB.Audio.motif(regionId) once per arrival
 (reload-safe key day.seg), on the music bus.
+`keepsakes.js` (THE KEEPSAKE BOX: wraps TB.recordEnd, files one slim
+run snapshot per life (BOX_RECORDED guard) into 'tidebound.box.v1'
+(cap 24); almanac 📜 Keepsakes tab (7 tabs total) lists lives via
+RC.titleFor, tap renders the run card PNG inline) · companion
+interludes (scenes-extra.js INTERLUDES: 6 quiet companion vignettes,
+POOL ev_interlude w:3, companion && trust≥50 && ch3–6, once per run,
+bond+4 hope+5).
+**The camp hub is grouped** (`TB.hubOrganize` in engine.js): every
+ch3Actions-chain action carries `grp: 'top'|'story'|'daily'|'camp'`
+(untagged defaults to story so nothing new gets buried). camp2's
+choices() pipes the assembled list through hubOrganize, which stable-
+sorts into pinned → ⭐ Threads to pull → 🧺 The day's work → 🏕️ Camp &
+recovery, inserting `{hdr}` divider rows that showChoices renders as
+non-button `.chHdr` divs. Pinned (no header, always first): canteen
+sip, own-wound dressing, companion tending, medic fever cure. Story
+actions unseen this life get a gold `.newBadge` chip; the badge clears
+when clicked (key = label stripped of counters, stored in
+`s.seenActs`, save-persisted). Ch1's `camp` list stays flat. Worst-
+case audit: 22 simultaneous actions mid-ch4 — the grouping is why.
 Global namespace `window.TB`. Cache-bust query `?v=N` on every asset — bump on release.
 
 **Scene format** (registered via `TB.scene(id, def)`):

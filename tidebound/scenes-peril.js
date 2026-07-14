@@ -111,6 +111,7 @@
     if (s.chInjured && s.companion) {
       const stage = Math.min(s.chInjured.tends, 2);
       c.unshift({
+        grp: 'top',
         t: '🩹 Tend to ' + NAMES[s.companion], sub: ['Clean the wound, and be the reason it\'s bearable.', 'Food, patience, and company. The medicine under the medicine.', 'Nearly there. Let them show you what works again.'][stage] + ' Energy −, trust ++.',
         do: () => {
           const s2 = TB.state;

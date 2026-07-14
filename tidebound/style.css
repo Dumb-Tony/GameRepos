@@ -635,3 +635,18 @@ body {
 .almKeepsake:hover .almName { text-decoration: underline; }
 .almCardWrap { text-align: center; padding: 10px 0; }
 .almCardImg { width: 100%; max-width: 300px; border-radius: 10px; box-shadow: 0 8px 26px rgba(0, 0, 0, .5); }
+
+/* ===== CAMP HUB GROUPING (engine hubOrganize): section headers + new-badges ===== */
+.chHdr {
+  font: 600 11px/1 system-ui, sans-serif; letter-spacing: 1.6px; text-transform: uppercase;
+  color: var(--panel-em); opacity: .75; text-align: left;
+  padding: 9px 4px 3px; margin-top: 2px;
+  border-bottom: 1px solid var(--btn-border); user-select: none;
+}
+#choices .chHdr:first-child { margin-top: 0; padding-top: 2px; }
+.newBadge {
+  display: inline-block; vertical-align: 2px; margin-left: 6px;
+  font: 700 9px/1 system-ui, sans-serif; letter-spacing: 1px; text-transform: uppercase;
+  color: #1d1607; background: linear-gradient(180deg, #ffd65c, #e8ab2e);
+  padding: 2.5px 6px 2px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0, 0, 0, .35);
+}
