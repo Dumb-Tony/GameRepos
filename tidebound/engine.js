@@ -199,6 +199,7 @@
   function setBackdrop(name) {
     $('backdrop').className = 'bg-' + (name || 'beach-day');
     if (TB.Audio) TB.Audio.setScene(name || 'beach-day', TB.state);
+    if (TB.FX) TB.FX.setScene(name || 'beach-day', TB.state);
   }
 
   // which stylized call a scene should make when its portrait appears

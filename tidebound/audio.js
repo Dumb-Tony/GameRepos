@@ -50,6 +50,7 @@
       document.body.dataset.theme = s.theme; document.body.dataset.bars = s.bars;
       document.documentElement.style.setProperty('--tscale', (s.tsize || 100) / 100);
     } catch (e) {}
+    try { if (TB.FX) TB.FX.refresh(); } catch (e) {}
   };
 
   // ---- graph ------------------------------------------------------------
