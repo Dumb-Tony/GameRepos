@@ -36,6 +36,7 @@
     thirst: 'THE DRIFTWOOD TONGUE', hunger: 'HUNGER\'S QUIET', undertow: 'UNDERTOW',
     fever: 'MARSH FEVER', despair: 'THE GREEN SWALLOWS', dark: 'THE LONG DARK',
     grin: 'OLD GRIN', injury: 'THE SMALL LOAN',
+    boarking: 'THE BOAR KING', fall: 'THE FALL', coldfire: 'COLD FIRE', ash: 'MOTHER ASH',
   };
   const NAMES = { kavi: 'Kavi 🐕', ipo: 'Ipo 🐒', vela: 'Vela 🦅', buri: 'Buri 🐗', moa: 'Moa 🐔', nine: 'Nine 🐙' };
   const TIERS = ['wary', 'tolerant', 'bonded', 'devoted', 'kindred'];

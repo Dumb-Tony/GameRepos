@@ -306,7 +306,20 @@
       if (s.companion === 'ipo') t.push('Ipo spends it inside your shirt, a heartbeat against your sternum, silent all night. In the morning he emerges, checks the state of the world, and — visibly deciding the audience needs it — performs his coconut-opening impression in the wreckage until you laugh. Morale officer. Never off duty.');
       if (s.companion === 'nine') t.push('Somewhere below the white chaos of the lagoon, Nine rides out the night in the deep channels. At dawn\'s first slack you find her mark on the tideline rock: one neat spiral, freshly traced in the storm\'s rearranged sand. <em>Still here. You?</em>');
       if (!s.companion) t.push('You ride it out alone with Coco under one arm — you fetched him in from the shelf at the first real gust, an act you have elected not to examine — and you talk to him through the worst hours, steady nothing-talk, the way you\'d steady a rookie. It helps. You have also elected not to examine why.');
+      if (s.shelter <= 1 && s.site !== 'overhang') t.push('And then, an hour before the worst of it, the night puts its real question: what\'s left of your camp is coming apart lash by lash, your fire is dead, the cold rain is finding everything — and the storm has HOURS left in its arm. Stay with your work, or give the night your camp and keep the body.');
       return t;
+    },
+    choices: (s) => {
+      // COLD FIRE: the one death that is purely the sum of small skipped
+      // choices — it only exists for a tier-0/1 camp outside the overhang
+      if (s.shelter > 1 || s.site === 'overhang') return [];
+      return [
+        { t: '🏃 Abandon camp. Burrow into the fringe root-vaults till dawn.', sub: 'Lose the night, some gear, and every shred of comfort — keep the pulse.',
+          do: () => { const s2 = TB.state; s2.fire = 0; if (s2.shelter > 0) s2.shelter -= 1; TB.stat('energy', -16); TB.stat('health', -8); TB.stat('hope', -6); s2.out = { bg: 'jungle-night', text: ['You wedge yourself into the buttress-roots of the biggest fig on the fringe with your knees to your chest and the world ending overhead, and you spend the cyclone the way the island\'s oldest things spend it: small, low, and patient.', 'Dawn arrives grey and ringing. Your camp is a debris field, your hands won\'t close, and you are alive — entirely, undramatically alive — because at the one moment it mattered you chose the body over the work. The island respects nothing more. Rebuilding is a thing the living get to do.'] }; TB.tickSegment(); },
+          go: 'act_result' },
+        { t: '⛺ Stay. Hold what\'s left of camp together with your hands.', sub: '⚠️ A tier-' + s.shelter + ' shelter, no fire, and hours of cyclone to go. This is the storm every skipped choice was saving up for.',
+          do: () => { TB.state.deathCause = 'coldfire'; }, go: 'death' },
+      ];
     },
     nextLabel: 'Morning, eventually ➤',
     next: (s) => { TB.tickSegment(); return TB.advance(); },
