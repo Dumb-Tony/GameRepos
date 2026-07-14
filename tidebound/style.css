@@ -592,3 +592,4 @@ body {
 .tkName { font-weight: bold; }
 .tkPaid { opacity: .6; font-size: .85em; }
 .tkLine { opacity: .78; font-size: .88em; line-height: 1.45; }
+.tkImg { width: 46px; height: 46px; border-radius: 9px; object-fit: cover; flex: 0 0 auto; border: 1px solid var(--divider); }

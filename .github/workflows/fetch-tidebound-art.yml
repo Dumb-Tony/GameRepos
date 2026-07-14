@@ -39,6 +39,7 @@ jobs:
             case "$name" in
               bg-*)   cwebp -quiet -q 82 -resize 1920 0 /tmp/src.png -o "$name" ;;
               char-*) cwebp -quiet -q 85 -resize 512  0 /tmp/src.png -o "$name" ;;
+              tk-*)   cwebp -quiet -q 85 -resize 256  0 /tmp/src.png -o "$name" ;;
               *)      cwebp -quiet -q 82 /tmp/src.png -o "$name" ;;
             esac
           done < manifest.txt
