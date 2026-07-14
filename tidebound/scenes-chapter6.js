@@ -144,7 +144,7 @@
         'The Inner Green. They went in. <em>They stayed in.</em>'];
       if (TB.is('INNER_GREEN')) {
         t.push('They meet you on the rim path — a dozen of them, silent, watchful, dressed like Naia in the colors of the walls — and at their center an old man with a staff of black heartglass-veined wood and eyes like the Tidewell: Tekau, Elder Speaker, who looks at you for a long moment and then speaks in slow, rust-thick English, learned — you realize with a jolt — from the same decades of listening that taught Naia:',
-          '"Castaway. Thirty days the island has watched you." He begins, staff striking soft time on the stone, to recite — and it is your Ledger, spoken aloud on a mountaintop by a stranger: the fires you built and banked. The one you fed at your boundary. The toll you paid without blood. The graves you didn\'t disturb, the drawer you ' + (TB.is('FILES_BURNED') ? 'burned' : TB.is('FILES_TO_EDDA') ? 'carried, unopened, up a mountain' : 'weighed') + ', the hand you set in the hollow of a people you\'d never met.' + (s.companion ? ' And last, longest: "…and the ' + ({ kavi: 'grey dog', ipo: 'laughing thief', vela: 'old blind-eyed queen of the cliffs', buri: 'young tusker', moa: 'small brave hen', nine: 'nine-armed daughter of the tide' }[s.companion]) + ', who chose you, and stayed. The island speaks through its lives, castaway. That one\'s testimony outweighs the rest of this list."' : ''),
+          '"Castaway. Seventy days and more, the island has watched you." He begins, staff striking soft time on the stone, to recite — and it is your Ledger, spoken aloud on a mountaintop by a stranger: the fires you built and banked. The one you fed at your boundary. The toll you paid without blood. The graves you didn\'t disturb, the drawer you ' + (TB.is('FILES_BURNED') ? 'burned' : TB.is('FILES_TO_EDDA') ? 'carried, unopened, up a mountain' : 'weighed') + ', the hand you set in the hollow of a people you\'d never met.' + (s.companion ? ' And last, longest: "…and the ' + ({ kavi: 'grey dog', ipo: 'laughing thief', vela: 'old blind-eyed queen of the cliffs', buri: 'young tusker', moa: 'small brave hen', nine: 'nine-armed daughter of the tide' }[s.companion]) + ', who chose you, and stayed. The island speaks through its lives, castaway. That one\'s testimony outweighs the rest of this list."' : ''),
           'He lowers the staff. Behind him, Naia is not breathing. "Come down," Tekau says simply, and turns. "Guests eat first. It is a rule older than the mountain\'s temper."',
           'You walk down into the Inner Green as the first outsider in three hundred and something years, and the town watches you pass with eyes like held questions — and children, at the edges, whose curiosity has already escaped custody entirely.');
       } else if (TB.is('INNER_PROBATION')) {
@@ -188,7 +188,7 @@
         do: () => { TB.flag('TIDEWELL_KEEP'); TB.route('depth', 3); TB.flag('CH6_DONE'); }, go: 'ch6_keep' });
       c.push({
         t: '🙏 WITNESS ONLY. Stand at the water, and choose not to choose for an island.',
-        sub: 'Some doors are too large for thirty-three days\' standing. Leave the covenant to the people whose grandmothers built the pool.',
+        sub: 'Some doors are too large for one season\'s standing. Leave the covenant to the people whose grandmothers built the pool.',
         do: () => { TB.flag('TIDEWELL_WITNESS'); TB.route('roots', 1); TB.flag('CH6_DONE'); }, go: 'ch6_witness' });
       return c;
     },
@@ -233,7 +233,7 @@
     bg: 'temple',
     text: [
       'You stand at the water\'s edge a long time — long enough for the tide to turn twice under the lamplight — and you keep your hands at your sides.',
-      'It isn\'t fear, or not only. It\'s the oldest arithmetic you own, the one the island itself taught you: <em>take only what you can tend.</em> Thirty-three days\' standing does not tend an island. A keeper chosen by accident of shipwreck, deciding the fate of a veil that shelters two thousand living descendants — that isn\'t covenant. That\'s conquest with better manners.',
+      'It isn\'t fear, or not only. It\'s the oldest arithmetic you own, the one the island itself taught you: <em>take only what you can tend.</em> One season\'s standing does not tend an island. A keeper chosen by accident of shipwreck, deciding the fate of a veil that shelters two thousand living descendants — that isn\'t covenant. That\'s conquest with better manners.',
       'So you witness. You let the pool read you — it does; you feel it file you, gently, like a glyph — and you step back, and you bow to the water because your body insists on doing SOMETHING, and you leave the covenant where you found it: with the people whose grandmothers built the pool.',
       'On the rim path down, Naia falls in beside you, and after a mile she says, not looking at you: "The old ones will hear what you didn\'t do." A pause. "It will weigh more than everything you did."',
     ],

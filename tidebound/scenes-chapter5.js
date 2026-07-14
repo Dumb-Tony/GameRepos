@@ -31,7 +31,7 @@
     text: (s) => [
       '<em>CHAPTER FIVE — THE LONG RAIN</em>',
       'It arrives on the fifty-third day, not as a storm but as a <em>change of government</em>: the southern wall walks ashore at dawn and the sky becomes a low grey ceiling that has no further interest in negotiation. Rain — warm, vertical, endless — becomes the medium you live in. The lagoon\'s glow blurs to a haze. Thunder moves in upstairs, permanently, like bad neighbors.',
-      'Edda\'s verdict, shouted cheerfully over the drumming when you last saw her: <em>"Eight weeks of this, castaway, give or take the mountain\'s mood. The rain solves your water and rots everything else. Whatever you meant to do with your season — you do it IN this, or not at all."</em>',
+      'Edda\'s verdict, shouted cheerfully over the drumming when you last saw her: <em>"Three weeks of this, castaway, give or take the mountain\'s mood. The rain solves your water and rots everything else. Whatever you meant to do with your season — you do it IN this, or not at all."</em>',
       'She\'s right, and you feel it: the monsoon is a crucible, and a crucible only shapes what commits. Your hands, your hours, your allies\' strength — one master plan gets them. The Ledger\'s tally so far — Signal ' + s.route.signal + ' · Roots ' + s.route.roots + ' · Depth ' + s.route.depth + ' — leans where it leans. The choice is still yours.',
     ],
     choices: (s) => [
@@ -110,11 +110,11 @@
         'At 2:14 the needle drops flat.',
         'You key the transmitter into dead air — <em>"MAYDAY MAYDAY MAYDAY, this is survivor of downed aircraft, island position unknown, at least two souls, DO YOU COPY"</em> — once, twice, the black window standing open around your voice like held breath—',
         '—and the phones crackle, distant as another life, human as a heartbeat: <em>"—station calling MAYDAY, copy you broken, say again your posi—"</em>',
-        'The seventh beat slams back down over everything. The window closes. The Hum rolls on, vast and total, and you sit in the amber light with your pulse everywhere, having heard — for four seconds, for the first time in twenty-seven days — <em>the world</em>.',
+        'The seventh beat slams back down over everything. The window closes. The Hum rolls on, vast and total, and you sit in the amber light with your pulse everywhere, having heard — for four seconds, for the first time in sixty-six days — <em>the world</em>.',
         'They copied. Broken, but they copied. Someone, somewhere, has a bearing on a ghost — and every skip from now on is a door you know how to knock through.',
       ];
       return [
-        'The twenty-seventh day you provision like a navigator: water in every vessel, smoked stores wrapped and wrapped again, the sea-anchor rigged, Edda\'s hand-drawn current notes (she\'d pressed them on you with insults) sealed in wax against the chart-lack.',
+        'The sixty-seventh day you provision like a navigator: water in every vessel, smoked stores wrapped and wrapped again, the sea-anchor rigged, Edda\'s hand-drawn current notes (she\'d pressed them on you with insults) sealed in wax against the chart-lack.',
         'And at dusk, between squalls, the sea sends its answer to your season of work: far out, hull-down on the streaming horizon, running lights — a ship, real, the first since the flare-light of Day 3 — crossing south to north, oblivious, <em>there</em>.',
         'You stand in the rain and watch it the whole way across, and this time it doesn\'t hollow you out. This time you have a vessel above the tideline and trial-hours in her log, and the sight files itself not as grief but as <em>traffic report</em>: the lane is out there. The lane is reachable. After the rains.',
       ];
@@ -141,7 +141,7 @@
   TB.scene('ev5_home2', {
     bg: 'river',
     text: (s) => [
-      'On the twenty-fifth day the Silverthread stands up.',
+      'On the sixtieth day the Silverthread stands up.',
       'You hear it change in the night — the voice dropping an octave — and by grey dawn the river is twice itself, tea-brown and muscled, eating its banks in slabs. And it is reaching, with the season\'s first real malice, for everything you\'ve built downslope of it.',
       'You have one streaming morning to answer.',
     ],
@@ -291,7 +291,7 @@
       if (s.companion === 'kavi') TB.flag('KAVI_FIRE_NIGHT');
     },
     text: (s) => {
-      const t = ['The season\'s true fist arrives on the twenty-fourth night: a cyclone\'s outer arm, and the world simply becomes velocity. Rain traveling flat. The reef\'s roar relocated directly overhead. Trees inland surrendering with sounds like artillery.'];
+      const t = ['The season\'s true fist arrives on the fifty-eighth night: a cyclone\'s outer arm, and the world simply becomes velocity. Rain traveling flat. The reef\'s roar relocated directly overhead. Trees inland surrendering with sounds like artillery.'];
       t.push(s.site === 'overhang' ? 'And you sit behind fifty feet of stone with your fire burning — <em>burning</em>, in this — listening to the apocalypse miss you by a geological accident you chose on Day 4. You have never loved a rock before.'
         : s.shelter >= 3 ? 'Your fortified camp takes it the way a good hull takes a sea: groaning, flexing, shedding. You lose thatch, a windbreak, a night\'s sleep — and keep everything that bleeds. Every hour you ever spent bracing and lashing pays out tonight, with interest.'
         : 'Your camp loses its argument with the sky in the first hour. After that it\'s endurance: you and everything living pressed into the lee of what holds, taking the night one gust at a time while your work disassembles around you in the dark.');
@@ -348,20 +348,20 @@
     text: (s) => {
       if (s.plan === 'sea') return [
         '<em>THE PROMISE OF THE HORIZON</em>',
-        'Day twenty-eight. The season\'s work stands finished around you: ' + (TB.is('CONTACT_MADE') ? 'a radio that has touched the world through the island\'s held breath — they COPIED you, broken but real, and every skip is a knockable door now' : 'a vessel with trial-hours in her log and the shipping lane\'s address in your head') + (TB.is('RYO_MET') ? ', and a sailor at your fire who looks at the horizon like a homeland' : '') + '.',
+        'Day sixty-nine. The season\'s work stands finished around you: ' + (TB.is('CONTACT_MADE') ? 'a radio that has touched the world through the island\'s held breath — they COPIED you, broken but real, and every skip is a knockable door now' : 'a vessel with trial-hours in her log and the shipping lane\'s address in your head') + (TB.is('RYO_MET') ? ', and a sailor at your fire who looks at the horizon like a homeland' : '') + '.',
         'The rains will end. The weather will open. And then the way out — the actual, buildable, sailable way out — will stand open in front of everything you\'ve grown here: the camp, the ground, ' + (s.companion ? NAMES[s.companion] + ',' : '') + ' Edda\'s mountain, the island\'s unfinished riddle.',
         'You don\'t have to decide tonight who boards and who stays and what gets said to the world about a place that hides. But tonight, for the first time since the sky broke — <em>leaving is real.</em> Say what that feels like.',
       ];
       if (s.plan === 'home') return [
         '<em>THE TABLE</em>',
-        'Day twenty-eight. You build the table first — that\'s the part you\'ll remember: a real table, riven hardwood on braced legs, under the big rain-fly, with benches. Then you cook everything the season can spare: smoked fish and roast yams, flood-silt greens, Halcyon rice, honey from the immortal jar. And they come to it: ' + [TB.is('EDDA_WINTER') ? 'Edda, wrapped and imperious at the head' : (TB.is('EDDA_TENDED') ? 'Edda, down off her mountain for one night, under extreme protest, carried up the last stretch by dignity alone' : null), TB.is('RYO_MET') ? 'Ryo, who has made something with lime and sugarcane that should be illegal' : null, s.companion ? NAMES[s.companion] + ', at your side where the world belongs' : null].filter(Boolean).join('; ') + '.',
+        'Day sixty-nine. You build the table first — that\'s the part you\'ll remember: a real table, riven hardwood on braced legs, under the big rain-fly, with benches. Then you cook everything the season can spare: smoked fish and roast yams, flood-silt greens, Halcyon rice, honey from the immortal jar. And they come to it: ' + [TB.is('EDDA_WINTER') ? 'Edda, wrapped and imperious at the head' : (TB.is('EDDA_TENDED') ? 'Edda, down off her mountain for one night, under extreme protest, carried up the last stretch by dignity alone' : null), TB.is('RYO_MET') ? 'Ryo, who has made something with lime and sugarcane that should be illegal' : null, s.companion ? NAMES[s.companion] + ', at your side where the world belongs' : null].filter(Boolean).join('; ') + '.',
         'The rain drums the fly. The fire holds. The food goes around, and around again, and somewhere in the second hour you look down the table at your <em>household</em> — castaway, the word stopped fitting weeks ago — and understand that the season\'s real crop was never in the ground.',
         'A place like this should have a name. Yours to give.',
       ];
       return [
         '<em>THE WATCHER\'S OFFER</em>',
-        'Day twenty-eight, and she comes to YOU — walks out of the dusk treeline into your firelight, hands open, the bone knife conspicuously absent: Naia, the watcher, standing in a castaway\'s camp for the first time in her life and cataloguing everything with those fierce curious eyes.',
-        '"I spoke of you," she says, without preamble — she has clearly rehearsed on the walk. "To the old ones. Long — <em>ffh</em> — long arguing." A quick glance at ' + (s.companion ? NAMES[s.companion] : 'your tidy, solitary fire') + ', and something in her face you\'d call, on anyone, respect. "I say: this one, the island watched twenty-eight days, and the island is not angry. I say what you did." She counts on her fingers, your own Ledger recited back to you in broken English by a stranger: the tide pools, the fires, the graves-question you didn\'t ask Edda, the hand in the hollow. "They listen. Slow — they are old — but they listen."',
+        'Day sixty-nine, and she comes to YOU — walks out of the dusk treeline into your firelight, hands open, the bone knife conspicuously absent: Naia, the watcher, standing in a castaway\'s camp for the first time in her life and cataloguing everything with those fierce curious eyes.',
+        '"I spoke of you," she says, without preamble — she has clearly rehearsed on the walk. "To the old ones. Long — <em>ffh</em> — long arguing." A quick glance at ' + (s.companion ? NAMES[s.companion] : 'your tidy, solitary fire') + ', and something in her face you\'d call, on anyone, respect. "I say: this one, the island watched sixty-nine days, and the island is not angry. I say what you did." She counts on her fingers, your own Ledger recited back to you in broken English by a stranger: the tide pools, the fires, the graves-question you didn\'t ask Edda, the hand in the hollow. "They listen. Slow — they are old — but they listen."',
         '"So: when the rains end. The mountain. The door you saw painted." She points, once, at the broken crown, lost in rain and dark, and the sentence she has practiced most comes out whole and quiet: <em>"Come and stand before my people, castaway. Come and be decided."</em>',
       ];
     },
@@ -400,7 +400,7 @@
         t.push('— You gave the rains to THE HOMESTEAD: the farm is in' + (TB.is('FLOOD_DIKED') ? ', diked against the flood that came for it' : TB.is('FLOOD_STORES') ? ', a third drowned to keep the granary whole' : '') + ', and on the twenty-eighth night you fed your whole strange household at a real table and named the place <em>' + (TB.is('NAME_ROOTSTEAD') ? 'Rootstead' : TB.is('NAME_DRIFTWOOD') ? 'Driftwood' : 'The Landing') + '</em>.');
         t.push('— The Boar King came to your boundary starving, and you ' + (TB.is('KING_FED') ? 'fed him from the winter stores. He walked your fence line once, signed it with his shoulder, and the inland dark has an ally in it now.' : 'held the line. He went back into the failing dark unhurried, and you carry the weight of the arithmetic.'));
       } else {
-        t.push('— You gave the rains to THE DESCENT: the throat, the Gallery of Hands — <em>they went in</em> — and the wound itself, guttering around Halcyon\'s bore. And the dark finally introduced itself: Naia, watcher, twenty-eight days your shadow, who ended the season standing in your firelight saying <em>come and be decided</em>.');
+        t.push('— You gave the rains to THE DESCENT: the throat, the Gallery of Hands — <em>they went in</em> — and the wound itself, guttering around Halcyon\'s bore. And the dark finally introduced itself: Naia, watcher, sixty-nine days your shadow, who ended the season standing in your firelight saying <em>come and be decided</em>.');
       }
       t.push('— The cyclone night: ' + (s.site === 'overhang' ? 'the mountain kept you like a promise.' : s.shelter >= 3 ? 'your walls earned every hour you ever spent on them.' : 'the sky took its tax in full, and you paid and rebuilt.') + (TB.is('VELA_MANTLED') ? ' And Vela stayed through it — mantled over your stores, shaking, present. The whole of her heart, seen once by storm-light.' : '') + (TB.is('MONSOON_FIRE_LOST') ? ' (The season has been drowning your fire nightly; you\'ve learned to sleep colder.)' : ''));
       t.push('— Edda\'s season turned: ' + (TB.is('EDDA_WINTER') ? 'she winters at your fire now, imperious and mending, and the household clicked around her like a joint finding its socket.' : TB.is('EDDA_TENDED') ? 'she winters in her grove on your legs and stubbornness, and there\'s tea already poured when you make the fence.' : 'her smoke faltered once, and the mountain felt suddenly very far.'));

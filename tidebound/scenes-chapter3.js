@@ -40,7 +40,7 @@
     },
     text: [
       '<em>CHAPTER THREE — THE GREEN DEEP</em>',
-      'Day ten. The island stops being a shore with a mystery behind it, and becomes a <em>country</em>: the deep jungle, the silver river that drains the broken mountain, the drowned tangle of the mangroves in the east — and, on the mountain\'s knee, a garden, a grove, and the woman who has kept them for sixty years.',
+      'Day nineteen. The island stops being a shore with a mystery behind it, and becomes a <em>country</em>: the deep jungle, the silver river that drains the broken mountain, the drowned tangle of the mangroves in the east — and, on the mountain\'s knee, a garden, a grove, and the woman who has kept them for sixty years.',
     ],
     next: (s) => (TB.is('SMOKE_NOW') ? 'ch3_edda_now' : TB.is('SMOKE_LATER') ? 'ch3_edda_later' : 'ch3_open_signal'),
     nextLabel: 'Begin ➤',
@@ -259,9 +259,9 @@
   TB.scene('ev3_eddavisit', {
     bg: campBg2, who: EDDA,
     text: (s) => [
-      'On the eleventh morning there is a woman in your camp.',
+      'On the twenty-first morning there is a woman in your camp.',
       'Not arriving — <em>in</em> it: standing at your fire ring with a shotgun broken open over one arm and the proprietary air of a health inspector, an old woman, weathered as driftwood, with a long grey braid and eyes that have finished three audits since you sat up.',
-      '"Eleven days," she says, without preamble. "Eleven days of watching you signal an empty sea and ignore a lit fire on a mountain. I came down to see if you were proud, stupid, or dying." A glance at your camp — the stores, the defenses, ' + (s.companion ? NAMES[s.companion] + ', whom she takes in with one long unreadable look' : 'your tidy solitary arrangements') + '. "Hm. Not dying."',
+      '"Twenty-one days," she says, without preamble. "Twenty-one days of watching you signal an empty sea and ignore a lit fire on a mountain. I came down to see if you were proud, stupid, or dying." A glance at your camp — the stores, the defenses, ' + (s.companion ? NAMES[s.companion] + ', whom she takes in with one long unreadable look' : 'your tidy solitary arrangements') + '. "Hm. Not dying."',
       '"Edda Voss. Up the mountain, past the third ridge, the fire you\'ve been snubbing. Marshmint for the flies, feverbark for the fever you\'re courting, camped where you\'re camped — I\'ll leave cuttings." She snaps the shotgun closed, business concluded. "The sea\'s deaf, castaway. The mountain isn\'t. When you\'re done being proud, the path is marked."',
       'She is gone into the treeline before your manners finish rebooting.',
     ],
@@ -410,7 +410,7 @@
           : 'Because the east is where the island keeps its locked drawers: the station, the stones, the answers under the answers.';
       return [
         '<em>OLD GRIN\'S TOLL</em>',
-        'Day fifteen. You stand at the mangrove edge with your kit weighed and your reasons rehearsed. ' + why,
+        'Day thirty-five. You stand at the mangrove edge with your kit weighed and your reasons rehearsed. ' + why,
         'Between you and all of it: the East Passage — one crossing, one channel, one landlord. He is there now. He is always there. Six meters of patience in tea-dark water, older than Edda, undefeated by everyone who ever carried better equipment than yours into this swamp.',
         'The toll gets paid one way or another. Choose the currency.',
       ];
