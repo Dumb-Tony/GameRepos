@@ -33,6 +33,7 @@
     if (TB.is('MOA_FOUND') || TB.is('VELA_MANTLED') || TB.is('HEART2_DONE')) r++;
     if (TB.is('TURTLES') || TB.is('TREASURE_LEFT')) r++; // mercies the island witnessed
     if (TB.is('OLD_THINGS_HOME')) r++; // Kaari-old beach-finds, carried up the mountain (trinkets.js)
+    if (TB.is('GEMS_RETURNED')) r++; // the cut heartglass, carried back to the seam (map.js grotto)
     return r;
   };
 

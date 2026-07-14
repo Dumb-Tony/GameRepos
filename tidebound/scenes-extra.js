@@ -44,8 +44,27 @@
       t: '📻 Night vigil at the radio — listen, don\'t speak', sub: TB.is('LISTEN1') ? 'There was something under the static last time. You have to know.' : 'The skips are windows. Windows work both ways.',
       do: () => { TB.stat('energy', -5); TB.tickSegment(); }, go: 'radio_listen',
     });
+    // the courier's funeral: only once you know the WHOLE of his story
+    if (TB.is('CASE_OPEN') && !TB.is('COURIER_RESTED') && TB.Almanac && TB.Almanac.counts().frags >= 9) c.push({
+      t: '🕯️ Build the courier a cairn', sub: 'Case opened, photograph whole. You know the entire story now. Nobody else on Earth does.',
+      do: () => { TB.stat('energy', -8); TB.tickSegment(); }, go: 'courier_rest',
+    });
     return c;
   };
+
+  TB.scene('courier_rest', {
+    bg: 'beach-dusk',
+    enter: (s) => { if (!TB.is('COURIER_RESTED')) { TB.flag('COURIER_RESTED'); TB.stat('hope', 8); TB.route('roots', 1); } },
+    text: (s) => [
+      'No body ever came ashore. The island filed him somewhere gentler than its beaches — you\'ve made your peace with never knowing where. But a story with nobody to hold it isn\'t a story; it\'s just weather. So you spend an afternoon doing something about that.',
+      'You build the cairn on the point above the bay, where the land looks hardest at the horizon: flat stones footed deep against king tides, the case\'s fifty-year-old felt lining folded beneath the capstone, and the crest-side of the broken lock set facing OUT to sea — let Meridian\'s mark stand sentry duty for the man it spent, forever.',
+      'Then you sit beside it and you read him back his own photograph, out loud, all nine fragments of it, beginning to end: the pier, the hem of her dress mid-turn, the coffee steam, the half-painted name-board, her laugh, the date, the seven-spiral his hand couldn\'t stop drawing, his own broad shadow on the boards, and the inscription. <em>"Until the island lets me back — wait for me."</em> <em>"Ninth year. Still waiting. Bringing you home."</em>',
+      'You tell the sea the ending he didn\'t get to write: that the island let him back. That he saw it rise off the bow and said <em>there you are</em>, glad, like a man at his own gate. That the last mile is yours now, and you know how to carry things.',
+      (s.companion ? ({ kavi: 'Kavi sits the whole reading through, ears working, and when you finish he leans once, hard, against the cairn — the way he leans against you. Filed. Kept. Pack.', ipo: 'Ipo watches from the dune grass with unusual stillness, and in the morning there is a bottle-green marble balanced on the capstone. You do not ask. Payment travels strange roads here.', vela: 'Vela rides the wind above the point the whole time, one slow circle after another, and you realize partway through that a one-eyed empress is standing honor guard.', buri: 'Buri helps with the stones — which is to say he moves several boulders you didn\'t ask about — and then stands beside the finished cairn with his great head low, doing the thing pigs are never given credit for: grieving properly.', moa: 'Moa stands on the capstone as you read, small and copper and unyielding, facing the sea like the figurehead of a very small, very serious ship.', nine: 'And from the rocks below the point, for the whole length of the reading, one slotted golden eye watches above the waterline — Nine, at attention in her own element, seeing a drowned man honored by the dry world.' })[s.companion] : 'You do it alone, which is fitting; he crossed his last nine years alone too. The wind takes each sentence as you finish it, going somewhere.'),
+      (TB.is('EDDA_MET') ? 'When you tell Edda, later, she is quiet a long moment and then goes to her drawer — HER drawer — and gives you a stub of real wax candle. "For the cairn. First king tide of the season, light it. That\'s the custom we had, for the ones the water kept." A pause. "It\'s a good custom. It just ran out of people who remembered it." It has one again.' : 'The candle-stub you set at its foot gutters out near midnight. The glow you can see from camp for a while after that is, you are almost certain, the lagoon.'),
+    ],
+    next: (s) => backToCamp(s),
+  });
 
   TB.scene('case_scene', {
     bg: campBg2,
