@@ -202,7 +202,33 @@
     else if (curTab === 'pages') setTab(PAGES, c.pages, c.pagesTotal, '<em>The journals, complete.</em> Vane\'s whole arc in your hands: surveyor, believer, penitent. Somewhere between page one and the last entry, a man stopped measuring an island and started being measured by it.');
     else if (curTab === 'recipes') setTab(RECIPES, c.recipes, c.recipesTotal, '<em>Edda\'s kitchen, entire.</em> Six recipes and the seventh no card can hold: someone to cook them for.');
     else if (curTab === 'photo') {
-      setTab(FRAGS, c.frags, c.fragsTotal, '<em>The photograph, whole.</em> A woman on a pier called KAI—something, nine monsoons ago, laughing at a broad-shouldered man with a case chained to his wrist. He had been here. He spent nine years finding his way back to her promise. And when the island rose off the bow at last, he looked at it — not the water, the ISLAND — and said: <em>"There you are."</em> You carry the photograph now. Whatever you do with the rest of your days here — someone was coming home.');
+      // the photograph renders for real: each found fragment is a torn
+      // scrap (art/ph-frag*.webp, emoji fallback), and at 9/9 the whole
+      // picture assembles above the story.
+      let n = 0;
+      for (const it of FRAGS) {
+        const got = gotNow(it);
+        let icon;
+        if (got) {
+          icon = document.createElement('img');
+          icon.className = 'almThumb almScrap';
+          icon.src = 'art/ph-' + it.key.toLowerCase() + '.webp';
+          icon.onerror = (function (ic) { return function () { const e = document.createElement('span'); e.className = 'almEmoji'; e.textContent = '🖼️'; ic.replaceWith(e); }; })(icon);
+        } else { icon = document.createElement('span'); icon.className = 'almEmoji'; icon.textContent = '❔'; }
+        body.appendChild(entryRow(icon, got ? it.name : '— undiscovered —', got ? it.line : 'Keep living. The island leaves these where attentive lives will cross them.', !got));
+        if (got) n++;
+      }
+      if (n === FRAGS.length) {
+        const wrap = document.createElement('div'); wrap.className = 'almPhotoWrap';
+        const img = document.createElement('img'); img.className = 'almPhotoFull'; img.alt = 'The photograph, whole';
+        img.src = 'art/ph-full.webp';
+        img.onerror = function () { wrap.remove(); };
+        wrap.appendChild(img);
+        body.appendChild(wrap);
+        const done = document.createElement('div'); done.className = 'almDone';
+        done.innerHTML = '<em>The photograph, whole.</em> A woman on a pier called KAI—something, nine monsoons ago, laughing at a broad-shouldered man with a case chained to his wrist. He had been here. He spent nine years finding his way back to her promise. And when the island rose off the bow at last, he looked at it — not the water, the ISLAND — and said: <em>"There you are."</em> You carry the photograph now. Whatever you do with the rest of your days here — someone was coming home.';
+        body.appendChild(done);
+      }
     } else if (curTab === 'trophies' && TB.Trophies) {
       const got = TB.Trophies.data().got;
       for (const t of TB.Trophies.LIST) {
