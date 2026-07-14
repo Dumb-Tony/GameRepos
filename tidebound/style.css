@@ -569,3 +569,16 @@ body {
   55.2% { opacity: .2; } 57.2% { opacity: .55; } 61.7% { opacity: .2; }
   66% { opacity: .14; } 100% { opacity: .14; }
 }
+
+/* ===== TROPHY TOAST (trophies.js) ===== */
+#trophyToast {
+  position: fixed; top: 52px; left: 50%; transform: translate(-50%, -18px);
+  display: flex; align-items: center; gap: 10px; padding: 8px 16px;
+  background: var(--panel-bg, rgba(12, 24, 34, .92)); border: 1px solid rgba(255, 214, 92, .55);
+  border-radius: 999px; box-shadow: 0 6px 24px rgba(0, 0, 0, .45);
+  font-family: system-ui, sans-serif; z-index: 60; opacity: 0; pointer-events: none;
+  transition: opacity .45s, transform .45s;
+}
+#trophyToast.show { opacity: 1; transform: translate(-50%, 0); }
+#trophyToast .ttTag { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #ffd65c; }
+#trophyToast .ttName { font-size: 14.5px; color: var(--ink, #eef6f9); }

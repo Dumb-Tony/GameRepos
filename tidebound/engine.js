@@ -350,6 +350,7 @@
     if (s.deathCause && id !== 'death' && id !== 'title') { TB.go('death'); return; }
     if (id === 'ending' && s.endingId) TB.recordEnd('ending', s.endingId);
     if (id === 'death' && s.deathCause) TB.recordEnd('death', s.deathCause);
+    if (TB.Trophies && id !== 'title') { try { TB.Trophies.check(s); } catch (e) {} } // 🏆 after recordEnd, so ending counts are fresh
     setBackdrop(resolve(def.bg, s));
     const who = resolve(def.who, s);
     setPortrait(who);
