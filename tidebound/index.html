@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Tidebound — a survival visual novel</title>
-<link rel="stylesheet" href="style.css?v=25">
+<link rel="stylesheet" href="style.css?v=26">
 </head>
 <body>
 
@@ -58,8 +58,10 @@ window.onerror = function (msg, src, line) {
 <!-- ===== KIT OVERLAY ===== -->
 <div id="kitOverlay" class="hidden">
   <div id="kitCard">
-    <h2>🎒 Your kit</h2>
+    <h2>🎒 Your backpack</h2>
     <div id="kitItems"></div>
+    <h2>✨ Beach-finds <span id="kitTkCount" class="menuHint"></span></h2>
+    <div id="kitTrinkets"></div>
     <h2>🧭 What you know</h2>
     <div id="kitFacts"></div>
     <button id="kitClose">Close</button>
@@ -112,27 +114,28 @@ window.onerror = function (msg, src, line) {
   </div>
 </div>
 
-<script src="engine.js?v=25"></script>
-<script src="audio.js?v=25"></script>
-<script src="fx.js?v=25"></script>
-<script src="menu.js?v=25"></script>
-<script src="runcard.js?v=25"></script>
-<script src="loops.js?v=25"></script>
-<script src="almanac.js?v=25"></script>
-<script src="trophies.js?v=25"></script>
-<script src="scenes-prologue.js?v=25"></script>
-<script src="scenes-chapter1.js?v=25"></script>
-<script src="scenes-chapter2.js?v=25"></script>
-<script src="scenes-chapter3.js?v=25"></script>
-<script src="scenes-chapter4.js?v=25"></script>
-<script src="scenes-chapter5.js?v=25"></script>
-<script src="scenes-chapter6.js?v=25"></script>
-<script src="scenes-chapter7.js?v=25"></script>
-<script src="scenes-extra.js?v=25"></script>
-<script src="scenes-quests.js?v=25"></script>
-<script src="scenes-milestones.js?v=25"></script>
-<script src="scenes-peril.js?v=25"></script>
-<script src="map.js?v=25"></script>
+<script src="engine.js?v=26"></script>
+<script src="audio.js?v=26"></script>
+<script src="fx.js?v=26"></script>
+<script src="menu.js?v=26"></script>
+<script src="runcard.js?v=26"></script>
+<script src="loops.js?v=26"></script>
+<script src="almanac.js?v=26"></script>
+<script src="trophies.js?v=26"></script>
+<script src="scenes-prologue.js?v=26"></script>
+<script src="scenes-chapter1.js?v=26"></script>
+<script src="scenes-chapter2.js?v=26"></script>
+<script src="scenes-chapter3.js?v=26"></script>
+<script src="scenes-chapter4.js?v=26"></script>
+<script src="scenes-chapter5.js?v=26"></script>
+<script src="scenes-chapter6.js?v=26"></script>
+<script src="scenes-chapter7.js?v=26"></script>
+<script src="scenes-extra.js?v=26"></script>
+<script src="scenes-quests.js?v=26"></script>
+<script src="scenes-milestones.js?v=26"></script>
+<script src="scenes-peril.js?v=26"></script>
+<script src="map.js?v=26"></script>
+<script src="trinkets.js?v=26"></script>
 <script>window.TB.start();</script>
 </body>
 </html>

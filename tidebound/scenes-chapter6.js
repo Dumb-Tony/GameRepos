@@ -32,6 +32,7 @@
     if (TB.is('NAIA_TRUSTED') || TB.is('NAIA_TERMS')) r++;
     if (TB.is('MOA_FOUND') || TB.is('VELA_MANTLED') || TB.is('HEART2_DONE')) r++;
     if (TB.is('TURTLES') || TB.is('TREASURE_LEFT')) r++; // mercies the island witnessed
+    if (TB.is('OLD_THINGS_HOME')) r++; // Kaari-old beach-finds, carried up the mountain (trinkets.js)
     return r;
   };
 
@@ -76,7 +77,11 @@
   // ---- The Tidewell Temple ---------------------------------------------------------------
   TB.scene('ch6_temple', {
     bg: 'temple',
-    enter: (s) => { if (!TB.is('TEMPLE_SEEN')) { TB.flag('TEMPLE_SEEN'); TB.route('depth', 2); } },
+    enter: (s) => {
+      if (!TB.is('TEMPLE_SEEN')) { TB.flag('TEMPLE_SEEN'); TB.route('depth', 2); }
+      // old things, carried all the way up: the mountain notices (trinkets.js finds)
+      if (!TB.is('OLD_THINGS_HOME') && s.trinkets && (s.trinkets.arrowhead || s.trinkets.potsherd || s.trinkets.driftidol || s.trinkets.boneflute)) { TB.flag('OLD_THINGS_HOME'); TB.stat('hope', 6); }
+    },
     text: (s) => [
       'The stair ends at the temple, and the temple ends at the sea — which is impossible, because you are eight hundred feet above it.',
       'The Tidewell Temple is cut into the mountain\'s shoulder: a nave of standing stone open to the sky, walls carved past weathering with the spiral in every size — and half its floor is <em>water</em>. A pool, black and utterly clear, fills the nave\'s lower end, and the water breathes. Rises, falls. Seven beats. You watch it run its cycle three times before your mind accepts what your eyes and the last month have already agreed on: the pool is plumbed to the sea through the whole body of the mountain — the throat, the Gullet, the channels the Kaari drew — and it keeps the island\'s time here, at the top of everything, like a heart on an altar.',
@@ -155,6 +160,14 @@
         t.push('You lie flat on the rim-rock and watch the impossible town for an hour, heart hammering — and you are not surprised, somehow, when the watchers find you: three of them, rising out of the crown-rock where nothing was, spears grounded but present, faces closed.',
           'No words reach across. They do not attack; they do not invite; they stand between you and the downward path with the settled patience of a wall, and one of them — youngest, fiercest, familiar in a way you can\'t place — points, once, back the way you came, and then, after a heartbeat\'s hesitation, at the temple below. <em>Not here. There.</em>',
           'The island\'s people keep their door. But they have pointed you, unmistakably, at the water.');
+      }
+      // the beach-finds payoff: old things, carried home (trinkets.js)
+      const OLD_NAMES = { arrowhead: 'the obsidian arrowhead', potsherd: 'the spiral-marked potsherd', driftidol: 'the little boar idol', boneflute: 'the cracked bone flute' };
+      const old = s.trinkets ? Object.keys(OLD_NAMES).filter((k) => s.trinkets[k]) : [];
+      if (old.length) {
+        const carried = old.map((k) => OLD_NAMES[k]).join(', ');
+        if (TB.is('INNER_GREEN') || TB.is('INNER_PROBATION')) t.push('And one exchange needs no translation at all: you unwrap ' + carried + ' and hold ' + (old.length > 1 ? 'them' : 'it') + ' out — not as payment; as <em>returning</em> — and the oldest hands present turn the old things over in a silence with weight in it, and then press them back into yours. "Carried this far," Tekau says, "they have chosen their courier." Something has changed in every face on the rim. You brought their grandmothers\' things up a mountain, and the island watched you do it.');
+        else t.push('And then the youngest watcher\'s eyes catch on ' + OLD_NAMES[old[0]] + ' at your belt — found, kept, plainly <em>cared for</em> — and the spear-points, without any order being given, lift away from you. Old things coming home buy a stranger more than words would.');
       }
       return t;
     },
