@@ -162,7 +162,7 @@
   };
 
   // ---- the overlay ------------------------------------------------------------
-  const TABS = [['species', '🐾 Species'], ['stones', '🗿 Stones'], ['pages', '📄 Pages'], ['recipes', '🍲 Recipes'], ['photo', '🖼️ The Photograph'], ['trophies', '🏆 Trophies']];
+  const TABS = [['species', '🐾 Species'], ['stones', '🗿 Stones'], ['pages', '📄 Pages'], ['recipes', '🍲 Recipes'], ['photo', '🖼️ The Photograph'], ['trophies', '🏆 Trophies'], ['keepsakes', '📜 Keepsakes']];
   let curTab = 'species';
 
   function entryRow(icon, title, text, dim) {
@@ -237,6 +237,33 @@
       }
       const tc = TB.Trophies.counts();
       if (tc.got === tc.total) { const done = document.createElement('div'); done.className = 'almDone'; done.innerHTML = '<em>The shelf, full.</em> Every way of paying attention, paid. The island has no more medals to hand you — only mornings.'; body.appendChild(done); }
+    }
+    else if (curTab === 'keepsakes' && TB.Keepsakes) {
+      const list = TB.Keepsakes.list();
+      const st = TB.Keepsakes.stats();
+      const head = document.createElement('div'); head.className = 'almDone';
+      head.innerHTML = st.lives ? '<em>The box, so far:</em> ' + st.lives + (st.lives === 1 ? ' life' : ' lives') + ' · ' + st.days + ' island days lived' + (st.fav ? ' · most often beside ' + ({ kavi: 'Kavi 🐕', ipo: 'Ipo 🐒', vela: 'Vela 🦅', buri: 'Buri 🐗', moa: 'Moa 🐔', nine: 'Nine 🐙' }[st.fav] || st.fav) : '') : '<em>The box is empty.</em> Every life you finish on Vessakai leaves a card here — endings and deaths alike. The island is long; go live one.';
+      body.appendChild(head);
+      for (const snap of list) {
+        const t = TB.RunCard.titleFor(snap);
+        const e = document.createElement('span'); e.className = 'almEmoji'; e.textContent = t.icon;
+        const row = entryRow(e, t.title, 'Day ' + snap.day + (snap.companion ? ' · with ' + ({ kavi: 'Kavi', ipo: 'Ipo', vela: 'Vela', buri: 'Buri', moa: 'Moa', nine: 'Nine' }[snap.companion] || snap.companion) : ' · solo') + (snap.when ? ' · ' + snap.when : '') + ' — tap to see the card', false);
+        row.classList.add('almKeepsake');
+        row.addEventListener('click', function () {
+          const open = row.nextElementSibling && row.nextElementSibling.classList.contains('almCardWrap');
+          document.querySelectorAll('.almCardWrap').forEach((w) => w.remove());
+          if (open) return;
+          try {
+            const cv = TB.RunCard.render(snap);
+            const wrap = document.createElement('div'); wrap.className = 'almCardWrap';
+            const img = document.createElement('img'); img.className = 'almCardImg'; img.alt = t.title;
+            img.src = cv.toDataURL('image/png');
+            wrap.appendChild(img);
+            row.after(wrap);
+          } catch (err) {}
+        });
+        body.appendChild(row);
+      }
     }
     // header counts
     const tCounts = TB.Trophies ? ' · Trophies ' + TB.Trophies.counts().got + '/' + TB.Trophies.counts().total : '';
