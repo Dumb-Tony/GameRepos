@@ -23,6 +23,18 @@
       do: () => { const s2 = TB.state; s2.vigilDay = s2.day; s2.vigil = (s2.vigil | 0) + 1; TB.stat('energy', -5); TB.tickSegment(); },
       go: (s2) => 'vigil_' + ((TB.state.vigil | 0)),
     });
+    // THE TWELFTH HOUR — NG+ only: after the pact, M.'s dead-station hour
+    // becomes something a second keeper can hold with her. Two beats, and
+    // the Archipelago stops being a number and becomes a future.
+    if (s.flags.NGPLUS && TB.is('M_VIGIL_DONE') && TB.is('RADIO_DONE') && !TB.is('TWELVE_DONE') && s.twelveDay !== s.day) c.push({
+      grp: 'story',
+      t: '🕛 Keep the twelve-beat hour' + (TB.is('TWELVE1') ? ' (again)' : ''),
+      sub: TB.is('TWELVE1')
+        ? 'Last hour, at the end, the Hum held its breath on a dead station\'s frequency. M. heard it too. The hour has come around again.'
+        : 'First vigil of the month, M. still listens on the twelve-beat island\'s hour. Nine years of nothing. Tonight, keep it with her.',
+      do: () => { const s2 = TB.state; s2.twelveDay = s2.day; TB.stat('energy', -5); TB.tickSegment(); },
+      go: (s2) => (TB.is('TWELVE1') ? 'twelve_2' : 'twelve_1'),
+    });
     return c;
   };
 
@@ -96,6 +108,31 @@
       '<em>"Agreed,"</em> you send, and the word barely fits in the window, and it is the most binding thing you have signed in your life.',
       'And then she breaks her own custom, once, deliberately, in the exact middle of the night\'s last skip — no facts first, no sign after, just a name, HER name, plain and whole, spent like a coin she\'d saved eleven years. You give her yours back with two seconds to spare. The Hum closes over both of them.',
       'You never write it down. Neither, you are certain, does she. Names are for the ends of things — except once, between keepers, at the founding of a pact: <em>every seventh night, one hour, whoever is still keeping.</em> Two lighthouses, one hidden sea. The light is on. The light stays on.',
+    ],
+    next: (s) => backTo(s),
+  });
+
+  // ---- THE TWELFTH HOUR (NG+): the dead station's hour, kept by two -------
+  TB.scene('twelve_1', {
+    bg: 'station', art: 'ev-vigil',
+    enter: (s) => { if (!TB.is('TWELVE1')) { TB.flag('TWELVE1'); TB.route('depth', 1); TB.stat('hope', 2); } },
+    text: (s) => [
+      'First vigil of the month, and tonight you do what she has done alone for nine years: you turn your dial to a dead island\'s frequency and you keep its hour.',
+      'She walks you into the custom like a sexton showing you the bells. <em>"Twelve-beat went silent mid-schedule. No distress, no sign-off. Keepers end, seven-beat; islands wait. So: one hour, first vigil, every month. You listen. You log the nothing. The nothing is the record that somebody is still expecting them."</em> For fifty-eight minutes the two of you sit an ocean apart in the same silence, trading no telegrams, spending your windows on company instead — and the hour is not sad, which surprises you. It\'s a lit doorway. It\'s a chair kept empty on purpose.',
+      'And then, in the hour\'s last minute, the Hum does the thing you know from before big weather — it holds its breath. Longer than the pattern. Longer than any storm ever bought.' + (TB.is('M_WEATHERWISE') ? ' You count it the way she taught you, and the count comes back wrong for weather and wrong for tide and wrong for everything except the one thing you don\'t dare say first.' : ' You have no name for the count it makes.'),
+      'M.\'s window opens with two seconds spent on protocol and the rest on a whisper she\'d deny: <em>"You felt that. Sign: M."</em> Not a question. You look at the amber dials a long time before you sleep' + (s.flags.NGPLUS ? ', and the feeling that walks you home is one the island has given you before: the certainty of a song you know before the second verse. Something is coming around again.' : '.'),
+    ],
+    next: (s) => backTo(s),
+  });
+  TB.scene('twelve_2', {
+    bg: 'station', art: 'ev-vigil',
+    enter: (s) => { if (!TB.is('TWELVE_HEARD')) { TB.flag('TWELVE_HEARD'); TB.flag('TWELVE_DONE'); TB.route('depth', 2); TB.stat('hope', 8); } },
+    text: (s) => [
+      'The hour comes around, and the two of you take your chairs in the dark, and for forty minutes the dead frequency is its faithful, kept-empty self.',
+      'Then, at 3:07 by your wall of important arithmetic, the window opens on something that is not nothing: <em>twelve beats.</em> Ragged. Wrong-spaced. Halting where the old recordings M. once described never halted — like someone playing an instrument found in an attic, with cold hands, from a diagram. Twelve, a silence that lasts a lifetime, and twelve again. Then the Hum closes, and the frequency is empty, and stays empty, and the hour ends.',
+      'M. spends her entire next window on four seconds of silence — paid deliberately, like coins on a counter — before the telegram comes: <em>"Nine years. Somebody washed in. Somebody FOUND IT. They don\'t know the language yet — they counted twelve because the radio was LABELED."</em> A breath. <em>"That is how I started, seven-beat. That is how everyone starts."</em>',
+      'The two of you adopt the hour on the spot, no discussion needed, terms amended like a treaty gaining a clause: first vigil of every month, both lighthouses listening, until the new keeper of the twelve-beat island finds their hands. Somewhere out on the hidden sea a terrified castaway has just keyed twelve beats into what they believe is dead air, and two islands they cannot imagine are already keeping their light.',
+      '<em>The Archipelago is not a number anymore. It\'s a roll being called — and it grows.</em>',
     ],
     next: (s) => backTo(s),
   });

@@ -146,6 +146,16 @@ Menu toggle 'Recorded island sound' (settings.rec, default ON); any
 load failure or file:// origin marks the bed dead and pure synth keeps
 the watch. setScene stores its state arg (curS) — bed choice reads it,
 not TB.state. Test hook A._rec().
+**THE TWELFTH HOUR** (scenes-vigil.js, NG+-only post-game hook): gate
+NGPLUS && M_VIGIL_DONE && RADIO_DONE && !TWELVE_DONE, once/day via
+s.twelveDay; 🕛 hub action → twelve_1 (the kept hour; the Hum holds
+its breath; TWELVE1, honors M_WEATHERWISE) → twelve_2 (the dead
+station answers, ragged twelve; a new castaway found the labeled
+radio; TWELVE_HEARD+TWELVE_DONE, depth+2 hope+8). Payoffs: 🕛 trophy
+The Twelfth Hour (shelf 31), ch7 epilogue staying/leaving lines
+('Nobody leaves the Archipelago'), OTHER_SIGNAL body upgrades its
+held-hour paragraph when TWELVE_HEARD. Seeds the Archipelago as a
+growing roll without overcommitting future content.
 `keepsakes.js` (THE KEEPSAKE BOX: wraps TB.recordEnd, files one slim
 run snapshot per life (BOX_RECORDED guard) into 'tidebound.box.v1'
 (cap 24); almanac 📜 Keepsakes tab (7 tabs total) lists lives via
