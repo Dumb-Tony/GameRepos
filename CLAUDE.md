@@ -18,6 +18,6 @@
   effects go in choice `do` / `next` handlers or reload-guarded `enter` hooks,
   never in `text` functions.
 - The design bible is `tidebound/design/` — treat it as the roadmap
-  (49 endings designed, 37 CORES + 8 deaths implemented incl. NG+ ending
-  The Loop and What Remains; secret/joke/death categories listed in `design/09-endings.md`,
+  (49 endings designed, 38 CORES + 8 deaths implemented incl. NG+ ending
+  The Loop, What Remains, and The Island's Own; secret/joke/death categories listed in `design/09-endings.md`,
   current status table in `design/00-state-of-the-game.md`).

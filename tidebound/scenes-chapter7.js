@@ -69,6 +69,9 @@
         if ((TB.is('HEARTGLASS') || TB.is('HEART2_LOW')) && (TB.is('TIDEWELL_WITNESS') || TB.is('TIDEWELL_FEED'))) c.push({
           t: '🏮 Carry the covenant lamp down to the wound. And stay with it.', sub: 'The Tide Price. Someone holds the seam. It was always going to be someone.',
           do: () => { TB.state.endingId = 'TIDE_PRICE'; }, go: 'ending' });
+        if (kindred && (TB.is('TIDEWELL_WITNESS') || TB.is('TIDEWELL_FEED'))) c.push({
+          t: '🐚 Walk ' + NAMES[s.companion] + ' up the mountain. The post was never yours to fill.', sub: 'The Island\'s Own. A keeper is the one still kneeling — and you know who never left.',
+          do: () => { TB.state.endingId = 'ISLANDS_OWN'; }, go: 'ending' });
       }
       // --- the Locked Things: endings unlocked by deep or secret play ---
       const treasure = TB.is('TREASURE_SOME') || TB.is('TREASURE_ALL') || TB.is('GEMS');
@@ -297,10 +300,33 @@
     ] },
   };
 
+  // THE ISLAND'S OWN (the owner's ending): the covenant goes to the one
+  // it always fit. body is a FUNCTION here — the keeper prose is
+  // per-companion, resolved in the ending scene's text at render time.
+  CORES.ISLANDS_OWN = { icon: '🐚', title: 'THE ISLAND\'S OWN', bg: 'temple', body: (s) => {
+    const c = s.companion || 'kavi';
+    const ACCEPT = {
+      kavi: 'It sees a dog descended from the drowned, grief braided into loyalty and both worn like a working harness — a creature that has spent every night of a hundred keeping watch over the one thing the sea gave him to keep. The seven beats pause. Recount. <em>Accept.</em> Keeper Kavi takes the post the way he took your camp: quietly, entirely, forever. The ridge songs change that very night — the whole pack singing the new covenant down the length of the island — and the island, for the first time in four hundred years, sings something back.',
+      ipo: 'It sees a thief who pays his debts, a tactician who abandons nothing, the only creature on this island who already operates a treasury. The seven beats pause — and then, you will swear this at any fire for the rest of your life, they <em>laugh</em>. Keeper Ipo audits his new estate within the week: the canopy roads, the fig tithes, the reef\'s ancient accounts, four centuries of covenant bookkeeping brought suddenly and gloriously up to date. The island has never been so well administered. It appears, if anything, delighted.',
+      vela: 'It sees an empress with one eye and a ledger where a heart should be — no. You have watched closer than that, all season. A ledger <em>as</em> a heart: every debt remembered, every payment honored, forgiveness at fair market rates and no defaults, not one, in thirty years of wind. The seven beats pause. Recount. <em>Accept.</em> Keeper Vela takes the whole sky for her parish, and the island\'s weather begins arriving, there is no other word for it, punctually.',
+      buri: 'It sees devotion that never once stopped to ask what it would cost — a warm boulder that walked through a gore-line, a heart that audits the camps at night to be sure everyone is still where he left them. The seven beats pause. Recount. <em>Accept.</em> Keeper Buri does for the island what he did for your acre: everything, twice, with his whole chest — and the old treaties of the inland dark put roots down around him the way a forest roots around a spring.',
+      moa: 'It sees six ounces of copper courage that has never yielded a path in her life — the smallest keeper any mural will ever show, and the murals <em>will</em> show her; you live to watch the Kaari cut the first one. The seven beats pause. Recount. <em>Accept.</em> Keeper Moa stands her watch the way she stood every one of yours: entirely. In the years after, storms are observed — measured, Ryo insists, logged — to go <em>around</em>.',
+      nine: 'It sees what it has been waiting for since the boats: the water\'s own attention. Three hearts, nine answers, a gallery of sorted shells curated for absolutely no one — attention as love, which was the covenant\'s whole ask, all along, in every mural. The seven beats pause. Recount. <em>Accept</em> — and here is the island\'s receipt, the one you never dared price out loud: the covenant keeps what keeps it. Her three springs become the pool\'s count now, not hers. Keeper Nine has all the time the door has. You stood there and watched mortality lift off your friend like weather.',
+    };
+    return [
+      'You had it wrong for weeks, and the wrongness only shows itself on the stair: the covenant stood open like a door nobody fit, and you kept measuring <em>yourself</em> against the frame. But the stone on the fifth landing says it plainly, has said it all along. A keeper is not chosen. A keeper is the one still kneeling when the tide has asked everyone else to leave.',
+      'You know somebody like that. You have known them for exactly one hundred days.',
+      'So you climb the broken mountain one last time, the two of you, dusk going to dark going to the pool\'s own light — and at the Tidewell you do the introducing the old way, the way the murals show it: name, and debt, and gift. And then you shut your mouth, castaway, and let the water look.',
+      ACCEPT[c],
+      'And you? You stay — obviously, permanently, gladly. You are the keeper\'s person: no mural has a rank for it yet, and one day one will. You build your fire at the mountain\'s foot and learn the work from the outside — the rounds you can share, the errands a keeper without thumbs prefers delegated — and on clear nights the two of you sit at the pool\'s lip in the seven-beat light, the island\'s own and the island\'s guest, neither of you ever entirely off duty again. Neither of you, not once, ever wanting to be.',
+    ];
+  } };
+
   function epilogue(s, id) {
     const t = [];
     const leaving = id === 'RESCUE' || id === 'SAIL_BLESSED' || id === 'RYO_BOAT' || id === 'LONG_SWIM' || id === 'ROSAS_RANSOM' || id === 'REGRET' || id === 'EMPTY_HORIZON' || id === 'CARTOGRAPHER' || id === 'COCONUT_MOGUL';
-    const companionCovered = id === 'THREE_SPRINGS' || id === 'LAST_PACK' || id === 'TRICKSTER' || id === 'WIND_TAKES' || id === 'SOUNDER' || id === 'ROOSTER_DAWN' || id === 'NINES_GARDEN'; // their cores ARE the companion's fate
+    const companionCovered = id === 'THREE_SPRINGS' || id === 'LAST_PACK' || id === 'TRICKSTER' || id === 'WIND_TAKES' || id === 'SOUNDER' || id === 'ROOSTER_DAWN' || id === 'NINES_GARDEN' || id === 'ISLANDS_OWN'; // their cores ARE the companion's fate
+    if (id === 'ISLANDS_OWN' && TB.is('EDDA_MET')) t.push('— Edda hears it before you finish saying it — she always hears it — and sets down the pestle and looks at you for a long, still moment. "Forty years," she says at last, "I wondered what that pool was holding the post open <em>for</em>. It was never waiting for a better human." A snort, at herself, at everything. "It was waiting for you to introduce them." She takes tea up the mountain every new moon after. She is, every time, received.');
     if (id === 'TIDE_PRICE') {
       // the one ending whose epilogue the player doesn't live to keep — it
       // belongs to the ones left at the fires
@@ -321,7 +347,7 @@
     } else if (!s.companion && id !== 'COCO' && id !== 'ALONE_UNBROKEN') { // ALONE_UNBROKEN's core IS this line, expanded
       t.push('— You did the whole of it alone — the solo route, the hardest road on the island — and the Ledger marks it in the old way: <em>Alone, unbroken.</em>' + (TB.is('COCO') ? ' (Coco ' + (leaving ? 'sails with you, lashed to the mast with full honors.' : 'keeps his shelf, and his counsel, to the end.') + ')' : ''));
     }
-    if (TB.is('EDDA_MET') && id !== 'HERMIT_HEIR') t.push('— Edda: ' + (leaving ? 'she refuses rescue, refuses goodbye ceremonies, and presses on you at the last a wax-sealed letter "for the world, if it must have one" — which proves to contain, in full, her resignation from Project Halcyon, dated 1979, effective immediately, tone scorching. You deliver it. It is framed, eventually, in an archive. She\'d hate that, and know it was funny.' : s.edda >= 60 ? 'her last years are warm ones — your fire and her grove, tea and insults, the drawer\'s weight finally shared. She dies in her garden in her ninetieth spring, mid-argument with a seedling, and is buried under the flowering tree between Ilsa and Aleksander, where all three of them can supervise the sea.' : 'her mountain keeps her to the end, flinty and sovereign, and the island is never told a better secret-keeper.'));
+    if (TB.is('EDDA_MET') && id !== 'HERMIT_HEIR' && id !== 'ISLANDS_OWN') t.push('— Edda: ' + (leaving ? 'she refuses rescue, refuses goodbye ceremonies, and presses on you at the last a wax-sealed letter "for the world, if it must have one" — which proves to contain, in full, her resignation from Project Halcyon, dated 1979, effective immediately, tone scorching. You deliver it. It is framed, eventually, in an archive. She\'d hate that, and know it was funny.' : s.edda >= 60 ? 'her last years are warm ones — your fire and her grove, tea and insults, the drawer\'s weight finally shared. She dies in her garden in her ninetieth spring, mid-argument with a seedling, and is buried under the flowering tree between Ilsa and Aleksander, where all three of them can supervise the sea.' : 'her mountain keeps her to the end, flinty and sovereign, and the island is never told a better secret-keeper.'));
     if (TB.is('RYO_MET') && id !== 'RYO_BOAT') t.push('— Ryo: ' + (leaving ? 'he sails out beside you as far as the veil, then — to your shout of protest across the water — puts the Kingfisher\'s helm over and turns BACK, laughing, pointing at the island like a man pointing at a keeper\'s post. "Somebody has to mind the sea things!" The island\'s harbormaster. It suits him better than arriving anywhere ever did.' : 'he never does sail for the world — the boatyard, the salvage, the arrivals who need a sailor\'s hands; the island gave him the thing the circumnavigation was for, and he knows it. The Kingfisher goes out and comes back, out and comes back, like a tide with a name.'));
     if (TB.is('KING_ALLY') || TB.is('KING_FED')) t.push('— The Boar King holds the treaty to the end of his old age, and the inland dark holds it after him: nothing with tusks ever again crosses your boundary uninvited. Rent, it turned out, was a language. You both spoke it.');
     if (TB.is('HOME_NAMED') && !leaving) t.push('— ' + homeName() + ' outlives every plan you had for it. Names hold, on this island. The island heard you give it.');
@@ -365,7 +391,7 @@
     text: (s) => {
       const core = CORES[s.endingId] || CORES.HOME;
       return ['<em>ENDING ' + core.icon + ' — ' + core.title + '</em>']
-        .concat(core.body)
+        .concat(typeof core.body === 'function' ? core.body(s) : core.body)
         .concat(epilogue(s, s.endingId))
         .concat(ledgerReport(s));
     },

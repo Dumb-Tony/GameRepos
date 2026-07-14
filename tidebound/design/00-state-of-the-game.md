@@ -23,7 +23,7 @@ compressed realization. Deviations a resuming developer must know:
 | Designed | Built | Notes |
 |---|---|---|
 | ~100 in-game days | **34 days** (Ch1 d1–3 · Ch2 d4–9 · Ch3 d10–15 · Ch4 d16–21 · Ch5 d22–28 · Ch6 d29–33 · Ch7 d34) | Chapter *content* kept; day counts compressed. Expanding day ranges is pure tuning if desired. |
-| 49 endings | **33 CORES endings** (RESCUE, STAY_OPEN, BROKER, HOME, VILLAGE, JOIN, KEEPER, COVENANT, TWO_WORLDS, SAIL_BLESSED, RYO_BOAT, LONG_SWIM, WHOLE_SKY, COCO, THREE_SPRINGS, LAST_PACK, TRICKSTER, ROSAS_RANSOM, OTHER_SIGNAL, FIRST_KAARI, + the Endings Expansion in ch7: REGRET, EMPTY_HORIZON, CARTOGRAPHER, REMAIN, HERMIT_HEIR, ILSA_ANSWER, DROWNED_DOOR, TIDE_PRICE, WIND_TAKES, SOUNDER, ROOSTER_DAWN, NINES_GARDEN, ALONE_UNBROKEN) + 8 death endings (thirst, hunger, injury, undertow, fever, grin, despair, dark) | Ending engine is parameterized — new endings = CORES entry (scenes-extra.js appends via TB.CORES) + convergence mapping. Now 37 cores: Phase-3 jokes (CRAB_TOWN, COCONUT_MOGUL), X3 The Loop (NG+), and S7 WHAT_REMAINS (via the Scars-Not-Graves peril arc — PERIL_HEALED/PERIL_SELFHEALED, not a death). Still unbuilt from design/09: D9/D10 death causes. C2 Good Boy is VETOED by the owner — companions never die; peril arcs are the sanctioned substitute. |
+| 49 endings | **33 CORES endings** (RESCUE, STAY_OPEN, BROKER, HOME, VILLAGE, JOIN, KEEPER, COVENANT, TWO_WORLDS, SAIL_BLESSED, RYO_BOAT, LONG_SWIM, WHOLE_SKY, COCO, THREE_SPRINGS, LAST_PACK, TRICKSTER, ROSAS_RANSOM, OTHER_SIGNAL, FIRST_KAARI, + the Endings Expansion in ch7: REGRET, EMPTY_HORIZON, CARTOGRAPHER, REMAIN, HERMIT_HEIR, ILSA_ANSWER, DROWNED_DOOR, TIDE_PRICE, WIND_TAKES, SOUNDER, ROOSTER_DAWN, NINES_GARDEN, ALONE_UNBROKEN) + 8 death endings (thirst, hunger, injury, undertow, fever, grin, despair, dark) | Ending engine is parameterized — new endings = CORES entry (scenes-extra.js appends via TB.CORES) + convergence mapping. Now 38 cores: Phase-3 jokes (CRAB_TOWN, COCONUT_MOGUL), X3 The Loop (NG+), S7 WHAT_REMAINS (via the Scars-Not-Graves peril arc — PERIL_HEALED/PERIL_SELFHEALED, not a death), and ISLANDS_OWN "The Island's Own" (the owner's own idea: kindred companion trust≥90 + TIDEWELL_WITNESS/FEED → walk the companion up the mountain and hand the covenant to the one it always fit; its `body` is a FUNCTION (per-companion keeper prose — the ending scene resolves `typeof core.body === 'function'`); companionCovered; special Edda epilogue beat "It was waiting for you to introduce them"). Still unbuilt from design/09: D9/D10 death causes. C2 Good Boy is VETOED by the owner — companions never die; peril arcs are the sanctioned substitute. |
 | Trust 0–100, 5 tiers, per-companion | ✅ As designed (`s.trust`, `TB.tier()`), plus `s.edda` and `s.ryo` human-relationship tracks | Never shown as numbers; behavioral text only. |
 | Route points Signal/Roots/Depth | ✅ As designed (`s.route`) — steer Ch5 variant choice framing + Convergence options | |
 | Island Regard | **`TB.regard()`** — computed from ~8 mercy/restraint/bond flags rather than a running counter | Gates Inner Green admission (≥4) and the keeper covenant. |
@@ -92,7 +92,22 @@ trust +10); untended, engine tickSegment quietly self-heals after 5 days
 (PERIL_SELFHEALED). NOBODY DIES — owner's explicit order ("too attached to
 Kavi"). Either scar flag + companion gates the 37th core WHAT_REMAINS at
 convergence: choosing to stay because you nearly lost this once) ·
+`fx.js` (VISIBLE WEATHER: pointer-transparent layer inside #backdrop —
+monsoon rain sheets + storm-light tint + lightning strobes (ch5, or NG+
+hard from ch4; mirrors audio mixFor gates, gullet/temple stay dry),
+fireflies at jungle-night, the lagoon's seven-beat glow at beach-night
+(deep blue variant in gullet/temple, keyframed to the hum's 0.62s step +
+2.4s rest). Engine setBackdrop calls TB.FX.setScene(bg, state); menu
+toggle settings.wfx (untouched default honors prefers-reduced-motion;
+explicit opt-in respected); audio applySettings calls FX.refresh()) ·
+`trophies.js` (THE TROPHY SHELF: 26 cross-run achievements in
+'tidebound.ach.v1' {got}; engine checks on every scene entry after
+recordEnd; unlock toasts queue one at a time top-center (#trophyToast);
+renders as the 🏆 sixth tab of the Field Almanac) ·
 `scenes-prologue.js` · `scenes-chapter1..7.js`.
+Regional music motifs: audio.js MOTIFS — twelve per-region pluck
+phrases; map.js M.run calls TB.Audio.motif(regionId) once per arrival
+(reload-safe key day.seg), on the music bus.
 Global namespace `window.TB`. Cache-bust query `?v=N` on every asset — bump on release.
 
 **Scene format** (registered via `TB.scene(id, def)`):
