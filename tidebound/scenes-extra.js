@@ -53,6 +53,7 @@
   };
 
   TB.scene('courier_rest', {
+    art: 'ev-cairn',
     bg: 'beach-dusk',
     enter: (s) => { if (!TB.is('COURIER_RESTED')) { TB.flag('COURIER_RESTED'); TB.stat('hope', 8); TB.route('roots', 1); } },
     text: (s) => [
@@ -128,6 +129,7 @@
 
   // ---- The Rosa Dourada -----------------------------------------------------
   TB.scene('rosa_dive', {
+    art: 'ev-rosa',
     bg: 'tidepools',
     text: (s) => [
       'The chart is honest. Two hundred years of honest: on the north reef, in four fathoms of surge-washed blue, lies the ribcage of a ship — swallowed by coral, mast-stumps like broken teeth, her iron long gone to rust-bloom and her timbers to stone.',

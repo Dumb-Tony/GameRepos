@@ -283,6 +283,7 @@
 
   // ---- Old Grin, introduced ---------------------------------------------------------------
   TB.scene('ev3_grin1', {
+    art: 'ev-grin',
     bg: 'mangrove',
     text: (s) => {
       const warn = s.companion === 'kavi' ? 'Kavi stops you. Flat stop: a shoulder against your knee, hackles in a ridge, a growl pitched below hearing — aimed at a stretch of tea-dark water you\'d already put your next footstep beside.' :
@@ -303,6 +304,7 @@
 
   // ---- The Boar King, continued --------------------------------------------------------------
   TB.scene('ev3_king2', {
+    art: 'ev-boarking',
     bg: (s) => (TB.is('KING_TITHED') ? campBg2(s) : 'jungle'),
     who: (s) => (TB.is('KING_SEEN') || TB.is('KING_TRACKED') ? BOAR_KING : null),
     text: (s) => {
@@ -358,6 +360,7 @@
 
   // ---- Heart scenes II (Devoted) -------------------------------------------------------------------
   TB.scene('ev3_heart2', {
+    art: (s) => (s.companion ? 'ev-heart-' + s.companion : null),
     bg: (s) => (s.companion === 'nine' ? 'tidepools' : campBg2(s)),
     who: (s) => WHO[s.companion],
     text: (s) => {

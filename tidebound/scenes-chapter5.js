@@ -159,6 +159,7 @@
   });
 
   TB.scene('ev5_home3', {
+    art: 'ev-boarking',
     bg: 'camp-fringe', who: BOAR_KING,
     text: (s) => {
       const t = ['On the sixty-sixth dusk, the Boar King comes to the homestead — and this time is not like the other times.',
@@ -229,6 +230,7 @@
   });
 
   TB.scene('ev5_deep2', {
+    art: 'ev-heartroom',
     bg: 'gullet',
     text: [
       'The second descent finds the Gallery of Hands.',
@@ -279,6 +281,7 @@
   //  SHARED EVENTS
   // ==================================================================
   TB.scene('ev5_cyclone', {
+    art: 'ev-cyclone',
     bg: 'beach-night',
     enter: (s) => {
       if (TB.is('CYCLONE_APPLIED')) return;

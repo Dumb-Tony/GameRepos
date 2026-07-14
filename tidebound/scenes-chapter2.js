@@ -333,6 +333,7 @@
 
   // ---- The Boar King ------------------------------------------------------------
   TB.scene('ev2_boarking', {
+    art: 'ev-boarking',
     bg: campBg2,
     who: (s) => (s.companion === 'kavi' || s.companion === 'buri' ? BOAR_KING : null),
     enter: (s) => {
@@ -373,6 +374,7 @@
   });
 
   TB.scene('ev2_boarkface', {
+    art: 'ev-boarking',
     bg: 'jungle', who: BOAR_KING,
     text: (s) => [
       'You find him because he lets you. That much is clear within the first hundred meters of the trail: the prints get fresher too fast, the rooting-sign too neat, and then the jungle opens into a wallow-clearing and he is simply THERE, facing you, having chosen the ground, the light, and the moment you\'d arrive.',
@@ -382,7 +384,7 @@
     ],
     next: (s) => { TB.tickSegment(); return TB.advance(); },
   });
-  TB.scene('ev2_boarking2', { bg: 'jungle', who: (s) => (TB.is('KING_SEEN') ? BOAR_KING : null),
+  TB.scene('ev2_boarking2', { bg: 'jungle', art: 'ev-boarking', who: (s) => (TB.is('KING_SEEN') ? BOAR_KING : null),
     text: (s) => [
       (s.companion === 'kavi' ? 'Kavi takes the trail like it\'s a manuscript, and reads you the terrible parts. ' : 'You follow the post-hole prints inland, slowly, loudly enough to be honest about it. ') + 'The trail is a road — <em>his</em> road, worn deep by years, running from a wallow the size of a pond up toward the grass highlands. Along it: trees stripped of bark at shoulder height, old snare-wire grown into scar tissue on a tusk-scraped trunk, and once — you stop and look for a long time — the rusted spring-arm of a man-made trap, snapped clean.',
       'He is old. He has been hunted before, by people with better equipment than yours, and he has outlived every one of them. Whatever this is going to be between you, it will not be simple, and it will not be quick.',
@@ -515,6 +517,7 @@
 
   // ---- Day 8: hearts, doubts, and coconuts ---------------------------------------------
   TB.scene('ev2_heart', {
+    art: (s) => (s.companion ? 'ev-heart-' + s.companion : null),
     bg: campBg2, who: (s) => WHO[s.companion],
     text: (s) => {
       const v = {

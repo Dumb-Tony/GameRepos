@@ -199,6 +199,16 @@ portraits), append `name.webp|rawUrl` to `art/manifest.txt`, push — the
 q85). Backdrops: CSS class `.bg-<name> .art {background-image}` over painted-CSS
 fallback layers. Portraits: emoji→file map in engine + `who.art` override.
 **Never download art in the sandbox; never Read image files into context.**
+**Story-moment illustrations:** scenes may declare `art: 'ev-<name>'`
+(string or fn(s)) — engine setBackdrop paints it as an inline
+background-image on the .art layer OVER the bg class art, clearing it
+on artless scenes; a missing file degrades to the class/painted scene.
+Camp results ride `s.out.art` (act_result); endings ride `CORES[id].art`.
+16 shipped: ev-clearing (clearing + court_*), ev-boarking (king chain,
+ev3_king2, ev5_home3), ev-grin, ev-heart-<companion> ×6 (heart I+II),
+ev-lagoonglow (ev_lights), ev-rosa, ev-cairn, ev-convergence,
+ev-heartroom (ev5_deep2), ev-cyclone, ev-firetower (tower stage 3 +
+LIGHTKEEPER). Workflow sizes ev-* at 1920w q82.
 
 **Audio (`audio.js`):** all synthesized. Continuous layers (surf/wind/rain/river)
 crossfade via `mixFor(bg, state)`; a 260ms scheduler sprinkles one-shots (birds dawn,
