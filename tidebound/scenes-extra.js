@@ -162,7 +162,7 @@
 
   // ---- The listening vigil -----------------------------------------------------
   TB.scene('radio_listen', {
-    bg: 'station',
+    bg: 'station', art: 'ev-vigil',
     text: (s) => {
       if (!TB.is('LISTEN1')) return [
         'You keep the vigil with the transmitter cold and the receiver hot, headphones on in the amber dark, waiting on the island\'s held breaths.',
@@ -211,12 +211,17 @@
       'The world receives a castaway and audits a fortune. There are rooms, afterward — polite rooms, with flags in the corners and men who say "provenance" the way priests say sin — and you tell the truth minus one island: storm, raft, a reef that isn\'t on the charts, salvage law. The gold clears eventually. Gold always does; that\'s what it\'s FOR. The heartglass you sell one stone at a time, carefully, to buyers who don\'t advertise — and stop, the third time a purchaser\'s crest looks a half-century familiar, and quietly drop the rest into a harbor at night.',
       'You are, by any accounting, set for life. The accounting runs at night anyway: the seventh beat of anything turns your head; wealth, it turns out, is a lighthouse pointed backward. You know exactly what it illuminates. You paid the Rosa\'s ransom to leave, and some nights — most nights — you understand at last why her crew never did.',
     ] },
-    OTHER_SIGNAL: { icon: '🌀', title: 'THE OTHER SIGNAL', bg: 'station', body: [
-      'You stay — but not for the island. For the ARCHIPELAGO.',
-      'Night after night, skip after skip, four seconds at a time, you and the nine-beat station build the strangest friendship in the history of radio: two keepers of two hidden worlds, trading survival tricks and storm warnings and, eventually, in hundred-night installments, whole life stories. Her island is cold where yours is green; her Hum lives in aurora, not tide; her people went IN, too, a thousand years before yours did. There are, she has confirmed across her longer vigil, at least FIVE. The world\'s quiet places know each other. Now their keepers do.',
-      'Your radio room grows into a listening post the world will never chart: logbooks of skips, a map of nothing anyone else can see. And on the first night of your third year, a third voice arrives in the windows — hesitant, terrified, brand new, some fresh castaway on some far quiet place, keying a MAYDAY into what they think is dead air.',
-      'You and nine-beat answer together, the old way, the way she once answered you: <em>"We hear you. You\'re not alone. Count the beats, keeper. Count the beats, and be careful what you teach the world to find."</em>',
-    ] },
+    OTHER_SIGNAL: { icon: '🌀', title: 'THE OTHER SIGNAL', bg: 'station', art: 'ev-vigil', body: (s) => {
+      const t = ['You stay — but not for the island. For the ARCHIPELAGO.'];
+      if (TB.is('M_VIGIL_DONE')) t.push(
+        'The pact was already signed before the Convergence ever asked its question — <em>every seventh night, one hour, whoever is still keeping</em> — so staying is less a choice than a ratification. You know her schedule, her customs, her number (five, at least), and the one name apiece you traded at the founding and never wrote down. The strangest friendship in the history of radio simply continues, four seconds at a time, into its second season, and its tenth.' + (TB.is('M_SAVED') ? ' And she never signs off on the anniversary of the ice storm without one extra beat — a tenth, off the pattern, unexplained. You know what it is. It\'s the coconut, read back.' : ''));
+      else t.push('Night after night, skip after skip, four seconds at a time, you and the nine-beat station build the strangest friendship in the history of radio: two keepers of two hidden worlds, trading survival tricks and storm warnings and, eventually, in hundred-night installments, whole life stories. Her island is cold where yours is green; her Hum lives in aurora, not tide; her people went IN, too, a thousand years before yours did. There are, she confirms across her longer vigil, at least FIVE. The world\'s quiet places know each other. Now their keepers do.');
+      t.push(
+        'Your radio room grows into a listening post the world will never chart: logbooks of skips, a map of nothing anyone else can see' + (TB.is('ARCHIPELAGO') ? ' — and one hour held open, first vigil of every month, for a twelve-beat island whose keeper ended nine years ago and whose radio is still waiting for its next castaway. That is the job. You keep the whole of it now.' : '.'),
+        'And on the first night of your third year, a third voice arrives in the windows — hesitant, terrified, brand new, some fresh castaway on some far quiet place, keying a MAYDAY into what they think is dead air.',
+        'You and nine-beat answer together, the old way, the way she once answered you: <em>"We hear you. You\'re not alone. Count the beats, keeper. Count the beats, and be careful what you teach the world to find."</em>');
+      return t;
+    } },
     FIRST_KAARI: { icon: '🌀', title: 'THE FIRST KAARI', bg: 'temple', body: [
       'What happened when you touched the triple-spiral was not a dream, and you have stopped calling it one.',
       'You stood on the Terrace of Steps under an unbroken mountain, in air that smelled of a thousand cook-fires, and you watched the boats come in with sails like wings — the arrival itself, the first landing, nine centuries deep. And a woman turned on the great stair — sea-speaker\'s hood, spiral at her collar, the whole of the unfallen world behind her — and she looked AT you. Across everything. As the pool looks at you. And she raised one hand, palm out: not a greeting. A PLACING. The gesture you make to set a stone in a wall.',
