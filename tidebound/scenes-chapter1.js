@@ -154,6 +154,7 @@
   // s.out.go lets an action chain into a bespoke scene (the tide pools → Nine).
   TB.scene('act_result', {
     bg: (s) => (s.out && s.out.bg) || campBg(s),
+    art: (s) => (s.out && s.out.art) || null,
     text: (s) => (s.out && s.out.text) || ['The hours pass.'],
     next: (s) => (s.out && s.out.go) || TB.advance(),
   });
@@ -373,6 +374,7 @@
   TB.scene('ev_nine2', { bg: 'tidepools', who: { emoji: '🐙', name: 'The neighbor' }, text: ['When the business of the oyster is concluded to her satisfaction, she settles back into the pool, pours herself into a crevice you\'d have sworn was too small — and stops, one eye out, watching you go.', 'At the last moment, an arm rises above the water and traces one slow spiral in the air. It might be nothing. It might be a wave goodbye. It does not, in any way you can name, feel like nothing.'], next: (s) => TB.advance() });
 
   TB.scene('ev_lights', {
+    art: 'ev-lagoonglow',
     bg: 'beach-dusk',
     text: [
       'Dusk, day four. You\'re coaxing the evening chores along when your whole body freezes before your mind knows why.',
@@ -407,6 +409,7 @@
   };
 
   TB.scene('clearing', {
+    art: 'ev-clearing',
     bg: 'beach-dusk',
     text: (s) => {
       const met = Object.keys(COURTS).filter((k) => s.met[k]);
@@ -446,6 +449,7 @@
 
   // ---- courtship vignettes -----------------------------------------------------
   TB.scene('court_kavi', {
+    art: 'ev-clearing',
     bg: 'beach-night', who: { emoji: '🐕', name: 'Kavi' },
     text: (s) => [
       'You take your food to the open sand between the camp and the treeline, sit down at his height, and wait.',
@@ -463,6 +467,7 @@
   });
 
   TB.scene('court_ipo', {
+    art: 'ev-clearing',
     bg: 'beach-dusk', who: { emoji: '🐒', name: 'Ipo' },
     text: (s) => [
       'You find him where you knew you would — the dead palm at the camp\'s edge, working his audience of nobody — and you do the one thing no creature on this island has done for him: you sit down in the front row.',
@@ -480,6 +485,7 @@
   });
 
   TB.scene('court_vela', {
+    art: 'ev-clearing',
     bg: 'beach-dusk', who: { emoji: '🦅', name: 'Vela' },
     text: (s) => [
       'You do not go to her. You have understood this much: nothing approaches a sea eagle. You go to the tide pools instead, spear the fattest mullet of your five days, and lay it — whole, untouched — on the high rock below the dead palm. Then you step back exactly ten paces and stand in plain view, empty-handed, in the evening light.',
@@ -497,6 +503,7 @@
   });
 
   TB.scene('court_buri', {
+    art: 'ev-clearing',
     bg: 'beach-night', who: { emoji: '🐗', name: 'Buri' },
     text: (s) => [
       'Strategy is not required. Strategy would, in fact, be wasted. You simply cook dinner — a real one, doubled — and leave the second portion on a flat stone at the edge of the firelight, and by full dark the beach transmits the seismic information that he is inbound.',
@@ -514,6 +521,7 @@
   });
 
   TB.scene('court_moa', {
+    art: 'ev-clearing',
     bg: 'beach-dusk', who: { emoji: '🐔', name: 'Moa' },
     text: (s) => [
       'You do it the slow way, the only way: a scatter of grubs a little nearer the camp each time, and yourself — planted, quiet, unthreatening — a little nearer the scatter. All evening the copper hen shuttles between the fern-shadow and the food, wound like a spring, retreating from every noise the island makes.',
@@ -531,6 +539,7 @@
   });
 
   TB.scene('court_nine', {
+    art: 'ev-clearing',
     bg: 'tidepools', who: { emoji: '🐙', name: 'Nine' },
     text: (s) => [
       'You give your last free hours to the pools, which is — by every survival arithmetic you know — indefensible. You bring a live crab, and your patience, and you sit down at the edge of her pool in the low gold light like a student early for class.',
@@ -548,6 +557,7 @@
   });
 
   TB.scene('court_none', {
+    art: 'ev-clearing',
     bg: 'beach-night',
     text: [
       'You bank the fire alone, on purpose, and sit with the decision while the lagoon keeps its slow time.',

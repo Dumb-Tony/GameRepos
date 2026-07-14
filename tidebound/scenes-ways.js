@@ -62,6 +62,7 @@
           TB.stat('energy', -10); TB.route('signal', 1); TB.stat('hope', 4);
           if (s2.tower >= 3) { TB.flag('TOWER_BUILT'); TB.stat('hope', 4); TB.route('roots', 1); }
           s2.out = { bg: 'cliff-camp', text: TOWER_STAGES[Math.min(s2.tower - 1, 2)] };
+          if (s2.tower >= 3) s2.out.art = 'ev-firetower';
           TB.tickSegment();
         },
         go: 'act_result',

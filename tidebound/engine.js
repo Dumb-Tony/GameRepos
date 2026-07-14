@@ -196,8 +196,12 @@
     }
   };
 
-  function setBackdrop(name) {
+  function setBackdrop(name, artFile) {
     $('backdrop').className = 'bg-' + (name || 'beach-day');
+    // per-scene illustration override: layers over the class art; a
+    // missing file simply leaves the painted scene showing through
+    const artEl = $('backdrop').querySelector('.art');
+    if (artEl) artEl.style.backgroundImage = artFile ? "url('art/" + artFile + ".webp')" : '';
     if (TB.Audio) TB.Audio.setScene(name || 'beach-day', TB.state);
     if (TB.FX) TB.FX.setScene(name || 'beach-day', TB.state);
   }
@@ -351,7 +355,7 @@
     if (id === 'ending' && s.endingId) TB.recordEnd('ending', s.endingId);
     if (id === 'death' && s.deathCause) TB.recordEnd('death', s.deathCause);
     if (TB.Trophies && id !== 'title') { try { TB.Trophies.check(s); } catch (e) {} } // 🏆 after recordEnd, so ending counts are fresh
-    setBackdrop(resolve(def.bg, s));
+    setBackdrop(resolve(def.bg, s), resolve(def.art, s));
     const who = resolve(def.who, s);
     setPortrait(who);
     if (TB.Audio) { const sp = animalCallFor(def, who, id); if (sp) TB.Audio.call(sp, id); }

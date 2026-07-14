@@ -33,6 +33,7 @@
   // ---- THE CONVERGENCE -------------------------------------------------------------------
   TB.scene('convergence', {
     bg: 'beach-dusk',
+    art: 'ev-convergence',
     enter: (s) => { if (s.day < 100) { s.day = 100; s.seg = 2; } }, // the hundred days come due, literally
     text: (s) => [
       '<em>THE CONVERGENCE</em>',
@@ -351,7 +352,7 @@
   } };
 
   // KEEPER OF THE LIGHT (S4): the fire-tower kept, the stay dedicated.
-  CORES.LIGHTKEEPER = { icon: '🗼', title: 'KEEPER OF THE LIGHT', bg: 'cliff-camp', body: (s) => {
+  CORES.LIGHTKEEPER = { icon: '🗼', title: 'KEEPER OF THE LIGHT', bg: 'cliff-camp', art: 'ev-firetower', body: (s) => {
     const t = [
       'You choose the tower the way the tower, you suspect, chose you: quietly, on the hundredth dusk, standing in the fire-bowl\'s fan of light with the whole dark sea spread out underneath — the one patch of this world where your two hands unambiguously matter every single night.',
       'The work is simple and it is endless and it is <em>yours</em>: oil rendered and lockered, char split and stacked, the lens-glass wiped at dusk, the light struck at full dark and banked at dawn. The island collects the lost — it always has; you are standing proof — and the Kaari built this tower because collecting is gentler when somebody keeps a light on the last mile. For four hundred years the post stood empty. It doesn\'t now.',
@@ -447,6 +448,7 @@
 
   TB.scene('ending', {
     bg: (s) => (CORES[s.endingId] || CORES.HOME).bg,
+    art: (s) => (CORES[s.endingId] || {}).art || null,
     text: (s) => {
       const core = CORES[s.endingId] || CORES.HOME;
       return ['<em>ENDING ' + core.icon + ' — ' + core.title + '</em>']
