@@ -209,6 +209,17 @@ ev3_king2, ev5_home3), ev-grin, ev-heart-<companion> ×6 (heart I+II),
 ev-lagoonglow (ev_lights), ev-rosa, ev-cairn, ev-convergence,
 ev-heartroom (ev5_deep2), ev-cyclone, ev-firetower (tower stage 3 +
 LIGHTKEEPER). Workflow sizes ev-* at 1920w q82.
+THE OTHER CASTAWAY (scenes-vigil.js): after OTHER_HEARD, the '📻 Keep
+the nine-beat vigil' hub action plays a 5-beat correspondence (one per
+day, s.vigilDay guard, s.vigil counter): protocols (VIGIL1, Sign: M.,
+eleven years) → tradecraft (VIGIL2 + M_WEATHERWISE, the laugh) → her
+silent night (VIGIL3 — choice: burn the reserve → M_SAVED, or hold
+protocol) → the archipelago (VIGIL4 + ARCHIPELAGO — five islands, the
+silent twelve) → the two-lighthouse pact (M_VIGIL_DONE, names spent
+once). OTHER_SIGNAL body is now a fn honoring M_VIGIL_DONE/M_SAVED/
+ARCHIPELAGO; ch7 epilogues carry the pact staying AND leaving (the
+M_VIGIL_DONE line supersedes the plain OTHER_HEARD one); trophy Two
+Lighthouses (shelf 30); vigil scenes + radio_listen wear ev-vigil art.
 
 **Audio (`audio.js`):** all synthesized. Continuous layers (surf/wind/rain/river)
 crossfade via `mixFor(bg, state)`; a 260ms scheduler sprinkles one-shots (birds dawn,

@@ -94,3 +94,4 @@ ev-heart-vela.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MC
 ev-heart-buri.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260714_193006_b18c0d3c-6d9c-49b7-a904-887dc672c835.png
 ev-heart-moa.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260714_193022_308d4dfe-ce50-40d2-8a21-007e559ca8bb.png
 ev-heart-nine.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260714_193035_3cebbaa6-7107-4357-bc05-bdc8e7dbd76a.png
+ev-vigil.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260714_194111_ef93a422-c2ab-4f9e-90bb-901f933ae306.png
