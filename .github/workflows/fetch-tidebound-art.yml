@@ -39,7 +39,7 @@ jobs:
               amb-*|mus-*)
                 # recorded ambience / music: normalize to quiet AAC loops
                 curl -fsSL --retry 3 --retry-delay 2 -o /tmp/src.audio "$url"
-                ffmpeg -y -loglevel error -i /tmp/src.audio -af "loudnorm=I=-20:TP=-3" -c:a aac -b:a 96k -movflags +faststart "$name"
+                ffmpeg -nostdin -y -loglevel error -i /tmp/src.audio -af "loudnorm=I=-20:TP=-3" -c:a aac -b:a 96k -movflags +faststart "$name"
                 continue ;;
             esac
             curl -fsSL --retry 3 --retry-delay 2 -o /tmp/src.png "$url"
