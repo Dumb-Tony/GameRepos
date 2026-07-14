@@ -132,6 +132,20 @@ the Playwright harness via navigator.webdriver — set localStorage
 Regional music motifs: audio.js MOTIFS — twelve per-region pluck
 phrases; map.js M.run calls TB.Audio.motif(regionId) once per arrival
 (reload-safe key day.seg), on the music bus.
+**Recorded ambience** (audio.js rec layer): five real beds
+(art/amb-{surf,jungle,night,rain,cave}.m4a) + the recorded title theme
+(art/mus-title.m4a), Higgsfield mirelo/sonilo via the manifest workflow
+(amb-*/mus-* rows are ffmpeg-normalized to −20 LUFS AAC, not webp).
+One bed at a time by backdrop (recKeyFor: ch5→rain, gullet/temple→cave,
+night scenes→night, green scenes→jungle, shore/title→surf; river/sky/
+cliffs stay pure synth), looped via WebAudio with trimmed seam points
+on ambBus; while a bed plays the four continuous synth beds duck to
+25% (one-shot critters stay full). The title screens loop mus-title on
+musBus and the generative score yields (musTick returns while themeCur).
+Menu toggle 'Recorded island sound' (settings.rec, default ON); any
+load failure or file:// origin marks the bed dead and pure synth keeps
+the watch. setScene stores its state arg (curS) — bed choice reads it,
+not TB.state. Test hook A._rec().
 `keepsakes.js` (THE KEEPSAKE BOX: wraps TB.recordEnd, files one slim
 run snapshot per life (BOX_RECORDED guard) into 'tidebound.box.v1'
 (cap 24); almanac 📜 Keepsakes tab (7 tabs total) lists lives via

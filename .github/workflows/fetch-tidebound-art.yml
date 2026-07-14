@@ -25,8 +25,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install webp tools
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq webp
+      - name: Install webp + audio tools
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq webp ffmpeg
 
       - name: Download and convert art assets
         run: |
@@ -35,6 +35,13 @@ jobs:
           while IFS='|' read -r name url; do
             case "$name" in ''|\#*) continue ;; esac
             echo "== $name"
+            case "$name" in
+              amb-*|mus-*)
+                # recorded ambience / music: normalize to quiet AAC loops
+                curl -fsSL --retry 3 --retry-delay 2 -o /tmp/src.audio "$url"
+                ffmpeg -y -loglevel error -i /tmp/src.audio -af "loudnorm=I=-20:TP=-3" -c:a aac -b:a 96k -movflags +faststart "$name"
+                continue ;;
+            esac
             curl -fsSL --retry 3 --retry-delay 2 -o /tmp/src.png "$url"
             case "$name" in
               bg-*)   cwebp -quiet -q 82 -resize 1920 0 /tmp/src.png -o "$name" ;;

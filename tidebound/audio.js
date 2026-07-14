@@ -29,7 +29,7 @@
   let schedTimer = null, humNext = 0, curMix = {}, curBgName = '';
 
   // ---- settings -------------------------------------------------------
-  const DEFAULTS = { vol: 70, bright: 100, amb: true, sfx: true, music: true, theme: 'midnight', bars: 'island', tsize: 100, type: false };
+  const DEFAULTS = { vol: 70, bright: 100, amb: true, sfx: true, music: true, rec: true, theme: 'midnight', bars: 'island', tsize: 100, type: false };
   A.settings = function () {
     try { return Object.assign({}, DEFAULTS, JSON.parse(localStorage.getItem('tidebound.settings') || '{}')); }
     catch (e) { return Object.assign({}, DEFAULTS); }
@@ -51,6 +51,7 @@
       document.documentElement.style.setProperty('--tscale', (s.tsize || 100) / 100);
     } catch (e) {}
     try { if (TB.FX) TB.FX.refresh(); } catch (e) {}
+    try { recScene(); } catch (e) {} // recorded beds honor the toggle immediately
   };
 
   // ---- graph ------------------------------------------------------------
@@ -219,17 +220,108 @@
   }
 
   A.setScene = function (bgName, s) {
-    curBgName = bgName;
+    curBgName = bgName; curS = s;
     curMix = mixFor(bgName, s);
     setMood(moodFor(bgName, s));
     if (!ctx) return;
-    try {
-      const t = ctx.currentTime;
-      for (const name of ['surf', 'wind', 'rain', 'river']) {
-        layers[name].gain.gain.setTargetAtTime(curMix[name] || 0, t, 1.2); // slow crossfade
-      }
-    } catch (e) {}
+    try { applyBeds(); } catch (e) {}
+    try { recScene(); } catch (e) {}
   };
+  // the four continuous synth beds; recorded ambience, when playing, takes
+  // the foreground and the synth beds fall to a quarter underneath it
+  function applyBeds() {
+    const t = ctx.currentTime, duck = recCur ? 0.25 : 1;
+    for (const name of ['surf', 'wind', 'rain', 'river']) {
+      layers[name].gain.gain.setTargetAtTime((curMix[name] || 0) * duck, t, 1.2); // slow crossfade
+    }
+  }
+
+  // ---- recorded ambience --------------------------------------------------
+  // Real recorded beds (art/amb-*.m4a, fetched by the manifest workflow like
+  // every other generated asset). One bed at a time, chosen by backdrop;
+  // loops via WebAudio with trimmed loop points, crossfades on scene change,
+  // rides ambBus (so the Ambience toggle + volume + mute all still rule it).
+  // Anything without a bed — or any load failure — falls back to pure synth.
+  const REC_LEVEL = { surf: 0.5, jungle: 0.5, night: 0.45, rain: 0.62, cave: 0.55 };
+  const REC_FILE = { surf: 'amb-surf', jungle: 'amb-jungle', night: 'amb-night', rain: 'amb-rain', cave: 'amb-cave', theme: 'mus-title' };
+  const recBufs = {}, recPending = {}, recDead = {};
+  let recCur = null;   // { key, src, gain }
+  let themeCur = null; // looping title track on the music bus
+  let curS = null;     // the state setScene was last given (authoritative for bed choice)
+
+  function recKeyFor(bg, s) {
+    const ch = s ? s.chapter : 1, seg = s ? s.seg : 1;
+    if (ch === 5 && bg !== 'gullet' && bg !== 'temple') return 'rain'; // the Long Rain outranks everything outdoors
+    if (bg === 'gullet' || bg === 'temple') return 'cave';
+    if (bg === 'jungle-night' || bg === 'beach-night') return 'night';
+    if (seg === 3 && (bg === 'camp-fringe' || bg === 'jungle' || bg === 'grove' || bg === 'river' || bg === 'mangrove')) return 'night';
+    if (bg === 'jungle' || bg === 'camp-fringe' || bg === 'grove' || bg === 'mangrove' || bg === 'station') return 'jungle';
+    if (bg === 'title' || bg === 'beach-day' || bg === 'beach-dusk' || bg === 'tidepools' || bg === 'ocean-night') return 'surf';
+    return null; // sky, river, cliffs, caldera: the synth beds carry those
+  }
+  function recLoad(key, cb) {
+    if (recBufs[key]) { if (cb) cb(); return; }
+    if (recDead[key] || recPending[key] || !ctx || typeof fetch !== 'function') return;
+    if (location.protocol === 'file:') { recDead[key] = true; return; } // no fetch off disk — pure synth there
+    recPending[key] = true;
+    fetch('art/' + REC_FILE[key] + '.m4a')
+      .then((r) => { if (!r.ok) throw new Error('http ' + r.status); return r.arrayBuffer(); })
+      .then((ab) => ctx.decodeAudioData(ab))
+      .then((buf) => { recBufs[key] = buf; delete recPending[key]; if (cb) cb(); })
+      .catch(() => { recDead[key] = true; delete recPending[key]; }); // synth keeps the watch
+  }
+  function recStop() {
+    if (!recCur) return;
+    const c = recCur; recCur = null;
+    try {
+      c.gain.gain.setTargetAtTime(0.0001, ctx.currentTime, 0.5);
+      setTimeout(() => { try { c.src.stop(); } catch (e) {} }, 1800);
+    } catch (e) {}
+  }
+  function recPlay(key) {
+    const buf = recBufs[key];
+    const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true;
+    src.loopStart = 0.06; src.loopEnd = Math.max(0.2, buf.duration - 0.06); // shave the edges off the seam
+    const g = ctx.createGain(); g.gain.value = 0.0001;
+    src.connect(g); g.connect(ambBus); src.start();
+    g.gain.setTargetAtTime(REC_LEVEL[key] || 0.5, ctx.currentTime, 0.9);
+    recCur = { key, src, gain: g };
+  }
+  function recScene() {
+    if (!ctx) return;
+    const on = A.settings().rec !== false;
+    const key = on ? recKeyFor(curBgName, curS || TB.state) : null;
+    if (!recCur || recCur.key !== key) {
+      recStop();
+      if (key) recLoad(key, () => {
+        // only start if this bed is still the right one by the time it decodes
+        if (!recCur && A.settings().rec !== false && recKeyFor(curBgName, curS || TB.state) === key) { recPlay(key); applyBeds(); }
+      });
+      if (key && recBufs[key] && !recCur) { recPlay(key); }
+    }
+    applyBeds();
+    themeScene();
+  }
+  // the recorded title theme: loops on the music bus at the title screens,
+  // and the generative score yields while it plays
+  function themeScene() {
+    const want = musOn && A.settings().rec !== false && musMood === 'title';
+    if (themeCur && !want) {
+      const c = themeCur; themeCur = null;
+      try { c.gain.gain.setTargetAtTime(0.0001, ctx.currentTime, 0.6); setTimeout(() => { try { c.src.stop(); } catch (e) {} }, 2200); } catch (e) {}
+      return;
+    }
+    if (!themeCur && want) recLoad('theme', () => {
+      if (themeCur || !musOn || musMood !== 'title' || A.settings().rec === false) return;
+      const src = ctx.createBufferSource(); src.buffer = recBufs.theme; src.loop = true;
+      src.loopStart = 0.05; src.loopEnd = Math.max(0.2, recBufs.theme.duration - 0.05);
+      const g = ctx.createGain(); g.gain.value = 0.0001;
+      src.connect(g); g.connect(musBus); src.start();
+      g.gain.setTargetAtTime(0.42, ctx.currentTime, 1.2);
+      themeCur = { src, gain: g };
+    });
+  }
+  A._rec = function () { return { cur: recCur && recCur.key, theme: !!themeCur, dead: Object.keys(recDead), have: Object.keys(recBufs) }; }; // for tests
 
   // ---- music ----------------------------------------------------------------
   // Chords/scales are MIDI note numbers. A phrase = the whole progression
@@ -322,6 +414,7 @@
   }
   function musTick(t) {
     if (!musOn || !musMood) return;
+    if (themeCur) return; // the recorded title theme has the floor
     const M = MOODS[musMood]; if (!M) return;
     if (t >= musNext) { // next chord of the phrase
       const chord = M.prog[musIdx];
