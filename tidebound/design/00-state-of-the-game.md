@@ -217,6 +217,16 @@ night early: day 10 ch2 (lagoon glow HOLDS; shelter-aware coda) and
 day 57 ch5 (M_WEATHERWISE → M.'s counted 'hours' version, else the
 animals-know version). Deaths keep tracing to ignorable warnings —
 these make the warnings fair.
+**Companion idle life** (scenes-chapter2.js TIER_LINE): each companion's
+five trust tiers now hold THREE vignettes each (90 total) and camp2
+picks one per visit — trust as behavior, rotating; pure flavor so the
+re-roll on reload is safe; every vignette names its companion.
+**Species almanac upgrades** (almanac.js thumb + species tab): unmet
+painted species render their portrait as a black silhouette (.almSil —
+the shape of what you haven't found; impossible seven keep the 🌀);
+met painted species rows are .almRowBtn — tap toggles an .almSpWrap
+portrait plate under the row (one open at a time, self-clears on
+re-render).
 Global namespace `window.TB`. Cache-bust query `?v=N` on every asset — bump on release.
 **PWA / offline phone version** (sw.js + manifest.webmanifest): the
 service worker precaches all CODE files plus every asset named in

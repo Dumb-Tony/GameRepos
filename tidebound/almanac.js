@@ -176,7 +176,15 @@
     return row;
   }
   function thumb(sp, seen) {
-    if (seen && sp.art) { const img = document.createElement('img'); img.className = 'almThumb'; img.src = 'art/' + sp.art + '.webp'; img.onerror = function () { const e = document.createElement('span'); e.className = 'almEmoji'; e.textContent = sp.e; img.replaceWith(e); }; return img; }
+    if (sp.art && !sp.imp) {
+      // met: the painted portrait; unmet: the same portrait as a black
+      // silhouette — the shape of what you haven't found yet
+      const img = document.createElement('img');
+      img.className = 'almThumb' + (seen ? '' : ' almSil');
+      img.src = 'art/' + sp.art + '.webp';
+      img.onerror = function () { const e = document.createElement('span'); e.className = 'almEmoji'; e.textContent = seen ? sp.e : '❔'; img.replaceWith(e); };
+      return img;
+    }
     const e = document.createElement('span'); e.className = 'almEmoji'; e.textContent = seen ? sp.e : (sp.imp ? '🌀' : '❔');
     return e;
   }
@@ -196,7 +204,27 @@
     if (curTab === 'species') {
       for (const sp of SPECIES) {
         const seen = seenNow(sp);
-        body.appendChild(entryRow(thumb(sp, seen), seen ? sp.name : (sp.imp ? '· · · · · · ·' : '— unmet —'), seen ? sp.blurb : sp.hint, !seen));
+        const row = entryRow(thumb(sp, seen), seen ? sp.name : (sp.imp ? '· · · · · · ·' : '— unmet —'), seen ? sp.blurb : sp.hint, !seen);
+        // met, painted species expand to a full portrait plate on tap
+        if (seen && sp.art && !sp.imp) {
+          row.classList.add('almRowBtn');
+          row.addEventListener('click', function () {
+            const open = row.nextElementSibling && row.nextElementSibling.classList && row.nextElementSibling.classList.contains('almSpWrap');
+            const prev = body.querySelector('.almSpWrap');
+            if (prev) prev.remove();
+            if (open) return; // tapped the same one: just close
+            const wrap = document.createElement('div');
+            wrap.className = 'almSpWrap';
+            const img = document.createElement('img');
+            img.className = 'almSpImg';
+            img.alt = sp.name;
+            img.src = 'art/' + sp.art + '.webp';
+            img.onerror = function () { wrap.remove(); };
+            wrap.appendChild(img);
+            row.after(wrap);
+          });
+        }
+        body.appendChild(row);
       }
     } else if (curTab === 'stones') setTab(STONES, c.stones, c.stonesTotal, '<em>The counting song, whole:</em> six for the living, one for the door — and the door opens from their side. You have the entire hymn now. Sing it at the pool sometime, and watch the water.');
     else if (curTab === 'pages') setTab(PAGES, c.pages, c.pagesTotal, '<em>The journals, complete.</em> Vane\'s whole arc in your hands: surveyor, believer, penitent. Somewhere between page one and the last entry, a man stopped measuring an island and started being measured by it.');

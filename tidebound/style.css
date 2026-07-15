@@ -813,3 +813,18 @@ body.on-ending #panel, body.on-death #panel { animation: panelRise .9s ease back
 /* ===== FOREKNOWLEDGE: gallery chips are doors ===== */
 .tChipBtn { cursor: pointer; transition: border-color .15s, background .15s; }
 .tChipBtn:hover { border-color: #ffd65c90; background: #0a1c2b; }
+
+/* ===== SPECIES ALMANAC UPGRADES ===== */
+/* unmet species show as silhouettes: the shape of what you haven't found */
+.almThumb.almSil { filter: brightness(0) saturate(0); opacity: .5; }
+/* met species expand to a portrait plate on tap */
+.almRowBtn { cursor: pointer; }
+.almRowBtn:hover .almName { text-decoration: underline; }
+.almSpWrap { text-align: center; padding: 8px 0 12px; }
+.almSpImg {
+  width: min(340px, 82%); border-radius: 12px;
+  border: 1px solid #ffffff2e; box-shadow: 0 10px 34px rgba(0, 0, 0, .55);
+  animation: spIn .3s ease backwards;
+}
+@keyframes spIn { from { opacity: 0; transform: translateY(6px) scale(.97); } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .almSpImg { animation: none; } }
