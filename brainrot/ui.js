@@ -299,12 +299,13 @@
       const log = rect('logbar'), stat = rect('statusbar');
       const bt = log ? log.top : (stat ? stat.top : mr.bottom);
       bottom = mr.bottom - bt + 10;
-      // The side panels only inset the map when they're actually docked to the
-      // sides (desktop). On phones they're full-width bottom sheets — measuring
-      // their edges here would set left/right ~= the whole screen width and
-      // collapse the map to zero width (the "map never shows" bug).
-      const sidePanels = !(typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width:760px)').matches);
-      if (sidePanels) {
+      // The side panels inset the map only when they're docked to the SIDES
+      // (desktop, tablet, and landscape phones). On PORTRAIT phones they're
+      // full-width bottom sheets — measuring them would set left/right ~= the
+      // whole screen width and collapse the map (the "map never shows" bug).
+      const portraitPhone = typeof window !== 'undefined' && window.matchMedia &&
+        window.matchMedia('(orientation:portrait) and (max-width:600px)').matches;
+      if (!portraitPhone) {
         const lc = rect('left'); if (lc) left = lc.right - mr.left + 14;
         const rc = rect('right'); if (rc) right = mr.right - rc.left + 14;
       }
