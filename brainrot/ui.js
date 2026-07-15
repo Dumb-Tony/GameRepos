@@ -321,26 +321,56 @@
       const w = this.cssW || 1, h = this.cssH || 1;
       v.x = clamp(v.x, w - w * v.zoom, 0); v.y = clamp(v.y, h - h * v.zoom, 0);
     }
+    // Zoom the view by a factor, keeping the given screen point fixed (defaults
+    // to the map centre). Shared by wheel, pinch, and the on-screen +/- buttons.
+    _zoomAt(factor, sxp, syp) {
+      const v = this.view, w = this.cssW || 1, h = this.cssH || 1;
+      const px = sxp == null ? w / 2 : sxp, py = syp == null ? h / 2 : syp;
+      const lx = (px - v.x) / v.zoom, ly = (py - v.y) / v.zoom;
+      v.zoom = clamp(v.zoom * factor, 1, 6);
+      v.x = px - lx * v.zoom; v.y = py - ly * v.zoom;
+      this._clampView(); if (this.popupCountry) this._positionPopup();
+    }
     _wireMap() {
       const cv = this.mapCanvas, v = this.view;
-      let down = false, moved = false, sx = 0, sy = 0, ox = 0, oy = 0;
-      cv.addEventListener('pointerdown', (e) => { down = true; moved = false; sx = e.clientX; sy = e.clientY; ox = v.x; oy = v.y; try { cv.setPointerCapture(e.pointerId); } catch (err) {} });
+      const pts = new Map();               // active pointers: id -> {x,y}
+      let moved = false, sx = 0, sy = 0, ox = 0, oy = 0, pinchDist = 0;
+      const twoPts = () => { const it = pts.values(); return [it.next().value, it.next().value]; };
+      const rebasePan = () => { const p = pts.values().next().value; if (p) { sx = p.x; sy = p.y; ox = v.x; oy = v.y; } };
+
+      cv.addEventListener('pointerdown', (e) => {
+        pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+        if (pts.size === 1) { moved = false; sx = e.clientX; sy = e.clientY; ox = v.x; oy = v.y; }
+        else if (pts.size === 2) { const [a, b] = twoPts(); pinchDist = Math.hypot(a.x - b.x, a.y - b.y) || 1; moved = true; }
+      });
       cv.addEventListener('pointermove', (e) => {
-        if (down) {
-          const dx = e.clientX - sx, dy = e.clientY - sy;
-          if (!moved && Math.abs(dx) + Math.abs(dy) > 4) moved = true;
-          if (moved) { v.x = ox + dx; v.y = oy + dy; this._clampView(); if (this.popupCountry) this._positionPopup(); cv.style.cursor = 'grabbing'; }
+        if (!pts.has(e.pointerId)) {        // hover (mouse only)
+          const m = this._toMap(e.clientX, e.clientY);
+          const hit = this.game.world.pick(m.x, m.y, this.game);
+          this.game.hoverCountry = hit && hit.type === 'country' ? hit.obj : null;
+          cv.style.cursor = hit ? 'pointer' : (this.game.phase === 'select' ? 'crosshair' : 'grab');
           return;
         }
-        const m = this._toMap(e.clientX, e.clientY);
-        const hit = this.game.world.pick(m.x, m.y, this.game);
-        this.game.hoverCountry = hit && hit.type === 'country' ? hit.obj : null;
-        cv.style.cursor = hit ? 'pointer' : (this.game.phase === 'select' ? 'crosshair' : 'grab');
+        pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (pts.size >= 2) {                // two-finger pinch-zoom about the midpoint
+          const [a, b] = twoPts(); const d = Math.hypot(a.x - b.x, a.y - b.y) || 1;
+          const r = cv.getBoundingClientRect();
+          this._zoomAt(d / (pinchDist || d), (a.x + b.x) / 2 - r.left, (a.y + b.y) / 2 - r.top);
+          pinchDist = d; return;
+        }
+        const dx = e.clientX - sx, dy = e.clientY - sy;   // single-finger pan
+        if (!moved && Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+        if (moved) { v.x = ox + dx; v.y = oy + dy; this._clampView(); if (this.popupCountry) this._positionPopup(); cv.style.cursor = 'grabbing'; }
       });
-      const endDrag = (e) => {
-        if (!down) return; down = false; try { cv.releasePointerCapture(e.pointerId); } catch (err) {}
+      const up = (e) => {
+        const had = pts.has(e.pointerId); pts.delete(e.pointerId);
+        try { cv.releasePointerCapture(e.pointerId); } catch (err) {}
+        if (pts.size < 2) pinchDist = 0;
+        if (pts.size === 1) { rebasePan(); moved = true; return; }   // a finger lifted mid-pinch
+        if (pts.size > 0 || !had) return;
         cv.style.cursor = 'grab';
-        if (moved) return;                 // it was a pan, not a click
+        if (moved) return;                 // it was a pan/pinch, not a tap
         this.game.audio && this.game.audio.ensure();
         const m = this._toMap(e.clientX, e.clientY);
         const hit = this.game.world.pick(m.x, m.y, this.game);
@@ -350,18 +380,19 @@
         else if (this.game.phase === 'select') { this.game.chooseStart(hit.obj); this.selectCountry(hit.obj); }
         else { this.selectCountry(hit.obj); this._showCountryPopup(hit.obj); }
       };
-      cv.addEventListener('pointerup', endDrag);
-      cv.addEventListener('pointercancel', () => { down = false; });
+      cv.addEventListener('pointerup', up);
+      cv.addEventListener('pointercancel', (e) => { pts.delete(e.pointerId); if (pts.size < 2) pinchDist = 0; });
       cv.addEventListener('wheel', (e) => {
         e.preventDefault();
-        const r = cv.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top;
-        const lx = (mx - v.x) / v.zoom, ly = (my - v.y) / v.zoom;
-        v.zoom = clamp(v.zoom * (e.deltaY < 0 ? 1.15 : 1 / 1.15), 1, 6);
-        v.x = mx - lx * v.zoom; v.y = my - ly * v.zoom; this._clampView();
-        if (this.popupCountry) this._positionPopup();
+        const r = cv.getBoundingClientRect();
+        this._zoomAt(e.deltaY < 0 ? 1.15 : 1 / 1.15, e.clientX - r.left, e.clientY - r.top);
       }, { passive: false });
-      // double-click to reset the view
+      // double-tap / double-click to reset the view
       cv.addEventListener('dblclick', () => { v.zoom = 1; v.x = 0; v.y = 0; if (this.popupCountry) this._positionPopup(); });
+      // on-screen zoom buttons (mainly for touch)
+      const zi = $('zoomIn'), zo = $('zoomOut');
+      if (zi) zi.addEventListener('click', () => { this.game.audio && this.game.audio.ensure(); this._zoomAt(1.4); });
+      if (zo) zo.addEventListener('click', () => { this._zoomAt(1 / 1.4); });
     }
 
     // ---- lifecycle ----------------------------------------------------
