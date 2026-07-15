@@ -366,20 +366,22 @@
         '<text x="' + Rg.x + '" y="' + (Rg.y + 3) + '" class="mapEmoji">' + (disc ? Rg.e : '❔') + '</text>' +
         '<text x="' + Rg.x + '" y="' + (Rg.y + 30) + '" class="mapLabel">' + label + '</text></g>';
     }).join('');
+    // the chart reads as a hand-drawn survey: parchment sea, inked coast,
+    // dashed annotation lines — and the generated art carries the same style
     return '<svg viewBox="0 0 440 320" id="mapSvg" role="img" aria-label="Chart of Vessakai">' +
       '<defs>' +
-      '<radialGradient id="mgSea" cx="50%" cy="45%" r="75%"><stop offset="0%" stop-color="#0e3a52"/><stop offset="100%" stop-color="#061b2b"/></radialGradient>' +
-      '<linearGradient id="mgLand" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3d6b45"/><stop offset="55%" stop-color="#2c5236"/><stop offset="100%" stop-color="#b9a37f"/></linearGradient>' +
-      '<linearGradient id="mgPeak" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6b6357"/><stop offset="100%" stop-color="#3d6b45"/></linearGradient>' +
+      '<radialGradient id="mgSea" cx="50%" cy="45%" r="78%"><stop offset="0%" stop-color="#e9dab8"/><stop offset="80%" stop-color="#d3ba8d"/><stop offset="100%" stop-color="#bd9d6c"/></radialGradient>' +
+      '<linearGradient id="mgLand" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#d9c9a0"/><stop offset="100%" stop-color="#c6b184"/></linearGradient>' +
       '</defs>' +
       '<rect width="440" height="320" fill="url(#mgSea)"/>' +
-      '<path d="M60 300 Q 40 240 70 190 Q 50 150 90 110 Q 120 60 180 45 Q 225 25 275 50 Q 340 60 370 110 Q 400 160 375 210 Q 390 250 350 280 Q 300 305 240 296 Q 200 312 150 300 Q 100 310 60 300 Z" fill="url(#mgLand)" stroke="#0a2331" stroke-width="3" opacity="0.95"/>' +
-      // painted chart art (generated; degrades silently to the CSS-painted island above)
-      '<image href="art/bg-map.webp" x="0" y="0" width="440" height="320" preserveAspectRatio="xMidYMid slice" opacity="0.92"/>' +
-      '<path d="M180 95 L 222 48 L 264 95 L 240 88 L 222 100 L 204 88 Z" fill="url(#mgPeak)" opacity="0.9"/>' +
-      '<path d="M215 100 Q 190 120 160 132 Q 140 142 128 118" fill="none" stroke="#58aee0" stroke-width="3" stroke-linecap="round" opacity="0.6"/>' +
-      '<path d="M128 118 Q 110 160 118 210 Q 112 240 118 252" fill="none" stroke="#58aee0" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>' +
-      '<path d="M175 296 Q 220 282 265 294" fill="none" stroke="#2fe0c9" stroke-width="3" stroke-linecap="round" opacity="0.55"/>' +
+      '<path d="M60 300 Q 40 240 70 190 Q 50 150 90 110 Q 120 60 180 45 Q 225 25 275 50 Q 340 60 370 110 Q 400 160 375 210 Q 390 250 350 280 Q 300 305 240 296 Q 200 312 150 300 Q 100 310 60 300 Z" fill="url(#mgLand)" stroke="#4a2f16" stroke-width="2" opacity="0.95"/>' +
+      '<path d="M60 300 Q 40 240 70 190 Q 50 150 90 110 Q 120 60 180 45 Q 225 25 275 50 Q 340 60 370 110 Q 400 160 375 210 Q 390 250 350 280 Q 300 305 240 296 Q 200 312 150 300 Q 100 310 60 300 Z" fill="none" stroke="#4a2f16" stroke-width="1" stroke-dasharray="2 3" opacity="0.5" transform="translate(3,3)"/>' + // the surveyor's second pass
+      // painted chart art (generated; degrades silently to the inked parchment above)
+      '<image href="art/bg-map.webp" x="0" y="0" width="440" height="320" preserveAspectRatio="xMidYMid slice" opacity="0.95"/>' +
+      '<path d="M180 95 L 222 48 L 264 95 L 240 88 L 222 100 L 204 88 Z" fill="#4a2f1614" stroke="#4a2f16" stroke-width="1.4" opacity="0.8"/>' +
+      '<path d="M215 100 Q 190 120 160 132 Q 140 142 128 118" fill="none" stroke="#3c5a6a" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="7 4" opacity="0.55"/>' +
+      '<path d="M128 118 Q 110 160 118 210 Q 112 240 118 252" fill="none" stroke="#3c5a6a" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="7 4" opacity="0.5"/>' +
+      '<path d="M175 296 Q 220 282 265 294" fill="none" stroke="#3c5a6a" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="2 5" opacity="0.55"/>' +
       regs +
       '<text x="12" y="22" class="mapTitle">VESSAKAI — the chart so far</text>' +
       '</svg>';

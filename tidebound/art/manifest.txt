@@ -44,7 +44,7 @@ char-moray.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1
 char-tern.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260713_060700_ce516e03-483e-4e1f-8d54-2753082e0569.png
 char-snake.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260713_060702_12b346a1-6fbf-4677-8e91-ee4a9903d4c5.png
 char-hornbill.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260713_060709_c75fc3f2-2a9f-43e0-a2ba-2f5622604a98.png
-bg-map.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260713_191336_c2b3bb07-ce01-4778-9846-41aad12d70a6.png
+bg-map.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260715_023631_8e5c5522-b9c7-42b6-96ef-20c2b2617813.png
 tk-canteen.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260714_042852_da0eb86a-b4c6-4bae-be8d-7b33835693b7.png
 tk-raindrop.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260714_042841_90ac22de-c800-4cff-a8bf-ae1b908b2efb.png
 tk-compassrose.webp|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260714_042832_02caa14a-86d0-499d-84a5-d7d99f563fa1.png
