@@ -200,17 +200,24 @@
       const padR = ins.right != null ? ins.right : w * 0.03;
       const padT = ins.top != null ? ins.top : h * 0.05;
       const padB = ins.bottom != null ? ins.bottom : h * 0.05;
-      const iw = Math.max(60, w - padL - padR), ih = Math.max(60, h - padT - padB);
-      this._view = { w, h, padX: padL, padY: padT, iw, ih };
-      // Marker radius must track the map's on-screen SIZE, not just population —
-      // otherwise the desktop-sized pins swamp the shrunken mobile map and
-      // "cover the whole country". Scale by the tighter of the two axes vs a
-      // desktop reference; capped at 1 so the desktop look is unchanged.
-      this._markerScale = clamp(Math.min(iw / 820, ih / 620), 0.42, 1);
+      const availW = Math.max(60, w - padL - padR), availH = Math.max(60, h - padT - padB);
+      // Preserve the world's native 2:1 aspect (equirectangular 360x180) instead
+      // of stretching it to fill the box — the stretch looked bad, especially in
+      // portrait. CONTAIN it, centred; leftover space shows the vaporwave
+      // backdrop, and you zoom in + pan for detail.
+      const ASPECT = 2;
+      let iw = availW, ih = availW / ASPECT;
+      if (ih > availH) { ih = availH; iw = availH * ASPECT; }
+      const ox = padL + (availW - iw) / 2, oy = padT + (availH - ih) / 2;
+      this._view = { w, h, padX: ox, padY: oy, iw, ih };
+      // Marker radius tracks the map's on-screen SIZE (not just population), so
+      // pins don't swamp the shrunken mobile map. 836 = desktop drawn width →
+      // scale 1 there (desktop unchanged); phones scale down.
+      this._markerScale = clamp(iw / 836, 0.42, 1);
       const ms = this._markerScale;
       if (!this._matched) { this._matchFeatures(); this._matched = true; }
       for (const c of this.countries) {
-        c.px = padL + c.mx * iw; c.py = padT + c.my * ih;
+        c.px = ox + c.mx * iw; c.py = oy + c.my * ih;
         c.r = (6 + Math.sqrt(c.pop) * 0.3) * ms;
         const rings = [];
         for (const f of c._features) for (const ring of f.r) rings.push(this._projFlat(ring));
