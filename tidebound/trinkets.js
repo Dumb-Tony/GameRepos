@@ -32,7 +32,9 @@
     { id: 'seaglass', e: '🟦', name: 'a lozenge of blue sea glass', short: 'sea glass', src: 'shore', line: 'Fifty years of surf have worn some bottle\'s worst day into something the sky would envy.' },
     { id: 'glassfloat', e: '🟢', name: 'a glass fishing float', short: 'glass float', src: 'shore', line: 'Blown glass, netted in rotten cord, escaped from some fleet a thousand miles and half a century away. It has been at sea longer than you\'ve been alive, and it is UNBROKEN.' },
     { id: 'brassbutton', e: '🔘', name: 'a brass button stamped 1887', short: 'brass button', src: 'shore', line: 'Naval, polished blind by sand. 1887 — the year a ship\'s dog swam ashore with a collar that outlived the ship.',
-      edda: '"1887." Edda turns the button in the light for a long time, and when she speaks it\'s softer than you\'ve ever heard her. "The wreck that brought the first dog. Kavi\'s whole line runs back to a night this button was on someone\'s coat." She gives it back like it\'s warm. "The island returns things when it\'s ready. Keep that with the photograph."', efx: (s) => { TB.stat('hope', 6); if (s.companion === 'kavi') s.trust = TB.clamp(s.trust + 6, 0, 100); } },
+      // Kavi is a name the PLAYER gives at courtship — on other runs Edda
+      // can only point at the grey pariah dog, not name him
+      edda: (s) => '"1887." Edda turns the button in the light for a long time, and when she speaks it\'s softer than you\'ve ever heard her. "The wreck that brought the first dog. ' + (s.companion === 'kavi' ? 'Kavi\'s whole line' : 'Every dog this island has ever had — the pack that sings inland, the grey pariah you\'ve seen at the treeline — the whole line') + ' runs back to a night this button was on someone\'s coat." She gives it back like it\'s warm. "The island returns things when it\'s ready. Keep that with the photograph."', efx: (s) => { TB.stat('hope', 6); if (s.companion === 'kavi') s.trust = TB.clamp(s.trust + 6, 0, 100); } },
     { id: 'ambergris', e: '🪨', name: 'a fist of ambergris', short: 'ambergris', src: 'shore', line: 'Grey, waxy, smelling of low tide and, underneath, impossibly, of flowers. Whale-treasure. Somewhere a perfumer would faint.',
       edda: 'Edda weighs the ambergris in one hand, snorts at your ignorance, and trades you for it on the spot — a sealed jar of honey, a string of smoked fish, and the recipe-lecture that comes free with everything. "The bees will want thanking. Not my problem how."', efx: (s) => { s.food = (s.food || 0) + 2; TB.stat('hunger', 18); } },
     { id: 'tinsoldier', e: '🪖', name: 'a tin soldier', short: 'tin soldier', src: 'shore', line: 'Paint gone, rifle bent, standing at attention in the wrack line as if the tide were an inspecting officer. Some child on some coast is seventy years old now and never knew where he went.' },
@@ -145,7 +147,7 @@
         s2.edda = TB.clamp((s2.edda || 0) + 4, 0, 100);
         TB.stat('energy', -6);
         try { if (gift.efx) gift.efx(s2); } catch (e) {}
-        s2.out = { bg: 'grove', text: [gift.edda] };
+        s2.out = { bg: 'grove', text: [typeof gift.edda === 'function' ? gift.edda(s2) : gift.edda] };
         TB.tickSegment();
       },
       go: 'act_result',
