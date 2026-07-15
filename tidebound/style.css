@@ -841,3 +841,11 @@ body.on-ending #panel, body.on-death #panel { animation: panelRise .9s ease back
 #bondToast.show { opacity: 1; transform: translate(-50%, 0); }
 #bondToast .btTag { font-size: 13px; }
 #bondToast .btName { font-size: 14.5px; color: var(--ink, #eef6f9); font-style: italic; }
+
+/* ===== OLD GROUND: the backpack shelves by origin ===== */
+.tkHdr {
+  font: 600 10.5px/1 system-ui, sans-serif; letter-spacing: 1.4px; text-transform: uppercase;
+  color: var(--panel-em); opacity: .7; padding: 10px 2px 4px;
+  border-bottom: 1px solid var(--divider); margin-bottom: 2px;
+}
+#kitTrinkets .tkHdr:first-child { padding-top: 2px; }

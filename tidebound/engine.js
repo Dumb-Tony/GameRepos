@@ -539,16 +539,28 @@
       const cnt = $('kitTkCount');
       if (cnt) cnt.textContent = owned.length ? '— ' + owned.length + ' of ' + cat.length + ' this life' : '';
       if (!owned.length) tk.innerHTML = '<div class="none">The island\'s little gifts will gather here. Work the shore; wade the pools; look down.</div>';
-      for (const t of owned) {
-        const d = document.createElement('div');
-        d.className = 'tkRow';
-        d.innerHTML = '<span class="tkBody"><span class="tkName">' + t.name.replace(/^(a|an) /, (m) => m[0].toUpperCase() + m.slice(1)) + (s.flags['TPAID_' + t.id] ? ' <em class="tkPaid">· Edda knows it</em>' : '') + '</span><span class="tkLine">' + t.line + '</span></span>';
-        // painted icon from art/, degrading to the emoji if absent
-        const img = document.createElement('img');
-        img.className = 'tkImg'; img.alt = ''; img.src = 'art/tk-' + t.id + '.webp';
-        img.onerror = function () { const e = document.createElement('span'); e.className = 'tkIcon'; e.textContent = t.e; img.replaceWith(e); };
-        d.insertBefore(img, d.firstChild);
-        tk.appendChild(d);
+      // shelved by where the island gave them
+      const SRC_HDR = [
+        ['shore', '🌊 Off the wrack line'], ['wade', '💧 Waded up'], ['mud', '🟤 Dug from the mud'],
+        ['forage', '🌿 Found in the green'], ['deep', '🕳️ Up from the deep'], ['', '✨ Along the way'],
+      ];
+      for (const [src, hdr] of SRC_HDR) {
+        const shelf = owned.filter((t) => (t.src || '') === src);
+        if (!shelf.length) continue;
+        const h = document.createElement('div');
+        h.className = 'tkHdr'; h.textContent = hdr;
+        tk.appendChild(h);
+        for (const t of shelf) {
+          const d = document.createElement('div');
+          d.className = 'tkRow';
+          d.innerHTML = '<span class="tkBody"><span class="tkName">' + t.name.replace(/^(a|an) /, (m) => m[0].toUpperCase() + m.slice(1)) + (s.flags['TPAID_' + t.id] ? ' <em class="tkPaid">· Edda knows it</em>' : '') + '</span><span class="tkLine">' + t.line + '</span></span>';
+          // painted icon from art/, degrading to the emoji if absent
+          const img = document.createElement('img');
+          img.className = 'tkImg'; img.alt = ''; img.src = 'art/tk-' + t.id + '.webp';
+          img.onerror = function () { const e = document.createElement('span'); e.className = 'tkIcon'; e.textContent = t.e; img.replaceWith(e); };
+          d.insertBefore(img, d.firstChild);
+          tk.appendChild(d);
+        }
       }
     }
     const facts = $('kitFacts');
