@@ -483,6 +483,29 @@
     grin: (t) => { noiseHit(sfxBus, t, 0.7, 0.1, 350, 'lowpass'); tone(sfxBus, 'sawtooth', 70, 45, t + 0.1, 0.5, 0.08); }, // low hiss-rumble
     hawk: (t) => { tone(sfxBus, 'sawtooth', 2800, 1400, t, 0.3, 0.06); },
   };
+  // ---- UI voice: tiny synthesized ticks on the sfx bus ----------------------
+  // tap = a choice pressed (driftwood knock); open/close = overlays lifted and
+  // set down (shell rise/fall); chime = a trophy landing. All honor the sfx
+  // toggle, master mute, and volume — quiet by design.
+  A.ui = function (kind) {
+    if (!ctx || ctx.state !== 'running' || A.muted() || !A.settings().sfx) return;
+    A._uiCount = (A._uiCount || 0) + 1; // for tests
+    try {
+      const t = ctx.currentTime + 0.01;
+      if (kind === 'tap') {
+        tone(sfxBus, 'sine', 620, 470, t, 0.045, 0.045);
+        noiseHit(sfxBus, t, 0.025, 0.045, 2600, 'bandpass');
+      } else if (kind === 'open') {
+        tone(sfxBus, 'sine', 340, 560, t, 0.09, 0.04);
+      } else if (kind === 'close') {
+        tone(sfxBus, 'sine', 540, 330, t, 0.09, 0.035);
+      } else if (kind === 'chime') {
+        tone(sfxBus, 'sine', 659, 659, t, 0.28, 0.06);
+        tone(sfxBus, 'sine', 988, 988, t + 0.14, 0.42, 0.05);
+      }
+    } catch (e) {}
+  };
+
   let lastCallKey = '';
   A.call = function (species, sceneId) {
     if (!ctx || ctx.state !== 'running' || !CALLS[species]) return;

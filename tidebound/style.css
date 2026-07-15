@@ -772,3 +772,40 @@ body {
   .statFloat { opacity: 1; } /* still informative, just not animated */
   #dayBanner.show { opacity: 1; }
 }
+
+/* ===== WEIGHT & VOICE: endings arrive like title cards ===== */
+body.on-ending #textLog p:first-child, body.on-death #textLog p:first-child { text-align: center; margin: 6px 0 16px; }
+body.on-ending #textLog p:first-child em, body.on-death #textLog p:first-child em {
+  display: block; font-style: normal; font-size: 24px; letter-spacing: 3.5px; line-height: 1.35;
+  color: #ffd65c; text-shadow: 0 2px 18px #000000a0, 0 0 26px #ffd65c33;
+  animation: endTitle 1.6s cubic-bezier(.2, .9, .3, 1) backwards;
+}
+body.on-death #textLog p:first-child em { color: #c7d3dc; text-shadow: 0 2px 18px #000, 0 0 22px #9fb7c930; }
+@keyframes endTitle { from { opacity: 0; letter-spacing: 9px; filter: blur(3px); } to { opacity: 1; } }
+
+/* the scene leans in: a slow zoom and a gathering vignette */
+body.on-ending #backdrop .art, body.on-death #backdrop .art { animation: endZoom 40s ease-out forwards; }
+@keyframes endZoom { from { transform: scale(1); } to { transform: scale(1.08); } }
+body.on-ending #backdrop::after, body.on-death #backdrop::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 38%, transparent 52%, #04101ab8 100%);
+  animation: vignetteIn 2.4s ease forwards;
+}
+body.on-death #backdrop::after { background: radial-gradient(ellipse at 50% 38%, transparent 45%, #120507cc 100%); }
+@keyframes vignetteIn { from { opacity: 0; } to { opacity: 1; } }
+body.on-ending #panel, body.on-death #panel { animation: panelRise .9s ease backwards .25s; }
+@keyframes panelRise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+/* long menus admit they scroll: content fades at the bottom edge until read */
+#choices.canScroll {
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 34px), transparent);
+  mask-image: linear-gradient(180deg, #000 calc(100% - 34px), transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.on-ending #textLog p:first-child em, body.on-death #textLog p:first-child em,
+  body.on-ending #backdrop .art, body.on-death #backdrop .art,
+  body.on-ending #backdrop::after, body.on-death #backdrop::after,
+  body.on-ending #panel, body.on-death #panel { animation: none; }
+  body.on-ending #backdrop::after, body.on-death #backdrop::after { opacity: 1; }
+}
