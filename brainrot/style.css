@@ -805,9 +805,9 @@ body{ display:block; height:100vh; }
   #right{ width:210px; }
   #btnEvolve{ width:86px; height:86px; }
 }
-@media (max-width:640px){
-  #left,#right{ display:none; }   /* phones: map + top/bottom HUD + evolve only */
-}
+/* (phones no longer hide the panels — they become bottom sheets, see the
+ *  mobile block at the end of this file. Hiding them stranded the Release
+ *  button and the whole HUD.) */
 
 /* ===== RETRO Y2K WINDOW CHROME on modals ================================= */
 /* chrome bevel + magenta border on every popup card */
@@ -865,6 +865,108 @@ img.spr { display: inline-block; vertical-align: middle; image-rendering: auto; 
 .speeds button img.spr, .menu-btn img.spr, .round-btn img.spr { pointer-events: none; }
 .tn-ico img.spr { filter: drop-shadow(0 1px 2px rgba(0,0,0,.5)); }
 .tn-cost img.spr { vertical-align: -1px; margin-right: 1px; }
+
+/* =====================================================================
+ * MOBILE / PHONE LAYOUT  (appended last so it wins the cascade)
+ * The desktop layout floats two side panels over a full-screen map. On a
+ * phone those panels covered the map — and hiding them stranded the whole
+ * HUD *and the Release button*, so the game couldn't even be started. Here
+ * the panels become bottom sheets you toggle, the top HUD compacts to the
+ * essentials, and the evolve overlay reflows to a single column.
+ * =================================================================== */
+.mob-only{ display:none; }
+
+/* Use the *dynamic* viewport height so mobile browser chrome doesn't crop us. */
+@supports (height:100dvh){ body{ height:100dvh; } }
+
+@media (max-width:760px){
+  :root{ --hud-top:52px; --hud-cure:42px; --hud-bottom:56px; }
+  .mob-only{ display:flex; }
+
+  /* ---- top HUD: brand mark + only the essential chips + controls ---- */
+  #topbar{ padding-left:max(8px, env(safe-area-inset-left)); padding-right:max(8px, env(safe-area-inset-right)); gap:6px; }
+  .brand{ padding-right:8px; } .brand-txt{ display:none; }        /* icon only */
+  .chips{ gap:6px; flex:1; min-width:0; }
+  /* keep just Virality (currency) + Global; the rest live in the bottom bar / sheets */
+  .chip{ display:none; }
+  .chip-vir, #chipVir{ display:flex; }
+  .chips .chip:nth-child(4){ display:flex; }                       /* Global % */
+  .chip{ min-width:0; padding:4px 8px 4px 10px; }
+  .chip-lbl{ display:none; } .chip-ico{ position:static; margin-right:4px; }
+  .chip-val{ font-size:13px; }
+  .topctrl{ gap:6px; flex:0 0 auto; }
+  .speeds button{ width:30px; height:30px; } .menu-btn{ width:34px; height:34px; }
+
+  /* ---- cure bar: compact, race read wraps under if tight ---- */
+  #curebar{ padding:5px 12px 7px; }
+  .cure-head{ font-size:11px; } .race-read{ margin-right:6px; }
+
+  /* ---- side panels become bottom sheets (docked ABOVE the status bar so its
+         toggle buttons stay tappable to switch/close) ---- */
+  .hud-card{
+    left:0 !important; right:0 !important; top:auto !important; bottom:var(--hud-bottom);
+    width:auto !important; max-width:none; max-height:60vh !important;
+    border-radius:16px 16px 0 0;
+    transform:translateY(130%); transition:transform .28s cubic-bezier(.4,0,.2,1);
+    z-index:41;
+  }
+  /* status bar (with the sheet toggles) always sits on top and clickable */
+  #statusbar{ z-index:43; }
+  #left{ overflow-y:auto; }
+  body.sh-path #left{ transform:translateY(0); }
+  body.sh-world #right{ transform:translateY(0); }
+  /* select phase: the World sheet is docked (shorter) and NON-modal so the
+     map above stays tappable for choosing patient zero. */
+  body.sh-select #right{ transform:translateY(0); max-height:52vh !important; }
+
+  #sheetScrim{ position:fixed; inset:0; z-index:40; background:rgba(6,4,16,.55);
+    opacity:0; pointer-events:none; transition:opacity .25s; }
+  body.sh-modal #sheetScrim{ opacity:1; pointer-events:auto; }
+
+  /* ---- toasts: keep them off the map, narrow + few ---- */
+  #toasts{ top:calc(var(--hud-top) + var(--hud-cure) + 6px); right:8px; left:auto; max-width:74vw; gap:6px; }
+  .toast{ font-size:12px; padding:8px 10px; }
+
+  /* ---- declutter: ticker + map hint off; evolve button smaller & clear ---- */
+  #logbar{ display:none; }
+  #mapHint{ display:none; }
+  #btnEvolve{ width:74px; height:74px; left:12px; bottom:calc(var(--hud-bottom) + 10px); }
+  .evo-btn-ico{ font-size:24px; } .evo-btn-lbl{ font-size:9px; }
+
+  /* ---- bottom status bar: tighten, drop the healthy count ---- */
+  #statusbar{ gap:8px; padding:6px 8px calc(6px + env(safe-area-inset-bottom));
+    padding-left:max(8px, env(safe-area-inset-left)); padding-right:max(8px, env(safe-area-inset-right)); }
+  .sb-counts{ gap:8px; } .sb-counts .sb-hea{ display:none; }
+  .worldbar{ min-width:44px; } .round-btn{ width:36px; height:36px; font-size:15px; }
+
+  /* ---- country popup: keep it within the viewport ---- */
+  #countryPopup{ width:min(76vw,240px) !important; }
+
+  /* ---- EVOLVE overlay: fullscreen, single column ---- */
+  #evoModal .evo-card{ width:100vw; height:100dvh; max-height:100dvh; border-radius:0; }
+  .evo-top{ padding:10px 12px; gap:8px; padding-top:max(10px, env(safe-area-inset-top)); }
+  .evo-title{ font-size:14px; } .evo-paused{ display:none; }
+  .evo-back{ font-size:12px; padding:8px 12px; }
+  .evo-tabs{ padding:6px 8px 0; gap:3px; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .evo-tabs::-webkit-scrollbar{ display:none; }
+  .etab{ font-size:12px; padding:8px 11px; white-space:nowrap; flex:0 0 auto; }
+  .evo-main{ flex-direction:column; }
+  .evo-panes{ flex:1 1 auto; padding:10px; -webkit-overflow-scrolling:touch; }
+  #evoModal #nodeDetail{ width:auto; flex:0 0 auto; max-height:34vh; overflow-y:auto;
+    border-left:none; border-top:1px solid var(--line2); }
+  #evoModal #pathogenPanel{ display:none; }   /* decorative; reclaim the space */
+  .evo-statbar{ padding:8px 10px calc(8px + env(safe-area-inset-bottom)); gap:8px; }
+
+  /* ---- modals: fit the screen, allow scroll ---- */
+  .modal-card{ width:94vw !important; max-height:88dvh; overflow-y:auto; }
+  .start-card h1{ font-size:44px; letter-spacing:2px; }
+}
+
+/* very narrow phones: drop the Global chip too, shrink title further */
+@media (max-width:380px){
+  .chips .chip:nth-child(4){ display:none; }
+  .start-card h1{ font-size:38px; letter-spacing:1px; }
+}
 
 /* ===== cure endgame phase ===== */
 #endgameBanner {
