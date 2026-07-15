@@ -502,6 +502,9 @@
       } else if (kind === 'chime') {
         tone(sfxBus, 'sine', 659, 659, t, 0.28, 0.06);
         tone(sfxBus, 'sine', 988, 988, t + 0.14, 0.42, 0.05);
+      } else if (kind === 'bond') { // warmer, lower: a bond deepening
+        tone(sfxBus, 'sine', 523, 523, t, 0.3, 0.05);
+        tone(sfxBus, 'sine', 659, 659, t + 0.16, 0.45, 0.045);
       }
     } catch (e) {}
   };
