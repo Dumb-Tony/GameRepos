@@ -315,6 +315,9 @@ body::after{
 .ghost-btn{ background:var(--panel2); border:1px solid var(--line2); color:var(--txt); font-weight:700; padding:12px 20px; border-radius:12px; cursor:pointer; }
 .ghost-btn:hover{ background:#262b4d; }
 .ghost-btn.full{ width:100%; margin-bottom:8px; }
+.fs-hint{ display:none; font-size:11px; line-height:1.4; color:var(--dim); background:var(--panel2);
+  border:1px solid var(--line); border-radius:9px; padding:8px 10px; margin-bottom:8px; }
+.fs-hint b{ color:var(--txt); }
 .ghost-btn:disabled{ opacity:.4; cursor:not-allowed; }
 .credit{ color:var(--dim2); font-size:10.5px; margin-top:14px; }
 

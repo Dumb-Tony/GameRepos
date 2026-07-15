@@ -221,7 +221,7 @@
 
     _wireControls() {
       $('speeds').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; this.game.audio && this.game.audio.ensure(); this.game.setSpeed(+b.dataset.sp); });
-      $('menuBtn').addEventListener('click', () => { this._fillSlots(); this._openModal('menuModal'); });
+      $('menuBtn').addEventListener('click', () => { this._fillSlots(); this._refreshFsUi(); this._openModal('menuModal'); });
       document.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => this._closeModal(b.dataset.close)));
       document.querySelectorAll('.modal').forEach((m) => m.addEventListener('click', (e) => {
         if (e.target !== m || m.id === 'introModal' || m.id === 'endModal') return;
@@ -235,7 +235,7 @@
         else this._closeModal(m.id);
       }));
 
-      $('btnBegin').addEventListener('click', () => { this.game.audio && this.game.audio.ensure(); this._lockLandscape(); this._captureName(); this._closeModal('introModal'); this._showSelect(); });
+      $('btnBegin').addEventListener('click', () => { this.game.audio && this.game.audio.ensure(); this._autoFullscreen(); this._lockLandscape(); this._captureName(); this._closeModal('introModal'); this._showSelect(); });
       const cont = $('btnContinue');
       const resumable = () => (this.game.save.hasSlot('auto') ? 'auto' : SLOTS.find((s) => this.game.save.hasSlot(s)));
       cont.disabled = !resumable();
@@ -258,6 +258,7 @@
         });
       }
 
+      const bfs = $('btnFullscreen'); if (bfs) bfs.addEventListener('click', () => { this._toggleFullscreen(); setTimeout(() => this._refreshFsUi(), 60); });
       $('btnRestart').addEventListener('click', () => { this._closeModal('menuModal'); this.game.stop(); this.game.newGame(undefined, this.game.difficulty.id); this.game.start(); this._openModal('introModal'); });
       $('btnHelp').addEventListener('click', () => { this._closeModal('menuModal'); this._openModal('introModal'); });
       $('btnStats').addEventListener('click', () => { this._renderStats(); this._openModal('statsModal'); });
@@ -449,6 +450,48 @@
     _lockLandscape() {
       try { const o = window.screen && window.screen.orientation;
         if (o && o.lock) o.lock('landscape').catch(() => {}); } catch (e) {}
+    }
+    // Request browser fullscreen (works on Android/desktop; iOS Safari has no
+    // page-fullscreen API — there the manifest + "Add to Home Screen" gives it).
+    _goFullscreen() {
+      try {
+        if (document.fullscreenElement || document.webkitFullscreenElement) return;
+        const el = document.documentElement;
+        const req = el.requestFullscreen || el.webkitRequestFullscreen || el.webkitRequestFullScreen;
+        if (req) { const r = req.call(el); if (r && r.catch) r.catch(() => {}); }
+      } catch (e) {}
+    }
+    // Auto-enter fullscreen only on touch devices (phones/tablets) — desktop
+    // mouse users shouldn't get a surprise fullscreen from clicking Begin.
+    _autoFullscreen() {
+      try { if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) this._goFullscreen(); } catch (e) {}
+    }
+    _toggleFullscreen() {
+      const fs = document.fullscreenElement || document.webkitFullscreenElement;
+      if (fs) { try { (document.exitFullscreen || document.webkitExitFullscreen || (() => {})).call(document); } catch (e) {} }
+      else this._goFullscreen();
+    }
+    // True when the page can actually enter fullscreen (Android/desktop). iOS
+    // Safari reports false, so we show the Add-to-Home-Screen hint there instead.
+    _fsAvailable() {
+      const el = document.documentElement;
+      return !!(el.requestFullscreen || el.webkitRequestFullscreen || el.webkitRequestFullScreen) &&
+        (document.fullscreenEnabled == null || document.fullscreenEnabled || document.webkitFullscreenEnabled);
+    }
+    // Reflect fullscreen support/state in the menu: a working button where the
+    // API exists, otherwise the iOS "Add to Home Screen" hint.
+    _refreshFsUi() {
+      const btn = $('btnFullscreen'), hint = $('fsHint'); if (!btn) return;
+      const standalone = window.matchMedia && window.matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches;
+      const nav = window.navigator || {};
+      if (standalone || nav.standalone) { btn.style.display = 'none'; if (hint) hint.style.display = 'none'; return; }
+      if (this._fsAvailable()) {
+        btn.style.display = ''; if (hint) hint.style.display = 'none';
+        const on = document.fullscreenElement || document.webkitFullscreenElement;
+        btn.textContent = on ? '⛶ Exit fullscreen' : '⛶ Fullscreen';
+      } else {
+        btn.style.display = 'none'; if (hint) hint.style.display = 'block';
+      }
     }
     // ---- mobile bottom sheets (Pathogen vitals / World & news) ----
     _closeSheets() { document.body.classList.remove('sh-path', 'sh-world', 'sh-modal'); }
