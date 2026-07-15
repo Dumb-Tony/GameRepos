@@ -175,6 +175,21 @@ actions unseen this life get a gold `.newBadge` chip; the badge clears
 when clicked (key = label stripped of counters, stored in
 `s.seenActs`, save-persisted). Ch1's `camp` list stays flat. Worst-
 case audit: 22 simultaneous actions mid-ch4 — the grouping is why.
+**Feedback & micro-animation layer** (engine.js + style.css, all
+presentation-only): TB.stat buffers real deltas into statDeltas;
+flushStatFloaters (called in _go after renderHud) spawns .statFloat
+chips over the HUD meters — the action's NET cost/reward incl. the
+segment's metabolic tick (sfUp green / sfDown red, staggered, self-
+removing). renderHud toggles .crit on any meter ≤20 (pulse+shake —
+danger telegraphing). maybeDayBanner shows a #dayBanner pill on day
+change (runtime-var guarded: no banner on boot/reload; pointer-events
+none). setBackdrop snapshots the outgoing computed art onto the
+.artFade layer (new sibling div in index.html) which animates opacity
+1→0 — a true crossfade that leaves the .art inline style untouched
+(art tests unaffected). Choices stagger in via nth-child delays
+(headers count as slots); portrait pops in. Every animation is
+disabled under prefers-reduced-motion (floaters/banner stay visible,
+unanimated).
 Global namespace `window.TB`. Cache-bust query `?v=N` on every asset — bump on release.
 **PWA / offline phone version** (sw.js + manifest.webmanifest): the
 service worker precaches all CODE files plus every asset named in
