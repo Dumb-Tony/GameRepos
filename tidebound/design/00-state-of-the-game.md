@@ -280,6 +280,17 @@ the player meets heartglass; the E-wing sample connects two-and-two
 SPONSORS_KNOWN names Meridian; the ch6 Speaker's staff is 'dark
 glass' to unknowing keepers. Loop-carried KNOW_* flags legitimately
 carry names across lives — the game remembering you is a feature.
+**Undiscovered stays unnamed** (the companion-name rule): companion
+names are PLAYER-GIVEN at courtship — only `s.companion` may ever be
+named in prose this run. Fixed leaks: Edda's 1887 brass-button
+appraisal (trinkets.js — catalog `edda` lines may now be functions of
+state; non-Kavi runs get 'the grey pariah' instead), Moa's
+brave-feather vignette (ev3_heart2 no longer says 'Kavi-sized'), and
+the death cards — THE FALL ('the sea eagles' unless Vela is yours),
+OLD GRIN (nameless eulogy until EDDA_MET), COLD FIRE (RYO_MET),
+MOTHER ASH (NAIA_MET). When writing new prose: never use a companion
+name as generic shorthand; loreorder-test.js enforces the button,
+vignette, and all four death cards.
 Global namespace `window.TB`. Cache-bust query `?v=N` on every asset — bump on release.
 **PWA / offline phone version** (sw.js + manifest.webmanifest): the
 service worker precaches all CODE files plus every asset named in
