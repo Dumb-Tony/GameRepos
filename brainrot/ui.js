@@ -1060,11 +1060,15 @@
 
     // ---- toasts / modals ----------------------------------------------
     toast(emoji, msg, tone) {
-      if (!this.mounted) return; const t = el('div', 'toast ' + (tone || 'info'), `<span class="t-ico">${emoji}</span><span>${msg}</span>`);
+      if (!this.mounted) return; const t = el('div', 'toast ' + (tone || 'info'), `<span class="t-ico">${emoji}</span><span class="t-msg">${msg}</span>`);
       const host = $('toasts'); host.appendChild(t);
-      const cap = (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width:760px)').matches) ? 3 : 5;
+      // Phones have little room: keep only a couple of toasts and clear them
+      // faster so a burst of back-to-back events can't blanket the screen.
+      const phone = typeof window !== 'undefined' && window.matchMedia &&
+        window.matchMedia('(orientation:portrait) and (max-width:600px), (orientation:landscape) and (max-height:600px)').matches;
+      const cap = phone ? 2 : 5;
       while (host.children.length > cap) host.removeChild(host.firstChild);
-      setTimeout(() => { t.classList.add('leaving'); setTimeout(() => t.remove(), 320); }, 3600);
+      setTimeout(() => { t.classList.add('leaving'); setTimeout(() => t.remove(), 320); }, phone ? 2400 : 3600);
     }
     _flash(id) { const e = $(id); if (!e) return; e.classList.remove('flash'); void e.offsetWidth; e.classList.add('flash'); }
     _openModal(id) { $(id).classList.add('on'); }
