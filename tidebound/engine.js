@@ -104,8 +104,40 @@
   };
   TB.warm = function (k, d) { TB.state.interest[k] = (TB.state.interest[k] || 0) + d; };
   // Companion trust (0-100). Never shown as a number — only as behavior.
-  TB.bond = function (d) { TB.state.trust = TB.clamp(TB.state.trust + d, 0, 100); };
+  TB.bond = function (d) {
+    const s = TB.state;
+    s.trust = TB.clamp(s.trust + d, 0, 100);
+    // a quiet one-time beat when trust crosses into a new tier (upward only)
+    if (d > 0 && s.companion && s.hudOn) { // hud-off crossings hold the beat for later
+      const tier = TB.tier();
+      if (tier > (s.tierSeen || 0)) { s.tierSeen = tier; bondToast(s.companion, tier); }
+    }
+  };
   TB.tier = function () { const t = TB.state.trust; return t >= 100 ? 4 : t >= 75 ? 3 : t >= 50 ? 2 : t >= 25 ? 1 : 0; };
+
+  const BOND_NAMES = { kavi: 'Kavi', ipo: 'Ipo', vela: 'Vela', buri: 'Buri', moa: 'Moa', nine: 'Nine' };
+  const BOND_LINES = [
+    null,
+    (n) => n + ' has decided you\'re worth watching.',
+    (n) => n + ' trusts you now. It shows in everything.',
+    (n) => 'You and ' + n + ' move like one animal.',
+    (n) => n + ' is family. The island knows it too.',
+  ];
+  function bondToast(comp, tier) {
+    try {
+      const line = BOND_LINES[tier];
+      if (!line) return;
+      let el = document.getElementById('bondToast');
+      if (!el) { el = document.createElement('div'); el.id = 'bondToast'; el.setAttribute('aria-live', 'polite'); document.body.appendChild(el); }
+      el.innerHTML = '';
+      const tag = document.createElement('span'); tag.className = 'btTag'; tag.textContent = '❤️';
+      const name = document.createElement('span'); name.className = 'btName'; name.textContent = line(BOND_NAMES[comp] || comp);
+      el.appendChild(tag); el.appendChild(name);
+      el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+      if (TB.Audio && TB.Audio.ui) TB.Audio.ui('bond');
+      setTimeout(function () { el.classList.remove('show'); }, 3600);
+    } catch (e) {}
+  }
 
   // ---- the clock -------------------------------------------------------
   // Consumes one segment: base metabolic tick, then starvation/thirst harm.

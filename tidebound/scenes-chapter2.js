@@ -148,6 +148,22 @@
       if (s.injury) w.push('the wound needs more respect than you\'re giving it');
       if (w.length) t.push('Honest accounting: ' + w.join('; ') + '.');
       if (s.companion) t.push(pick(TIER_LINE[s.companion][TB.tier()]));
+      // the island's other people, felt at dawn: smoke, hammering, song
+      if (s.seg === 0) {
+        const folk = [];
+        if (TB.is('EDDA_MET')) {
+          folk.push('Inland, Edda\'s hearth-smoke climbs the mountain\'s knee in its thin grey line, banked and punctual — the island\'s oldest clock, still keeping.',
+            'A single far-off shotgun report rolls down from the terraces and flattens over the water. Somewhere on the mountain, Edda is renegotiating with the pest population.');
+          if (s.edda >= 50) folk.push('Edda\'s smoke rises early and generous this morning — baking smoke, you\'ve learned to read it, the kind that means the next visitor up the mountain leaves with more than they carried in.',
+            'There\'s a palm-leaf bundle on the boundary stone this morning: dried figs and one scandalously good tomato. No note. The old woman\'s accounting travels downhill by itself.');
+        }
+        if (TB.is('RYO_MET') && s.ryo >= 40) {
+          folk.push('From down the beach, carried on the offshore air: hammering. Two strikes, a pause for argument, three more. The Kingfisher and her captain, negotiating.',
+            'Ryo\'s voice drifts up the beach in pieces this morning — some working song in no language you know, timed to a caulking mallet, cheerfully off-key. The sound of a man mid-repair, in every sense.',
+            'A thread of pitch-smoke rises from down the shore where the Kingfisher lies. Ryo is boiling tar before the heat comes up, which means today is a hull day, which means tonight he\'ll talk your ear off about strakes.');
+        }
+        if (folk.length && R() < 0.45) t.push(pick(folk));
+      }
       if (TB.is('SMOKE_SEEN') && !TB.is('CLEARING_DONE2')) t.push('And inland, above the green — you catch yourself checking, every hour — the thin grey thread of <em>someone else\'s fire</em> still climbs the sky.');
       t.push('What do you spend this part of the day on?');
       return t;
@@ -336,15 +352,54 @@
     text: (s) => {
       const t = ['<em>Night, Day ' + s.day + '.</em> ' + (s.site === 'fringe' ? 'The jungle turns its sound up and its lights on — fireflies stitching the dark between the trunks.' : s.site === 'overhang' ? 'From the ledge, the whole lagoon glows its slow seven-beat pulse below you, a heartbeat you live on top of.' : 'The lagoon takes up its seven-beat glow, faithful as tide.')];
       if (s.companion) {
-        const lines = {
-          kavi: TB.tier() >= 2 ? 'Kavi lies against your back, one ear working all night like a lighthouse.' : 'Kavi settles at the camp\'s edge, facing out.',
-          ipo: 'Ipo nests in the thatch above you, muttering small commerce in his sleep.',
-          vela: 'Vela is a shape on the high snag, head under wing — no night watch from her; the night is yours to hold.',
-          buri: 'Buri\'s snore rolls through camp like weather. It is, against all reason, a comfort.',
-          moa: TB.is('NEST_BOX') ? 'Moa is battened into her storm-box, one bright eye at the door until sleep takes it.' : 'Moa roosts on the driftwood, feathers doubled against the dark.',
-          nine: 'Nine is down in her black water, doing whatever she does with her hours. Twice, from the shore, a soft slap of arm on rock: checking.',
+        // night idle life: trust as behavior after dark, dealt from tier pools
+        const NIGHT_LINE = {
+          kavi: [
+            ['Kavi settles at the camp\'s edge, facing out.', 'Kavi sleeps beyond the firelight, a grey suggestion in the dark that is gone if you look straight at it, there again when you don\'t.'],
+            ['Kavi has moved his night post inside the firelight\'s rim — barely inside, exactly inside, a treaty measured in inches.', 'Twice in the night you hear Kavi stand, listen, and lie back down. The dark is being managed.'],
+            ['Kavi lies against your back, one ear working all night like a lighthouse.', 'You wake once and Kavi\'s head is up, silhouetted, reading the treeline. He glances at you — <em>go back to sleep</em> — and you do.'],
+            ['Kavi runs somewhere in his sleep tonight, paws working, a whine like a far-off gull — and when you rest a hand on his ribs, the running stops.', 'The ridge pack sings late and Kavi answers without getting up, one note from beside your knee. Present. Elsewhere spoken for.'],
+            ['Kavi sleeps in full surrender tonight, belly to the stars — the posture of an animal whose watch is shared.', 'You dream something bad and surface from it to a weight settling against your chest: Kavi, arrived before the dream even ended, seeing it off.'],
+          ],
+          ipo: [
+            ['Ipo roosts somewhere in the dark canopy, position undisclosed. A fig stone drops on your tarp at intervals. Surveillance, or comment.', 'Ipo watches your fire from the treeline, two small coals in the dark that blink out whenever you look up.'],
+            ['Ipo nests in the thatch above you, muttering small commerce in his sleep.', 'Something small rearranges your kit in the night. In the morning nothing is missing and one shell is better sorted. Ipo\'s night audit passes you.'],
+            ['Ipo has bedded down in the crook of the shelter frame, one long arm hanging into your airspace like a possessive flag.', 'You wake to Ipo sleep-grooming the edge of your blanket, fingers working, entirely unconscious. Housekeeping goes deep in him.'],
+            ['A night bird lands too close and Ipo is awake and shrieking territorial curses before you\'ve even opened your eyes. Then, honor satisfied: instantly asleep again.', 'Ipo has dragged his bedding — leaves, one prized rag — to the edge of yours. Not on. At the edge. The negotiation continues in his sleep.'],
+            ['Ipo sleeps in the crook of your arm, fist knotted in your collar, and the night noises that used to wake you don\'t anymore. He\'d hear them first, and you both know it.', 'In the smallest hours Ipo whimpers — some monkey grief, some old fall — and when you cup a hand over his back he quiets mid-note, like a lid gently set on a pot.'],
+          ],
+          vela: [
+            ['Vela is a shape on the high snag, head under wing — no night watch from her; the night is yours to hold.', 'Far up the beach, Vela\'s snag stands empty tonight. Wherever empresses go after dark, they don\'t file the itinerary.'],
+            ['Vela has taken the nearer perch tonight — the dead palm at camp\'s edge — for no reason she\'d admit to.', 'At moonrise you see Vela shake out her feathers and resettle, one round eye catching the firelight, unreadable as a coin.'],
+            ['Vela roosts on the ridgepole itself now on rough nights, a carved figure on the ship of your camp.', 'Twice tonight, between wind gusts, you hear it: the small chesty rattle Vela makes when all is well. A lighthouse in her own language.'],
+            ['You bank the fire and Vela is already asleep above it, close enough that the updraft warms her keel. Royalty knows where the heating is.', 'Something crossed the beach at midnight; you know because Vela\'s wings opened once — a sound like a sail filling — and closed. Whatever it was reconsidered.'],
+            ['Vela mantles over your camp in storms like it were a nest.', 'You wake before dawn and Vela is watching you from the ridgepole with her good eye, patient as tide. Not hungry. Not asking. Keeping.'],
+          ],
+          buri: [
+            ['Buri sleeps elsewhere, but the flattened grass at camp\'s edge says he considered here first.', 'From somewhere in the fringe, at intervals: the seismic sigh of Buri settling somewhere close. The night has furniture.'],
+            ['Buri\'s snore rolls through camp like weather. It is, against all reason, a comfort.', 'Buri has bedded down against the woodpile again, and the woodpile, again, has migrated an inch by morning.'],
+            ['Buri sleeps parallel to your shelter wall now, a windbreak with a heartbeat.', 'A branch cracked inland at midnight and Buri was on his feet before the echo — head low, ears wide — until the dark apologized. Then: instantly, thunderously, back asleep.'],
+            ['On cold nights Buri arranges himself so exactly one warm flank is available for leaning. It is used. This is not discussed.', 'You wake once to find Buri\'s snout resting on the shelter threshold, breathing your camp\'s air like a guard smelling the till.'],
+            ['Buri would follow you into the sea, and has tried.', 'The whole camp breathes with Buri\'s sleeping bulk these nights — slow, enormous, tidal. Your house has a heartbeat, and it is his.'],
+          ],
+          moa: [
+            ['Moa roosts far up the beach, one bird-shaped shadow among the driftwood, officially unaffiliated.', 'From the dark, at intervals, one soft interrogative cluck: Moa, taking the night\'s roll. You appear to be on it.'],
+            ['Moa roosts on the driftwood, feathers doubled against the dark.', 'Moa has moved her roost one log closer to the fire. No announcement accompanied the redeployment.'],
+            ['Moa sleeps on the driftwood by your knee, facing the dark.', 'Something rustled at the fringe and Moa answered from her roost — one flat warning note, sentry to trespasser — without opening more than one eye.'],
+            ['Moa patrols once at moonrise — a full perimeter walk, muttering — then remounts her post and sleeps at attention.', 'You shifted in the night and a small copper weight resettled immediately against your calf. Moa\'s post moves with the flock.'],
+            ['Moa has decided the night watch is hers alone, and stands it from your blanket\'s edge, small and unyielding, facing out.', 'You wake before dawn with Moa asleep on your chest, facing the door. At some point the perimeter contracted to exactly you.'],
+          ],
+          nine: [
+            ['Nine is down in her black water, doing whatever she does with her hours. Twice, from the shore, a soft slap of arm on rock: checking.', 'The tide pools catch the starlight strangely tonight — rearranged again, you\'d swear, since dusk. The night shift is working.'],
+            ['At full dark a soft weight of water moves in the nearest pool — Nine, surfacing to look at your fire the way you look at the stars.', 'A shell arrived on the tideline stone during the evening. It wasn\'t there at dusk. Nine\'s night post delivers.'],
+            ['You walk the tideline before sleep and the water walks with you — a smooth bow-wave twenty feet out, keeping your pace exactly.', 'Nine has learned when you bank the fire. The little slap-slap of arm on rock comes right after, every night now: <em>logged; goodnight.</em>'],
+            ['Tonight the lagoon\'s seven-beat glow lit her for a moment — Nine, hanging in the bright pulse, arms open to it like a dancer in stage light, sure nobody watched. Somebody did.', 'You left a puzzle for Nine this time — a knotted cord on the tide stone. By moonrise: untied, re-tied better, returned. Extra credit, the arrangement implies.'],
+            ['Nine watches you the way you watch the horizon: like it matters — and these nights she does it from the shallowest pool, the one nearest your fire, rent be damned.', 'You wake at the smallest hour, certain you heard your name — not spoken; tapped, on stone, in the little slap-code you and Nine never formally invented. You tap the driftwood twice. The water settles.'],
+          ],
         };
-        t.push(lines[s.companion]);
+        let pool = NIGHT_LINE[s.companion][TB.tier()];
+        if (s.companion === 'moa' && TB.is('NEST_BOX')) pool = pool.concat(['Moa is battened into her storm-box, one bright eye at the door until sleep takes it.']);
+        t.push(pick(pool));
       }
       // the held breath: the island telegraphs its two great blows a night early
       if (s.day === 10 && s.chapter === 2) t.push('Then, mid-pulse, the lagoon does something you have never seen it do: it <em>holds</em> — one long unlit beat where the glow should rise, the whole bay dark and waiting, before the rhythm resumes as if nothing happened. The island, holding its breath.' + (s.shelter >= 2 ? ' You check your lashings twice anyway, and sleep with one hand on the ridgepole.' : ' You lie awake a while counting what this camp could lose to real weather, and the honest count is: most of it.'));

@@ -828,3 +828,16 @@ body.on-ending #panel, body.on-death #panel { animation: panelRise .9s ease back
 }
 @keyframes spIn { from { opacity: 0; transform: translateY(6px) scale(.97); } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .almSpImg { animation: none; } }
+
+/* ===== BOND BEATS: a quiet toast when trust crosses a tier ===== */
+#bondToast {
+  position: fixed; top: 52px; left: 50%; transform: translate(-50%, -18px);
+  display: flex; align-items: center; gap: 10px; padding: 8px 16px;
+  background: var(--panel-bg, rgba(12, 24, 34, .92)); border: 1px solid rgba(240, 130, 160, .55);
+  border-radius: 999px; box-shadow: 0 6px 24px rgba(0, 0, 0, .45);
+  font-family: system-ui, sans-serif; z-index: 60; opacity: 0; pointer-events: none;
+  transition: opacity .45s, transform .45s;
+}
+#bondToast.show { opacity: 1; transform: translate(-50%, 0); }
+#bondToast .btTag { font-size: 13px; }
+#bondToast .btName { font-size: 14.5px; color: var(--ink, #eef6f9); font-style: italic; }

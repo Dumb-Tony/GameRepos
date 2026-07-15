@@ -221,6 +221,16 @@ these make the warnings fair.
 five trust tiers now hold THREE vignettes each (90 total) and camp2
 picks one per visit — trust as behavior, rotating; pure flavor so the
 re-roll on reload is safe; every vignette names its companion.
+**Night idle life** (night2 NIGHT_LINE): same treatment after dark —
+two vignettes per tier per companion (60), moa's NEST_BOX line joins
+her pool when flagged. **Folk at dawn** (camp2, seg 0 only, 45%):
+EDDA_MET adds hearth-smoke/shotgun lines (+2 warmer at edda≥50,
+boundary-stone gifts), RYO_MET && ryo≥40 adds Kingfisher hammering/
+song/pitch-smoke. **Bond beats** (engine TB.bond): upward tier
+crossings show a one-time #bondToast ('Kavi has decided you\'re worth
+watching' … 'family'), warm two-note ui('bond') sound; s.tierSeen is
+monotonic (dips never replay); hud-off crossings hold the beat until
+the first hud-world gain.
 **Species almanac upgrades** (almanac.js thumb + species tab): unmet
 painted species render their portrait as a black silhouette (.almSil —
 the shape of what you haven't found; impossible seven keep the 🌀);
