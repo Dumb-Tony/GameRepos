@@ -458,6 +458,7 @@
     text: (s) => {
       const core = CORES[s.endingId] || CORES.HOME;
       return ['<em>ENDING ' + core.icon + ' — ' + core.title + '</em>']
+        .concat(TB.RunCard && TB.RunCard.chips ? [TB.RunCard.chips(s)] : [])
         .concat(typeof core.body === 'function' ? core.body(s) : core.body)
         .concat(epilogue(s, s.endingId))
         .concat(ledgerReport(s));

@@ -80,6 +80,25 @@
     ],
   });
 
+  // the Long Rain rewrites everyone's habits: ch5 swaps the tier pools
+  // for the monsoon's own (weather outranks lounging)
+  const RAIN_LINE = {
+    kavi: ['Kavi has re-dug his rain trench twice this week and inspects yours daily with an engineer\'s disappointment.', 'Kavi sits at the shelter mouth watching the rain the way old men watch the sea — resigned, expert, personally acquainted with it.'],
+    ipo: ['Ipo has not willingly touched the ground in nine days. He commutes along the shelter frame, dry as a bishop, and pities you loudly.', 'Ipo\'s fur in the Long Rain has achieved a state somewhere between wet velvet and public grievance. He requires toweling. It is a ceremony now.'],
+    vela: ['Vela flies her patrols in the rain-gaps only, and spends the rest of the grey hours on the ridgepole with her back to the weather like a disappointed figurehead.', 'Rain stands in Vela\'s feathers in beads she shakes off in one violent full-body blur — always, you\'ve noticed, just after stepping out from under YOUR dry.'],
+    buri: ['Buri has never been happier in his life. The entire island is a wallow now, and he commutes between the best of it glistening like a lacquered boulder.', 'Buri stands out in the downpour on purpose, eyes shut, streaming — then comes into the shelter\'s lee and shakes, which is grounds for war, and both of you know he\'ll do it again.'],
+    moa: ['Moa runs her perimeter between squalls at a flat sprint, feathers slicked into a copper arrowhead, and returns to the dry looking personally victorious over the sky.', 'Moa has relocated her post to the shelter\'s driest corner and defends it against nobody. The rain is an adversary she can\'t peck, and it\'s making her philosophical.'],
+    nine: ['The Long Rain is Nine\'s season: the pools brim, the tideline moves in, and her whole territory has come uphill to meet you. She has never been closer or busier.', 'Nine surfaces in the rain with her arms spread to it, catching drops — fresh water, you realize, an ocean creature tasting the sky\'s ration. She looks drunk on it.'],
+  };
+  const RAIN_NIGHT = {
+    kavi: ['Kavi sleeps pressed to the driest wall with his tail over his nose, and every hour, without waking, shifts an inch closer to you as the damp works in.', 'Thunder rolls somewhere out at sea and Kavi answers it once, low, from his sleep — a growl filed against the weather itself, for the record.'],
+    ipo: ['Ipo has built a nest ABOVE your nest, in the frame, from your spare cloth. Rain-drips that make it past the thatch hit him first. He has priced this in, and bills you in the morning.', 'Ipo talks in his sleep more in the monsoon — small worried commerce, deals going wrong somewhere dry and far away — until your hand on his back settles the market.'],
+    vela: ['Vela night-roosts under the deepest eave now, close enough that when she resettles her wings you feel the air of it. Neither of you mentions the arrangement.', 'Lightning whitens the beach once and shows you Vela wide awake on the ridgepole, riding the shaking house like a captain who has decided the storm is beneath comment.'],
+    buri: ['Buri sleeps against the windward wall on the wild nights — chosen, you are certain, deliberately: two hundred pounds of weather-break, snoring into the gale.', 'The rain drums all night and under it, from Buri\'s corner, the deep slow bellows of a creature to whom monsoons are just the sky doing chores.'],
+    moa: ['Moa has waterproofed her roost with stolen thatch and sits it out like a lighthouse keeper, one bright eye opening at every big gust: accounted for, accounted for, accounted for.', 'On the worst night of the week Moa abandons protocol entirely and sleeps inside your blanket\'s edge, a small damp indignant warmth, on duty even there.'],
+    nine: ['The lagoon\'s glow is rain-stippled tonight, and through it Nine patrols her enlarged empire — you can track her by the seam of calm water moving against the chop.', 'A slap on stone at midnight, twice: Nine\'s all-well, barely audible under the rain — she\'s upgraded the signal\'s force for the season, so it still reaches you.'],
+  };
+
   // ---- The Chapter 2 camp hub -----------------------------------------------
   const SITE_LINE = {
     beach: 'The sea keeps its enormous counsel beside your camp.',
@@ -147,7 +166,7 @@
       if (s.stats.energy <= 25) w.push('your body is running on argument alone');
       if (s.injury) w.push('the wound needs more respect than you\'re giving it');
       if (w.length) t.push('Honest accounting: ' + w.join('; ') + '.');
-      if (s.companion) t.push(pick(TIER_LINE[s.companion][TB.tier()]));
+      if (s.companion) t.push(pick(s.chapter === 5 ? RAIN_LINE[s.companion] : TIER_LINE[s.companion][TB.tier()]));
       // the island's other people, felt at dawn: smoke, hammering, song
       if (s.seg === 0) {
         const folk = [];
@@ -397,7 +416,7 @@
             ['Nine watches you the way you watch the horizon: like it matters — and these nights she does it from the shallowest pool, the one nearest your fire, rent be damned.', 'You wake at the smallest hour, certain you heard your name — not spoken; tapped, on stone, in the little slap-code you and Nine never formally invented. You tap the driftwood twice. The water settles.'],
           ],
         };
-        let pool = NIGHT_LINE[s.companion][TB.tier()];
+        let pool = s.chapter === 5 ? RAIN_NIGHT[s.companion] : NIGHT_LINE[s.companion][TB.tier()];
         if (s.companion === 'moa' && TB.is('NEST_BOX')) pool = pool.concat(['Moa is battened into her storm-box, one bright eye at the door until sleep takes it.']);
         t.push(pick(pool));
       }

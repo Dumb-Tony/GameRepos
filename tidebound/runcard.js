@@ -82,6 +82,23 @@
     ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
   }
 
+  // the life in one chip row — worn by the ending/death title cards
+  RC.chips = function (s) {
+    const NAMES = { kavi: 'Kavi', ipo: 'Ipo', vela: 'Vela', buri: 'Buri', moa: 'Moa', nine: 'Nine' };
+    const TIER_WORD = ['wary company', 'watching you', 'trusting', 'one animal', 'family'];
+    const c = ['🗓️ Day ' + s.day];
+    if (s.companion) {
+      const tw = TIER_WORD[s.trust >= 100 ? 4 : s.trust >= 75 ? 3 : s.trust >= 50 ? 2 : s.trust >= 25 ? 1 : 0];
+      c.push('❤️ ' + (NAMES[s.companion] || s.companion) + ' — ' + tw);
+    }
+    const tk = (TB.Trinkets && TB.Trinkets.count) ? TB.Trinkets.count(s) : 0;
+    if (tk) c.push('✨ ' + tk + ' beach-find' + (tk === 1 ? '' : 's'));
+    const met = s.met ? Object.keys(s.met).length : 0;
+    if (met) c.push('🐾 ' + met + ' neighbor' + (met === 1 ? '' : 's'));
+    if (s.flags && s.flags.NGPLUS && TB.Loops) c.push('🌀 life ' + (TB.Loops.data().loops + 1));
+    return '<span class="titleChips">' + c.map((x) => '<span class="tChip">' + x + '</span>').join('') + '</span>';
+  };
+
   RC.titleFor = function (s) {
     if (s.deathCause) return { icon: '🌑', title: DEATH_TITLES[s.deathCause] || 'THE ISLAND KEEPS' };
     const core = TB.CORES && TB.CORES[s.endingId];

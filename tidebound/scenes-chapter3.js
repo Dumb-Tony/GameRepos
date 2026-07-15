@@ -11,6 +11,7 @@
   'use strict';
   const TB = G.TB;
   const R = Math.random;
+  const pick = (a) => a[Math.floor(R() * a.length)];
 
   const NAMES = { kavi: 'Kavi', ipo: 'Ipo', vela: 'Vela', buri: 'Buri', moa: 'Moa', nine: 'Nine' };
   const WHO = {
@@ -155,6 +156,19 @@
       else if (s.edda >= 60) t.push('She sets you working beside her without asking — that\'s the promotion, out here: from guest to hands. The talk comes easier over shared rows.');
       else if (s.edda >= 35) t.push('She feeds you and insults you in the same breath, which you\'ve learned to bank as affection.');
       else t.push('She keeps the fence between you for the first while, and the old eyes do their auditing. Probation continues.');
+      // the grove keeps a calendar: what the terraces are doing follows the season
+      const GROVE_SEASON = {
+        3: ['The terraces are in their green ascendancy: beans running their poles like rigging, the fig heavy, the beds weeded to parade order. Sixty years of system, showing off quietly.',
+          'A new bed has been turned since your last visit — dark, raked, deliberate. She\'s planting for a season she has no reason to assume you\'ll see, which is, you realize, how she plants everything.',
+          'The drying racks are full today: bark in flats, herbs hung head-down, the pharmacopoeia being banked. She works while she talks, and the talk keeps the rhythm of the hands.'],
+        4: ['The grove is battening down: young trees staked and double-lashed, the rain tanks scoured and their lids stone-weighted, whole beds going under woven covers. "Monsoon\'s coming," she says, catching your look. "The garden knows. Try to be as smart as the garden."',
+          'She has you hauling stones for the terrace lips all visit — the little walls that will keep her soil from going to the sea when the sky opens. "Sixty monsoons," she says, tapping a stone home. "Soil\'s still here. That\'s the whole of my genius: I stack rocks."',
+          'Half the harvest is coming in early, green and gambled — she\'d rather ripen it under a roof than race the first big rain for it. The kitchen smells of everything at once.'],
+        5: ['The grove in the Long Rain is a different country: terraces sheeted in runoff, the fig dark and dripping, and Edda moving through it in oilskins like the weather\'s own auditor, unbothered, checking her little walls.',
+          'You find her in the lee of the hut, potting on seedlings under cover — next season already underway at bench height while this one drums on the roof. "Rain\'s not weather to a garden," she says. "It\'s payroll."',
+          'The rain tanks are full for the first time since you\'ve known her, and she shows you with the pride most people save for grandchildren: a tapped knuckle, a deep sweet note. "That," she says, "is the sound of not carrying water till March."'],
+      };
+      t.push(pick(GROVE_SEASON[Math.min(Math.max(s.chapter, 3), 5)]));
       t.push('What do you give the visit to?');
       return t;
     },
