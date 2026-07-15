@@ -244,6 +244,42 @@ chapter 3/4/5 (in-season / battening down / the Long Rain country);
 RC.chips(s) (runcard.js) renders a titleChips row — day, companion +
 tier word, beach-finds, neighbors met, NG+ life number — inserted as
 paragraph two of both the ending scene and the death scene.
+**Old Ground** (map.js COMP_NOTES / DEJA_VU, engine openKit):
+24 companion×region Wayfinder arrival beats (first visit always shows,
+returns 45%, generic 30%); 6 NG+ déjà-vu whispers keyed to KNOW_*
+flags fire on a region's first visit of a loop; the backpack shelves
+beach-finds by `t.src` under SRC_HDR headers (wrack line / waded /
+mud / green / deep / along the way). `s.visits` init lives at the TOP
+of M.run — it's read by story-branch guards before any lazy use.
+**Hand-drawn Wayfinder** (map.js + style.css + regenerated
+art/bg-map.webp): the chart is drawn as a surveyor's parchment —
+sepia ink-on-parchment base art, inked coastline with a dashed
+second-pass, dashed annotation rivers/reef, dashed survey-ring
+ellipses on regions (solid on hover), handwriting-stack labels with a
+paper halo, inked italic title.
+**Field Notes & Whole Chart**: #almCard/#kitCard restyled as paper
+field notebooks via scoped custom properties (theme-proof — the
+parchment wins over every panel theme); unmet species are fogged
+plates (.almSil: grayscale+blur, a photograph not yet taken); the run
+card renders as a parchment field-note over the painted ending scene.
+`TB.Map.charted(s)` = every non-locked region discovered & visited
+(Broken Crown excluded) → inked double frame, 'charted whole ✦'
+title, and the whole_chart 🗺️ trophy (32 total). A worn ring marks
+the most-visited region (>3 visits).
+**Once & Unknowing** (the lore-order pass): hub actions that are
+one-shots now RETIRE — smoke study disappears after one study (or at
+CLEARING_DONE2), Edda's island-lore ask retires at LORE_HALCYON
+(refusal keeps the door open), the Station Halcyon expedition retires
+once the station is stripped, a defeated E-wing door doesn't re-ask
+until tomorrow (s.ewingTry). Knowledge keeps its order:
+`TB.knowsGlass(s)` (scenes-extra.js) gates every premature proper
+noun — the courier's case describes mystery gems (GEMS_MYSTERY) until
+the player meets heartglass; the E-wing sample connects two-and-two
+(GEMS_LINKED); or Edda names it via the grove's '💎 cut stones' ask
+(GEMS_NAMED, self-retiring). The cairn says 'its old crest' until
+SPONSORS_KNOWN names Meridian; the ch6 Speaker's staff is 'dark
+glass' to unknowing keepers. Loop-carried KNOW_* flags legitimately
+carry names across lives — the game remembering you is a feature.
 Global namespace `window.TB`. Cache-bust query `?v=N` on every asset — bump on release.
 **PWA / offline phone version** (sw.js + manifest.webmanifest): the
 service worker precaches all CODE files plus every asset named in

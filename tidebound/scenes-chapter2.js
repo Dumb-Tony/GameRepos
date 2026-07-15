@@ -337,10 +337,12 @@
           go: 'act_result',
         });
       }
-      if (TB.is('SMOKE_SEEN')) c.push({
+      // once is enough: one study retires it, and the smoke question itself
+      // resolves at the chapter threshold anyway
+      if (TB.is('SMOKE_SEEN') && !TB.is('SMOKE_STUDIED') && !TB.is('CLEARING_DONE2')) c.push({
         grp: 'story',
         t: '🔭 Study the smoke inland', sub: 'Learn what a fire an hour\'s trek away can teach from here.',
-        do: () => { const s2 = TB.state; TB.stat('energy', -4); TB.route('depth', 1);
+        do: () => { const s2 = TB.state; TB.flag('SMOKE_STUDIED'); TB.stat('energy', -4); TB.route('depth', 1);
           s2.out = { bg: 'jungle', text: ['You watch it through the noon and into the slant light: thin, steady, banked and tended — not a wildfire, not a signal. A <em>hearth</em>. Whoever feeds it has fed it for years; you can tell by how little it wanders.', 'Someone on this island knows how to live here. The question you keep circling is why they haven\'t come to look at <em>your</em> smoke.'] };
           TB.tickSegment(); },
         go: 'act_result',

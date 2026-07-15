@@ -212,7 +212,9 @@
           s2.out = { bg: 'grove', text: ['She takes one look at your eyes and the conversation is over — you are steered into shade, dosed with a decoction so bitter your ancestors flinch, wrapped, watered, and ordered to sleep like it\'s a chore assignment.', 'You surface hours later, soaked through and ravenous, with the fever\'s grip broken and an old woman pretending to garden nearby, exactly within earshot. "Three more doses," she says, not looking up, pressing a paper of stripped bark into your kit. "And move your camp off that fringe at dusk, fool."'] }; },
         go: 'act_result',
       });
-      c.push({
+      // once she has given the whole of it (LORE_HALCYON), the asking retires;
+      // a refusal (low regard at stage 3) keeps the door open for later
+      if (!TB.is('LORE_HALCYON')) c.push({
         t: '🗿 Ask about the island — the stones, the spiral, the ones who left', sub: 'She knows. Every visit, she lets go of a little more.',
         do: () => { const s2 = TB.state; TB.route('depth', 1);
           const stage = TB.is('EDDA_LORE2') ? 3 : TB.is('EDDA_LORE1') ? 2 : 1;
@@ -225,6 +227,16 @@
           s2.out = { bg: 'grove', text };
           if (stage === 3 && s2.edda >= 55) { TB.flag('LORE_HALCYON'); TB.route('depth', 2); }
         },
+        go: 'act_result',
+      });
+      // the gems can be ASKED about — Edda supplies the name the island hasn't
+      if (TB.is('GEMS') && TB.knowsGlass && !TB.knowsGlass(s)) c.push({
+        t: '💎 Show her the courier\'s cut stones', sub: 'A dozen gems that hold your lamplight a half-beat too long. If anyone on this island can name them, it\'s her.',
+        do: () => { const s2 = TB.state; TB.flag('GEMS_NAMED'); s2.edda = TB.clamp(s2.edda + 2, 0, 100); TB.route('depth', 1);
+          s2.out = { bg: 'grove', text: ['You unroll the lead-lined pouch on her table, and Edda Voss looks at the dozen cut stones for a long, level moment — and then, notably, does <em>not</em> touch them.',
+            '"Heartglass," she says. "The mountain\'s own. It runs in veins under this island, down where the survey drilled — alive, for any definition of the word that will stretch. Cutting cores of it was the station\'s sin, and the island answered it." A nod at the pouch. "Someone kept the habit. Someone out in the world has been cutting it into <em>trinkets</em>."',
+            'She pushes the pouch back across the table with one knuckle, lead-side in. "Keep it wrapped. And when you finally see it living in the rock, castaway — you\'ll understand why I didn\'t touch it."'] };
+          TB.tickSegment(); },
         go: 'act_result',
       });
       if (TB.has('case') && s.edda >= 35 && !TB.is('CASE_EDDA')) c.push({
