@@ -60,9 +60,35 @@
   // ---- state helpers (used heavily by scene files) --------------------
   TB.stat = function (k, d) {
     const s = TB.state.stats;
+    const before = s[k];
     s[k] = TB.clamp(Math.round(s[k] + d), 0, 100);
+    const real = s[k] - before;
+    if (real) statDeltas[k] = (statDeltas[k] || 0) + real; // shown as floaters when the next scene lands
     TB.renderHud();
   };
+
+  // ---- stat floaters: the net effect of an action, worn on the meters ----
+  let statDeltas = {};
+  function flushStatFloaters() {
+    const s = TB.state;
+    const buf = statDeltas; statDeltas = {};
+    if (!s.hudOn) return;
+    let i = 0;
+    for (const k of ['health', 'hunger', 'thirst', 'energy', 'hope']) {
+      const v = buf[k];
+      if (!v) continue;
+      try {
+        const host = $('m' + k[0].toUpperCase() + k.slice(1)).closest('.meter');
+        const f = document.createElement('span');
+        f.className = 'statFloat ' + (v > 0 ? 'sfUp' : 'sfDown');
+        f.textContent = (v > 0 ? '+' : '') + v;
+        f.style.animationDelay = (i * 110) + 'ms';
+        host.appendChild(f);
+        setTimeout(function () { try { f.remove(); } catch (e) {} }, 2100 + i * 110);
+        i++;
+      } catch (e) {}
+    }
+  }
   TB.item = function (k, d) {
     const inv = TB.state.inv;
     inv[k] = Math.max(0, (inv[k] || 0) + (d === undefined ? 1 : d));
@@ -192,16 +218,50 @@
     $('hudDay').textContent = 'Day ' + s.day;
     $('hudSeg').textContent = TB.SEGS[s.seg];
     for (const k of ['health', 'hunger', 'thirst', 'energy', 'hope']) {
-      $('m' + k[0].toUpperCase() + k.slice(1)).style.width = s.stats[k] + '%';
+      const el = $('m' + k[0].toUpperCase() + k.slice(1));
+      el.style.width = s.stats[k] + '%';
+      // danger telegraph: a critical meter pulses until it's answered —
+      // every death on this island traces to a warning that was ignorable
+      const host = el.closest('.meter');
+      if (host) host.classList.toggle('crit', s.stats[k] <= 20);
     }
   };
 
+  // ---- the day banner: a quiet chapter-mark when a new day arrives -------
+  let bannerDay = null;
+  function maybeDayBanner(s) {
+    if (!s.hudOn) { bannerDay = s.day; return; }
+    if (bannerDay === null || s.day === bannerDay) { bannerDay = s.day; return; }
+    bannerDay = s.day;
+    try {
+      let b = document.getElementById('dayBanner');
+      if (!b) { b = document.createElement('div'); b.id = 'dayBanner'; document.body.appendChild(b); }
+      b.textContent = '🌅 Day ' + s.day;
+      b.classList.remove('show');
+      void b.offsetWidth; // restart the animation
+      b.classList.add('show');
+    } catch (e) {}
+  }
+
   function setBackdrop(name, artFile) {
-    $('backdrop').className = 'bg-' + (name || 'beach-day');
+    const bd = $('backdrop');
+    const artEl = bd.querySelector('.art');
+    const fadeEl = bd.querySelector('.artFade');
+    // remember what's on screen so the swap can be a crossfade, not a pop
+    const prevCss = artEl ? getComputedStyle(artEl).backgroundImage : 'none';
+    bd.className = 'bg-' + (name || 'beach-day');
     // per-scene illustration override: layers over the class art; a
     // missing file simply leaves the painted scene showing through
-    const artEl = $('backdrop').querySelector('.art');
     if (artEl) artEl.style.backgroundImage = artFile ? "url('art/" + artFile + ".webp')" : '';
+    if (fadeEl && artEl) {
+      const newCss = getComputedStyle(artEl).backgroundImage;
+      if (prevCss !== 'none' && prevCss !== newCss) {
+        fadeEl.style.backgroundImage = prevCss; // the old scene lingers a beat, fading out over the new
+        fadeEl.classList.remove('fading');
+        void fadeEl.offsetWidth;
+        fadeEl.classList.add('fading');
+      }
+    }
     if (TB.Audio) TB.Audio.setScene(name || 'beach-day', TB.state);
     if (TB.FX) TB.FX.setScene(name || 'beach-day', TB.state);
   }
@@ -399,6 +459,8 @@
     if (TB.Audio) { const sp = animalCallFor(def, who, id); if (sp) TB.Audio.call(sp, id); }
     s.hudOn = def.hud === false ? false : s.hudOn;
     TB.renderHud();
+    flushStatFloaters(); // the action's net cost/reward, worn on the meters
+    maybeDayBanner(s);
     cancelTyping(); // never type into a cleared log
     $('textLog').innerHTML = '';
     $('choices').innerHTML = '';
