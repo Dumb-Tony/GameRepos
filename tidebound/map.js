@@ -176,9 +176,69 @@
   const explorable = (id, s) => id !== 'caldera' && discovered(id, s);
 
   // ---- run an expedition (from chart taps; the map IS the picker) ----------------
+  // ---- companions have history with places -----------------------------------
+  const COMP_NOTES = {
+    bay: {
+      kavi: 'Kavi walks the whole survey at your heel until the old wreck-line, where he stops and sits and waits — the one stretch of his beach he has never once set foot on.',
+      moa: 'Moa treats the bay tour as an inspection of outlying provinces, gravely disappointed by each unguarded dune.',
+    },
+    tidepools: {
+      nine: 'Nine is home here, and shows it off shamelessly: doors you can\'t see opened in the rock, a crab produced from nowhere like a coin from an ear, the whole reef performing for its keeper\'s guest.',
+      kavi: 'Kavi hunts the shallows beside you with total commitment and zero technique, and comes up dripping, empty-jawed, dignified. Some wars are hereditary.',
+      moa: 'Moa patrols the pool rims like a harbormaster, scolding anemones. One closes at her. She logs the insubordination.',
+    },
+    bonebeach: {
+      kavi: 'Bone Beach unsettles most creatures. Kavi walks it like an archivist — nose down among the ribs and wrack, reading the beach\'s long obituary column with professional respect.',
+      buri: 'Buri excavates the high wrack with seismic enthusiasm and presents you, at length, with a whale vertebra the size of a stool. It is a gift. You will be carrying it home.',
+      ipo: 'Ipo works the wrack line like an estate sale, appraising and discarding, and pockets exactly one thing he refuses to show you.',
+    },
+    fringe: {
+      buri: 'The fringe is Buri\'s pantry and he tours it like a landlord — a rub on this trunk, a nose-flip under that log, rent collected in grubs the whole green mile.',
+      ipo: 'Ipo runs the canopy roads above you the entire way, calling down commentary at every fork like a tout who owns the route.',
+    },
+    deepgreen: {
+      kavi: 'The pack\'s trails thread the Green Deep, and Kavi reads each crossing aloud in his own way — a pause, a long nose-write in the air, once a single answered howl from far upslope. Family news.',
+      ipo: 'Somewhere past the second ridge Ipo goes quiet and rides low on your shoulder: troop boundary. Whatever treaty governs it, he\'d rather owe you than test it.',
+    },
+    cliffs: {
+      vela: 'This is Vela\'s nation, and crossing into it changes her: she rises off your shoulder-line and takes the high wind like a queen resuming a throne, escorting you along her own coast at altitude.',
+      moa: 'Moa spends the whole cliff walk pressed to your boot, one eye on the wheeling specks above — hawk country — and her courage, which never once breaks, costs her visibly the entire time.',
+    },
+    river: {
+      buri: 'The river bank is Buri\'s spa, and no argument survives contact: you conduct the survey; he conducts the mud.',
+      nine: 'Nine rides the last brackish pool as far up the river as sea-blood dares, and watches the fresh water beyond like a sailor reading a chart of somewhere she\'ll never berth.',
+    },
+    mangrove: {
+      kavi: 'Kavi will not drink here. The whole drowned forest through, he keeps between you and the channels, hackles in a low permanent ridge, reading the tea-dark water\'s one long word.',
+      moa: 'Moa rides your shoulder through the mangroves at full alert and utters not one sound the entire transit — the only place on the island that has ever bought her silence.',
+    },
+    grotto: {
+      nine: 'In the grotto\'s pool Nine becomes a ribbon of light — the heartglass glow runs her skin in slow waves, and she hangs in the blue dark signing something with all eight arms that you are years from reading.',
+      kavi: 'Kavi comes into the grotto exactly three body-lengths and no further, and holds the entrance the whole time you\'re inside — not afraid, you\'d swear, so much as OBSERVANT of some very old protocol.',
+    },
+    caldera: {
+      vela: 'Vela will not overfly the crown. She rides the rim wind in one great circle while you climb, always level with you, never above the broken lip — the only ceiling you have ever seen her honor.',
+      buri: 'Buri\'s people don\'t come up here, and he makes clear the custom is wisdom: every hundred paces he tests the ground ahead with one hoof, like a sapper who has read the mountain\'s file.',
+    },
+    station: {
+      kavi: 'Kavi tours the station\'s yard stiff-legged, filing fifty-year-old smells under headings only he keeps — and places himself, as always, between you and the E wing\'s heavy door.',
+      ipo: 'The station is Ipo\'s cathedral of latches, and he holds himself to a strict devotional order: one drawer per visit, opened with ceremony, contents assessed, verdict rendered.',
+    },
+  };
+  // NG+: places a banked life KNEW arrive pre-remembered on first visit
+  const DEJA_VU = {
+    mangrove: { know: 'KNOW_GRIN', line: '<em>And under it all, before you ever reach open water: a certainty, old as a scar you don\'t have, of a cold hour and a patient landlord. You have never been here. You slow down anyway.</em>' },
+    grotto: { know: 'KNOW_GULLET', line: '<em>Your hands know this dark. Before the lamp even settles you\'ve turned toward the right gallery — a map you never drew in this life, unfolding under your skin.</em>' },
+    grove: { know: 'KNOW_EDDA', line: '<em>The kettle, the fence, the two mounds under the flowering tree — you have never seen any of it, and all of it is exactly where you left it.</em>' },
+    tidepools: { know: 'KNOW_NINE', line: '<em>You check the third pool first — the gallery pool — before anything has told you it matters. Something eight-armed surfaces, regards you a long moment, and does not startle. As if you were expected. As if you were LATE.</em>' },
+    caldera: { know: 'KNOW_SUNDERING', line: '<em>You have dreamed this skyline breaking. Standing under the crown now, whole, you cannot stop seeing the seam.</em>' },
+    bay: { know: 'KNOW_ROSA', line: '<em>Looking north along the reef, a word arrives unasked, in old ink, in a hand you have never seen: GOLD. You know exactly which stretch of surf hides her bones.</em>' },
+  };
+
   M.run = function (id) {
     const s = TB.state, Rg = REGIONS[id];
     if (!Rg || Rg.locked) return;
+    s.visits = s.visits || {}; // before the story branches — they read it too
     try { if (TB.Audio && TB.Audio.motif) TB.Audio.motif(id); } catch (e) {} // the region's signature phrase
     // regions with story mechanics take priority over the sightseeing decks
     if (id === 'grove' && TB.is('GROVE_OPENED')) { // the real grove scene (tea, Edda, incidents)
@@ -190,7 +250,6 @@
     if (id === 'cliffs' && s.chapter >= 3 && (s.visits.cliffs || 0) >= 1 && !TB.is('CLIFF_LEDGE')) { runCliffLedge(s); return; }
     if (id === 'cliffs' && s.chapter >= 3 && TB.is('CLIFF_LEDGE') && !TB.is('TOWER_FOUND')) { runTowerFind(s); return; }
     TB.stat('energy', -9);
-    s.visits = s.visits || {};
     const n = s.visits[id] || 0;
     s.visits[id] = n + 1;
     let text;
@@ -201,10 +260,18 @@
       const entry = Rg.deck[(n - 1) % Rg.deck.length];
       text = [entry.t];
       if (entry.fx) { try { const ex = entry.fx(s); if (ex) text = text.concat(ex); } catch (e) {} }
-      if (s.companion && R() < 0.3) text.push(pick([
-        NAMES[s.companion] + ' makes the expedition with you, on ' + (s.companion === 'vela' ? 'the wing' : s.companion === 'nine' ? 'the water-side of every path' : 'point') + ', and the going is better for the company.',
-        'You travel accompanied, as always now — and the island reads differently through four eyes than two.',
-      ]));
+    }
+    // companions have history with places — the strong pairs get their beat
+    const note = s.companion && COMP_NOTES[id] && COMP_NOTES[id][s.companion];
+    if (note && (n === 0 || R() < 0.45)) text.push(note);
+    else if (n > 0 && s.companion && R() < 0.3) text.push(pick([
+      NAMES[s.companion] + ' makes the expedition with you, on ' + (s.companion === 'vela' ? 'the wing' : s.companion === 'nine' ? 'the water-side of every path' : 'point') + ', and the going is better for the company.',
+      'You travel accompanied, as always now — and the island reads differently through four eyes than two.',
+    ]));
+    // NG+: the first arrival somewhere a past life knew arrives already remembered
+    if (n === 0 && s.flags.NGPLUS) {
+      const deja = DEJA_VU[id];
+      if (deja && s.flags[deja.know]) text.push(deja.line);
     }
     s.out = { bg: Rg.bg, text };
     M.hide();
