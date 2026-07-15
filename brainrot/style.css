@@ -876,6 +876,17 @@ img.spr { display: inline-block; vertical-align: middle; image-rendering: auto; 
  * =================================================================== */
 .mob-only{ display:none; }
 
+/* Map zoom controls (touch): hidden on desktop (wheel zoom there). Positioned
+   per-orientation inside the phone blocks below. Also stop the browser from
+   hijacking touch pans/pinches on the map canvases. */
+#zoomCtl{ display:none; position:fixed; z-index:24; flex-direction:column; gap:8px; }
+#zoomCtl button{ width:44px; height:44px; border-radius:12px; border:1px solid var(--line2);
+  background:var(--glass2); color:var(--txt); font-size:24px; font-weight:800; line-height:1;
+  cursor:pointer; box-shadow:var(--hair); -webkit-tap-highlight-color:transparent;
+  display:flex; align-items:center; justify-content:center; }
+#zoomCtl button:active{ background:#262b4d; transform:scale(.94); }
+#mapWrap, #mapCanvas, #fxCanvas{ touch-action:none; }
+
 /* Use the *dynamic* viewport height so mobile browser chrome doesn't crop us. */
 @supports (height:100dvh){ body{ height:100dvh; } }
 
@@ -910,6 +921,8 @@ img.spr { display: inline-block; vertical-align: middle; image-rendering: auto; 
   .worldbar{ min-width:38px; } .round-btn{ width:36px; height:36px; font-size:15px; }
   /* country popup fits the viewport */
   #countryPopup{ width:min(76vw,240px) !important; }
+  /* zoom controls visible on phones */
+  #zoomCtl{ display:flex; }
   /* shared scrim for modal drawers */
   #sheetScrim{ position:fixed; inset:0; z-index:40; background:rgba(6,4,16,.55);
     opacity:0; pointer-events:none; transition:opacity .25s; }
@@ -950,6 +963,8 @@ img.spr { display: inline-block; vertical-align: middle; image-rendering: auto; 
   body.sh-select #right{ transform:translateY(0); max-height:52vh !important; }
   #btnEvolve{ width:72px; height:72px; left:12px; bottom:calc(var(--hud-bottom) + 10px); }
   .evo-btn-ico{ font-size:24px; } .evo-btn-lbl{ font-size:9px; }
+  /* zoom buttons: bottom-right, clear of the evolve button (bottom-left) */
+  #zoomCtl{ right:10px; bottom:calc(var(--hud-bottom) + 14px); }
   /* evolve overlay: single column (tree over detail) */
   .evo-main{ flex-direction:column; }
   .evo-panes{ flex:1 1 auto; padding:10px; -webkit-overflow-scrolling:touch; }
@@ -987,6 +1002,9 @@ img.spr { display: inline-block; vertical-align: middle; image-rendering: auto; 
   /* evolve button tucked in the bottom-left corner under the (shortened) left panel */
   #btnEvolve{ width:56px; height:56px; left:10px; bottom:calc(var(--hud-bottom) + 6px); }
   .evo-btn-ico{ font-size:19px; } .evo-btn-lbl{ display:none; }
+  /* zoom buttons sit just left of the right panel, stacked bottom-right of map */
+  #zoomCtl{ right:194px; bottom:calc(var(--hud-bottom) + 8px); gap:6px; }
+  #zoomCtl button{ width:40px; height:40px; font-size:22px; }
   /* evolve overlay keeps the two-column layout (uses width, not scarce height) */
   #evoModal #nodeDetail{ width:206px; flex:0 0 206px; }
   #evoModal #pathogenPanel{ height:92px; }
