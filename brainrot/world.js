@@ -202,10 +202,16 @@
       const padB = ins.bottom != null ? ins.bottom : h * 0.05;
       const iw = Math.max(60, w - padL - padR), ih = Math.max(60, h - padT - padB);
       this._view = { w, h, padX: padL, padY: padT, iw, ih };
+      // Marker radius must track the map's on-screen SIZE, not just population —
+      // otherwise the desktop-sized pins swamp the shrunken mobile map and
+      // "cover the whole country". Scale by the tighter of the two axes vs a
+      // desktop reference; capped at 1 so the desktop look is unchanged.
+      this._markerScale = clamp(Math.min(iw / 820, ih / 620), 0.42, 1);
+      const ms = this._markerScale;
       if (!this._matched) { this._matchFeatures(); this._matched = true; }
       for (const c of this.countries) {
         c.px = padL + c.mx * iw; c.py = padT + c.my * ih;
-        c.r = 6 + Math.sqrt(c.pop) * 0.3;
+        c.r = (6 + Math.sqrt(c.pop) * 0.3) * ms;
         const rings = [];
         for (const f of c._features) for (const ring of f.r) rings.push(this._projFlat(ring));
         c.pxRings = rings.length ? rings : null;
@@ -463,9 +469,10 @@
     pick(x, y, game) {
       for (const m of game.viralBubbles) if ((x - m.x) ** 2 + (y - m.y) ** 2 <= 24 * 24) return { type: 'viral', obj: m };
       for (const m of game.cureBubbles) if ((x - m.x) ** 2 + (y - m.y) ** 2 <= 24 * 24) return { type: 'cure', obj: m };
-      // Marker hit (easy to click), then the country shape itself.
-      let best = null, bd = Infinity;
-      for (const c of this.countries) { const d = (x - c.px) ** 2 + (y - c.py) ** 2; if (d <= (c.r + 7) ** 2 && d < bd) { best = c; bd = d; } }
+      // Marker hit (easy to tap), then the country shape itself. Keep a minimum
+      // tap tolerance so the smaller mobile markers are still comfortably tappable.
+      let best = null, bd = Infinity; const tol = (1 - (this._markerScale || 1)) * 18;
+      for (const c of this.countries) { const d = (x - c.px) ** 2 + (y - c.py) ** 2; const rr = c.r + 7 + tol; if (d <= rr * rr && d < bd) { best = c; bd = d; } }
       if (best) return { type: 'country', obj: best };
       for (const c of this.countries) if (c.pxRings && this._pointIn(x, y, c.pxRings)) return { type: 'country', obj: c };
       return null;
