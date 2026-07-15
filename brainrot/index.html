@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Brainrot: Rise of the Meme</title>
-<link rel="stylesheet" href="style.css?v=31">
+<link rel="stylesheet" href="style.css?v=32">
 </head>
 <body>
 
@@ -102,10 +102,13 @@ window.onerror = function (msg, src, line) {
   <div class="worldbar" title="World population: healthy / infected / terminal"><span class="wb-inf" id="wbInf"></span><span class="wb-nec" id="wbNec"></span></div>
   <div class="sb-time"><span data-spr="hud:clock" data-sprsize="13"></span> <b id="sbTime">0:00</b></div>
   <div class="sb-btns">
+    <button class="round-btn mob-only" id="btnSheetPath" title="Pathogen vitals" data-spr="hud:brain" data-sprsize="16" data-sprcolor="#ff6bd6"></button>
+    <button class="round-btn mob-only" id="btnSheetWorld" title="World &amp; news" data-spr="hud:global" data-sprsize="16" data-sprcolor="#5ffbe0"></button>
     <button class="round-btn" id="btnStats" title="Statistics" data-spr="hud:stats" data-sprsize="16"></button>
     <button class="round-btn" id="btnAwards" title="Achievements" data-spr="hud:awards" data-sprsize="16"></button>
   </div>
 </div>
+<div id="sheetScrim"></div>
 <footer id="logbar"><span class="log-tag"><span data-spr="hud:news" data-sprsize="13"></span> WORLD NEWS</span><div id="eventLog"></div></footer>
 <div id="toasts"></div>
 
@@ -211,18 +214,18 @@ window.onerror = function (msg, src, line) {
   <div class="start-btns"><button class="big-btn" id="btnAgain">▶ Rot Again</button></div>
 </div></div>
 
-<script src="config.js?v=31"></script>
-<script src="sprites.js?v=31"></script>
-<script src="audio.js?v=31"></script>
-<script src="animations.js?v=31"></script>
-<script src="countries.js?v=31"></script>
-<script src="worldmap.js?v=31"></script>
-<script src="upgrades.js?v=31"></script>
-<script src="events.js?v=31"></script>
-<script src="world.js?v=31"></script>
-<script src="save.js?v=31"></script>
-<script src="genes.js?v=31"></script>
-<script src="ui.js?v=31"></script>
-<script src="game.js?v=31"></script>
+<script src="config.js?v=32"></script>
+<script src="sprites.js?v=32"></script>
+<script src="audio.js?v=32"></script>
+<script src="animations.js?v=32"></script>
+<script src="countries.js?v=32"></script>
+<script src="worldmap.js?v=32"></script>
+<script src="upgrades.js?v=32"></script>
+<script src="events.js?v=32"></script>
+<script src="world.js?v=32"></script>
+<script src="save.js?v=32"></script>
+<script src="genes.js?v=32"></script>
+<script src="ui.js?v=32"></script>
+<script src="game.js?v=32"></script>
 </body>
 </html>

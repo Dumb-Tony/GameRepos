@@ -268,6 +268,12 @@
       $('evoClose').addEventListener('click', () => this._closeEvo());
       $('newsOk').addEventListener('click', () => { this.game.audio && this.game.audio.click(); this._dismissNews(); });
 
+      // Mobile bottom-sheet toggles (Pathogen vitals / World & news panels).
+      const bp = $('btnSheetPath'), bw = $('btnSheetWorld'), scrim = $('sheetScrim');
+      if (bp) bp.addEventListener('click', () => this._toggleSheet('path'));
+      if (bw) bw.addEventListener('click', () => this._toggleSheet('world'));
+      if (scrim) scrim.addEventListener('click', () => this._closeSheets());
+
       window.addEventListener('keydown', (e) => this._onKey(e));
       window.addEventListener('resize', () => this._resize());
     }
@@ -394,10 +400,19 @@
       if (pl) pl.innerHTML = `<span data-spr="hud:biohazard" data-sprsize="13" data-sprcolor="#8fd14a"></span> ${n.toUpperCase()}`;
       const pca = document.querySelector('.hud-card#left'); if (pca) pca.setAttribute('data-title', '☣ ' + n);
     }
-    _showSelect() { $('selectBanner').style.display = 'block'; this.selectCountry(null); }
+    _showSelect() { $('selectBanner').style.display = 'block'; this.selectCountry(null); document.body.classList.add('sh-select'); this._closeSheets(); }
     onChooseStart() { this.selectCountry(this.game.startChoice); }
     onDifficulty() { this._buildDiffs(); }
-    onRelease() { $('selectBanner').style.display = 'none'; this._pushTimeline(this.game.elapsed, `Patient zero: <b>${this.game.patientZero ? this.game.patientZero.name : '?'}</b>`); this.selectCountry(null); }
+    onRelease() { $('selectBanner').style.display = 'none'; document.body.classList.remove('sh-select'); this._pushTimeline(this.game.elapsed, `Patient zero: <b>${this.game.patientZero ? this.game.patientZero.name : '?'}</b>`); this.selectCountry(null); }
+    // ---- mobile bottom sheets (Pathogen vitals / World & news) ----
+    _closeSheets() { document.body.classList.remove('sh-path', 'sh-world', 'sh-modal'); }
+    _toggleSheet(which) {
+      const b = document.body, cls = which === 'path' ? 'sh-path' : 'sh-world', on = b.classList.contains(cls);
+      b.classList.remove('sh-path', 'sh-world');
+      if (on) { b.classList.remove('sh-modal'); return; }
+      b.classList.add(cls, 'sh-modal');
+      if (which === 'world') this._renderDiseasePanel();   // freshen before it slides up
+    }
     _evoVir() { const ev = $('evoVir'); if (ev) ev.textContent = fmt(this.game.virality); if (this._evoOpen && this._activeTree() === 'overview') this._renderOverview(); }
     onBuy(u) { this._updateTree(); this._drawLines(this._activeTree()); this._renderNodeDetail(); this._evoVir(); this._flash('chipVir'); this.toast(spr('upgrade', u.id, 20), `Evolved <b>${u.name}</b>`, u.tree === 'symptom' && u.fx.sev > 1 ? 'bad' : 'good'); }
     onDeEvolve(u) { this._updateTree(); this._drawLines(this._activeTree()); this._renderNodeDetail(); this._evoVir(); this.toast('✂️', `De-evolved <b>${u.name}</b> (severity down)`, 'info'); }
@@ -437,6 +452,7 @@
       // Clear any open news popup first so the two overlays can't stack their
       // pause flags and leave the sim stuck paused after the overlay closes.
       if (this._newsOpen) { this._newsOpen = false; this._newsQueue = []; this._closeModal('newsModal'); }
+      this._closeSheets();
       this._evoOpen = true; this._updatePause();
       const ev = $('evoVir'); if (ev) ev.textContent = fmt(this.game.virality);
       this._renderOverview(); this._updateTree(); this._updateEvoStats(); this._openModal('evoModal'); this._drawLines(this._activeTree());
@@ -956,7 +972,9 @@
     // ---- toasts / modals ----------------------------------------------
     toast(emoji, msg, tone) {
       if (!this.mounted) return; const t = el('div', 'toast ' + (tone || 'info'), `<span class="t-ico">${emoji}</span><span>${msg}</span>`);
-      const host = $('toasts'); host.appendChild(t); while (host.children.length > 5) host.removeChild(host.firstChild);
+      const host = $('toasts'); host.appendChild(t);
+      const cap = (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width:760px)').matches) ? 3 : 5;
+      while (host.children.length > cap) host.removeChild(host.firstChild);
       setTimeout(() => { t.classList.add('leaving'); setTimeout(() => t.remove(), 320); }, 3600);
     }
     _flash(id) { const e = $(id); if (!e) return; e.classList.remove('flash'); void e.offsetWidth; e.classList.add('flash'); }
