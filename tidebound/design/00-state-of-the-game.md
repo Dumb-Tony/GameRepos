@@ -202,6 +202,21 @@ capture-phase click listener in engine plays tap on #choices buttons
 on *Close; trophies.js chimes when a toast lands. Long choice lists
 wear #choices.canScroll (bottom fade mask, toggled by a scroll
 listener in showChoices) until scrolled to the end.
+**Foreknowledge**: (1) loops.js `loop_arrival` (WHAT CARRIES) — every
+Driftwood Loop start routes loops_menu buttons → this card before
+'falling'; lists carried KNOW_* flags via KNOW_LINES, the keepsake,
+and the chosen modifier via MOD_LINES; empty crossing gets a fallback
+line. State is fully dressed in the buttons' do (fresh()), so the card
+only reads. (2) title_gallery chips carry data-eid (.tChipBtn) — a
+delegated #textLog click listener (scenes-prologue, chart-tap pattern)
+finds the newest Keepsake Box snapshot for that endingId and renders
+TB.RunCard.render(snap) into p#galCardWrap (self-clears on scene
+change); snapshotless endings get a 'predates the Keepsake Box' note.
+(3) The held breath — night2 telegraphs the two scripted blows one
+night early: day 10 ch2 (lagoon glow HOLDS; shelter-aware coda) and
+day 57 ch5 (M_WEATHERWISE → M.'s counted 'hours' version, else the
+animals-know version). Deaths keep tracing to ignorable warnings —
+these make the warnings fair.
 Global namespace `window.TB`. Cache-bust query `?v=N` on every asset — bump on release.
 **PWA / offline phone version** (sw.js + manifest.webmanifest): the
 service worker precaches all CODE files plus every asset named in

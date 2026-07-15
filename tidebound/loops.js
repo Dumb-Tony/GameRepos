@@ -109,13 +109,47 @@
       ];
     },
     choices: (s) => [
-      { t: '🌀 Begin the next loop', sub: 'Everything you know, nothing you owned. The standard crossing.', cls: 'title-btn', do: fresh(null), go: 'falling' },
-      { t: '⛈️ Hard Season', sub: 'The Long Rain comes a chapter early. The island tests what you think you know.', do: fresh('hard'), go: 'falling' },
-      { t: '🤫 Silent Island', sub: 'No eyes at the clearing. The solo route, enforced — the wild keeps its distance this loop.', do: fresh('silent'), go: 'falling' },
-      { t: '🕯️ Kind Tide', sub: 'Story mode: the meters soften. The island tells its tale with gentler hands.', do: fresh('kind'), go: 'falling' },
-      { t: '🌪️ Chaos Drift', sub: 'The living island, doubled. Events crowd the days; wonders stop being rare.', do: fresh('chaos'), go: 'falling' },
+      { t: '🌀 Begin the next loop', sub: 'Everything you know, nothing you owned. The standard crossing.', cls: 'title-btn', do: fresh(null), go: 'loop_arrival' },
+      { t: '⛈️ Hard Season', sub: 'The Long Rain comes a chapter early. The island tests what you think you know.', do: fresh('hard'), go: 'loop_arrival' },
+      { t: '🤫 Silent Island', sub: 'No eyes at the clearing. The solo route, enforced — the wild keeps its distance this loop.', do: fresh('silent'), go: 'loop_arrival' },
+      { t: '🕯️ Kind Tide', sub: 'Story mode: the meters soften. The island tells its tale with gentler hands.', do: fresh('kind'), go: 'loop_arrival' },
+      { t: '🌪️ Chaos Drift', sub: 'The living island, doubled. Events crowd the days; wonders stop being rare.', do: fresh('chaos'), go: 'loop_arrival' },
       { t: '↩️ Back', go: 'title' },
     ],
+  });
+
+  // ---- WHAT CARRIES: the crossing between lives, made visible --------------
+  const KNOW_LINES = {
+    KNOW_GRIN: '🐊 The mangroves have a landlord. Somewhere under your skin, you know his cold hour.',
+    KNOW_GULLET: '🕳️ The dark under the island has a shape, and your hands remember its map.',
+    KNOW_EDDA: '🍵 There is a woman on the mountain: tea, a shotgun, sixty years of knowing. Climb early.',
+    KNOW_NINE: '🐙 Something in the tide pools sorts shells and keeps accounts. It will know you on sight.',
+    KNOW_ROSA: '🗺️ On the north reef a drowned ship keeps her gold. Old ink marked the spot; the mark carried.',
+    KNOW_SUNDERING: '🌋 You have seen the mountain break. In dreams you haven\'t had yet, it is still breaking.',
+  };
+  const MOD_LINES = {
+    hard: '⛈️ And this life comes in under a low sky: the Long Rain is early, and it is not waiting for you to be ready.',
+    silent: '🤫 And the wild keeps its distance this time. The island will be only, entirely, yours.',
+    kind: '🕯️ And the tide is kind: the meters soften, and the island tells its tale with gentler hands.',
+    chaos: '🌪️ And the days come crowded: the living island, doubled — wonders stop being rare.',
+  };
+  TB.scene('loop_arrival', {
+    bg: 'ocean-night', hud: false,
+    text: (s) => {
+      const d = L.data();
+      const t = [
+        '<em>🌀 WHAT CARRIES</em>',
+        'Between one life and the next there is a crossing — water, and a hum, and the strange freight inspection of dreams. Nothing you owned makes it. What you <em>know</em> rides free.',
+      ];
+      const knows = Object.keys(KNOW_LINES).filter((k) => s.flags[k]);
+      for (const k of knows) t.push(KNOW_LINES[k]);
+      if (!knows.length) t.push('This time the crossing is nearly empty: a hum under the skin, a sense of green off the port bow, the certainty of a song one verse before it starts. It is enough. It has to be.');
+      const kp = d.keepsake && KEEPSAKES[d.keepsake];
+      if (kp) t.push('🎁 And in your pack, impossibly: <em>' + kp.name.slice(kp.name.indexOf(' ') + 1) + '</em> — soaked in enough of a life you can\'t remember to have become part of you.');
+      if (s.mod && MOD_LINES[s.mod]) t.push(MOD_LINES[s.mod]);
+      return t;
+    },
+    next: 'falling', nextLabel: '🛫 Cross ➤',
   });
 
   // ---- the keepsake choice, offered at every ending ------------------------

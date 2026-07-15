@@ -809,3 +809,7 @@ body.on-ending #panel, body.on-death #panel { animation: panelRise .9s ease back
   body.on-ending #panel, body.on-death #panel { animation: none; }
   body.on-ending #backdrop::after, body.on-death #backdrop::after { opacity: 1; }
 }
+
+/* ===== FOREKNOWLEDGE: gallery chips are doors ===== */
+.tChipBtn { cursor: pointer; transition: border-color .15s, background .15s; }
+.tChipBtn:hover { border-color: #ffd65c90; background: #0a1c2b; }
