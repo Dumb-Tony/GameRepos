@@ -63,7 +63,7 @@
     enter: (s) => { if (!TB.is('COURIER_RESTED')) { TB.flag('COURIER_RESTED'); TB.stat('hope', 8); TB.route('roots', 1); } },
     text: (s) => [
       'No body ever came ashore. The island filed him somewhere gentler than its beaches — you\'ve made your peace with never knowing where. But a story with nobody to hold it isn\'t a story; it\'s just weather. So you spend an afternoon doing something about that.',
-      'You build the cairn on the point above the bay, where the land looks hardest at the horizon: flat stones footed deep against king tides, the case\'s fifty-year-old felt lining folded beneath the capstone, and the crest-side of the broken lock set facing OUT to sea — let Meridian\'s mark stand sentry duty for the man it spent, forever.',
+      'You build the cairn on the point above the bay, where the land looks hardest at the horizon: flat stones footed deep against king tides, the case\'s fifty-year-old felt lining folded beneath the capstone, and the crest-side of the broken lock set facing OUT to sea — let ' + (TB.is('SPONSORS_KNOWN') ? 'Meridian\'s mark' : 'its old crest') + ' stand sentry duty for the man it spent, forever.',
       'Then you sit beside it and you read him back his own photograph, out loud, all nine fragments of it, beginning to end: the pier, the hem of her dress mid-turn, the coffee steam, the half-painted name-board, her laugh, the date, the seven-spiral his hand couldn\'t stop drawing, his own broad shadow on the boards, and the inscription. <em>"Until the island lets me back — wait for me."</em> <em>"Ninth year. Still waiting. Bringing you home."</em>',
       'You tell the sea the ending he didn\'t get to write: that the island let him back. That he saw it rise off the bow and said <em>there you are</em>, glad, like a man at his own gate. That the last mile is yours now, and you know how to carry things.',
       (s.companion ? ({ kavi: 'Kavi sits the whole reading through, ears working, and when you finish he leans once, hard, against the cairn — the way he leans against you. Filed. Kept. Pack.', ipo: 'Ipo watches from the dune grass with unusual stillness, and in the morning there is a bottle-green marble balanced on the capstone. You do not ask. Payment travels strange roads here.', vela: 'Vela rides the wind above the point the whole time, one slow circle after another, and you realize partway through that a one-eyed empress is standing honor guard.', buri: 'Buri helps with the stones — which is to say he moves several boulders you didn\'t ask about — and then stands beside the finished cairn with his great head low, doing the thing pigs are never given credit for: grieving properly.', moa: 'Moa stands on the capstone as you read, small and copper and unyielding, facing the sea like the figurehead of a very small, very serious ship.', nine: 'And from the rocks below the point, for the whole length of the reading, one slotted golden eye watches above the waterline — Nine, at attention in her own element, seeing a drowned man honored by the dry world.' })[s.companion] : 'You do it alone, which is fitting; he crossed his last nine years alone too. The wind takes each sentence as you finish it, going somewhere.'),
@@ -96,28 +96,36 @@
       return c;
     },
   });
-  const CASE_CONTENTS = [
+  // lore keeps its order: the player only reads the WORD heartglass if this
+  // run (or a banked loop) has actually met the stuff. Otherwise the gems
+  // stay a mystery until the island — or Edda — supplies the name.
+  TB.knowsGlass = function (s) {
+    return TB.is('HEARTGLASS') || TB.is('GULLET1') || TB.is('GULLET2') || TB.is('GULLET_MAP') || TB.is('WOUND_SEEN') || TB.is('KNOW_GULLET') || TB.is('GEMS_NAMED');
+  };
+  const CASE_CONTENTS = (s) => [
     'Inside, packed in fifty-year-old felt, three things.',
-    'First: a lead-lined pouch, surgeon-stitched, and inside it — your breath goes somewhere else — <em>gems</em>. A dozen of them, cut and polished: dark, glassy, catching your lamp and holding it a half-beat too long. Heartglass. Someone, somewhere off this island, has been CUTTING it. Faceted like diamonds. Sold, presumably, like them. They are the most beautiful wrong thing you have ever held.',
+    TB.knowsGlass(s)
+      ? 'First: a lead-lined pouch, surgeon-stitched, and inside it — your breath goes somewhere else — <em>gems</em>. A dozen of them, cut and polished: dark, glassy, catching your lamp and holding it a half-beat too long. Heartglass. You know it the moment the light lags. Someone, somewhere off this island, has been CUTTING it. Faceted like diamonds. Sold, presumably, like them. They are the most beautiful wrong thing you have ever held.'
+      : 'First: a lead-lined pouch, surgeon-stitched, and inside it — your breath goes somewhere else — <em>gems</em>. A dozen of them, cut and polished: dark, glassy, catching your lamp and holding it a half-beat too long — a delay your eye insists on and your reason can\'t explain. Not diamond, not obsidian, not anything you own a name for. Someone, somewhere, has been cutting these. Sold, presumably, like diamonds. They are the most beautiful question you have ever held.',
     'Second: a dossier in a waxed envelope, typed pages and photostats under the crest from the lock. You read it twice. The sponsors never stopped existing — they renamed. And they never stopped looking: the file is a fifty-year hunt for "Site 9," compiled from satellite anomaly maps, shipping-lane reports, and — page after page — testimony from people who LEFT this island and lived. The ship photo\'s twin is here, catalogued. The courier wasn\'t traveling with the case. The courier was <em>delivering himself</em>: an agent, riding the one aircraft their models said the island would take.',
     'Third: an oilskin chart of Vessakai itself — crude, pre-Halcyon, older than everything — annotated in two centuries of different hands. And on the north reef, in the oldest ink of all, a wreck is marked with a word and a cross: <em>ROSA DOURADA. GOLD.</em>',
   ];
   TB.scene('case_open_ipo', {
     bg: campBg2, who: { emoji: '🐒', name: 'Ipo' },
-    text: (s) => ['Ipo approaches the case the way a maestro approaches a difficult hall: one slow circuit, tapping; a period of theatrical limbering; and then twenty minutes of the most focused work you have ever seen from any living thing — one ear pressed flat to the steel, fingers reading the lock\'s small resistances like braille.', 'The CLACK of it opening is followed by a bow. You applaud. It is expected, and deserved.'].concat(CASE_CONTENTS),
-    enter: (s) => { if (!TB.is('CASE_LOOT')) { TB.flag('CASE_LOOT'); TB.flag('GEMS'); TB.flag('DOSSIER'); TB.flag('CHART_ROSA'); TB.route('depth', 2); TB.route('signal', 1); } },
+    text: (s) => ['Ipo approaches the case the way a maestro approaches a difficult hall: one slow circuit, tapping; a period of theatrical limbering; and then twenty minutes of the most focused work you have ever seen from any living thing — one ear pressed flat to the steel, fingers reading the lock\'s small resistances like braille.', 'The CLACK of it opening is followed by a bow. You applaud. It is expected, and deserved.'].concat(CASE_CONTENTS(s)),
+    enter: (s) => { if (!TB.is('CASE_LOOT')) { TB.flag('CASE_LOOT'); TB.flag('GEMS'); TB.flag('DOSSIER'); TB.flag('CHART_ROSA'); TB.route('depth', 2); TB.route('signal', 1); if (!TB.knowsGlass(s)) TB.flag('GEMS_MYSTERY'); } },
     next: (s) => backToCamp(s),
   });
   TB.scene('case_open_drill', {
     bg: campBg2,
-    text: (s) => ['You do it the engineer\'s way: brace, center-punch, and two patient hours of hand-drill work through the lock body, resting the bit, saving the toolbox\'s last good edges. The lock surrenders like an argument running out of premises.'].concat(CASE_CONTENTS),
-    enter: (s) => { if (!TB.is('CASE_LOOT')) { TB.flag('CASE_LOOT'); TB.flag('GEMS'); TB.flag('DOSSIER'); TB.flag('CHART_ROSA'); TB.route('depth', 2); TB.route('signal', 1); } },
+    text: (s) => ['You do it the engineer\'s way: brace, center-punch, and two patient hours of hand-drill work through the lock body, resting the bit, saving the toolbox\'s last good edges. The lock surrenders like an argument running out of premises.'].concat(CASE_CONTENTS(s)),
+    enter: (s) => { if (!TB.is('CASE_LOOT')) { TB.flag('CASE_LOOT'); TB.flag('GEMS'); TB.flag('DOSSIER'); TB.flag('CHART_ROSA'); TB.route('depth', 2); TB.route('signal', 1); if (!TB.knowsGlass(s)) TB.flag('GEMS_MYSTERY'); } },
     next: (s) => backToCamp(s),
   });
   TB.scene('case_open_smash', {
     bg: campBg2,
-    text: (s) => ['You wedge it against the boundary stone and put the heavy end of your resolve through the hinge line, again, again — the case dying hard, the way things built by serious people do — until it yawns open, bent and beaten.'].concat(CASE_CONTENTS).concat(['The smashing had a price: the old oilskin chart took the worst of the final blow — torn through, a corner gone entirely, half its annotations lost to the tear. The wreck-mark survives. Much of what two centuries of hands wrote AROUND it did not.']),
-    enter: (s) => { if (!TB.is('CASE_LOOT')) { TB.flag('CASE_LOOT'); TB.flag('GEMS'); TB.flag('DOSSIER'); TB.flag('CHART_ROSA'); TB.route('depth', 2); TB.route('signal', 1); } },
+    text: (s) => ['You wedge it against the boundary stone and put the heavy end of your resolve through the hinge line, again, again — the case dying hard, the way things built by serious people do — until it yawns open, bent and beaten.'].concat(CASE_CONTENTS(s)).concat(['The smashing had a price: the old oilskin chart took the worst of the final blow — torn through, a corner gone entirely, half its annotations lost to the tear. The wreck-mark survives. Much of what two centuries of hands wrote AROUND it did not.']),
+    enter: (s) => { if (!TB.is('CASE_LOOT')) { TB.flag('CASE_LOOT'); TB.flag('GEMS'); TB.flag('DOSSIER'); TB.flag('CHART_ROSA'); TB.route('depth', 2); TB.route('signal', 1); if (!TB.knowsGlass(s)) TB.flag('GEMS_MYSTERY'); } },
     next: (s) => backToCamp(s),
   });
 

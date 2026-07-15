@@ -92,7 +92,10 @@
   const prevActions = TB.ch3Actions;
   TB.ch3Actions = function (s) {
     const c = prevActions(s);
-    if (s.chapter >= 4 && TB.is('EAST_OPEN')) c.push({
+    // the expedition retires once the station is stripped — every room done,
+    // every list finished; the Wayfinder's station region covers return trips
+    const stationDone = TB.is('STATION_MESS') && TB.is('VANE_J3') && TB.is('RADIO_SURVEYED') && TB.is('E_WING_OPEN') && TB.is('FUEL') && TB.is('WIRE') && TB.is('RADIO_STAGED');
+    if (s.chapter >= 4 && TB.is('EAST_OPEN') && !stationDone) c.push({
       grp: 'story',
       t: '📡 Expedition to Station Halcyon', sub: 'The crossing, the rise, and one building\'s worth of daylight.',
       do: () => { TB.stat('energy', -6); TB.tickSegment(); }, go: 'station',
@@ -168,18 +171,23 @@
         },
         go: 'act_result',
       });
-      if (!TB.is('E_WING_OPEN')) {
+      if (!TB.is('E_WING_OPEN') && s.ewingTry !== s.day) { // a defeated door doesn't re-ask until tomorrow
         const key = TB.is('IPO_KEY'), buri = s.companion === 'buri' && s.trust >= 50, eng = TB.is('BG_ENGINEER') && TB.has('toolbox');
         c.push({
           t: '🚪 The E wing', sub: key ? 'The heavy door — and the flat steel key from Ipo\'s hoard, stamped E WING.' : buri ? 'The heavy door. You have two hundred pounds of demolition with opinions.' : eng ? 'The heavy door. Hinges are just puzzles that rust.' : 'The heavy door. Sealed, steel, and not asking to be opened.',
           do: () => { const s2 = TB.state;
-            if (!(key || buri || eng)) { s2.out = { bg: 'station', text: ['The E wing door is a slab of marine steel in a reinforced frame, and it defeats you — today. Pry-bar bends, hinges hold, and the building stands blank-walled and windowless, keeping the station\'s one locked thought.', 'There will be a way in — a key in this compound, a stronger lever, a better idea. The door isn\'t going anywhere. Neither, something tells you, is what\'s behind it.'] }; return; }
+            if (!(key || buri || eng)) { s2.ewingTry = s2.day; s2.out = { bg: 'station', text: ['The E wing door is a slab of marine steel in a reinforced frame, and it defeats you — today. Pry-bar bends, hinges hold, and the building stands blank-walled and windowless, keeping the station\'s one locked thought.', 'There will be a way in — a key in this compound, a stronger lever, a better idea. The door isn\'t going anywhere. Neither, something tells you, is what\'s behind it.'] }; return; }
             TB.flag('E_WING_OPEN'); TB.flag('TRANSMITTER'); TB.flag('HEARTGLASS'); TB.flag('INCIDENT_HINTED'); TB.route('depth', 2);
             const how = key ? 'The flat steel key from Ipo\'s hoard turns in the lock like it was oiled yesterday — fifty years of jungle and the tumblers still know their business. (Somewhere in the canopy roads, a small showman\'s reputation compounds further.)' : buri ? 'Buri answers the door\'s argument with the only rebuttal he owns. The third blow bursts the frame\'s rusted anchors and two hundred pounds of pleased pig rides the slab down into the dark with a boom that scatters birds for a mile.' : 'You defeat it the engineer\'s way: not the lock but the hinges, drifted out pin by rusted pin over two patient hours, until the whole slab swings backward against its own intentions.';
             s2.out = { bg: 'station', text: [how,
               'Inside, the E wing is two rooms and a chill that has no business surviving the tropics. The first room is storage, and it pays the whole expedition: a spare transmitter, crated, greased, sealed — <em>intact</em>. Tools. Cable ties. A drum of desiccant that did its job for fifty years.',
               'The second room is the reason for the door.',
               'Core samples, racked like wine. Grey stone, unremarkable — except the seventh rack, double-strapped, its samples sleeved in lead-lined canvas. You unwrap one to the wrist and stop: the stone is <em>glassy</em>, dark, threaded with veins that catch your lamp and hold it a half-beat too long — the exact wrongness of the third glyph stone\'s inlay, the exact color of your reflection arriving late.', 'It is warm. Not sun-warm. <em>Pulse</em>-warm. Seven beats. You wrap it back with more care than you\'ve handled anything since the crash, and you take one — the smallest — because Vane\'s clipped sample-log ends with a line you can\'t unread: <em>"After yesterday, all further sectioning suspended. It isn\'t inert. It was never inert. — I.V."</em>'] };
+            // if the courier's gems have been a riddle, this is where two and two land
+            if (TB.is('GEMS_MYSTERY') && !TB.is('GEMS_LINKED')) {
+              TB.flag('GEMS_LINKED');
+              s2.out.text.push('And with the sample\'s warmth still in your palm, two and two arrive at last: <em>the courier\'s gems.</em> The cut stones in the lead-lined pouch — they are THIS. Someone carried cores like these off the island, and somewhere out in the world, has never stopped cutting.');
+            }
           },
           go: 'act_result',
         });
