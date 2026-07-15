@@ -408,14 +408,22 @@
         ctx.save(); ctx.globalAlpha = 0.65 + 0.35 * pl * (game.cure / 100);
         Spr.draw(ctx, 'flask', c.px - c.r - 4, c.py - c.r - 3, 11, '#4ea1ff', c.r * 0.3 * pl); ctx.restore();
       }
-      // label (name always subtle; % when infected) with outline for legibility
+      // Labels (name; % when infected). Drawn at a CONSTANT SCREEN SIZE by
+      // dividing font/outline/offsets by the view zoom — otherwise they're
+      // inside the zoom transform and balloon into giant text when you zoom in.
+      const z = (game.ui && game.ui.view && game.ui.view.zoom) || 1;
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      const lbl = (s, y, color, weight) => { ctx.font = `${weight} 10px Inter, system-ui, sans-serif`; ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(0,0,0,0.72)'; ctx.strokeText(s, c.px, y); ctx.fillStyle = color; ctx.fillText(s, c.px, y); };
+      const lbl = (s, off, color, weight) => {
+        const y = c.py + c.r + off / z;
+        ctx.font = `${weight} ${10 / z}px Inter, system-ui, sans-serif`;
+        ctx.lineWidth = 3 / z; ctx.strokeStyle = 'rgba(0,0,0,0.72)'; ctx.strokeText(s, c.px, y);
+        ctx.fillStyle = color; ctx.fillText(s, c.px, y);
+      };
       // Declutter: only label a country's name when it matters (infected /
       // picked / hovered / during country select). Emoji marker is always on.
       const showName = game.phase === 'select' || total > 0.01 || c === game.selected || c === game.hoverCountry;
-      if (showName) lbl(c.short, c.py + c.r + 8, 'rgba(238,242,255,0.92)', '700');
-      if (total > 0.01) lbl(BR.fmtPct(c.brainrotPct()), c.py + c.r + 19, stage.color, '800');
+      if (showName) lbl(c.short, 8, 'rgba(238,242,255,0.92)', '700');
+      if (total > 0.01) lbl(BR.fmtPct(c.brainrotPct()), 19, stage.color, '800');
     }
 
     _bubble(ctx, m, t, color, icon, big) {
