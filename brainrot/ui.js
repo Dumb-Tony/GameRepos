@@ -235,7 +235,7 @@
         else this._closeModal(m.id);
       }));
 
-      $('btnBegin').addEventListener('click', () => { this.game.audio && this.game.audio.ensure(); this._captureName(); this._closeModal('introModal'); this._showSelect(); });
+      $('btnBegin').addEventListener('click', () => { this.game.audio && this.game.audio.ensure(); this._lockLandscape(); this._captureName(); this._closeModal('introModal'); this._showSelect(); });
       const cont = $('btnContinue');
       const resumable = () => (this.game.save.hasSlot('auto') ? 'auto' : SLOTS.find((s) => this.game.save.hasSlot(s)));
       cont.disabled = !resumable();
@@ -273,6 +273,7 @@
       if (bp) bp.addEventListener('click', () => this._toggleSheet('path'));
       if (bw) bw.addEventListener('click', () => this._toggleSheet('world'));
       if (scrim) scrim.addEventListener('click', () => this._closeSheets());
+      const rgs = $('rgSkip'); if (rgs) rgs.addEventListener('click', () => document.body.classList.add('rg-dismissed'));
 
       window.addEventListener('keydown', (e) => this._onKey(e));
       window.addEventListener('resize', () => this._resize());
@@ -411,6 +412,12 @@
     onChooseStart() { this.selectCountry(this.game.startChoice); }
     onDifficulty() { this._buildDiffs(); }
     onRelease() { $('selectBanner').style.display = 'none'; document.body.classList.remove('sh-select'); this._pushTimeline(this.game.elapsed, `Patient zero: <b>${this.game.patientZero ? this.game.patientZero.name : '?'}</b>`); this.selectCountry(null); }
+    // Best-effort: ask the browser to lock landscape (Android/fullscreen only;
+    // iOS Safari has no such API, so we also show the rotate gate in CSS).
+    _lockLandscape() {
+      try { const o = window.screen && window.screen.orientation;
+        if (o && o.lock) o.lock('landscape').catch(() => {}); } catch (e) {}
+    }
     // ---- mobile bottom sheets (Pathogen vitals / World & news) ----
     _closeSheets() { document.body.classList.remove('sh-path', 'sh-world', 'sh-modal'); }
     _toggleSheet(which) {
