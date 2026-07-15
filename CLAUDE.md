@@ -17,6 +17,12 @@
 - House style: plain HTML/CSS/JS, no build step, no dependencies. All scene
   effects go in choice `do` / `next` handlers or reload-guarded `enter` hooks,
   never in `text` functions.
+- The game is an installable PWA (`tidebound/sw.js` + `manifest.webmanifest`):
+  the service worker precaches every code file plus everything in
+  `art/manifest.txt`. **On every release, bump `sw.js`'s `VERSION` in lockstep
+  with index.html's `?v=` cache-bust** — and when adding a new code file,
+  add it to sw.js's `CODE` list (art/audio need nothing: the manifest covers
+  them).
 - The design bible is `tidebound/design/` — treat it as the roadmap
   (49 endings designed, 41 CORES + 12 deaths implemented incl. NG+ ending
   The Loop, What Remains, The Island's Own, The Last Delivery, Keeper of the
