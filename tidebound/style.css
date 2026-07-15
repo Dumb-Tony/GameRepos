@@ -820,8 +820,8 @@ body.on-ending #panel, body.on-death #panel { animation: panelRise .9s ease back
 .tChipBtn:hover { border-color: #ffd65c90; background: #0a1c2b; }
 
 /* ===== SPECIES ALMANAC UPGRADES ===== */
-/* unmet species show as silhouettes: the shape of what you haven't found */
-.almThumb.almSil { filter: brightness(0) saturate(0); opacity: .5; }
+/* unmet species show as fogged plates: the ghost of a shape, no detail */
+.almThumb.almSil { filter: grayscale(1) brightness(.6) contrast(.35) blur(2.5px) sepia(.4); opacity: .75; }
 /* met species expand to a portrait plate on tap */
 .almRowBtn { cursor: pointer; }
 .almRowBtn:hover .almName { text-decoration: underline; }
@@ -854,3 +854,33 @@ body.on-ending #panel, body.on-death #panel { animation: panelRise .9s ease back
   border-bottom: 1px solid var(--divider); margin-bottom: 2px;
 }
 #kitTrinkets .tkHdr:first-child { padding-top: 2px; }
+
+/* ===== FIELD NOTES: the almanac and backpack are paper artifacts ===== */
+/* Scoped custom properties re-dress everything inside without touching the
+   markup — the notebook keeps its paper look under every color theme. */
+#almCard, #kitCard {
+  --panel-bg: #efe5c8; --panel-border: #7a5c3555;
+  --panel-text: #2e2013; --panel-em: #7a4a1a;
+  --btn-bg: #5c3d1a14; --btn-bg-hover: #5c3d1a2e;
+  --btn-border: #5c3d1a47; --btn-bg-strong: #5c3d1a1f;
+  --divider: #5c3d1a33; --ink: #2e2013;
+  background: linear-gradient(160deg, #f2e9cf, #e8dbb8 60%, #ddcda6) !important;
+  color: #2e2013;
+  border: 1px solid #7a5c3566 !important;
+  box-shadow: inset 0 0 60px #7a5c351f, 0 14px 44px rgba(0, 0, 0, .5) !important;
+}
+#almCard h2, #kitCard h2 { color: #4a2f16; }
+#almCard h2 .menuHint, #kitCard .menuHint { color: #6b5a42; opacity: .9; }
+#almCard .almName, #kitCard .tkName { color: #3a2410; }
+#almCard .almDone { color: #7a4a1a; }
+/* the notebook's own hand for the shelf headers */
+#kitCard .tkHdr, #almCard #almTabs button {
+  font-family: 'Segoe Print', 'Bradley Hand', 'Marker Felt', 'Comic Sans MS', cursive;
+  text-transform: none; letter-spacing: .4px;
+}
+
+/* the surveyor's habit: the most-walked region wears a stain ring */
+.mapWornRing {
+  fill: none; stroke: #4a2f16; stroke-width: 5; opacity: .14;
+  stroke-linecap: round; pointer-events: none;
+}

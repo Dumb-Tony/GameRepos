@@ -145,40 +145,42 @@
 
     // --- the panel ---
     const px = 70, py = 250, pw = W - 140, ph = 850;
-    ctx.fillStyle = 'rgba(4,16,26,0.90)';
-    ctx.strokeStyle = 'rgba(255,255,255,0.28)'; ctx.lineWidth = 2;
-    rrect(ctx, px, py, pw, ph, 28); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = 'rgba(240,230,202,0.95)'; // parchment field-note over the painted scene
+    ctx.strokeStyle = 'rgba(74,47,22,0.75)'; ctx.lineWidth = 3;
+    rrect(ctx, px, py, pw, ph, 18); ctx.fill(); ctx.stroke();
+    ctx.strokeStyle = 'rgba(74,47,22,0.35)'; ctx.lineWidth = 1.5;
+    rrect(ctx, px + 12, py + 12, pw - 24, ph - 24, 12); ctx.stroke(); // the surveyor's second pass
 
     ctx.font = '84px serif';
     ctx.fillText(icon, W / 2, py + 130);
-    ctx.fillStyle = P[4];
+    ctx.fillStyle = '#6b3a12';
     ctx.font = '52px Georgia, serif';
     let y = wrap(ctx, title, W / 2, py + 220, pw - 120, 60);
-    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.fillStyle = 'rgba(74,47,22,0.45)';
     ctx.fillRect(px + 90, y - 20, pw - 180, 2);
     y += 40;
 
-    ctx.fillStyle = '#f2ede2';
+    ctx.fillStyle = '#2e2013';
     ctx.font = '34px Georgia, serif';
     ctx.fillText('Run of ' + s.day + ' days · Chapter ' + (s.chapter || 1), W / 2, y); y += 52;
     ctx.fillText(s.companion ? 'Companion: ' + NAMES[s.companion] + ' — ' + TIERS[TB.tier()] : 'The solo route — alone the whole way', W / 2, y); y += 52;
-    ctx.font = '30px Georgia, serif'; ctx.fillStyle = '#cfd8d4';
+    ctx.font = '30px Georgia, serif'; ctx.fillStyle = '#5a4a33';
     ctx.fillText('Signal ' + s.route.signal + '  ·  Roots ' + s.route.roots + '  ·  Depth ' + s.route.depth + '  ·  ' + Object.keys(s.flags).length + ' Ledger entries', W / 2, y); y += 70;
 
     const deeds = DEEDS.filter((d) => TB.is(d[0])).slice(0, 5);
     if (deeds.length) {
-      ctx.fillStyle = '#ffe9b8'; ctx.font = 'italic 30px Georgia, serif';
+      ctx.fillStyle = '#7a4a1a'; ctx.font = 'italic 30px Georgia, serif';
       ctx.fillText('— the Ledger remembers —', W / 2, y); y += 48;
-      ctx.fillStyle = '#e8e3d8'; ctx.font = '29px Georgia, serif';
+      ctx.fillStyle = '#3a2c1a'; ctx.font = '29px Georgia, serif';
       for (const d of deeds) { y = wrap(ctx, '· ' + d[1], W / 2, y, pw - 160, 38) + 6; }
     }
 
     // --- footer ---
     const m = TB.meta();
     const found = Object.keys(m.endings || {}).length, total = Object.keys(TB.CORES || {}).length || 33;
-    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.fillStyle = 'rgba(74,47,22,0.45)';
     ctx.fillRect(px + 90, py + ph - 96, pw - 180, 2);
-    ctx.fillStyle = '#cfd8d4'; ctx.font = '28px Georgia, serif';
+    ctx.fillStyle = '#5a4a33'; ctx.font = '28px Georgia, serif';
     ctx.fillText('Endings found: ' + found + ' / ' + total + '  ·  Lives lived: ' + (m.runs || 1), W / 2, py + ph - 44);
     ctx.fillStyle = '#f2ede2'; ctx.globalAlpha = 0.9; ctx.font = '26px Georgia, serif';
     ctx.shadowColor = '#000000aa'; ctx.shadowBlur = 16;

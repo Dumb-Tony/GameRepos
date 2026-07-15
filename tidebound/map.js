@@ -368,6 +368,20 @@
     }).join('');
     // the chart reads as a hand-drawn survey: parchment sea, inked coast,
     // dashed annotation lines — and the generated art carries the same style
+    const whole = M.charted(s);
+    // the surveyor's habit shows: the most-walked region wears a ring
+    let worn = '';
+    {
+      let best = null, bestN = 3; // needs real traffic before the paper shows it
+      for (const id of Object.keys(REGIONS)) {
+        const v = (s.visits && s.visits[id]) || 0;
+        if (v > bestN) { bestN = v; best = id; }
+      }
+      if (best) {
+        const Rg = REGIONS[best];
+        worn = '<ellipse class="mapWornRing" cx="' + (Rg.x + 2) + '" cy="' + (Rg.y + 2) + '" rx="34" ry="20"/>';
+      }
+    }
     return '<svg viewBox="0 0 440 320" id="mapSvg" role="img" aria-label="Chart of Vessakai">' +
       '<defs>' +
       '<radialGradient id="mgSea" cx="50%" cy="45%" r="78%"><stop offset="0%" stop-color="#e9dab8"/><stop offset="80%" stop-color="#d3ba8d"/><stop offset="100%" stop-color="#bd9d6c"/></radialGradient>' +
@@ -382,10 +396,25 @@
       '<path d="M215 100 Q 190 120 160 132 Q 140 142 128 118" fill="none" stroke="#3c5a6a" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="7 4" opacity="0.55"/>' +
       '<path d="M128 118 Q 110 160 118 210 Q 112 240 118 252" fill="none" stroke="#3c5a6a" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="7 4" opacity="0.5"/>' +
       '<path d="M175 296 Q 220 282 265 294" fill="none" stroke="#3c5a6a" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="2 5" opacity="0.55"/>' +
+      worn +
       regs +
-      '<text x="12" y="22" class="mapTitle">VESSAKAI — the chart so far</text>' +
+      (whole
+        ? '<rect x="7" y="7" width="426" height="306" rx="5" fill="none" stroke="#4a2f16" stroke-width="1.6" opacity="0.6"/>' +
+          '<rect x="12" y="12" width="416" height="296" rx="4" fill="none" stroke="#4a2f16" stroke-width="0.8" stroke-dasharray="3 3" opacity="0.45"/>' +
+          '<text x="12" y="22" class="mapTitle">VESSAKAI — charted whole ✦</text>'
+        : '<text x="12" y="22" class="mapTitle">VESSAKAI — the chart so far</text>') +
       '</svg>';
   }
+  // the whole chart: every walkable region discovered AND walked (the
+  // permanently locked Crown is visible from everywhere, walkable by no one)
+  M.charted = function (s) {
+    return Object.keys(REGIONS).every((id) => {
+      const Rg = REGIONS[id];
+      if (Rg.locked) return true;
+      return discovered(id, s) && !!(s.visits && (s.visits[id] || 0) >= 1);
+    });
+  };
+
   M.chart = svg; // exposed for tests
 
   // one delegated listener: chart taps click the matching scene choice, so
