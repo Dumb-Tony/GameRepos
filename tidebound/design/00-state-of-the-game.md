@@ -237,6 +237,13 @@ the shape of what you haven't found; impossible seven keep the 🌀);
 met painted species rows are .almRowBtn — tap toggles an .almSpWrap
 portrait plate under the row (one open at a time, self-clears on
 re-render).
+**Seasons & Ledgers**: ch5 swaps the idle pools for RAIN_LINE /
+RAIN_NIGHT (2 monsoon vignettes per companion, camp + night — weather
+outranks tier); the grove scene appends a GROVE_SEASON line keyed to
+chapter 3/4/5 (in-season / battening down / the Long Rain country);
+RC.chips(s) (runcard.js) renders a titleChips row — day, companion +
+tier word, beach-finds, neighbors met, NG+ life number — inserted as
+paragraph two of both the ending scene and the death scene.
 Global namespace `window.TB`. Cache-bust query `?v=N` on every asset — bump on release.
 **PWA / offline phone version** (sw.js + manifest.webmanifest): the
 service worker precaches all CODE files plus every asset named in
