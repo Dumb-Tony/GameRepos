@@ -101,3 +101,5 @@ amb-night.mp3|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG
 amb-rain.mp3|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260714_230510_b512f9e8-256f-46c8-8c31-0cdbded0998b.mp3
 amb-cave.mp3|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260714_230520_109c22fc-d602-4def-8847-57f4e8f0f0a3.mp3
 mus-title.mp3|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260714_230532_c30c8db1-b36c-4256-bfa1-9a495619dd34.m4a
+icon-192.png|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260714_235138_22b95bb4-f783-4d1e-bebc-ecafb30a5c3a.png
+icon-512.png|https://d8j0ntlcm91z4.cloudfront.net/user_3FxomCiOZT5PR5pj4MCur1MG0Im/hf_20260714_235138_22b95bb4-f783-4d1e-bebc-ecafb30a5c3a.png

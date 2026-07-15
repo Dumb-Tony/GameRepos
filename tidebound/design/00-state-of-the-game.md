@@ -176,6 +176,22 @@ when clicked (key = label stripped of counters, stored in
 `s.seenActs`, save-persisted). Ch1's `camp` list stays flat. Worst-
 case audit: 22 simultaneous actions mid-ch4 — the grouping is why.
 Global namespace `window.TB`. Cache-bust query `?v=N` on every asset — bump on release.
+**PWA / offline phone version** (sw.js + manifest.webmanifest): the
+service worker precaches all CODE files plus every asset named in
+art/manifest.txt (one-by-one, straggler-tolerant), serves cache-first
+with `ignoreSearch: true` (so `?v=` requests hit the unversioned
+precache), tops the cache up from the network keyed without query,
+and falls back to the cached shell for offline navigations. sw.js
+`VERSION` must be bumped IN LOCKSTEP with the `?v=` bump every release
+(new version → fresh cache, old ones purged on activate; new code
+files must be added to sw.js CODE). Registration is at the end of
+index.html, guarded off file://. manifest.webmanifest: standalone,
+theme #04101a, icons art/icon-192/512.png (workflow `icon-*` case:
+ffmpeg square-scales the generated PNG to the size in the filename);
+apple-touch/meta tags for iOS Add-to-Home-Screen. After one online
+visit the complete game — code, painted art, recorded audio — plays
+with no connection (pwa-test.js proves boot/art/audio/new-life fully
+offline).
 
 **Scene format** (registered via `TB.scene(id, def)`):
 ```js

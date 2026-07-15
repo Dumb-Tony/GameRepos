@@ -36,6 +36,12 @@ jobs:
             case "$name" in ''|\#*) continue ;; esac
             echo "== $name"
             case "$name" in
+              icon-*)
+                # PWA icons: square PNG at the size named in the file
+                curl -fsSL --retry 3 --retry-delay 2 -o /tmp/src.png "$url"
+                size="${name#icon-}"; size="${size%.png}"
+                ffmpeg -nostdin -y -loglevel error -i /tmp/src.png -vf "scale=${size}:${size}" "$name"
+                continue ;;
               amb-*|mus-*)
                 # recorded ambience / music: normalize to quiet MP3 loops
                 # (MP3 decodes everywhere incl. free-codec Chromium builds; AAC does not)
