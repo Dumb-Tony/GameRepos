@@ -67,8 +67,9 @@
       ];
       if (TB.CORES) {
         t.push('<span class="titleChips titleChips-wrap">' + found
-          .map((id) => (TB.CORES[id] ? '<span class="tChip">' + TB.CORES[id].icon + ' ' + TB.CORES[id].title + '</span>' : ''))
+          .map((id) => (TB.CORES[id] ? '<span class="tChip tChipBtn" data-eid="' + id + '">' + TB.CORES[id].icon + ' ' + TB.CORES[id].title + '</span>' : ''))
           .filter(Boolean).join('') + '</span>');
+        t.push('<span class="game-sub">Tap an ending to open its keepsake card.</span>');
         if (found.length < total) t.push('<span class="game-sub">' + (total - found.length) + ' still out there, past the reef of what you\'ve tried.</span>');
       }
       const deaths = Object.values(m.deaths || {}).reduce((a, b) => a + b, 0);
@@ -76,6 +77,32 @@
       return t;
     },
     choices: [{ t: '↩️ Back', cls: 'title-btn title-btn-quiet', go: 'title' }],
+  });
+
+  // gallery chips open the matching keepsake run card (delegated through
+  // #textLog, the same pattern the Wayfinder chart uses)
+  document.addEventListener('click', function (ev) {
+    const chip = ev.target && ev.target.closest ? ev.target.closest('.tChipBtn') : null;
+    if (!chip || !TB.state || TB.state.scene !== 'title_gallery') return;
+    const id = chip.dataset.eid;
+    let wrap = document.getElementById('galCardWrap');
+    if (!wrap) {
+      wrap = document.createElement('p');
+      wrap.id = 'galCardWrap';
+      wrap.className = 'almCardWrap';
+      const log = document.getElementById('textLog');
+      if (log) log.appendChild(wrap); // engine clears textLog per scene, so it self-removes
+    }
+    const snap = (TB.Keepsakes ? TB.Keepsakes.list() : []).find((r) => r.endingId === id);
+    if (!snap || !TB.RunCard) {
+      wrap.innerHTML = '<span class="game-sub">That ending predates the Keepsake Box — its card lives only in memory. Reach it again to file one.</span>';
+      return;
+    }
+    try {
+      wrap.innerHTML = '<img class="almCardImg" alt="run card">';
+      wrap.querySelector('img').src = TB.RunCard.render(snap).toDataURL();
+      wrap.scrollIntoView({ block: 'nearest' });
+    } catch (e) { wrap.innerHTML = ''; }
   });
 
   // ---- The crash --------------------------------------------------------

@@ -307,6 +307,11 @@
         };
         t.push(lines[s.companion]);
       }
+      // the held breath: the island telegraphs its two great blows a night early
+      if (s.day === 10 && s.chapter === 2) t.push('Then, mid-pulse, the lagoon does something you have never seen it do: it <em>holds</em> — one long unlit beat where the glow should rise, the whole bay dark and waiting, before the rhythm resumes as if nothing happened. The island, holding its breath.' + (s.shelter >= 2 ? ' You check your lashings twice anyway, and sleep with one hand on the ridgepole.' : ' You lie awake a while counting what this camp could lose to real weather, and the honest count is: most of it.'));
+      if (s.day === 57 && s.chapter === 5) t.push(TB.is('M_WEATHERWISE')
+        ? 'And there it is — the thing M. taught you across four thousand miles of hidden sea: the Hum <em>holds its breath</em>. Not a skip. A HOLD, longer than any storm yet has bought, the rain itself seeming to lean. You count it the way she taught you, and the count says <em>hours</em>. Move what matters. Go deep. Tomorrow the monsoon stops being weather and becomes an event.'
+        : 'And under the rain\'s roar, something stranger: the Hum — the constant you\'ve long stopped hearing — goes <em>silent</em>, one long held breath that makes the whole night feel like a lung at the top of its arc. Every animal on the island is already under cover. Whatever they know, know it too: tomorrow, be somewhere deep.');
       if (s.site === 'fringe') t.push('Dusk was billed to you in mosquitos; you pay along your arms and the back of your neck. Something to solve, before it solves you.');
       if (TB.has('rations') && s.stats.hunger < 55) t.push('You allow yourself a tin. <em>' + (s.inv.rations - 1) + ' left.</em>');
       return t;

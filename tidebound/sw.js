@@ -15,7 +15,7 @@
  * =================================================================== */
 'use strict';
 
-const VERSION = 'v40';
+const VERSION = 'v41';
 const CACHE = 'tidebound-' + VERSION;
 
 const CODE = [
