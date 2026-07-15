@@ -190,6 +190,18 @@ none). setBackdrop snapshots the outgoing computed art onto the
 (headers count as slots); portrait pops in. Every animation is
 disabled under prefers-reduced-motion (floaters/banner stay visible,
 unanimated).
+**Weight & Voice**: endings/deaths are title cards — _go stamps
+body.on-ending/.on-death; CSS gives the first `<em>` paragraph display-
+type treatment (gold for cores, ash for deaths, blur-in), a gathering
+vignette (#backdrop::after), a 40s slow art zoom, and a panel rise;
+all stilled under prefers-reduced-motion. UI voice: TB.Audio.ui(kind)
+('tap'|'open'|'close'|'chime') — tiny synth ticks on the sfx bus,
+honoring sfx toggle + mute (test counter A._uiCount); one delegated
+capture-phase click listener in engine plays tap on #choices buttons
+(+ 8ms navigator.vibrate on phones), open on HUD/menu buttons, close
+on *Close; trophies.js chimes when a toast lands. Long choice lists
+wear #choices.canScroll (bottom fade mask, toggled by a scroll
+listener in showChoices) until scrolled to the end.
 Global namespace `window.TB`. Cache-bust query `?v=N` on every asset — bump on release.
 **PWA / offline phone version** (sw.js + manifest.webmanifest): the
 service worker precaches all CODE files plus every asset named in

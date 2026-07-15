@@ -99,6 +99,7 @@
     const name = document.createElement('span'); name.className = 'ttName'; name.textContent = t.e + ' ' + t.name;
     el.appendChild(tag); el.appendChild(name);
     el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+    try { if (TB.Audio && TB.Audio.ui) TB.Audio.ui('chime'); } catch (e) {}
     setTimeout(() => {
       el.classList.remove('show');
       setTimeout(() => { showing = false; pump(); }, 450);

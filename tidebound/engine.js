@@ -432,6 +432,12 @@
       box.appendChild(b);
     }
     box.scrollTop = 0; // first option always in view when choices appear
+    // long menus admit they scroll: a fade mask until the bottom is reached
+    const scrollFade = function () {
+      box.classList.toggle('canScroll', box.scrollHeight - box.scrollTop - box.clientHeight > 12);
+    };
+    box.onscroll = scrollFade;
+    scrollFade();
   }
 
   TB.go = function (id) {
@@ -461,6 +467,9 @@
     TB.renderHud();
     flushStatFloaters(); // the action's net cost/reward, worn on the meters
     maybeDayBanner(s);
+    // endings and deaths arrive like title cards (styling hooks only)
+    document.body.classList.toggle('on-ending', id === 'ending');
+    document.body.classList.toggle('on-death', id === 'death');
     cancelTyping(); // never type into a cleared log
     $('textLog').innerHTML = '';
     $('choices').innerHTML = '';
@@ -556,6 +565,20 @@
     $('sndBtn').addEventListener('click', TB.Audio.toggleMute);
     $('sndBtn').textContent = TB.Audio.muted() ? '🔇' : '🔊';
     window.addEventListener('pointerdown', function once() { TB.Audio.kick(); window.removeEventListener('pointerdown', once); });
+    // the UI's voice: one delegated listener (capture phase, so re-rendered
+    // buttons are covered) — soft ticks + a phone-side haptic on choices
+    document.addEventListener('click', function (ev) {
+      const b = ev.target && ev.target.closest ? ev.target.closest('button') : null;
+      if (!b || !TB.Audio || !TB.Audio.ui) return;
+      if (b.closest('#choices')) {
+        TB.Audio.ui('tap');
+        try { if (navigator.vibrate && TB.Audio.settings().sfx && !TB.Audio.muted()) navigator.vibrate(8); } catch (e) {}
+      } else if (b.id === 'kitBtn' || b.id === 'almBtn' || b.id === 'mapBtn' || b.id === 'menuBtn' || b.id === 'menuAlm' || b.id === 'menuLog' || b.id === 'menuTour') {
+        TB.Audio.ui('open');
+      } else if (/Close$/.test(b.id || '')) {
+        TB.Audio.ui('close');
+      }
+    }, true);
     TB.Menu.init();
     if (TB.Almanac) TB.Almanac.init();
     $('kitClose').addEventListener('click', () => $('kitOverlay').classList.add('hidden'));
