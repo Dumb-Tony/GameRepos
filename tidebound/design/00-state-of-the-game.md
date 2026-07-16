@@ -459,24 +459,28 @@ ignored warnings, never to RNG.
 
 ## 6. Roadmap (priority order — the vision for what's next)
 
-1. **More endings** toward the designed 49 (design/09): first the secret set (X1
-   First Kaari via glyphs+temple, X2 Rosa's Ransom — needs the treasure wreck &
-   courier-case payoff content, X5 The Other Signal via CONTACT_MADE listening), the
-   remaining companion finales (C1 Last Pack, C3 Trickster's Crown, C8 Three Springs
-   with Nine's lifespan), and death-category expansion (D3/D4 despair & cave).
-2. **Courier case payoff** — it's salvageable, Edda recognizes the crest
-   (CASE_EDDA), Nine can retrieve it, but it never opens. Design intent: three
-   opening methods, contents tie to Halcyon's sponsors + X2.
-3. **Random event tables** per region/season with anti-repeat memory (design/08),
-   incl. the rare wonder events (green flash, turtle hatching, whale migration).
-4. **Collectibles & almanac** (design/10-11): remaining 27 glyph stones w/ lore
-   text, Vane's 24 journal pages as findables, species almanac.
-5. **NG+ full "Driftwood Loops"** (design/10): keepsake carry, X3 The Loop, run
-   modifiers, Kaari recognition of loopers.
-6. **Expand day counts** toward the designed 100 (more free days per chapter,
-   more events to fill them) — only with more event content, else it pads.
-7. Optional: generated ambience/music via Higgsfield `generate_audio` to layer
-   over/replace synth; more portrait art (Ryo, Naia, Tekau — currently emoji).
+*(The original roadmap — endings roster, courier case, random events,
+collectibles, NG+, 100 days, recorded audio, portraits — is COMPLETE.
+This is the second roadmap, drawn up July 2026 after the polish era.)*
+
+1. **Rumors on the Tide** ✅ (shipped): in-fiction discoverability — the island
+   gossips about unfound endings; fogged riddle chips in the title gallery.
+2. **Thin Air** — late-game idle life: chapters 6–7 are bare corridors next to
+   the lavish ch1–5 (no companion vignette pools on the ascent, no caldera
+   nights, thin Naia presence). Give the finale the same inhabited density:
+   altitude/dread-keyed companion beats, rim-camp night pools, Naia
+   folk-at-dawn equivalents once she's met.
+3. **Recorded music beyond the title theme** — ending/death themes + 2–3
+   regional motifs via Higgsfield (mus-* pipeline already exists; needs the
+   MCP re-authorized). Emotional payoff per token is huge here.
+4. **Balance & difficulty surface** — an optional gentler mode (the loops
+   'kind' modifier generalized to a first-run choice) for players who bounce
+   off thirst-death day 8; keep default untouched (targets in §5 are sacred).
+5. **The second island** (design/12-future.md; X5's expansion hook) — M.'s
+   island as a NG++ epistolary mini-campaign through the radio. Big; design
+   doc first.
+6. Evergreen: more wonder events, more almanac lore cards, more trophy
+   shelf rows — whenever a course needs a side dish.
 
 ## 7. Voice & style guide (the part that's hardest to recover)
 
