@@ -44,9 +44,30 @@ namespace Tidebound.EditorTools
             PlayerSettings.companyName = "GameRepos";
             PlayerSettings.productName = "Tidebound";
 
+            bool inputChanged = EnableBothInputBackends();
+
             AssetDatabase.SaveAssets();
             Debug.Log("[Tidebound] Project configured: URP pipeline assigned (default + quality), " +
-                      "linear color space, product name set. Assets in " + SettingsDir);
+                      "linear color space, product name set. Assets in " + SettingsDir +
+                      (inputChanged ? " — Active Input Handling set to Both; RESTART the editor once for it to apply." : ""));
+        }
+
+        /// <summary>
+        /// GameInput compiles against whichever backend is enabled; setting
+        /// Active Input Handling to Both (2) makes that a non-decision.
+        /// There's no public API — this pokes the serialized PlayerSettings,
+        /// the standard workaround. Takes effect after an editor restart.
+        /// </summary>
+        static bool EnableBothInputBackends()
+        {
+            var assets = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/ProjectSettings.asset");
+            if (assets == null || assets.Length == 0) return false;
+            var so = new SerializedObject(assets[0]);
+            var prop = so.FindProperty("activeInputHandler");
+            if (prop == null || prop.intValue == 2) return false;
+            prop.intValue = 2;
+            so.ApplyModifiedProperties();
+            return true;
         }
     }
 }

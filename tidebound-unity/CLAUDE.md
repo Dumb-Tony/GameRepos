@@ -34,9 +34,14 @@ Canon lives in `../tidebound/design/` (writers' bible) and `../tidebound/*.js`
 ```
 tidebound-unity/
 ├── Assets/_Game/
-│   ├── Scripts/Runtime/   Tidebound.Runtime (Core: GameState, SaveSystem;
+│   ├── Scripts/Runtime/   Tidebound.Runtime (Core: GameState, SaveSystem,
+│   │                      GameManager; World: DayClock/GameClock/SunCycle;
+│   │                      Survival: SurvivalActions (VN-pinned), FireLogic,
+│   │                      WarningSystem; Player: controller/camera/input;
+│   │                      Interaction: Interactable + PlayerInteractor;
+│   │                      Camp: fire/shelter/forage/water/SOS; UI: HUD;
 │   │                      Narrative: models, database, SO asset)
-│   ├── Scripts/Editor/    Tidebound.Editor (menu-item tooling)
+│   ├── Scripts/Editor/    Tidebound.Editor (menu-item tooling, scene builders)
 │   ├── Tests/EditMode/    Tidebound.Tests.EditMode
 │   ├── Data/Narrative/    tidebound-content.json (extracted VN content)
 │   ├── Scenes/ Prefabs/ Art/ Settings/
@@ -57,7 +62,13 @@ tidebound-unity/
   re-run whenever the VN changes, then in Unity:
   **Tidebound ▸ Narrative ▸ Import Content JSON**).
 - First open on a new machine: **Tidebound ▸ Setup ▸ Configure Project**
-  (creates/assigns the URP pipeline asset, linear color space).
+  (creates/assigns the URP pipeline asset, linear color space, sets Active
+  Input Handling to Both — restart the editor once after this).
+- Build the vertical slice: **Tidebound ▸ Scenes ▸ Build Castaway Bay
+  (Greybox)** — generates `Scenes/CastawayBay.unity` deterministically
+  (seed 42) with terrain, camp, forage points, player, camera, sun, and all
+  systems wired. Re-run freely; the scene file is overwritten. Then Play:
+  WASD + mouse, Shift run, E/F/C interact, Esc frees the cursor.
 - Tests (CLI): `Unity -batchmode -projectPath tidebound-unity -runTests
   -testPlatform EditMode -logFile - -testResults results.xml` (or the Test
   Runner window). Unity/graphics tooling can't run in the cloud sandbox —
@@ -66,8 +77,21 @@ tidebound-unity/
 ## Phase status (bible §7)
 
 - [x] Phase 0 — foundations: project scaffold, GameState + save/load,
-      content extractor + narrative DB importer, tests. *(this commit)*
-- [ ] Phase 1 — the day loop on one beach (vertical slice)
+      content extractor + narrative DB importer, tests.
+- [~] Phase 1 — the day loop on one beach (vertical slice). *Session 1
+      (this commit): continuous clock over the VN's four segments + sun/
+      lighting cycle; third-person controller + orbit camera (backend-
+      agnostic input); THE interaction system (proximity prompt, E/F/C
+      options); camp systems — fire (light/feed/dies, fuel in segments),
+      shelter tiers, forage/coconut/driftwood points, freshwater trickle,
+      SOS site, rest + sleep-to-dawn (VN energy-floor formula); warning
+      system (law #1) incl. dusk exposure warning + cold tax; collapse at
+      Energy 0; code-built HUD (meters/prompt/toasts/death cards with
+      canonical DEATH_TITLES); dawn autosave; Castaway Bay greybox builder;
+      43 new EditMode tests. Hub-action deltas are pinned to scenes-chapter1.js
+      — SurvivalActionsTests guards them. Remaining for the phase: play it,
+      tune the feel knobs (day length, costs, camera), and make surviving
+      three days mildly fun before anything else is added.*
 - [ ] Phase 2 — words (dialogue/journal UI, prologue)
 - [ ] Phase 3 — the dog (Kavi; make-or-break)
 - [ ] Phase 4 — the island (12-zone greybox generator, Wayfinder)

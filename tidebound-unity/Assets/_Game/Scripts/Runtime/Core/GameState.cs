@@ -52,6 +52,12 @@ namespace Tidebound
         // ---- camp & survival -------------------------------------------
         [JsonProperty("site")] public string Site;
         [JsonProperty("fire")] public int Fire;
+        /// <summary>
+        /// Segments of fuel left in the fire. Unity-only key (the 3D fire
+        /// burns down in real time; the VN's fire is a tier). Absent in VN
+        /// saves — defaults to 0 and the campfire re-grants a margin on load.
+        /// </summary>
+        [JsonProperty("fireFuel")] public float FireFuel;
         [JsonProperty("shelter")] public int Shelter;
         [JsonProperty("food")] public int Food;
         [JsonProperty("injury")] public string Injury;
