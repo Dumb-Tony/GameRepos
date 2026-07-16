@@ -280,6 +280,17 @@ the player meets heartglass; the E-wing sample connects two-and-two
 SPONSORS_KNOWN names Meridian; the ch6 Speaker's staff is 'dark
 glass' to unknowing keepers. Loop-carried KNOW_* flags legitimately
 carry names across lives — the game remembering you is a feature.
+**Thin Air** (scenes-chapter6.js): the ascent is inhabited — every
+ch6 leg now carries companion texture. Terrace climb beats for all
+six + a solo line (Kavi triangulates around your back, Ipo harmonizes
+with the Hum, Moa marches every stair, Nine's tideline goodbye);
+temple-nave reverence beats (Kavi holds the door, Ipo takes nothing,
+Vela pays court, Buri kneels — Moa/Nine pre-existing); tremor-ladder
+'knows first' dread beats for every land companion (Nine falls to the
+generic birds line by design — she isn't on the dry legs); and a
+BEDROCK pool (night before the rim) — 6 companion vignettes + solo.
+Convention held: every vignette names its companion (thinair-test
+enforces presence per-leg AND that no OTHER companion is ever named).
 **Rumors on the Tide** (rumors.js, `TB.Rumors`): the discoverability
 layer — the island gossips, in-fiction, about endings this player
 hasn't reached across ANY run (cross-run check vs `TB.meta().endings`;
