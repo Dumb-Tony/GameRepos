@@ -70,7 +70,17 @@
           .map((id) => (TB.CORES[id] ? '<span class="tChip tChipBtn" data-eid="' + id + '">' + TB.CORES[id].icon + ' ' + TB.CORES[id].title + '</span>' : ''))
           .filter(Boolean).join('') + '</span>');
         t.push('<span class="game-sub">Tap an ending to open its keepsake card.</span>');
-        if (found.length < total) t.push('<span class="game-sub">' + (total - found.length) + ' still out there, past the reef of what you\'ve tried.</span>');
+        if (found.length < total) {
+          t.push('<span class="game-sub">' + (total - found.length) + ' still out there, past the reef of what you\'ve tried.</span>');
+          // rumors of the unfound: fogged chips, one riddle each, never a name
+          if (TB.Rumors) {
+            const rd = TB.Rumors.riddles(5);
+            if (rd.length) {
+              t.push('<span class="game-sub">The tide brings rumors:</span>');
+              t.push('<span class="titleChips titleChips-wrap">' + rd.map((r) => '<span class="tChip tChipDim">🌫️ ' + r + '</span>').join('') + '</span>');
+            }
+          }
+        }
       }
       const deaths = Object.values(m.deaths || {}).reduce((a, b) => a + b, 0);
       if (deaths) t.push('<span class="game-sub">…and ' + deaths + (deaths === 1 ? ' life' : ' lives') + ' the island kept before the story was done.</span>');
