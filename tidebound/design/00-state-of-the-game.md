@@ -280,6 +280,20 @@ the player meets heartglass; the E-wing sample connects two-and-two
 SPONSORS_KNOWN names Meridian; the ch6 Speaker's staff is 'dark
 glass' to unknowing keepers. Loop-carried KNOW_* flags legitimately
 carry names across lives — the game remembering you is a feature.
+**Rumors on the Tide** (rumors.js, `TB.Rumors`): the discoverability
+layer — the island gossips, in-fiction, about endings this player
+hasn't reached across ANY run (cross-run check vs `TB.meta().endings`;
+a rumor retires forever once its ending is earned). Catalog of 19
+rumors, each gated by `when(s)` to the run-state where the hint makes
+sense, voiced per channel: `edda` (grove, 35% + dawn folk pool),
+`ryo` (dawn folk pool), `tide` (camp2 non-dawn, 14%), `night`
+(night2, 26%). All render hooks are PURE (no state writes — the
+idle-vignette precedent). Every line obeys the lore-order law: no
+unlearned proper nouns, ever (rumors-test enforces a banned-word
+list). The title gallery adds "The tide brings rumors:" — five
+fogged `.tChipDim` riddle chips for unfound endings (34-entry riddle
+book, `RM.riddles(n)`), thinning as the roster completes. New code
+file: remember sw.js CODE + index.html script tag on any sibling.
 **Undiscovered stays unnamed** (the companion-name rule): companion
 names are PLAYER-GIVEN at courtship — only `s.companion` may ever be
 named in prose this run. Fixed leaks: Edda's 1887 brass-button

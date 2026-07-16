@@ -181,7 +181,14 @@
             'Ryo\'s voice drifts up the beach in pieces this morning — some working song in no language you know, timed to a caulking mallet, cheerfully off-key. The sound of a man mid-repair, in every sense.',
             'A thread of pitch-smoke rises from down the shore where the Kingfisher lies. Ryo is boiling tar before the heat comes up, which means today is a hull day, which means tonight he\'ll talk your ear off about strakes.');
         }
+        // rumors ride the dawn: the folk hint at ways this player hasn't found
+        if (TB.Rumors) { const rl = TB.Rumors.folk(s); if (rl) folk.push(rl); }
         if (folk.length && R() < 0.45) t.push(pick(folk));
+      }
+      // ...and the wrack line mutters its own (pure render, retires when earned)
+      if (TB.Rumors && s.seg !== 0 && R() < 0.14) {
+        const rl = TB.Rumors.line(s, 'tide');
+        if (rl) t.push(rl);
       }
       if (TB.is('SMOKE_SEEN') && !TB.is('CLEARING_DONE2')) t.push('And inland, above the green — you catch yourself checking, every hour — the thin grey thread of <em>someone else\'s fire</em> still climbs the sky.');
       t.push('What do you spend this part of the day on?');
@@ -427,6 +434,11 @@
       if (s.day === 57 && s.chapter === 5) t.push(TB.is('M_WEATHERWISE')
         ? 'And there it is — the thing M. taught you across four thousand miles of hidden sea: the Hum <em>holds its breath</em>. Not a skip. A HOLD, longer than any storm yet has bought, the rain itself seeming to lean. You count it the way she taught you, and the count says <em>hours</em>. Move what matters. Go deep. Tomorrow the monsoon stops being weather and becomes an event.'
         : 'And under the rain\'s roar, something stranger: the Hum — the constant you\'ve long stopped hearing — goes <em>silent</em>, one long held breath that makes the whole night feel like a lung at the top of its arc. Every animal on the island is already under cover. Whatever they know, know it too: tomorrow, be somewhere deep.');
+      // the fire's late thoughts: rumors of ways this player hasn't found
+      if (TB.Rumors && R() < 0.26) {
+        const rl = TB.Rumors.line(s, 'night');
+        if (rl) t.push(rl);
+      }
       if (s.site === 'fringe') t.push('Dusk was billed to you in mosquitos; you pay along your arms and the back of your neck. Something to solve, before it solves you.');
       if (TB.has('rations') && s.stats.hunger < 55) t.push('You allow yourself a tin. <em>' + (s.inv.rations - 1) + ' left.</em>');
       return t;

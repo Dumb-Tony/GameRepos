@@ -698,6 +698,11 @@ body {
   background: #04101a99; border: 1px solid #ffd65c38; color: #f2ead2;
   padding: 4px 11px; border-radius: 999px;
 }
+/* rumors of the unfound: fogged, italic, deliberately unresolved */
+.tChip.tChipDim {
+  opacity: .62; font-style: italic; border-style: dashed; border-color: #9db6c455;
+  color: #cfdbe2; background: #04101a66; white-space: normal; text-align: center;
+}
 
 /* secondary title buttons: present, not shouting */
 #choices button.title-btn-quiet { font-size: 14.5px; padding: 8px 12px; opacity: .88; background: var(--btn-bg); }
