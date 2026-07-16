@@ -1,0 +1,44 @@
+# Unity — generated/local state (standard github/gitignore Unity profile,
+# rooted to this project folder)
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+
+# Never ignore the Packages lockfile if Unity writes one — reproducible resolves
+!/Packages/packages-lock.json
+
+# Asset store tools
+/[Aa]ssets/AssetStoreTools*
+/[Aa]ssets/Plugins/Editor/JetBrains*
+
+# IDE
+.vs/
+.idea/
+.vscode/
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Crash/profiler artifacts
+sysinfo.txt
+*.stackdump
+crashlytics-build.properties
