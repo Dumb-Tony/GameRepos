@@ -38,3 +38,5 @@
   `tidebound-unity/CLAUDE.md` (project conventions) before touching it.
 - The VN in `tidebound/` is the reference implementation and canon source —
   Unity sessions read it but never modify it.
+- The "post the playable link" agreement above is for VN sessions only —
+  Unity sessions don't post it.
