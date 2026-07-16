@@ -241,10 +241,19 @@
       cont.disabled = !resumable();
       cont.addEventListener('click', () => { this.game.audio && this.game.audio.ensure(); const s = resumable(); if (s && this.game.loadGame(s)) this._closeModal('introModal'); });
 
-      const mute = $('setMute'), music = $('setMusic'), hd = $('setHDIcons');
+      const mute = $('setMute'), music = $('setMusic'), hd = $('setHDIcons'), hap = $('setHaptics');
       mute.checked = this.game.save.settings.muted; music.checked = this.game.save.settings.music;
       mute.addEventListener('change', () => { this.game.save.settings.muted = mute.checked; this.game.save.saveSettings(); this.game.audio && this.game.audio.setMuted(mute.checked); });
       music.addEventListener('change', () => { this.game.save.settings.music = music.checked; this.game.save.saveSettings(); this.game.audio && (this.game.audio.ensure(), this.game.audio.setMusic(music.checked)); });
+      if (hap) {
+        const h = this.game.save.settings.haptics !== false; hap.checked = h;
+        if (this.game.audio) this.game.audio.setHaptics(h);
+        // Only meaningful on a touch device that supports vibration (Android).
+        const canVibe = typeof navigator !== 'undefined' && 'vibrate' in navigator &&
+          window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+        if (!canVibe) { const row = hap.closest('.setting'); if (row) row.style.display = 'none'; }
+        hap.addEventListener('change', () => { this.game.save.settings.haptics = hap.checked; this.game.save.saveSettings(); this.game.audio && (this.game.audio.setHaptics(hap.checked), hap.checked && this.game.audio.haptic(20)); });
+      }
       if (hd) {
         hd.checked = !!this.game.save.settings.hdIcons;
         if (BR.Sprites && BR.Sprites.setHDIcons) BR.Sprites.setHDIcons(hd.checked);
@@ -444,7 +453,20 @@
     _showSelect() { $('selectBanner').style.display = 'block'; this.selectCountry(null); document.body.classList.add('sh-select'); this._closeSheets(); }
     onChooseStart() { this.selectCountry(this.game.startChoice); }
     onDifficulty() { this._buildDiffs(); }
-    onRelease() { $('selectBanner').style.display = 'none'; document.body.classList.remove('sh-select'); this._pushTimeline(this.game.elapsed, `Patient zero: <b>${this.game.patientZero ? this.game.patientZero.name : '?'}</b>`); this.selectCountry(null); }
+    onRelease() {
+      $('selectBanner').style.display = 'none'; document.body.classList.remove('sh-select');
+      this._pushTimeline(this.game.elapsed, `Patient zero: <b>${this.game.patientZero ? this.game.patientZero.name : '?'}</b>`);
+      this.selectCountry(null);
+      // One-time controls hint on touch devices (pinch-zoom / bubble-tapping
+      // aren't obvious). Shown a beat after release so it isn't lost in the intro.
+      try {
+        const s = this.game.save.settings, coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+        if (coarse && !s.seenTouchHint) {
+          s.seenTouchHint = true; this.game.save.saveSettings();
+          setTimeout(() => this.toast('👆', 'Tap the 🧠 bubbles for Virality · pinch or ＋ / － to zoom · drag to pan', 'info'), 900);
+        }
+      } catch (e) {}
+    }
     // Best-effort: ask the browser to lock landscape (Android/fullscreen only;
     // iOS Safari has no such API, so we also show the rotate gate in CSS).
     _lockLandscape() {
@@ -535,7 +557,12 @@
     _dismissNews() { this._showNextNews(); }
 
     // ---- evolution overlay (pauses the game) --------------------------
-    _updatePause() { this.game.paused = !!(this._evoOpen || this._newsOpen); }
+    _updatePause() {
+      // Pause the sim while any blocking overlay is open — the evolve tree, a
+      // news bulletin, or a menu/stats/awards panel (Plague Inc pauses there too).
+      const blocking = ['menuModal', 'statsModal', 'awardsModal'].some((id) => { const m = $(id); return m && m.classList.contains('on'); });
+      this.game.paused = !!(this._evoOpen || this._newsOpen || blocking);
+    }
     _openEvo() {
       if (this.game.phase !== 'play' || this.game.ended) return;
       // Clear any open news popup first so the two overlays can't stack their
@@ -1071,8 +1098,8 @@
       setTimeout(() => { t.classList.add('leaving'); setTimeout(() => t.remove(), 320); }, phone ? 2400 : 3600);
     }
     _flash(id) { const e = $(id); if (!e) return; e.classList.remove('flash'); void e.offsetWidth; e.classList.add('flash'); }
-    _openModal(id) { $(id).classList.add('on'); }
-    _closeModal(id) { const m = $(id); if (m) m.classList.remove('on'); }
+    _openModal(id) { const m = $(id); if (m) m.classList.add('on'); this._updatePause(); }
+    _closeModal(id) { const m = $(id); if (m) m.classList.remove('on'); this._updatePause(); }
 
     _fillSlots() {
       const host = $('saveSlots'); host.innerHTML = '';
@@ -1087,6 +1114,8 @@
     _showEnd(win, reason) {
       this._evoOpen = false; this._newsOpen = false; this._newsQueue = []; this._updatePause();
       this._closeModal('evoModal'); this._closeModal('newsModal');
+      const th = $('toasts'); if (th) th.innerHTML = '';   // clear stray toasts off the end screen
+      this._closeSheets && this._closeSheets();
       const g = this.game, card = $('endModal').querySelector('.modal-card');
       card.classList.toggle('win', win); card.classList.toggle('lose', !win);
       const grade = this._grade(win, g);
