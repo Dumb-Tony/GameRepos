@@ -28,3 +28,13 @@
   The Loop, What Remains, The Island's Own, The Last Delivery, Keeper of the
   Light, and The Hum Silenced; secret/joke/death categories listed in `design/09-endings.md`,
   current status table in `design/00-state-of-the-game.md`).
+
+## Tidebound Unity (tidebound-unity/)
+
+- The 3D adventure-RPG adaptation of the VN. Development happens on branch
+  `claude/visual-novel-3d-rpg-ss5ld2`. **One phase per conversation, commit
+  every session.**
+- Read `tidebound/design/UNITY-ADAPTATION.md` (the adaptation bible) and
+  `tidebound-unity/CLAUDE.md` (project conventions) before touching it.
+- The VN in `tidebound/` is the reference implementation and canon source —
+  Unity sessions read it but never modify it.
