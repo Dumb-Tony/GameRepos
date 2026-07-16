@@ -40,7 +40,8 @@
       this.mem = {}; this.ok = this._probe();
       this.unlockedAch = this._readJSON(KEY.ach, {});
       this.stats = this._readJSON(KEY.stats, this._blankStats());
-      this.settings = this._readJSON(KEY.settings, { muted: false, music: true });
+      this.settings = this._readJSON(KEY.settings, { muted: false, music: true, haptics: true });
+      if (this.settings.haptics === undefined) this.settings.haptics = true;
     }
     _probe() { try { localStorage.setItem('br_t', '1'); localStorage.removeItem('br_t'); return true; } catch (e) { return false; } }
     _get(k) { return this.ok ? localStorage.getItem(k) : (this.mem[k] ?? null); }

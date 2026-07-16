@@ -9,8 +9,16 @@
 
   class Audio {
     constructor() {
-      this.ok = false; this.muted = false; this.musicOn = true;
+      this.ok = false; this.muted = false; this.musicOn = true; this.haptics = true;
       this.ctx = null; this.master = null; this.musicGain = null; this._musicTimer = null;
+    }
+
+    setHaptics(on) { this.haptics = !!on; }
+    // Fire a device vibration (mobile only; a no-op elsewhere). Independent of
+    // the audio mute so you can play silently but still feel the taps.
+    haptic(pattern) {
+      if (!this.haptics) return;
+      try { if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(pattern); } catch (e) {}
     }
 
     // Must be resumed from a user gesture (browser autoplay policy).
