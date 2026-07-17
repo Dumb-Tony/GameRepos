@@ -280,6 +280,14 @@ the player meets heartglass; the E-wing sample connects two-and-two
 SPONSORS_KNOWN names Meridian; the ch6 Speaker's staff is 'dark
 glass' to unknowing keepers. Loop-carried KNOW_* flags legitimately
 carry names across lives — the game remembering you is a feature.
+**Wonders pack, second folio** (scenes-extra.js POOL + rev scenes):
+five more once-per-run marvels — rev_moonbow (post-rain midnight
+arch), rev_coralsnow (the reef spawning, a blizzard falling upward,
++depth), rev_dolphinglow (bioluminescent bow-lines), rev_eelrun
+(the river runs silver at dawn, RIVER_KNOWN-gated, +1 food),
+rev_crownlight (saint's fire on the broken crown, +depth, ch4+,
+WOUND_SEEN garnish). All rare-flagged (DONE_ guards), night/dawn
+gated, lore-order clean (wonders-test bans unlearned nouns).
 **Kind Tide setting** (menu mKind → settings.kind): the loops 'kind'
 modifier (engine tickSegment ×0.6 drains) surfaced as a persistent
 menu checkbox — applied to every NEW life at newState (mid-run
