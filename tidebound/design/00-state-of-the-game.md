@@ -280,6 +280,14 @@ the player meets heartglass; the E-wing sample connects two-and-two
 SPONSORS_KNOWN names Meridian; the ch6 Speaker's staff is 'dark
 glass' to unknowing keepers. Loop-carried KNOW_* flags legitimately
 carry names across lives — the game remembering you is a feature.
+**Kind Tide setting** (menu mKind → settings.kind): the loops 'kind'
+modifier (engine tickSegment ×0.6 drains) surfaced as a persistent
+menu checkbox — applied to every NEW life at newState (mid-run
+toggles deliberately don't rewrite the current run; explicit loop
+conditions override via fresh(mod)). Early graves (day ≤20, not
+already kind) add one quiet signpost line to the death card; day-60
+graves keep their dignity. Balance targets in §5 untouched — default
+play is unchanged. kind-test.js (10) covers precedence + signposts.
 **Thin Air** (scenes-chapter6.js): the ascent is inhabited — every
 ch6 leg now carries companion texture. Terrace climb beats for all
 six + a solo line (Kavi triangulates around your back, Ipo harmonizes
