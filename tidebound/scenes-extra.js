@@ -314,6 +314,12 @@
     { id: 'rev_hatching', w: 0.5, rare: true, when: (s) => s.chapter >= 3 },
     { id: 'rev_whales', w: 0.5, rare: true, when: (s) => s.chapter >= 3 },
     { id: 'rev_superbloom', w: 0.5, rare: true, when: (s) => s.seg === 2 },
+    // ---- the wonders pack, second folio (July '26) ----
+    { id: 'rev_moonbow', w: 0.5, rare: true, when: (s) => s.chapter >= 3 && s.seg === 2 },
+    { id: 'rev_coralsnow', w: 0.5, rare: true, when: (s) => s.chapter >= 3 && s.seg === 2 },
+    { id: 'rev_dolphinglow', w: 0.5, rare: true, when: (s) => s.chapter >= 2 && s.seg === 2 },
+    { id: 'rev_eelrun', w: 0.5, rare: true, when: (s) => s.chapter >= 3 && s.seg === 0 && TB.is('RIVER_KNOWN') },
+    { id: 'rev_crownlight', w: 0.45, rare: true, when: (s) => s.chapter >= 4 && s.seg === 2 },
   ];
 
   TB.randomEvent = function (s) {
@@ -632,6 +638,28 @@
   rev('rev_whales', { bg: (s) => (s.site === 'overhang' ? 'cliff-camp' : 'beach-day'), text: ['The sea breathes out — visibly, a mile off: a column of spray, then another, then FIVE, then the backs themselves, dark islands moving south in slow procession. Whales. A whole nation of them, passing your little kingdom without slowing.', 'You watch until they are weather on the horizon. The ocean feels different for days afterward: not emptier. Occupied. Neighborly. Very, very large.'], enter: (s) => { TB.flag('WHALES'); TB.stat('hope', 6); } });
 
   rev('rev_superbloom', { bg: 'beach-night', text: (s) => ['The lagoon outdoes itself tonight: not the usual soft pulse but a SUPERBLOOM, the whole bay burning blue-green rim to rim, every wavelet edged in cold fire, the seven beats rolling through it in visible waves like wind through wheat.', s.companion === 'nine' ? 'And out in the middle of the burning water, a familiar shape is DANCING — there is no other word: Nine, wheeling and jetting through the bloom, trailing spirals of light like a signature written over and over. Showing off. For the island, for the light, for you. You wade in to your knees and glow alongside.' : 'You wade in to your knees and stand in the light like standing in a sky. Every step you take blooms. You write your name in the water with one finger and watch the island hold it, bright, for three full beats before letting it go.'].filter(Boolean), enter: (s) => { TB.flag('SUPERBLOOM'); TB.stat('hope', 7); } });
+
+  // -- the wonders pack, second folio: five more once-per-run marvels --
+  rev('rev_moonbow', { bg: 'beach-night',
+    enter: (s) => { TB.flag('MOONBOW'); TB.stat('hope', 7); },
+    text: (s) => ['The rain quits an hour after dark and leaves the air washed and full, and when the moon comes up hard and white over the water, the last of the weather pays for its passage: a MOONBOW — a rainbow at midnight, silver-pale, one vast quiet arch from the headland to the open sea.',
+      'No color your eye will swear to. Just light, bent enormous, standing over your bay like something the sky built and forgot to take down. You wake ' + (s.companion ? 'your companion, who regards it, and you, and files the whole business under acceptable' : 'no one, because there is no one, and stand the watch for both of you anyway') + ' — and it holds, and holds, and is gone between one wave and the next.'] });
+  rev('rev_coralsnow', { bg: 'beach-night',
+    enter: (s) => { TB.flag('CORALSNOW'); TB.stat('hope', 7); TB.route('depth', 1); },
+    text: ['You notice it first as a wrongness in the shallows: the water over the reef has gone THICK with light — millions of pale motes rising together off the coral heads, a blizzard falling upward, slow and deliberate and utterly silent.',
+      'The reef is spawning. One night a year, every polyp on fifty miles of coast agrees on a signal no scientist has fully caught, and lets its future go on the tide all at once. The lagoon\'s glow answers underneath — seven beats through a rising snow of stars — and you understand, wordlessly, kneeling at the waterline in the middle of it, that you have been let into a fertility rite older than land.'] });
+  rev('rev_dolphinglow', { bg: 'ocean-night',
+    enter: (s) => { TB.flag('DOLPHINGLOW'); TB.stat('hope', 6); },
+    text: ['Movement out past the reef gate, in the black water: lines of cold blue fire, six of them, eight, drawing themselves across the bay at impossible speed — turning together, crossing, weaving a bright cat\'s-cradle on the dark.',
+      'Dolphins, riding through the bloom. Every body traces its own signature of light; every leap tears a hole in the dark and stitches it shut behind. They work the bay for an hour, hunting or playing or both — with dolphins the line was never real — and leave the way they came: six ruler-straight strokes of fire, aimed at open sea, fading like the end of handwriting.'] });
+  rev('rev_eelrun', { bg: 'river',
+    enter: (s) => { TB.flag('EELRUN'); TB.stat('hope', 5); s.food = (s.food || 0) + 1; },
+    text: ['The river is wrong at dawn — silver, and MOVING wrong, the whole surface seething downstream — and it takes your sleep-slow eyes a full minute to resolve the truth: eels. Thousands. Tens of thousands, running seaward shoulder to shoulder, a single muscular ribbon of purpose a hundred years of instinct wide.',
+      'They pour past for most of the morning, utterly indifferent to you, bound for some spawning ground so far out and so deep that no one has ever seen it and every eel alive knows the way. You scoop two from the margin with your bare hands — the river\'s toll, paid in reverse for once — and stand a long time watching a nation emigrate.'] });
+  rev('rev_crownlight', { bg: 'beach-night',
+    enter: (s) => { TB.flag('CROWNLIGHT'); TB.stat('hope', 4); TB.route('depth', 1); },
+    text: (s) => ['On a heavy, charged night — air like held wool, the kind the monsoon leaves behind it — you look inland and the broken crown is WEARING LIGHT: a faint, steady shimmer standing off the summit rock, pale as breath on glass, streaming slowly upward against everything flame knows how to do.',
+      'Sailors called it saint\'s fire and nailed their luck to the mast. Here, tonight, over THIS mountain, with the lagoon\'s pulse running its seven beats below' + (TB.is('WOUND_SEEN') ? ' and the memory of the guttering seam behind your eyes' : '') + ', it does not read as weather. It reads as a lamp in an upstairs window: someone home, keeping late hours, at work on something old.'] });
 
   // ---- COMPANION INTERLUDES: who they are when you're not looking -----------
   const INTERLUDES = {
