@@ -15,7 +15,7 @@
  * =================================================================== */
 'use strict';
 
-const VERSION = 'v49';
+const VERSION = 'v53';
 const CACHE = 'tidebound-' + VERSION;
 
 const CODE = [
@@ -32,6 +32,7 @@ const CODE = [
   'almanac.js',
   'keepsakes.js',
   'trophies.js',
+  'rumors.js',
   'scenes-prologue.js',
   'scenes-chapter1.js',
   'scenes-chapter2.js',

@@ -169,6 +169,11 @@
           'The rain tanks are full for the first time since you\'ve known her, and she shows you with the pride most people save for grandchildren: a tapped knuckle, a deep sweet note. "That," she says, "is the sound of not carrying water till March."'],
       };
       t.push(pick(GROVE_SEASON[Math.min(Math.max(s.chapter, 3), 5)]));
+      // over shared rows, she alludes: rumors of ways this player hasn't found
+      if (TB.Rumors && Math.random() < 0.35) {
+        const rl = TB.Rumors.line(s, 'edda');
+        if (rl) t.push(rl);
+      }
       t.push('What do you give the visit to?');
       return t;
     },
