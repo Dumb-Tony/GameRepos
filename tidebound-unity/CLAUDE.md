@@ -49,7 +49,9 @@ tidebound-unity/
 ```
 
 - Namespace `Tidebound` (runtime), `Tidebound.Narrative`, `Tidebound.EditorTools`.
-- Unity 6 LTS (6000.0.x), URP. Newtonsoft JSON for all serialization
+- Unity 6000.5.x (the owner's installed editor — `ProjectSettings/
+  ProjectVersion.txt` is the truth; don't pin package versions the editor
+  will fight), URP. Newtonsoft JSON for all serialization
   (dictionaries). JSON keys match the VN's state keys (`seg`, `stats`,
   `flags`…) — keep it that way; a VN-save import must stay possible.
 - `GameState.TickSegment()` is a **faithful port** of engine.js drains, and
