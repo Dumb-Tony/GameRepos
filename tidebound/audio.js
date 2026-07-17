@@ -29,7 +29,7 @@
   let schedTimer = null, humNext = 0, curMix = {}, curBgName = '';
 
   // ---- settings -------------------------------------------------------
-  const DEFAULTS = { vol: 70, bright: 100, amb: true, sfx: true, music: true, rec: true, theme: 'midnight', bars: 'island', tsize: 100, type: false };
+  const DEFAULTS = { vol: 70, bright: 100, amb: true, sfx: true, music: true, rec: true, theme: 'midnight', bars: 'island', tsize: 100, type: false, kind: false };
   A.settings = function () {
     try { return Object.assign({}, DEFAULTS, JSON.parse(localStorage.getItem('tidebound.settings') || '{}')); }
     catch (e) { return Object.assign({}, DEFAULTS); }

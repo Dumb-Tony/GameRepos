@@ -62,6 +62,7 @@
     $('mAmb').checked = !!s.amb; $('mSfx').checked = !!s.sfx; $('mMus').checked = !!s.music; $('mType').checked = !!s.type;
     if ($('mRec')) $('mRec').checked = s.rec !== false;
     $('mWfx').checked = ('wfx' in s) ? !!s.wfx : (TB.FX ? TB.FX.enabled() : true);
+    if ($('mKind')) $('mKind').checked = !!s.kind;
     document.querySelectorAll('#mThemes .mSwatch').forEach((b) => b.classList.toggle('sel', b.dataset.pick === s.theme));
     document.querySelectorAll('#mBars .mSwatch').forEach((b) => b.classList.toggle('sel', b.dataset.pick === s.bars));
     const inGame = TB.state && TB.state.scene !== 'title';
@@ -119,6 +120,9 @@
       $('mType').addEventListener('change', (e) => setSetting({ type: e.target.checked }));
       $('mWfx').addEventListener('change', (e) => setSetting({ wfx: e.target.checked }));
       if ($('mRec')) $('mRec').addEventListener('change', (e) => setSetting({ rec: e.target.checked }));
+      // Kind tide applies at the NEXT new life (newState reads it); mid-run
+      // toggling deliberately doesn't rewrite the current run's terms
+      if ($('mKind')) $('mKind').addEventListener('change', (e) => setSetting({ kind: e.target.checked }));
       $('menuLog').addEventListener('click', () => { Menu.close(); showBacklog(); });
       $('menuAlm').addEventListener('click', () => { Menu.close(); if (TB.Almanac) TB.Almanac.open(); });
       $('menuTour').addEventListener('click', () => { Menu.close(); if (TB.Tut) TB.Tut.start(true); });

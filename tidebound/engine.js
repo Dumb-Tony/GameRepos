@@ -52,7 +52,9 @@
       pools: 0,                         // tide-pool visits (Nine gate)
       fired: {},                        // scheduled events already run
       deathCause: null,
-      mod: null,                        // NG+ run modifier: hard|silent|kind|chaos
+      // run modifier: hard|silent|kind|chaos. The menu's 'Kind tide' setting
+      // starts every NEW life kind; an explicit loop condition overrides it.
+      mod: (TB.Audio && TB.Audio.settings().kind) ? 'kind' : null,
       _cal: 2,                          // save-calendar version (100-day)
     };
   };
