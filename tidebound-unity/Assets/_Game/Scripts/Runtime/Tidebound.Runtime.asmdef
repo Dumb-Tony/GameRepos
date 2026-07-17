@@ -2,8 +2,7 @@
     "name": "Tidebound.Runtime",
     "rootNamespace": "Tidebound",
     "references": [
-        "UnityEngine.UI",
-        "Unity.InputSystem"
+        "UnityEngine.UI"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

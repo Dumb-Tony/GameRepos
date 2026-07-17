@@ -62,8 +62,12 @@ tidebound-unity/
   re-run whenever the VN changes, then in Unity:
   **Tidebound ▸ Narrative ▸ Import Content JSON**).
 - First open on a new machine: **Tidebound ▸ Setup ▸ Configure Project**
-  (creates/assigns the URP pipeline asset, linear color space, sets Active
-  Input Handling to Both — restart the editor once after this).
+  (creates/assigns the URP pipeline asset, linear color space, forces Active
+  Input Handling to Input Manager — restart the editor once if it says so).
+- **No Input System package.** Input goes through `GameInput`, which has a
+  legacy-backend path (active) and a new-backend path (dormant). The
+  com.unity.inputsystem package download kept corrupting on the owner's
+  network, so it was removed — don't re-add it without checking with them.
 - Build the vertical slice: **Tidebound ▸ Scenes ▸ Build Castaway Bay
   (Greybox)** — generates `Scenes/CastawayBay.unity` deterministically
   (seed 42) with terrain, camp, forage points, player, camera, sun, and all

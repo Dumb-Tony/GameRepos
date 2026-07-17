@@ -8,8 +8,10 @@ namespace Tidebound
     /// <summary>
     /// One thin seam over input so the rest of the game never touches a
     /// backend API. Compiles against the new Input System when its backend
-    /// is enabled, falls back to the legacy manager otherwise — the project
-    /// works whichever way Player Settings ▸ Active Input Handling points.
+    /// is enabled, falls back to the legacy manager otherwise. The project
+    /// currently ships legacy-only (the Input System package was dropped —
+    /// its download kept corrupting on the owner's network); the new-input
+    /// branch stays so re-adding com.unity.inputsystem later Just Works.
     /// </summary>
     public static class GameInput
     {
