@@ -117,6 +117,29 @@ namespace Tidebound.EditorTools
             return t * t * (3f - 2f * t);
         }
 
+        /// <summary>
+        /// The z where this column of sand crosses sea level (y = 0) — the
+        /// real waterline, wiggles and all. Scans seaward-to-landward and
+        /// interpolates the crossing.
+        /// </summary>
+        static float WaterlineZ(float x)
+        {
+            float prevZ = -14f;
+            float prevH = Height(x, prevZ);
+            for (float z = -13.5f; z <= 14f; z += 0.25f)
+            {
+                float h = Height(x, z);
+                if (prevH < 0f && h >= 0f)
+                {
+                    float t = -prevH / (h - prevH);
+                    return Mathf.Lerp(prevZ, z, t);
+                }
+                prevZ = z;
+                prevH = h;
+            }
+            return 0f; // no crossing found (shouldn't happen inside the bay)
+        }
+
         static void BuildTerrain(Mats mats)
         {
             const int nx = 97, nz = 81;
@@ -167,16 +190,36 @@ namespace Tidebound.EditorTools
             Object.DestroyImmediate(sea.GetComponent<Collider>());
             sea.AddComponent<SeaMotion>();
 
-            // surf wash: pale strips sliding out of phase along the waterline
+            // surf wash: polylines that trace the actual waterline (where the
+            // sand crosses sea level), washing in and out out of phase
             var foamParent = new GameObject("Foam");
+            float[] zOffsets = { 0.5f, -0.8f, -2.0f };
+            float[] widths = { 0.45f, 0.38f, 0.30f };
+            float[] heights = { 0.10f, 0.08f, 0.06f };
             for (int i = 0; i < 3; i++)
             {
-                var strip = Prim(PrimitiveType.Cube, "FoamLine", foamParent.transform,
-                    new Vector3(0f, 0.12f, 0.8f - i * 1.5f),
-                    new Vector3(190f - i * 20f, 0.05f, 0.45f - i * 0.08f), mats.Foam, stripCollider: true);
-                var line = strip.AddComponent<FoamLine>();
+                var lineGo = new GameObject("FoamLine");
+                lineGo.transform.SetParent(foamParent.transform, true);
+
+                Vector3? prev = null;
+                for (float x = -96f; x <= 96f; x += 4f)
+                {
+                    var point = new Vector3(x, heights[i], WaterlineZ(x) + zOffsets[i]);
+                    if (prev.HasValue)
+                    {
+                        Vector3 a = prev.Value, b = point;
+                        Vector3 mid = (a + b) * 0.5f;
+                        float length = Vector3.Distance(a, b);
+                        var seg = Prim(PrimitiveType.Cube, "Seg", lineGo.transform,
+                            mid, new Vector3(widths[i], 0.04f, length + 0.15f), mats.Foam, stripCollider: true);
+                        seg.transform.rotation = Quaternion.LookRotation(b - a, Vector3.up);
+                    }
+                    prev = point;
+                }
+
+                var line = lineGo.AddComponent<FoamLine>();
                 line.phase = i * 2.1f;
-                line.slideAmplitude = 1.6f + i * 0.4f;
+                line.slideAmplitude = 1.4f + i * 0.35f;
                 line.slidePeriod = 6.5f + i * 1.7f;
             }
         }
