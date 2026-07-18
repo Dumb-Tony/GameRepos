@@ -95,9 +95,12 @@ tidebound-unity/
       Energy 0; code-built HUD (meters/prompt/toasts/death cards with
       canonical DEATH_TITLES); dawn autosave; Castaway Bay greybox builder;
       43 new EditMode tests. Hub-action deltas are pinned to scenes-chapter1.js
-      — SurvivalActionsTests guards them. Remaining for the phase: play it,
-      tune the feel knobs (day length, costs, camera), and make surviving
-      three days mildly fun before anything else is added.*
+      — SurvivalActionsTests guards them. Session 2 (playtest feedback):
+      action time costs sweep as a visible time-lapse (GameClock.
+      timeLapseSpeed) instead of jumping; HUD day-progress bar with segment
+      dividers that flares during the sweep; segment-change narration.
+      Remaining for the phase: keep tuning the feel knobs (day length,
+      costs, camera) until surviving three days is mildly fun.*
 - [ ] Phase 2 — words (dialogue/journal UI, prologue)
 - [ ] Phase 3 — the dog (Kavi; make-or-break)
 - [ ] Phase 4 — the island (12-zone greybox generator, Wayfinder)

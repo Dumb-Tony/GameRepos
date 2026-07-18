@@ -33,6 +33,9 @@ namespace Tidebound
         readonly Dictionary<Meter, Color> _baseColors = new Dictionary<Meter, Color>();
         Text _dayLabel;
         Text _inventoryLabel;
+        Image _dayBarFill;
+        readonly Color _dayBarColor = new Color(1f, 0.92f, 0.72f, 0.9f);
+        readonly Color _dayBarSweepColor = new Color(1f, 0.75f, 0.35f, 1f);
 
         RectTransform _promptPanel;
         Text _promptTitle;
@@ -167,9 +170,38 @@ namespace Tidebound
 
         void BuildClockLabel()
         {
-            var panel = Panel("Clock", new Vector2(1, 1), new Vector2(1, 1), new Vector2(1, 1), new Vector2(-24, -24), new Vector2(280, 40));
+            var panel = Panel("Clock", new Vector2(1, 1), new Vector2(1, 1), new Vector2(1, 1), new Vector2(-24, -24), new Vector2(280, 64));
             _dayLabel = MakeText(panel, "DayLabel", 22, TextAnchor.UpperRight, new Color(1, 1, 1, 0.92f), bold: true);
-            Fill((RectTransform)_dayLabel.transform);
+            var lrt = (RectTransform)_dayLabel.transform;
+            lrt.anchorMin = new Vector2(0, 1); lrt.anchorMax = new Vector2(1, 1);
+            lrt.pivot = new Vector2(0.5f, 1);
+            lrt.anchoredPosition = Vector2.zero;
+            lrt.sizeDelta = new Vector2(0, 30);
+
+            // the day at a glance: a bar that creeps left→right, dawn to dawn
+            var barBg = MakeRect(panel, "DayBarBg", new Color(0f, 0f, 0f, 0.55f));
+            var brt = (RectTransform)barBg.transform;
+            brt.anchorMin = new Vector2(0, 1); brt.anchorMax = new Vector2(1, 1);
+            brt.pivot = new Vector2(0.5f, 1);
+            brt.anchoredPosition = new Vector2(0, -36);
+            brt.sizeDelta = new Vector2(0, 10);
+
+            _dayBarFill = MakeRect(barBg.transform, "Fill", _dayBarColor);
+            var frt = (RectTransform)_dayBarFill.transform;
+            frt.anchorMin = Vector2.zero;
+            frt.anchorMax = new Vector2(0f, 1f);
+            frt.offsetMin = new Vector2(1, 1);
+            frt.offsetMax = new Vector2(0, -1);
+
+            // segment dividers: dawn | day | dusk | night
+            for (int i = 1; i < 4; i++)
+            {
+                var tick = MakeRect(barBg.transform, "Tick", new Color(1f, 1f, 1f, 0.35f));
+                var trt = (RectTransform)tick.transform;
+                trt.anchorMin = trt.anchorMax = new Vector2(i * 0.25f, 0.5f);
+                trt.pivot = new Vector2(0.5f, 0.5f);
+                trt.sizeDelta = new Vector2(2, 10);
+            }
         }
 
         void BuildPrompt()
@@ -252,6 +284,13 @@ namespace Tidebound
             }
 
             _dayLabel.text = $"Day {s.Day} · {SegmentNames[(int)s.Seg]}";
+            if (_gm.clock != null)
+            {
+                var frt = (RectTransform)_dayBarFill.transform;
+                frt.anchorMax = new Vector2(Mathf.Clamp01(_gm.clock.Clock.Time01), 1f);
+                // the sweep announces itself: the bar flares warm while time is being spent
+                _dayBarFill.color = _gm.clock.IsFastForwarding ? _dayBarSweepColor : _dayBarColor;
+            }
 
             int wood = s.Count(Items.Driftwood);
             int rations = s.Count(Items.Rations);

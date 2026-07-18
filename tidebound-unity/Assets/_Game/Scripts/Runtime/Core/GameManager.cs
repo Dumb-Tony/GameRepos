@@ -103,6 +103,17 @@ namespace Tidebound
         // ---- the segment tick ---------------------------------------------
         void OnSegmentTicked(Segment seg)
         {
+            // the turning of the light, narrated — the clock you can feel
+            if (!_sleeping)
+            {
+                switch (seg)
+                {
+                    case Segment.Day: Toast("Midday. The sun stops being gentle about it.", ToastKind.Info); break;
+                    case Segment.Dusk: Toast("Dusk. The light goes long and starts packing to leave.", ToastKind.Info); break;
+                    case Segment.Night: Toast("Night settles in like it owns the place. It does.", ToastKind.Info); break;
+                }
+            }
+
             if (FireLogic.ConsumeSegment(State))
                 Toast("The fire lets go. Grey threads. Gone.", ToastKind.Warning);
             else if (FireLogic.IsEmbers(State))
