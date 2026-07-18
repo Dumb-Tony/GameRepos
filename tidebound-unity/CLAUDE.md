@@ -98,7 +98,9 @@ tidebound-unity/
       — SurvivalActionsTests guards them. Session 2 (playtest feedback):
       action time costs sweep as a visible time-lapse (GameClock.
       timeLapseSpeed) instead of jumping; HUD day-progress bar with segment
-      dividers that flares during the sweep; segment-change narration.
+      dividers that flares during the sweep; segment-change narration;
+      time-cost rule — labors cost segments, gestures (pick up, drink,
+      feed the fire) are free, walking there is their cost.
       Remaining for the phase: keep tuning the feel knobs (day length,
       costs, camera) until surviving three days is mildly fun.*
 - [ ] Phase 2 — words (dialogue/journal UI, prologue)

@@ -23,15 +23,18 @@ namespace Tidebound
         public OrbitCamera cam;
         public PlayerInteractor interactor;
 
-        [Header("Time costs (segments) — pacing knobs, tune freely")]
+        [Header("Time costs (segments) — pacing knobs, tune freely. The rule: " +
+                "labors (hours of work) cost time; gestures (picking up a stick, " +
+                "drinking, feeding the fire) are free — walking there was the cost.")]
         public float forageCost = 0.5f;
         public float coconutCost = 0.25f;
         public float makeFireCost = 0.4f;
-        public float feedFireCost = 0.1f;
+        public float feedFireCost = 0f;
         public float cookCost = 0.5f;
         public float restCost = 0.5f;
         public float buildCost = 0.75f;
-        public float drinkCost = 0.1f;
+        public float drinkCost = 0f;
+        public float gatherCost = 0f;
         public float sosCost = 0.5f;
 
         [Header("Exposure (the cold tax; warned at dusk)")]
@@ -163,7 +166,7 @@ namespace Tidebound
         {
             State.AddItem(Items.Driftwood, 1);
             point.Deplete(State);
-            AfterAction(ActionResult.Ok($"Salt-silvered, sun-dried, honest wood. ({State.Count(Items.Driftwood)} carried)"), 0.1f);
+            AfterAction(ActionResult.Ok($"Salt-silvered, sun-dried, honest wood. ({State.Count(Items.Driftwood)} carried)"), gatherCost);
         }
 
         public void MakeFire()
