@@ -218,6 +218,15 @@ namespace Tidebound
             _choiceWidgets.Clear();
             _choicesShown = false;
 
+            if (!string.IsNullOrEmpty(_playback.Current.Speaker))
+            {
+                var speaker = MakeParagraph();
+                speaker.fontSize = 17;
+                speaker.fontStyle = FontStyle.Bold;
+                speaker.color = new Color(0.85f, 0.72f, 0.45f);
+                speaker.text = "— " + _playback.Current.Speaker + " —";
+            }
+
             _paragraphs = _playback.Paragraphs();
             for (int i = 0; i < _paragraphs.Count; i++)
             {

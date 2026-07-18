@@ -13,6 +13,12 @@ namespace Tidebound.Narrative
     public class StoryScene
     {
         public string Id;
+        /// <summary>The VN's `who` — shown as a header. Law #3: descriptive
+        /// names only until the player learns real ones.</summary>
+        public string Speaker;
+        /// <summary>The VN's `enter` — effects applied once on scene entry.
+        /// Guard with a flag if re-entry must not double-apply.</summary>
+        public Action<GameState> OnEnter;
         /// <summary>Paragraphs for this scene, resolved against state.</summary>
         public Func<GameState, List<string>> Text;
         /// <summary>Branching choices; null/empty = continue-style scene.</summary>
@@ -108,6 +114,7 @@ namespace Tidebound.Narrative
                 return;
             }
             Current = _script.Get(id);
+            Current.OnEnter?.Invoke(_state);
             Options = Current.AvailableChoices(_state);
         }
     }

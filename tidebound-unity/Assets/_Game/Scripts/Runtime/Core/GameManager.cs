@@ -56,6 +56,12 @@ namespace Tidebound
         bool _sleeping;
         bool _collapsing;
 
+        // ---- the story calendar ------------------------------------------
+        readonly List<ScheduledEvent> _schedule = Chapter1Schedule.Build();
+        readonly Queue<string> _eventQueue = new Queue<string>();
+        StoryScript _encounters;
+        StoryScript Encounters => _encounters ??= Chapter1Encounters.Build();
+
         // ---- lifecycle ---------------------------------------------------
         void Awake()
         {
@@ -125,6 +131,13 @@ namespace Tidebound
             if (!DialogueActive && GameInput.JournalPressed) Journal.Toggle();
             if (DialogueActive || JournalOpen) return; // the world is frozen; nothing below applies
 
+            // a scheduled encounter waits until the world can hold it
+            if (!_sleeping && _eventQueue.Count > 0 && State.Is("PROLOGUE_DONE"))
+            {
+                Dialogue.Play(Encounters, _eventQueue.Dequeue(), () => SaveNow(), DialogueStyle.LowerThird);
+                return;
+            }
+
             foreach (var w in _warnings.Check(State.Stats))
                 Toast(w.Message, w.Severe ? ToastKind.Severe : ToastKind.Warning);
 
@@ -183,6 +196,14 @@ namespace Tidebound
 
             if (WarningSystem.ExposureWarningDue(State, seg))
                 Toast("The wind turns and the day's warmth leaves like a tide. No roof, no fire — tonight will cost you.", ToastKind.Warning);
+
+            // the calendar: fire-once story events, exactly the VN's rule
+            var due = EventScheduler.Due(State, _schedule);
+            if (due != null)
+            {
+                EventScheduler.MarkFired(State, due);
+                _eventQueue.Enqueue(due);
+            }
 
             // the night was just consumed (we're at the new dawn)
             if (seg == Segment.Dawn)

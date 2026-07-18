@@ -27,6 +27,22 @@ namespace Tidebound.Narrative
             ("COMPASS_SPINS", "Your compass turns all the way around, pointing at everything. The lagoon glows at night — seven slow beats."),
             ("TRIED_FIRE", "Fire has refused you once. The wood will be drier tomorrow. So will you."),
             ("SOS", "Giant letters of dark stone wait on the beach for anyone looking."),
+            ("SQUALL_DRY", "A squall tested your roof. Your roof won."),
+            ("FIRE_DROWNED", "A squall drowned your first fire without a sound."),
+            ("FLARE_SPENT", "You spent the flare on a ship that never turned. The horizon owes you one answer."),
+            ("FLARE_HELD", "A ship crossed the horizon and you held the flare. You stopped waiting; you started preparing."),
+        };
+
+        /// <summary>The locals, as the VN's known-list keeps them (engine.js) —
+        /// descriptive lines only; real names wait to be earned (law #3).</summary>
+        static readonly (string Animal, string Line)[] Locals =
+        {
+            ("kavi", "A grey dog watches you from the treeline."),
+            ("ipo", "A monkey owes you a lighter."),
+            ("vela", "A sea eagle paid you in fish."),
+            ("buri", "A bearded pig knows where you sleep."),
+            ("moa", "A junglefowl hen is still alive because of you."),
+            ("nine", "Something in the tide pools has been watching you back."),
         };
 
         static readonly (string Flag, string Line)[] Salvage =
@@ -94,6 +110,18 @@ namespace Tidebound.Narrative
                 lines.Add("");
                 lines.Add("<b>What you've done</b>");
                 lines.AddRange(deeds);
+            }
+
+            // ---- the locals ---------------------------------------------------
+            var locals = new List<string>();
+            foreach (var (animal, line) in Locals)
+                if (s.Met.TryGetValue(animal, out var met) && met)
+                    locals.Add(line);
+            if (locals.Count > 0)
+            {
+                lines.Add("");
+                lines.Add("<b>The locals</b>");
+                lines.AddRange(locals);
             }
 
             // ---- what you carry ----------------------------------------------

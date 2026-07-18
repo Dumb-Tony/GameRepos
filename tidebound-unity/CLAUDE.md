@@ -136,8 +136,18 @@ tidebound-unity/
       (sinking fuselage, tumbling cushions/papers, surface glow overhead),
       reef wreck wing/cargo, permanent shore flotsam (cushions, suitcase,
       fuel slick), lagoon glow 9 discs, camera far plane 3000.
-      Remaining: chapter-1 scheduled encounters (Vela, the howls, the
-      squall) as world events, journal quest hooks.*
+      Session 3: the story calendar — EventScheduler (VN firing rule:
+      exact day+segment, once, when-guarded, missed-is-missed) +
+      Chapter1Schedule + all eight chapter-1 encounters ported effect-for-
+      effect (Vela's payment, the howls, Ipo and the lighter, the squall
+      with its idempotent OnEnter, Buri's audit, the hawk and the hen,
+      the grey dog by daylight, the ship's light / flare choice), played
+      as lower-third dialogues queued at segment ticks (they wait out
+      sleep/dialogue); StoryScene grew Speaker + OnEnter; the Ledger
+      grew "The locals" (descriptive names only — law #3) and squall/
+      flare deeds. Remaining for Phase 2: nothing — ev_nine needs the
+      Tide Pools zone (Phase 4) and the Clearing of Eyes belongs to the
+      companion phase (Phase 3).*
 - [ ] Phase 3 — the dog (Kavi; make-or-break)
 - [ ] Phase 4 — the island (12-zone greybox generator, Wayfinder)
 - [ ] Phase 5 — act 1–2 story + first three endings
