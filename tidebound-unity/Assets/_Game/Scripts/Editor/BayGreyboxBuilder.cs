@@ -617,7 +617,9 @@ namespace Tidebound.EditorTools
 
         static void BuildSosSite(Mats mats)
         {
-            float ox = 22f, oz = 9f;
+            // well up the beach — the terrain noise can dip below sea level
+            // near the waterline, and letters must never stand in the sea
+            float ox = 26f, oz = 15f;
             var site = new GameObject("SosSite");
             site.transform.position = new Vector3(ox, Height(ox, oz), oz);
 
@@ -639,8 +641,9 @@ namespace Tidebound.EditorTools
                         {
                             float x = ox + g * 4f * spacing + col * spacing;
                             float z = oz - row * spacing;
+                            float y = Mathf.Max(Height(x, z) + 0.12f, 0.4f); // dry, whatever the sand does
                             Prim(PrimitiveType.Cube, "Stone", letters.transform,
-                                new Vector3(x, Height(x, z) + 0.12f, z),
+                                new Vector3(x, y, z),
                                 new Vector3(0.55f, 0.25f, 0.55f), mats.DarkStone, stripCollider: true);
                         }
             letters.SetActive(false);
@@ -867,25 +870,48 @@ namespace Tidebound.EditorTools
                     new Vector3(Rnd(1.6f, 3.6f), 0.03f, Rnd(1.4f, 3f)), mats.Fresh, stripCollider: true));
             }
 
-            // three workable pool cities
+            // three workable pool cities — LANDMARKS, not easter eggs: a ring
+            // of stones around one bright raised pool, dressed in shells and
+            // starfish (the dressing is the depletable visual)
             var poolSpots = new[] { new Vector2(140f, 12f), new Vector2(166f, 32f), new Vector2(192f, 6f) };
             foreach (var spot in poolSpots)
             {
                 var point = new GameObject("TidePoolPoint");
                 point.transform.SetParent(parent.transform, true);
-                point.transform.position = new Vector3(spot.x, Height(spot.x, spot.y), spot.y);
-                var shells = new GameObject("Shells");
-                shells.transform.SetParent(point.transform, true);
-                shells.transform.position = point.transform.position;
-                for (int i = 0; i < 3; i++)
-                    Prim(PrimitiveType.Sphere, "Shell", shells.transform,
-                        point.transform.position + new Vector3(Rnd(-0.5f, 0.5f), 0.08f, Rnd(-0.5f, 0.5f)),
-                        Vector3.one * 0.12f, mats.Foam, stripCollider: true);
+                float py = Mathf.Max(Height(spot.x, spot.y), 0.2f);
+                var center = new Vector3(spot.x, py, spot.y);
+                point.transform.position = center;
+
+                // the pool itself, raised enough to catch the eye
+                NoShadow(Prim(PrimitiveType.Cylinder, "CityPool", point.transform,
+                    center + Vector3.up * 0.16f, new Vector3(2.4f, 0.05f, 2.2f), mats.Fresh, stripCollider: true));
+                // the ring of stones that says "this one is different"
+                for (int i = 0; i < 6; i++)
+                {
+                    float ang = i * 60f * Mathf.Deg2Rad;
+                    var ringStone = Prim(PrimitiveType.Sphere, "RingStone", point.transform,
+                        center + new Vector3(Mathf.Cos(ang) * 1.5f, 0.22f, Mathf.Sin(ang) * 1.4f),
+                        new Vector3(Rnd(0.35f, 0.55f), Rnd(0.3f, 0.45f), Rnd(0.35f, 0.55f)), mats.Rock, stripCollider: true);
+                    ringStone.transform.rotation = Quaternion.Euler(0f, Rnd(0f, 360f), 0f);
+                }
+
+                var dressing = new GameObject("Shells");
+                dressing.transform.SetParent(point.transform, true);
+                dressing.transform.position = center;
+                for (int i = 0; i < 7; i++)
+                    Prim(PrimitiveType.Sphere, "Shell", dressing.transform,
+                        center + new Vector3(Rnd(-1.1f, 1.1f), 0.24f, Rnd(-1f, 1f)),
+                        Vector3.one * Rnd(0.14f, 0.2f), mats.Foam, stripCollider: true);
+                for (int i = 0; i < 2; i++)
+                    NoShadow(Prim(PrimitiveType.Sphere, "Starfish", dressing.transform,
+                        center + new Vector3(Rnd(-1f, 1f), 0.22f, Rnd(-0.9f, 0.9f)),
+                        new Vector3(0.22f, 0.05f, 0.22f), mats.Cushion, stripCollider: true));
+
                 var forage = point.AddComponent<ForagePoint>();
                 forage.kind = ForagePoint.Kind.TidePool;
                 forage.regrowSegments = 3;
-                forage.visual = shells;
-                forage.interactRadius = 3f;
+                forage.visual = dressing;
+                forage.interactRadius = 3.5f;
             }
 
             // the gallery at the drop-off: sorted shells, stacked stones,
