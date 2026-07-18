@@ -127,8 +127,17 @@ tidebound-unity/
       later nights once COMPASS_SPINS is set), fades between stages
       (DialogueUI owns the screen fader), dialogue in a lower-third panel
       (DialogueStyle) so the world plays above the words, and you wake at
-      the waterline at dawn. Remaining: chapter-1 scheduled encounters
-      (Vela, the howls, the squall) as world events, journal quest hooks.*
+      the waterline at dawn. Detail pass (owner: "add as many details as
+      you can, look good later"): horizon-filling OpenOcean plane,
+      permanent DistantIsland massif with the broken crown (visible from
+      the beach through thinned fog), 22 clouds + sister-island
+      silhouettes during the descent (aerial haze replaces beach fog in
+      the air; crash staged at midday light), underwater debris field
+      (sinking fuselage, tumbling cushions/papers, surface glow overhead),
+      reef wreck wing/cargo, permanent shore flotsam (cushions, suitcase,
+      fuel slick), lagoon glow 9 discs, camera far plane 3000.
+      Remaining: chapter-1 scheduled encounters (Vela, the howls, the
+      squall) as world events, journal quest hooks.*
 - [ ] Phase 3 — the dog (Kavi; make-or-break)
 - [ ] Phase 4 — the island (12-zone greybox generator, Wayfinder)
 - [ ] Phase 5 — act 1–2 story + first three endings

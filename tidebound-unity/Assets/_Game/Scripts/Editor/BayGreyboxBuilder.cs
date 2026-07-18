@@ -39,6 +39,7 @@ namespace Tidebound.EditorTools
             BuildLightingAndAtmosphere(out var gameClockHost);
             BuildTerrain(mats);
             BuildSea(mats);
+            BuildDistantIsland(mats);
             BuildBounds();
             BuildJungleWall(mats);
             BuildWreck(mats);
@@ -77,6 +78,10 @@ namespace Tidebound.EditorTools
             public Material Fresh = Mat("Freshwater", new Color(0.35f, 0.65f, 0.85f), 0.8f);
             public Material Foam = Mat("Foam", new Color(0.93f, 0.96f, 0.94f), 0.4f);
             public Material Crab = Mat("Crab", new Color(0.72f, 0.42f, 0.30f));
+            public Material Cloud = Mat("Cloud", new Color(0.95f, 0.96f, 0.97f), 0.05f);
+            public Material Mountain = Mat("Mountain", new Color(0.30f, 0.37f, 0.34f));
+            public Material Cushion = Mat("Cushion", new Color(0.85f, 0.45f, 0.15f)); // life-vest orange
+            public Material Slick = Mat("FuelSlick", new Color(0.08f, 0.06f, 0.12f), 0.95f);
         }
 
         static Material Mat(string name, Color color, float smoothness = 0.15f)
@@ -191,6 +196,16 @@ namespace Tidebound.EditorTools
             Object.DestroyImmediate(sea.GetComponent<Collider>());
             sea.AddComponent<SeaMotion>();
 
+            // the ocean to the horizon — sits just under the detailed sea so
+            // the water never visibly ends (and the prologue flies over it)
+            var openOcean = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            openOcean.name = "OpenOcean";
+            openOcean.transform.position = new Vector3(0f, -0.35f, -300f);
+            openOcean.transform.localScale = new Vector3(400f, 1f, 400f); // 4 km square
+            openOcean.GetComponent<MeshRenderer>().sharedMaterial = mats.Sea;
+            Object.DestroyImmediate(openOcean.GetComponent<Collider>());
+            openOcean.isStatic = true;
+
             // surf wash: irregular rounded patches scattered along the real
             // waterline — no straight edges anywhere. Each line washes in
             // and out of phase; FoamLine pulses the patches so foam swells
@@ -221,6 +236,43 @@ namespace Tidebound.EditorTools
                 line.slideAmplitude = 1.4f + i * 0.35f;
                 line.slidePeriod = 6.5f + i * 1.7f;
             }
+        }
+
+        /// <summary>
+        /// The island beyond the bay, as permanent silhouette: green terraces
+        /// climbing to the mountain with the broken crown. Visible from the
+        /// beach through the haze every day — the whole game's promise — and
+        /// from the air during the crash.
+        /// </summary>
+        static void BuildDistantIsland(Mats mats)
+        {
+            var parent = new GameObject("DistantIsland");
+
+            // the massif: overlapping domes rising landward
+            var domes = new (Vector3 pos, Vector3 scale)[]
+            {
+                (new Vector3(-40f, 10f, 260f), new Vector3(260f, 90f, 200f)),
+                (new Vector3(90f, 5f, 320f), new Vector3(220f, 70f, 190f)),
+                (new Vector3(-140f, 0f, 330f), new Vector3(200f, 55f, 170f)),
+                (new Vector3(20f, 20f, 420f), new Vector3(300f, 150f, 240f)), // the mountain itself
+                (new Vector3(150f, 0f, 460f), new Vector3(180f, 60f, 160f)),
+            };
+            foreach (var (pos, scale) in domes)
+                NoShadow(Prim(PrimitiveType.Sphere, "Terrace", parent.transform, pos, scale, mats.Mountain, stripCollider: true));
+
+            // the broken crown: two rim stubs with the break between them
+            NoShadow(Prim(PrimitiveType.Cylinder, "CrownWest", parent.transform,
+                new Vector3(-8f, 105f, 415f), new Vector3(52f, 26f, 48f), mats.Mountain, stripCollider: true));
+            NoShadow(Prim(PrimitiveType.Cylinder, "CrownEast", parent.transform,
+                new Vector3(58f, 96f, 428f), new Vector3(40f, 20f, 38f), mats.Mountain, stripCollider: true));
+
+            parent.isStatic = true;
+        }
+
+        static GameObject NoShadow(GameObject go)
+        {
+            go.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            return go;
         }
 
         static void BuildBounds()
@@ -286,6 +338,27 @@ namespace Tidebound.EditorTools
             var stone = Prim(PrimitiveType.Cube, "BoundaryStone", parent.transform,
                 new Vector3(bx, Height(bx, bz) + 1.1f, bz), new Vector3(0.8f, 2.4f, 0.6f), mats.DarkStone);
             stone.transform.rotation = Quaternion.Euler(Rnd(-4f, 4f), Rnd(0f, 360f), Rnd(-4f, 4f));
+
+            // the morning after: cushions, a suitcase, and the fuel slick
+            // rainbowing the shallows (canon prose, kept permanently)
+            for (int i = 0; i < 4; i++)
+            {
+                float cx = Rnd(-24f, 12f), cz = Rnd(0.5f, 5f);
+                var cushion = Prim(PrimitiveType.Cube, "SeatCushion", parent.transform,
+                    new Vector3(cx, Height(cx, cz) + 0.1f, cz),
+                    new Vector3(0.55f, 0.13f, 0.45f), mats.Cushion, stripCollider: true);
+                cushion.transform.rotation = Quaternion.Euler(0f, Rnd(0f, 360f), Rnd(-8f, 8f));
+            }
+            Prim(PrimitiveType.Cube, "Suitcase", parent.transform,
+                new Vector3(-6f, Height(-6f, 3f) + 0.2f, 3f), new Vector3(0.55f, 0.4f, 0.8f), mats.DarkStone, stripCollider: true)
+                .transform.rotation = Quaternion.Euler(-6f, 70f, 0f);
+            for (int i = 0; i < 3; i++)
+            {
+                float sx = Rnd(-20f, 0f), sz = Rnd(-8f, -3f);
+                NoShadow(Prim(PrimitiveType.Cylinder, "FuelSlick", parent.transform,
+                    new Vector3(sx, 0.12f, sz),
+                    new Vector3(Rnd(3f, 6f), 0.015f, Rnd(2f, 4f)), mats.Slick, stripCollider: true));
+            }
             parent.isStatic = true;
         }
 
@@ -626,6 +699,35 @@ namespace Tidebound.EditorTools
             abyss.color = new Color(0.2f, 0.75f, 0.7f);
             abyss.range = 25f;
             abyss.intensity = 1.1f;
+
+            // the rest of the crash goes down with you
+            var sunkFuselage = Prim(PrimitiveType.Capsule, "Fuselage", underwater.transform,
+                underwater.transform.position + new Vector3(5f, -11f, 9f),
+                new Vector3(2.2f, 4f, 2.2f), mats.Metal, stripCollider: true);
+            sunkFuselage.transform.rotation = Quaternion.Euler(75f, 25f, 10f);
+            for (int i = 0; i < 7; i++)
+            {
+                var isCushion = i % 2 == 0;
+                var piece = Prim(PrimitiveType.Cube, "Debris", underwater.transform,
+                    underwater.transform.position + new Vector3(
+                        (float)(bubbleRng.NextDouble() * 10 - 5),
+                        (float)(bubbleRng.NextDouble() * 10 - 5),
+                        (float)(bubbleRng.NextDouble() * 10 - 3) + 3f),
+                    isCushion ? new Vector3(0.5f, 0.12f, 0.4f) : new Vector3(0.4f, 0.3f, 0.55f),
+                    isCushion ? mats.Cushion : mats.DarkStone, stripCollider: true);
+                piece.transform.rotation = Quaternion.Euler(Rnd(0f, 360f), Rnd(0f, 360f), Rnd(0f, 360f));
+            }
+            for (int i = 0; i < 5; i++)
+                Prim(PrimitiveType.Cube, "Paper", underwater.transform,
+                    underwater.transform.position + new Vector3(
+                        (float)(bubbleRng.NextDouble() * 7 - 3.5f),
+                        (float)(bubbleRng.NextDouble() * 8 - 4),
+                        (float)(bubbleRng.NextDouble() * 6 - 2) + 2f),
+                    new Vector3(0.25f, 0.01f, 0.33f), mats.Foam, stripCollider: true);
+            // the surface, already impossibly far above
+            NoShadow(Prim(PrimitiveType.Sphere, "SurfaceGlow", underwater.transform,
+                underwater.transform.position + new Vector3(0f, 28f, 6f),
+                new Vector3(70f, 3f, 70f), mats.Foam, stripCollider: true));
             underwater.SetActive(false);
 
             // ---- the fuselage dying on the reef (prologue only; it sinks) ----
@@ -636,19 +738,49 @@ namespace Tidebound.EditorTools
             var doorway = Prim(PrimitiveType.Cube, "Doorway", wreck.transform,
                 new Vector3(-10.6f, 0.6f, -26.8f), new Vector3(1.1f, 1.4f, 0.15f), mats.DarkStone, stripCollider: true);
             doorway.transform.rotation = Quaternion.Euler(12f, -30f, 0f);
+            var wing = Prim(PrimitiveType.Cube, "Wing", wreck.transform,
+                new Vector3(-17f, -0.05f, -31f), new Vector3(6f, 0.16f, 1.7f), mats.Metal, stripCollider: true);
+            wing.transform.rotation = Quaternion.Euler(7f, -42f, 11f);
+            Prim(PrimitiveType.Cube, "CargoAdrift", wreck.transform,
+                new Vector3(-8.8f, 0.05f, -25.5f), new Vector3(0.7f, 0.5f, 0.9f), mats.Wood, stripCollider: true)
+                .transform.rotation = Quaternion.Euler(6f, 30f, -8f);
+            Prim(PrimitiveType.Cube, "CushionAdrift", wreck.transform,
+                new Vector3(-14.5f, 0.06f, -24f), new Vector3(0.55f, 0.12f, 0.45f), mats.Cushion, stripCollider: true);
             wreck.SetActive(false);
+
+            // ---- the sky: clouds to fall past, sister islands on the horizon ----
+            var sky = new GameObject("PrologueSky");
+            var cloudRng = new System.Random(31);
+            for (int i = 0; i < 22; i++)
+            {
+                float cx = -350f + (float)(cloudRng.NextDouble() * 600);
+                float cy = 110f + (float)(cloudRng.NextDouble() * 190);
+                float cz = -620f + (float)(cloudRng.NextDouble() * 540);
+                NoShadow(Prim(PrimitiveType.Sphere, "Cloud", sky.transform,
+                    new Vector3(cx, cy, cz),
+                    new Vector3(28f + (float)(cloudRng.NextDouble() * 34),
+                                5f + (float)(cloudRng.NextDouble() * 5),
+                                22f + (float)(cloudRng.NextDouble() * 26)),
+                    mats.Cloud, stripCollider: true));
+            }
+            // "islands whose names you learned yesterday" — far astern, low, blue
+            NoShadow(Prim(PrimitiveType.Sphere, "SisterIsle", sky.transform,
+                new Vector3(-800f, -8f, -1300f), new Vector3(320f, 45f, 220f), mats.Mountain, stripCollider: true));
+            NoShadow(Prim(PrimitiveType.Sphere, "SisterIsle", sky.transform,
+                new Vector3(550f, -8f, -1500f), new Vector3(240f, 30f, 180f), mats.Mountain, stripCollider: true));
+            sky.SetActive(false);
 
             // ---- the lagoon's glow (prologue night, then every night after) ----
             var glow = new GameObject("LagoonGlow");
             var glowRng = new System.Random(23);
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 9; i++)
             {
-                float gx = (float)(glowRng.NextDouble() * 90 - 45);
-                float gz = -6f - (float)(glowRng.NextDouble() * 32);
-                Prim(PrimitiveType.Cylinder, "GlowDisc", glow.transform,
+                float gx = (float)(glowRng.NextDouble() * 110 - 55);
+                float gz = -5f - (float)(glowRng.NextDouble() * 38);
+                NoShadow(Prim(PrimitiveType.Cylinder, "GlowDisc", glow.transform,
                     new Vector3(gx, 0.15f, gz), // riding the surface; the sea is opaque greybox
                     new Vector3(4f + (float)glowRng.NextDouble() * 5f, 0.03f, 4f + (float)glowRng.NextDouble() * 5f),
-                    Mat("HeartglassGlow", new Color(0.25f, 0.95f, 0.85f), 0.9f), stripCollider: true);
+                    Mat("HeartglassGlow", new Color(0.25f, 0.95f, 0.85f), 0.9f), stripCollider: true));
                 if (i % 2 == 0)
                 {
                     var lightGo = new GameObject("GlowLight");
@@ -666,6 +798,7 @@ namespace Tidebound.EditorTools
             var directorGo = new GameObject("PrologueDirector");
             var director = directorGo.AddComponent<PrologueStageDirector>();
             director.planeRig = plane;
+            director.skyDressing = sky;
             director.underwaterRig = underwater;
             director.reefWreck = wreck;
             director.lagoonGlow = lagoon;
@@ -682,7 +815,9 @@ namespace Tidebound.EditorTools
             RenderSettings.ambientLight = new Color(0.55f, 0.58f, 0.62f);
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.Exponential;
-            RenderSettings.fogDensity = 0.006f;
+            // thin enough that the broken crown reads from the beach; the
+            // haze still eats the horizon
+            RenderSettings.fogDensity = 0.0035f;
             var skybox = AssetDatabase.GetBuiltinExtraResource<Material>("Default-Skybox.mat");
             if (skybox != null) RenderSettings.skybox = skybox;
 
@@ -736,6 +871,7 @@ namespace Tidebound.EditorTools
             var camGo = new GameObject("Main Camera") { tag = "MainCamera" };
             var cam = camGo.AddComponent<Camera>();
             cam.nearClipPlane = 0.1f;
+            cam.farClipPlane = 3000f; // the open ocean and the crown must reach the horizon
             camGo.AddComponent<AudioListener>();
             var orbit = camGo.AddComponent<OrbitCamera>();
             orbit.target = player.transform;

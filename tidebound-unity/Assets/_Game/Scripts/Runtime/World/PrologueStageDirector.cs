@@ -19,14 +19,21 @@ namespace Tidebound
     {
         [Header("Rigs (wired by the scene builder)")]
         public GameObject planeRig;
+        public GameObject skyDressing;
         public GameObject underwaterRig;
         public GameObject reefWreck;
         public LagoonGlow lagoonGlow;
         public GameObject shoreAmbience;
 
         [Header("Shot feel")]
-        public Vector3 planeChaseOffset = new Vector3(-9f, 2.5f, -7f);
+        public Vector3 planeChaseOffset = new Vector3(-11f, 4f, -14f);
+        [Tooltip("Where the chase camera looks, in plane-local space — ahead and below, so the island stays in frame.")]
+        public Vector3 planeLookTarget = new Vector3(0f, -4f, 18f);
         public float cameraDrift = 0.35f;
+        [Tooltip("Fog density while in the air — light aerial haze, so the island reads at distance.")]
+        public float aerialFogDensity = 0.0008f;
+
+        float _groundFogDensity;
 
         GameManager _gm;
         Transform _camera;
@@ -92,12 +99,16 @@ namespace Tidebound
         // ---- stages -----------------------------------------------------------
         void EnterSkyStage()
         {
+            _gm.clock.Clock.Time01 = 0.4f; // the crash happens in full daylight
+            _groundFogDensity = RenderSettings.fogDensity;
+            RenderSettings.fogDensity = aerialFogDensity;
+            if (skyDressing != null) skyDressing.SetActive(true);
             if (planeRig != null)
             {
                 planeRig.SetActive(true);
                 _camera.SetParent(planeRig.transform, false);
                 _camera.localPosition = planeChaseOffset;
-                _camera.localRotation = Quaternion.LookRotation(-planeChaseOffset + Vector3.forward * 2f);
+                _camera.localRotation = Quaternion.LookRotation(planeLookTarget - planeChaseOffset);
                 _cameraParented = true;
             }
             if (shoreAmbience != null) shoreAmbience.SetActive(false);
@@ -107,6 +118,7 @@ namespace Tidebound
         {
             UnparentCamera();
             if (planeRig != null) planeRig.SetActive(false);
+            if (skyDressing != null) skyDressing.SetActive(false);
             if (underwaterRig != null)
             {
                 underwaterRig.SetActive(true);
@@ -121,6 +133,7 @@ namespace Tidebound
         {
             UnparentCamera();
             if (underwaterRig != null) underwaterRig.SetActive(false);
+            if (_groundFogDensity > 0f) RenderSettings.fogDensity = _groundFogDensity;
             if (reefWreck != null) reefWreck.SetActive(true);
             if (shoreAmbience != null) shoreAmbience.SetActive(true);
             _gm.clock.Clock.Time01 = 0.70f; // late dusk, losing its light
@@ -214,8 +227,10 @@ namespace Tidebound
             StopAllCoroutines();
             UnparentCamera();
             if (planeRig != null) planeRig.SetActive(false);
+            if (skyDressing != null) skyDressing.SetActive(false);
             if (underwaterRig != null) underwaterRig.SetActive(false);
             if (reefWreck != null) reefWreck.SetActive(false);
+            if (_groundFogDensity > 0f) RenderSettings.fogDensity = _groundFogDensity;
             if (lagoonGlow != null) lagoonGlow.forceOn = false;
             if (shoreAmbience != null) shoreAmbience.SetActive(true);
             _gm.Dialogue.FadeCut(1f); // hold black; PlayPrologue's completion fades in

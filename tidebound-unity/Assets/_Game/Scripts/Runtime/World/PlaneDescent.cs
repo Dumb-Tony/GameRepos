@@ -10,8 +10,8 @@ namespace Tidebound
     /// </summary>
     public class PlaneDescent : MonoBehaviour
     {
-        public Vector3 startPosition = new Vector3(-70f, 330f, -540f);
-        public Vector3 endPosition = new Vector3(-5f, 160f, -270f);
+        public Vector3 startPosition = new Vector3(-50f, 260f, -430f);
+        public Vector3 endPosition = new Vector3(0f, 115f, -195f);
         [Tooltip("How long the full descent takes; the impact cut comes first.")]
         public float descentSeconds = 55f;
         public float wobbleDegrees = 5f;
