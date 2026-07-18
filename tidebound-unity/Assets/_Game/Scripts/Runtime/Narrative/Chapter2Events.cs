@@ -21,6 +21,271 @@ namespace Tidebound.Narrative
             AddSmoke(script);
             AddHearts(script);
             AddKingTide(script);
+            AddBondAndSolo(script);
+            AddStorm(script);
+            AddThreshold(script);
+        }
+
+        // ---- day 9, dusk: the stick on the woodpile ------------------------
+        static void AddBondAndSolo(StoryScript script)
+        {
+            script.Add(new StoryScene
+            {
+                Id = "ev2_bond",
+                Speaker = "Kavi",
+                OnEnter = s =>
+                {
+                    if (s.Is("BOND1_DONE")) return;
+                    s.SetFlag("BOND1_DONE");
+                    s.Bond(4);
+                    s.Stat(Meter.Hope, 3);
+                },
+                Text = _ => new List<string>
+                {
+                    "At dusk Kavi does something new: he brings you a stick. Not to throw — he's no one's puppy — he lays it on your woodpile. Then another. He has watched you gather wood for a week and more, worked out that it matters, and decided to be implicated.",
+                    "You say thank you like it's normal. He looks away like it's nothing. The woodpile grows all week.",
+                },
+            });
+            script.Add(new StoryScene
+            {
+                Id = "ev2_solo",
+                OnEnter = s =>
+                {
+                    if (s.Is("SOLO1_DONE")) return;
+                    s.SetFlag("SOLO1_DONE");
+                    s.Stat(Meter.Hope, 2);
+                    s.AddRoute(RouteAxis.Roots, 1);
+                },
+                Text = _ => new List<string>
+                {
+                    "At dusk the wild dogs sing inland, and the macaque troop answers from the canopy, and the junglefowl mutter their roll-call at the fringe — the whole island talking around you, through you, past you.",
+                    "You chose this. You re-choose it now, deliberately, the way you check a knot: alone travels lighter, risks less, grieves nothing. The knot holds.",
+                    "It holds. You bank the fire and tell the dark, out loud, just to hear a voice: \"Just us, then.\" The dark, companionably, does not answer.",
+                },
+            });
+        }
+
+        // ---- day 11, dusk: the first storm -----------------------------------
+        static void AddStorm(StoryScript script)
+        {
+            script.Add(new StoryScene
+            {
+                Id = "ev2_storm",
+                Text = _ => new List<string>
+                {
+                    "It comes up the sea with almost no warning: a bruise-green wall off the southern horizon, dragging rain like a dropped curtain, and under it the water going the color of slate and bad news.",
+                    "This is no squall. This is the island's first real argument with you: a night of it, at least. You have one part of one hour, and everything you own is about to be weather.",
+                    "You can't save it all. What do you protect <i>first</i>?",
+                },
+                Choices = new List<StoryChoice>
+                {
+                    new StoryChoice
+                    {
+                        Label = "The stores — food, tools, tinder, everything dry.",
+                        Sub = "Property survives; comfort takes its chances.",
+                        Do = s => s.SetFlag("STORM_STORES"),
+                        Go = "ev2_storm2",
+                    },
+                    new StoryChoice
+                    {
+                        Label = "The fire — bank it deep, wall it, keep the ember alive.",
+                        Sub = "Losing fire in what's coming could cost days.",
+                        Do = s => s.SetFlag("STORM_FIRE"),
+                        Go = "ev2_storm2",
+                    },
+                    new StoryChoice
+                    {
+                        Label = "Kavi — get him under cover before anything.",
+                        Sub = "Things can be rebuilt.",
+                        When = s => s.Companion == "kavi",
+                        Do = s => { s.SetFlag("STORM_COMPANION"); s.Bond(6); },
+                        Go = "ev2_storm2",
+                    },
+                },
+            });
+            script.Add(new StoryScene
+            {
+                Id = "ev2_storm2",
+                OnEnter = s =>
+                {
+                    if (s.Is("STORM_APPLIED")) return;
+                    s.SetFlag("STORM_APPLIED");
+                    if (s.Shelter >= 2) { s.Stat(Meter.Hope, 2); s.Stat(Meter.Energy, -4); }
+                    else { s.Stat(Meter.Energy, -12); s.Stat(Meter.Hope, -5); s.Stat(Meter.Health, -5); }
+                    if (!s.Is("STORM_FIRE") && s.Fire > 0)
+                    {
+                        s.Fire = 0;
+                        s.FireFuel = 0f;
+                        s.SetFlag("FIRE_DROWNED2");
+                    }
+                    if (!s.Is("STORM_STORES"))
+                    {
+                        if (s.Food > 0) s.Food -= 1;
+                        if (s.Has("rations")) s.AddItem("rations", -1);
+                    }
+                    if (s.Companion == "kavi" && s.Is("STORM_FIRE")) s.SetFlag("KAVI_FIRE_TEST");
+                },
+                Text = s =>
+                {
+                    var t = new List<string>
+                    {
+                        s.Shelter >= 2
+                            ? "The storm lands on your camp like a thrown sea. The shelter — braced, double-thatched, trench-drained — bends, drums, leaks in two places, and <i>holds</i>. You spend the night with your back against the good main post, keeping company with your own competence."
+                            : "The storm dismantles your camp with the indifference of an auditor. The lean-to lasts an hour; the rest of the night is warm rain, cold wind, and endurance arithmetic, crouched in the ruins holding what you can.",
+                    };
+                    if (s.Is("FIRE_DROWNED2"))
+                        t.Add("Somewhere in the middle of it, the fire dies. You feel it go — a change in the dark behind you — and file the cost under morning.");
+                    if (!s.Is("STORM_STORES"))
+                        t.Add("Dawn's inventory: the storm fed itself from your stores. Some of what you'd put by is simply <i>elsewhere</i> now, distributed across a mile of soaked beach.");
+                    if (s.Companion == "kavi")
+                        t.Add(s.Is("KAVI_FIRE_TEST")
+                            ? "And Kavi meets his oldest enemy: you kept the fire alive, so all night the wind throws its light around like a threat, and all night he shakes at the far edge of the shelter, ears flat, eyes white-rimmed — and does not run. Stays, at the exact distance his fear allows, watching over you from inside it."
+                            : "Kavi presses against you the whole night through, storm-steady — thunder holds no history for him. It's only the fire he fears, and tonight there is none to fear.");
+                    return t;
+                },
+                NextLabel = "Endure until morning",
+            });
+        }
+
+        // ---- day 18, dusk: THE SMOKE (the chapter threshold) -------------------
+        static void AddThreshold(StoryScript script)
+        {
+            script.Add(new StoryScene
+            {
+                Id = "ch2_threshold",
+                Text = s => new List<string>
+                {
+                    "<i>THE SMOKE</i>",
+                    "Dusk, day eighteen. Two weeks of foothold behind you: a working camp, "
+                        + (s.Companion != null
+                            ? "a bond growing real enough to plan around"
+                            : "a solitude you've built into a structure")
+                        + ", and inland — patient, banked, unanswered — <i>that fire</i>.",
+                    "You've run every version of it. A castaway like you, decades deeper. A hermit who chose this. Someone the island keeps. Someone the island <i>couldn't get rid of</i>. Every version knows things that would take you years and cost you fingers to learn alone.",
+                    "Every version also watched your smoke for thirteen days and never came.",
+                    "The monsoon months are out there past the horizon somewhere, and knowledge has a season too. What do you do about the fire on the mountain?",
+                },
+                Choices = new List<StoryChoice>
+                {
+                    new StoryChoice
+                    {
+                        Label = "Go now. Tonight. Walk into the dark and knock.",
+                        Sub = "Bold, fast, and first impressions can't be rehearsed. The jungle at night is nobody's friend.",
+                        Do = s => { s.SetFlag("SMOKE_NOW"); s.AddRoute(RouteAxis.Depth, 2); s.SetFlag("CLEARING_DONE2"); },
+                        Go = "ch2_end_trek",
+                    },
+                    new StoryChoice
+                    {
+                        Label = "Prepare first. Go at first light, provisioned and presentable.",
+                        Sub = "Slower, safer, and whoever it is has waited years — they'll wait a night.",
+                        Do = s => { s.SetFlag("SMOKE_LATER"); s.AddRoute(RouteAxis.Roots, 2); s.SetFlag("CLEARING_DONE2"); },
+                        Go = "ch2_end_fort",
+                    },
+                    new StoryChoice
+                    {
+                        Label = "Let the mountain keep its hermit. Your fire talks to the SEA.",
+                        Sub = "Strangers are a risk and rescue is a bearing. Double down on the signal.",
+                        Do = s => { s.SetFlag("SMOKE_IGNORED"); s.AddRoute(RouteAxis.Signal, 2); s.SetFlag("CLEARING_DONE2"); },
+                        Go = "ch2_end_signal",
+                    },
+                },
+            });
+
+            script.Add(new StoryScene
+            {
+                Id = "ch2_end_trek",
+                Speaker = "A lantern, a braid, a shotgun",
+                Text = s => new List<string>
+                {
+                    "You bank your fire, "
+                        + (s.Companion == "kavi" ? "whistle Kavi to heel" : "square your shoulders alone")
+                        + ", and walk into the jungle at night, following a bearing and a resolve that both feel thinner with every dark mile.",
+                    "The jungle at night is a rumor of itself — root and drip and eyeshine — and you are deep in it, past the point of sensible return, when the smell of woodsmoke arrives like a hand out of the dark.",
+                    "Then the light. Not a campfire: a <i>lantern</i>, swinging knee-high, coming down the slope toward you through the trees with the unhurried gait of someone on their own ground. It stops at conversational distance. Above it: a weathered face, a long grey braid, eyes that have finished their assessment before you've started yours.",
+                    "Below it, held with the casual competence of long habit: the twin dark circles of a shotgun's mouth.",
+                    "\"Well,\" says a voice rusty with disuse, in the tone of a woman finding a pig in her garden. \"It talks, walks at night like a fool, and smells of the sea. Sixty years I've kept this island's one quiet mountain—\" the lantern lifts; the old eyes rake you, your companion, your empty hands, \"—and the tide brings me <i>another one</i>.\"",
+                    "The shotgun, you notice, has not been raised. It has also, you notice, not been lowered.",
+                    "<i>To be continued.</i>",
+                },
+                Next = "ch2_end",
+                NextLabel = "Chapter Two ends",
+            });
+            script.Add(new StoryScene
+            {
+                Id = "ch2_end_fort",
+                Text = _ => new List<string>
+                {
+                    "You spend the last light preparing like it's a state visit, because it might be: food packed as gift and as ballast, fire triple-banked, camp secured, your one salvageable shirt made as presentable as sea and jungle allow.",
+                    "You go up at first light, provisioned, rested, and deliberate — and find, an hour along the inland trail, that the mountain has been ahead of you the whole time: laid on a flat stone in the middle of your path, arranged so you cannot possibly miss it, a single dried sprig of some herb you don't know, and beneath it, weighted, a strip of bark with charcoal writing in a firm, old-fashioned hand.",
+                    "\"<i>If you must come — come at noon, come slow, and don't bring the pig smell if you can help it. — E.</i>\"",
+                    "You stand there in the green light, holding the first written words you've seen since the crash, laughing and unnerved in equal measure. Whoever E is: they've known where your camp is all along. They knew you'd come today. And they have opinions.",
+                    "<i>To be continued.</i>",
+                },
+                Next = "ch2_end",
+                NextLabel = "Chapter Two ends",
+            });
+            script.Add(new StoryScene
+            {
+                Id = "ch2_end_signal",
+                Text = _ => new List<string>
+                {
+                    "You choose the sea. Whatever the mountain knows, it isn't a way home — and you have finite hours, finite hands, and one horizon that matters.",
+                    "You spend the eighteenth night building your answer to it: the signal pyre rebuilt taller on the point, tinder-dry under its rain cap, ready to turn one match into a pillar visible from the shipping lanes you have to believe are out there. Your SOS renewed. Your mirror-glass angled and stacked.",
+                    "And yet, banking your fire at midnight, you catch yourself looking inland one more time. The thread of the mountain's smoke is invisible in the dark — but somewhere up there it burns, tended by hands that saw your fire and chose the same silence you're choosing now.",
+                    "Two fires on one island, each deciding the other can wait. The island keeps its own counsel about how that usually goes.",
+                    "<i>To be continued.</i>",
+                },
+                Next = "ch2_end",
+                NextLabel = "Chapter Two ends",
+            });
+
+            script.Add(new StoryScene
+            {
+                Id = "ch2_end",
+                Text = s =>
+                {
+                    var t = new List<string>
+                    {
+                        "<i>END OF CHAPTER TWO — FOOTHOLD</i>",
+                        "The Ledger turns another page. These weeks, as the island will remember them:",
+                        "— You chose your ground: <i>the crash beach, eyes on the horizon</i>.",
+                    };
+                    if (s.Companion == "kavi")
+                    {
+                        string[] tierWords =
+                        {
+                            "wary of you still", "tolerating you, and pretending otherwise",
+                            "bonded to you — it shows in everything",
+                            "devoted to you past all argument", "kindred",
+                        };
+                        t.Add("— Kavi the island dog is " + tierWords[(int)s.Tier] + "."
+                            + (s.Is("HEART1_DONE") ? " The fifteenth morning happened. Neither of you will mention it. Both of you are changed by it." : ""));
+                    }
+                    else
+                    {
+                        t.Add("— You are alone by choice, and the choice still holds."
+                            + (s.Is("COCO_TALKED") ? " Coco has been briefed on all major decisions." : ""));
+                    }
+                    t.Add("— The Boar King " + (s.Is("KING_TITHED")
+                        ? "accepts your tribute. For now. Negotiations continue."
+                        : s.Is("KING_TRACKED")
+                            ? "is known to you now — his roads, his scars, his snapped traps. Knowledge with teeth in it."
+                            : s.Is("KING_WALLED")
+                                ? "found your walls raised against him. The inland dark took note."
+                                : "came in the night and taught you the rent."));
+                    t.Add("— The first storm " + (s.Shelter >= 2 ? "tested your walls and lost." : "took its tax in full.")
+                        + (s.Is("KAVI_FIRE_TEST") ? " Kavi kept watch all night from inside his own fear." : ""));
+                    t.Add("— And the smoke: " + (s.Is("SMOKE_NOW")
+                        ? "you walked into the night and met a lantern, a braid, and a shotgun that never quite lowered. Her name starts with E, and Chapter Three belongs to her mountain."
+                        : s.Is("SMOKE_LATER")
+                            ? "you prepared first — and the mountain left you a note. \"Come at noon. Come slow.\" Signed E. Chapter Three has an appointment."
+                            : "you turned your back on it and fed your signal instead. The mountain's fire burns on, unanswered, patient. Chapter Three will not wait forever."));
+                    t.Add($"Route leanings — Signal {s.Route.Signal} · Roots {s.Route.Roots} · Depth {s.Route.Depth}. Nothing is decided. Everything is remembered.");
+                    t.Add("<i>Chapter Three: The Green Deep — in development. The island continues; so can you.</i>");
+                    return t;
+                },
+                NextLabel = "Back to the island",
+            });
         }
 
         // ---- CHAPTER TWO — FOOTHOLD -----------------------------------------

@@ -169,5 +169,128 @@ namespace Tidebound.Tests
             s.Seg = Segment.Dawn;
             Assert.AreEqual("ev2_boarking", EventScheduler.Due(s, Chapter1Schedule.Build()));
         }
+
+        // ---- day 9: the stick on the woodpile --------------------------------
+        [Test]
+        public void TheBond_AndTheSoloKnot_PinnedOnceEach()
+        {
+            var bond = GameState.NewGame();
+            bond.Companion = "kavi";
+            bond.Trust = 30;
+            var scene = Script.Get("ev2_bond");
+            scene.OnEnter(bond);
+            Assert.AreEqual(34, bond.Trust);       // +4
+            Assert.AreEqual(58f, bond.Stats.Hope); // +3
+            scene.OnEnter(bond);
+            Assert.AreEqual(34, bond.Trust); // guarded
+
+            var solo = GameState.NewGame();
+            Script.Get("ev2_solo").OnEnter(solo);
+            Assert.AreEqual(57f, solo.Stats.Hope);
+            Assert.AreEqual(1, solo.Route.Roots);
+        }
+
+        // ---- day 11: the first storm -------------------------------------------
+        [Test]
+        public void Storm_TheKaviChoice_OnlyExistsWithKavi()
+        {
+            var alone = GameState.NewGame();
+            Assert.AreEqual(2, Script.Get("ev2_storm").AvailableChoices(alone).Count);
+
+            var together = GameState.NewGame();
+            together.Companion = "kavi";
+            var choices = Script.Get("ev2_storm").AvailableChoices(together);
+            Assert.AreEqual(3, choices.Count);
+            choices[2].Do(together);
+            Assert.IsTrue(together.Is("STORM_COMPANION"));
+            Assert.AreEqual(6, together.Trust); // things can be rebuilt
+        }
+
+        [Test]
+        public void Storm_UnsavedFireDrowns_UnsavedStoresScatter()
+        {
+            var s = GameState.NewGame();
+            s.Fire = 1;
+            s.FireFuel = 3f;
+            s.Food = 2;
+            s.AddItem("rations", 1);
+            s.SetFlag("STORM_COMPANION"); // saved the dog, not the camp
+            var storm2 = Script.Get("ev2_storm2");
+            storm2.OnEnter(s);
+            Assert.AreEqual(0, s.Fire);
+            Assert.IsTrue(s.Is("FIRE_DROWNED2"));
+            Assert.AreEqual(1, s.Food);
+            Assert.IsFalse(s.Has("rations"));
+            Assert.AreEqual(73f, s.Stats.Energy); // -12, no real walls
+            Assert.AreEqual(50f, s.Stats.Hope);   // -5
+            Assert.AreEqual(95f, s.Stats.Health); // -5
+            storm2.OnEnter(s);
+            Assert.AreEqual(1, s.Food); // guarded
+        }
+
+        [Test]
+        public void Storm_KeepingTheFire_TestsKavi()
+        {
+            var s = GameState.NewGame();
+            s.Companion = "kavi";
+            s.Fire = 1;
+            s.SetFlag("STORM_FIRE");
+            Script.Get("ev2_storm2").OnEnter(s);
+            Assert.AreEqual(1, s.Fire); // the ember lives
+            Assert.IsTrue(s.Is("KAVI_FIRE_TEST"));
+        }
+
+        // ---- day 18: the threshold ------------------------------------------------
+        [Test]
+        public void Threshold_ThreeRoads_EachWriteTheirFlags()
+        {
+            var now = GameState.NewGame();
+            var scene = Script.Get("ch2_threshold");
+            var c = scene.AvailableChoices(now);
+            c[0].Do(now);
+            Assert.IsTrue(now.Is("SMOKE_NOW"));
+            Assert.AreEqual(2, now.Route.Depth);
+            Assert.AreEqual("ch2_end_trek", c[0].Go);
+
+            var later = GameState.NewGame();
+            scene.AvailableChoices(later)[1].Do(later);
+            Assert.IsTrue(later.Is("SMOKE_LATER"));
+            Assert.AreEqual(2, later.Route.Roots);
+
+            var ignored = GameState.NewGame();
+            scene.AvailableChoices(ignored)[2].Do(ignored);
+            Assert.IsTrue(ignored.Is("SMOKE_IGNORED"));
+            Assert.AreEqual(2, ignored.Route.Signal);
+        }
+
+        [Test]
+        public void TheChapterEndCard_RemembersEveryThread()
+        {
+            var s = GameState.NewGame();
+            s.Companion = "kavi";
+            s.Trust = 55; // Warming → "bonded to you" band per the VN's five words
+            s.SetFlag("HEART1_DONE");
+            s.SetFlag("KING_TITHED");
+            s.SetFlag("KAVI_FIRE_TEST");
+            s.SetFlag("SMOKE_NOW");
+            var text = string.Join("\n", Script.Get("ch2_end").Text(s));
+            StringAssert.Contains("FOOTHOLD", text);
+            StringAssert.Contains("Kavi the island dog", text);
+            StringAssert.Contains("fifteenth morning", text);
+            StringAssert.Contains("accepts your tribute", text);
+            StringAssert.Contains("inside his own fear", text);
+            StringAssert.Contains("shotgun that never quite lowered", text);
+        }
+
+        [Test]
+        public void TheThreshold_IsOnTheCalendar_DayEighteenDusk()
+        {
+            var s = GameState.NewGame();
+            s.Day = 18;
+            s.Seg = Segment.Dusk;
+            Assert.AreEqual("ch2_threshold", EventScheduler.Due(s, Chapter1Schedule.Build()));
+            s.Day = 11;
+            Assert.AreEqual("ev2_storm", EventScheduler.Due(s, Chapter1Schedule.Build()));
+        }
     }
 }

@@ -27,6 +27,7 @@ namespace Tidebound
         public GameObject nineRig;
         public GameObject boarKingRig;
         public GameObject smokeColumn;
+        public GameObject lanternShape;
         public SunCycle sun;
 
         [Header("Shot feel")]
@@ -127,6 +128,19 @@ namespace Tidebound
                 case "ev2_kingtide":
                     Shot(new Vector3(6f, 2.6f, 18f), new Vector3(-4f, 0.2f, -2f)); // the silver fingers
                     return true;
+                case "ev2_bond":
+                case "ev2_solo":
+                    Shot(new Vector3(-4f, 1.8f, 10f), new Vector3(1f, 0.7f, 15.5f));
+                    return true;
+                case "ev2_storm":
+                    Show(rainRig);
+                    WeatherOn();
+                    Shot(new Vector3(-7f, 3.5f, 7f), new Vector3(0f, 1f, 15f));
+                    return true;
+                case "ch2_threshold":
+                    Show(smokeColumn);
+                    Shot(new Vector3(0f, 3f, 30f), new Vector3(20f, 130f, 560f));
+                    return true;
                 case "clearing":
                     // they are all, in their various ways, present
                     Show(dogNightRig); Show(moaRig); Show(velaRig);
@@ -153,6 +167,21 @@ namespace Tidebound
                         Show(boarKingRig);
                     }
                     Shot(new Vector3(-46f, 2.4f, 248f), new Vector3(-36f, 1.4f, 256f));
+                    break;
+                case "ev2_storm2":
+                    // the storm proper — rain stays; the camp endures
+                    Shot(new Vector3(5f, 2.8f, 9f), new Vector3(0f, 0.9f, 16f));
+                    break;
+                case "ch2_end_trek":
+                    HideShown();
+                    Show(lanternShape); // the lantern, the braid, the unlowered shotgun
+                    Shot(new Vector3(-27f, 2.2f, 273f), new Vector3(-20f, 1.3f, 282f));
+                    break;
+                case "ch2_end_fort":
+                case "ch2_end_signal":
+                case "ch2_end":
+                    HideShown();
+                    Shot(new Vector3(-4f, 2.2f, 9f), new Vector3(0f, 0.8f, 15f));
                     break;
                 case "court_kavi":
                     HideShown();

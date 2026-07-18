@@ -221,8 +221,20 @@ tidebound-unity/
       camps pay in stores and sleep). StoryChoice.GoDynamic added (the
       VN's function-valued go). Boar King rig (movable, broken tusk,
       scar plate) staged at the treeline and at his wallow. 10 new
-      tests. Remaining: ev2_bond/solo + storm d9/d11, ch2_threshold +
-      chapter-2 camp tiers (shelter 3), the courier's case arc.*
+      tests. Session 3 (Foothold complete): ev2_bond (the stick on the
+      woodpile, +4) / ev2_solo (the knot holds) d9 dusk; the first storm
+      d11 dusk — protect stores / fire / Kavi (bond +6), storm2's full
+      consequence matrix (walls hold at shelter 2+, unsaved fire drowns,
+      unsaved stores scatter, KAVI_FIRE_TEST when the ember lives);
+      ch2_threshold d18 dusk — THE SMOKE's three roads (go now / prepare
+      / choose the sea), each with its full end scene (the lantern-braid-
+      shotgun meeting staged with a LanternShape rig in the deep green,
+      E's bark-strip note, the two silent fires) into the ch2_end Ledger
+      card that remembers every thread (site, tier words, King stance,
+      storm, smoke — route leanings shown, as the VN's chapter cards
+      canonically do). 7 new tests. Remaining for Phase 5: shelter tier
+      3, the courier's case arc, Cold Fire's cyclone framing — then
+      Phase 6 depth passes / Chapter Three: Edda's mountain.*
 - [ ] Phase 6 — depth passes per act · Phase 7 — companions, NG+, polish
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day

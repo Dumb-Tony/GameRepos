@@ -62,6 +62,12 @@ namespace Tidebound.Narrative
                 When = s => s.Companion == null },
             new ScheduledEvent { Day = 16, Seg = Segment.Night, SceneId = "ev2_kingtide",
                 When = s => s.Site == "beach" },
+            new ScheduledEvent { Day = 9, Seg = Segment.Dusk, SceneId = "ev2_bond",
+                When = s => s.Companion != null },
+            new ScheduledEvent { Day = 9, Seg = Segment.Dusk, SceneId = "ev2_solo",
+                When = s => s.Companion == null },
+            new ScheduledEvent { Day = 11, Seg = Segment.Dusk, SceneId = "ev2_storm" },
+            new ScheduledEvent { Day = 18, Seg = Segment.Dusk, SceneId = "ch2_threshold" },
         };
     }
 }

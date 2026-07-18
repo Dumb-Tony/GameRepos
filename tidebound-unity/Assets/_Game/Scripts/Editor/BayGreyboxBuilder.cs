@@ -1164,6 +1164,26 @@ namespace Tidebound.EditorTools
                     new Vector3(5f + i * 1.1f, 7f, 5f + i * 1.1f), mats.Cloud, stripCollider: true));
             smoke.SetActive(false);
 
+            // ---- a lantern, a braid, a shotgun (never named here — law #3) ----
+            var lantern = new GameObject("LanternShape");
+            lantern.transform.position = new Vector3(-20f, Height(-20f, 282f), 282f);
+            LocalPrim(lantern.transform, PrimitiveType.Capsule, "Figure",
+                new Vector3(0f, 0.85f, 0f), new Vector3(0.42f, 0.85f, 0.42f), mats.DarkStone);
+            LocalPrim(lantern.transform, PrimitiveType.Cylinder, "Braid",
+                new Vector3(0f, 1.1f, -0.24f), new Vector3(0.06f, 0.5f, 0.06f), mats.StormGrey, new Vector3(12f, 0f, 0f));
+            LocalPrim(lantern.transform, PrimitiveType.Cylinder, "Shotgun",
+                new Vector3(0.3f, 0.9f, 0.3f), new Vector3(0.05f, 0.55f, 0.05f), mats.Metal, new Vector3(70f, -20f, 0f));
+            var lampBall = LocalPrim(lantern.transform, PrimitiveType.Sphere, "Lamp",
+                new Vector3(-0.35f, 0.55f, 0.25f), Vector3.one * 0.2f, mats.Flame);
+            var lampLightGo = new GameObject("LampLight");
+            lampLightGo.transform.SetParent(lampBall.transform, false);
+            var lampLight = lampLightGo.AddComponent<Light>();
+            lampLight.type = LightType.Point;
+            lampLight.color = new Color(1f, 0.75f, 0.45f);
+            lampLight.range = 14f;
+            lampLight.intensity = 2.4f;
+            lantern.SetActive(false);
+
             // ---- the director ----
             var directorGo = new GameObject("EncounterDirector");
             var director = directorGo.AddComponent<EncounterStageDirector>();
@@ -1181,6 +1201,7 @@ namespace Tidebound.EditorTools
             director.nineRig = nine;
             director.boarKingRig = king;
             director.smokeColumn = smoke;
+            director.lanternShape = lantern;
             return director;
         }
 
