@@ -23,7 +23,7 @@ namespace Tidebound
 
         void Update()
         {
-            if (gm == null || gm.IsDead || inputLocked)
+            if (gm == null || gm.IsDead || inputLocked || gm.DialogueJustClosed)
             {
                 Current = null;
                 _options.Clear();

@@ -108,7 +108,18 @@ tidebound-unity/
       (OnAudioFilterRead, zero audio files), palms 8→14, driftwood 10→16.
       Remaining for the phase: keep tuning the feel knobs (day length,
       costs, camera) until surviving three days is mildly fun.*
-- [ ] Phase 2 — words (dialogue/journal UI, prologue)
+- [~] Phase 2 — words. *Session 1 (this commit): story runtime
+      (StoryScript/StoryScene/StoryChoice/StoryPlayback — pure, headless-
+      testable), rich-text-safe Typewriter, code-built DialogueUI
+      (typewriter paragraphs, choices with consequence subtext, click or
+      1–4 keys, world freezes + HUD steps aside), the full crash prologue
+      ported scene-for-scene from scenes-prologue.js (falling → courier →
+      who-you-were → ashore → two-of-five salvage → night0 → ch1_open;
+      every effect pinned by PrologueScriptTests), Ledger journal on J
+      (JournalEntries pure + JournalUI sheet; route numbers never shown),
+      GameManager freeze/cursor orchestration. New games now begin at the
+      crash. Remaining: chapter-1 scheduled encounters (Vela, the howls,
+      the squall) as world events, journal quest hooks, dialogue polish.*
 - [ ] Phase 3 — the dog (Kavi; make-or-break)
 - [ ] Phase 4 — the island (12-zone greybox generator, Wayfinder)
 - [ ] Phase 5 — act 1–2 story + first three endings

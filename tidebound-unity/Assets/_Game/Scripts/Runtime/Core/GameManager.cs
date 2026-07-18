@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using Tidebound.Narrative;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -44,6 +45,11 @@ namespace Tidebound
         public GameState State { get; private set; }
         public bool IsDead => State != null && State.DeathCause != null;
         public HudController Hud { get; private set; }
+        public DialogueUI Dialogue { get; private set; }
+        public JournalUI Journal { get; private set; }
+
+        public bool DialogueActive { get; private set; }
+        public bool JournalOpen { get; private set; }
 
         readonly WarningSystem _warnings = new WarningSystem();
         bool _sleeping;
@@ -62,17 +68,31 @@ namespace Tidebound
                 clock.SegmentTicked += OnSegmentTicked;
             }
             Hud = HudController.Create(this);
+            Dialogue = DialogueUI.Create(this);
+            Journal = JournalUI.Create(this);
         }
 
         void Start()
         {
             LockCursor(true);
-            if (State.Day <= 1 && State.Seg == Segment.Dawn && !State.Is("BAY_ARRIVED"))
+            if (!State.Is("PROLOGUE_DONE"))
             {
-                State.SetFlag("BAY_ARRIVED");
-                Toast("Day 1. The sea spat you out and kept the plane.", ToastKind.Info);
-                Toast("WASD to move · Shift to run · E/F/C to act · Esc frees the mouse.", ToastKind.Info);
-                Toast("Fire, water, a roof — in whatever order the island allows.", ToastKind.Info);
+                if (State.Day <= 0)
+                {
+                    // a fresh life: the crash, who you were, the salvage, the glow
+                    Dialogue.Play(PrologueScript.Build(), PrologueScript.Start, () =>
+                    {
+                        State.SetFlag("PROLOGUE_DONE");
+                        clock.SyncToState(); // night0 moved us to Day 1, Dawn
+                        SaveNow();
+                        Toast("WASD to move · Shift to run · E/F/C to act · J opens the Ledger · Esc frees the mouse.", ToastKind.Info);
+                    });
+                }
+                else
+                {
+                    // a save from before the prologue existed — don't replay it mid-run
+                    State.SetFlag("PROLOGUE_DONE");
+                }
             }
         }
 
@@ -86,9 +106,12 @@ namespace Tidebound
 
         void Update()
         {
-            if (GameInput.CancelPressed) LockCursor(false);
-            else if (GameInput.AnyMouseButtonPressed && Cursor.lockState != CursorLockMode.Locked && !IsDead)
-                LockCursor(true);
+            if (!DialogueActive)
+            {
+                if (GameInput.CancelPressed) LockCursor(false);
+                else if (GameInput.AnyMouseButtonPressed && Cursor.lockState != CursorLockMode.Locked && !IsDead)
+                    LockCursor(true);
+            }
 
             if (IsDead)
             {
@@ -96,11 +119,44 @@ namespace Tidebound
                 return;
             }
 
+            if (!DialogueActive && GameInput.JournalPressed) Journal.Toggle();
+            if (DialogueActive || JournalOpen) return; // the world is frozen; nothing below applies
+
             foreach (var w in _warnings.Check(State.Stats))
                 Toast(w.Message, w.Severe ? ToastKind.Severe : ToastKind.Warning);
 
             CheckCollapse();
             CheckDeath();
+        }
+
+        // ---- world freeze (dialogue / journal / death) ----------------------
+        int _dialogueEndFrame = -1;
+
+        /// <summary>The key that closed a dialogue must not also act in the world.</summary>
+        public bool DialogueJustClosed => Time.frameCount == _dialogueEndFrame;
+
+        public void SetDialogueActive(bool active)
+        {
+            DialogueActive = active;
+            if (!active) _dialogueEndFrame = Time.frameCount;
+            ApplyFreeze();
+        }
+
+        public void SetJournalOpen(bool open)
+        {
+            JournalOpen = open;
+            ApplyFreeze();
+        }
+
+        void ApplyFreeze()
+        {
+            bool frozen = DialogueActive || JournalOpen || IsDead;
+            if (clock != null) clock.paused = frozen;
+            if (player != null) player.inputLocked = frozen;
+            if (cam != null) cam.inputLocked = frozen;
+            if (interactor != null) interactor.inputLocked = frozen;
+            LockCursor(!(DialogueActive || IsDead)); // reading and dying free the mouse
+            if (Hud != null) Hud.gameObject.SetActive(!DialogueActive);
         }
 
         // ---- the segment tick ---------------------------------------------
@@ -267,20 +323,17 @@ namespace Tidebound
         void CheckDeath()
         {
             if (!IsDead) return;
-            if (clock != null) clock.paused = true;
-            if (player != null) player.inputLocked = true;
-            if (cam != null) cam.inputLocked = true;
-            if (interactor != null) interactor.inputLocked = true;
-            LockCursor(false);
+            ApplyFreeze();
             TryDeleteSave(); // the run is over; the next Enter starts a fresh tide
         }
 
         // ---- persistence -----------------------------------------------------
         static GameState FreshState()
         {
+            // Day stays 0 (the VN's newState): the prologue's first-night
+            // choice moves the clock to Day 1, Dawn — exactly as the VN does.
             var s = GameState.NewGame();
             s.CurrentScene = "bay";
-            s.Day = 1;
             s.Site = "beach";
             return s;
         }
