@@ -392,26 +392,45 @@ namespace Tidebound
         }
 
         // ---- sleep fade -------------------------------------------------------
+        Coroutine _fadeRoutine;
+
+        /// <summary>
+        /// If a dialogue hid the HUD mid-fade, the coroutine died — possibly
+        /// at full black. Never come back stuck: reactivation clears the fade.
+        /// </summary>
+        void OnEnable()
+        {
+            _fadeRoutine = null;
+            if (_fade != null) _fade.color = new Color(0f, 0f, 0f, 0f);
+        }
+
         /// <summary>Fade to black, run the world change, fade back in.</summary>
-        public void SleepFade(Action atBlack) => StartCoroutine(FadeRoutine(atBlack));
+        public void SleepFade(Action atBlack)
+        {
+            if (_fadeRoutine != null) StopCoroutine(_fadeRoutine);
+            _fadeRoutine = StartCoroutine(FadeRoutine(atBlack));
+        }
 
         IEnumerator FadeRoutine(Action atBlack)
         {
             _gm.player.inputLocked = true;
             _gm.cam.inputLocked = true;
-            yield return Ramp(0f, 1f, 0.7f);
+            yield return Ramp(1f, 0.7f);
             atBlack?.Invoke();
             yield return new WaitForSeconds(0.6f);
-            yield return Ramp(1f, 0f, 0.9f);
+            yield return Ramp(0f, 0.9f);
             if (!_gm.IsDead && !_gm.DialogueActive) // a cutscene may have taken over at wake
             {
                 _gm.player.inputLocked = false;
                 _gm.cam.inputLocked = false;
             }
+            _fadeRoutine = null;
         }
 
-        IEnumerator Ramp(float from, float to, float seconds)
+        /// <summary>Lerp the fade from wherever it is now — restart-safe.</summary>
+        IEnumerator Ramp(float to, float seconds)
         {
+            float from = _fade.color.a;
             for (float t = 0f; t < seconds; t += Time.deltaTime)
             {
                 _fade.color = new Color(0, 0, 0, Mathf.Lerp(from, to, t / seconds));
