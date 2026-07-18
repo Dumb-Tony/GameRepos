@@ -145,8 +145,19 @@ tidebound-unity/
       as lower-third dialogues queued at segment ticks (they wait out
       sleep/dialogue); StoryScene grew Speaker + OnEnter; the Ledger
       grew "The locals" (descriptive names only — law #3) and squall/
-      flare deeds. Remaining for Phase 2: nothing — ev_nine needs the
-      Tide Pools zone (Phase 4) and the Clearing of Eyes belongs to the
+      flare deeds. Session 4 (owner: encounters should play like
+      cutscenes, and never back-to-back): EncounterStageDirector stages
+      every event with greybox actors and framed shots — Vela perched on
+      a permanent dead palm (fish at your feet), the dog at the treeline
+      with glow-lit eyes / sitting in the open by day, Ipo with the
+      lighter, a real rain particle system + storm-dark override for the
+      squall, Buri nose-down in the supplies, the hawk circling the hen,
+      the ship's light crawling (ShipCrawl) and a rising FlareBurst if
+      spent. Pacing: sleep advances one segment at a time and story
+      events WAKE the sleeper (then sleep resumes); a real-time
+      eventGapSeconds (default 25) keeps ordinary play between queued
+      events. Remaining for Phase 2: nothing — ev_nine needs the Tide
+      Pools zone (Phase 4) and the Clearing of Eyes belongs to the
       companion phase (Phase 3).*
 - [ ] Phase 3 — the dog (Kavi; make-or-break)
 - [ ] Phase 4 — the island (12-zone greybox generator, Wayfinder)

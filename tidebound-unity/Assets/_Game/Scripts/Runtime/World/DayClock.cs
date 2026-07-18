@@ -36,6 +36,20 @@ namespace Tidebound
         public float FractionUntilNextDawn => 1f - _time01;
 
         /// <summary>
+        /// Normalized time to the next segment boundary, in (0, 0.25] —
+        /// for advancing sleep one interruptible segment at a time.
+        /// </summary>
+        public float FractionUntilNextBoundary
+        {
+            get
+            {
+                int next = (int)Math.Floor(_time01 / SegmentLength01) + 1;
+                float frac = next * SegmentLength01 - _time01;
+                return frac <= 0f ? SegmentLength01 : frac;
+            }
+        }
+
+        /// <summary>
         /// Advance by a fraction of a day and report how many segment
         /// boundaries were crossed (each crossing = one TickSegment for the
         /// caller to apply). Time wraps; crossings count the wrap too.

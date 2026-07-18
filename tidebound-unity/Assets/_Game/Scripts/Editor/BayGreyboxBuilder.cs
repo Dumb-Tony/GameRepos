@@ -51,7 +51,8 @@ namespace Tidebound.EditorTools
             BuildSosSite(mats);
             var shoreAmbience = BuildAmbientLife(mats);
             var director = BuildPrologueStage(mats, shoreAmbience);
-            BuildPlayerCameraAndSystems(gameClockHost, director);
+            var encounterDirector = BuildEncounterStage(mats);
+            BuildPlayerCameraAndSystems(gameClockHost, director, encounterDirector);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             AddToBuildSettings();
@@ -82,6 +83,9 @@ namespace Tidebound.EditorTools
             public Material Mountain = Mat("Mountain", new Color(0.30f, 0.37f, 0.34f));
             public Material Cushion = Mat("Cushion", new Color(0.85f, 0.45f, 0.15f)); // life-vest orange
             public Material Slick = Mat("FuelSlick", new Color(0.08f, 0.06f, 0.12f), 0.95f);
+            public Material StormGrey = Mat("StormGrey", new Color(0.44f, 0.45f, 0.48f));
+            public Material Copper = Mat("Copper", new Color(0.72f, 0.34f, 0.14f));
+            public Material FlareRed = Mat("FlareRed", new Color(1f, 0.25f, 0.15f));
         }
 
         static Material Mat(string name, Color color, float smoothness = 0.15f)
@@ -808,6 +812,193 @@ namespace Tidebound.EditorTools
             return director;
         }
 
+        // ================= the encounter stage =================
+        static EncounterStageDirector BuildEncounterStage(Mats mats)
+        {
+            // the dead palm at the edge of camp — permanent; Vela's perch
+            float px = 5.5f, pz = 12f, py = Height(px, pz);
+            var deadPalm = Prim(PrimitiveType.Cylinder, "DeadPalm", null,
+                new Vector3(px, py + 1.9f, pz), new Vector3(0.22f, 1.9f, 0.22f), mats.Driftwood);
+            deadPalm.transform.rotation = Quaternion.Euler(0f, 0f, 14f);
+
+            // ---- Vela: the one-eyed accountant, perched ----
+            var vela = new GameObject("VelaRig");
+            var perchTop = new Vector3(px - 0.85f, py + 3.6f, pz);
+            Prim(PrimitiveType.Sphere, "Body", vela.transform, perchTop, new Vector3(0.34f, 0.44f, 0.3f), mats.Foam, stripCollider: true);
+            Prim(PrimitiveType.Cube, "WingL", vela.transform, perchTop + new Vector3(-0.16f, 0.05f, 0f),
+                new Vector3(0.1f, 0.34f, 0.42f), mats.DarkStone, stripCollider: true);
+            Prim(PrimitiveType.Cube, "WingR", vela.transform, perchTop + new Vector3(0.16f, 0.05f, 0f),
+                new Vector3(0.1f, 0.34f, 0.42f), mats.DarkStone, stripCollider: true);
+            Prim(PrimitiveType.Sphere, "Head", vela.transform, perchTop + new Vector3(0f, 0.3f, 0.08f),
+                Vector3.one * 0.18f, mats.Foam, stripCollider: true);
+            Prim(PrimitiveType.Cube, "Beak", vela.transform, perchTop + new Vector3(0f, 0.28f, 0.2f),
+                new Vector3(0.05f, 0.05f, 0.12f), mats.Cushion, stripCollider: true);
+            vela.SetActive(false);
+
+            var fish = new GameObject("FishDrop");
+            var fishBody = Prim(PrimitiveType.Capsule, "Fish", fish.transform,
+                new Vector3(0.8f, Height(0.8f, 14f) + 0.08f, 14f), new Vector3(0.09f, 0.2f, 0.09f), mats.Metal, stripCollider: true);
+            fishBody.transform.rotation = Quaternion.Euler(90f, 35f, 0f);
+            fish.SetActive(false);
+
+            // ---- the grey dog, twice ----
+            var dogNight = BuildDog(mats, new Vector3(12f, Height(12f, 74f), 74f), nightEyes: true);
+            var dogDay = BuildDog(mats, new Vector3(8f, Height(8f, 26f), 26f), nightEyes: false);
+
+            // ---- Ipo, delighted with himself ----
+            var ipo = new GameObject("IpoRig");
+            var ipoPos = new Vector3(4f, Height(4f, 20f) + 0.16f, 20f);
+            Prim(PrimitiveType.Sphere, "Body", ipo.transform, ipoPos, new Vector3(0.24f, 0.28f, 0.22f), mats.Wood, stripCollider: true);
+            Prim(PrimitiveType.Sphere, "Head", ipo.transform, ipoPos + new Vector3(0f, 0.26f, 0.04f),
+                Vector3.one * 0.16f, mats.Wood, stripCollider: true);
+            var ipoTail = Prim(PrimitiveType.Cylinder, "Tail", ipo.transform, ipoPos + new Vector3(0f, 0.18f, -0.22f),
+                new Vector3(0.03f, 0.22f, 0.03f), mats.Wood, stripCollider: true);
+            ipoTail.transform.rotation = Quaternion.Euler(-40f, 0f, 0f);
+            Prim(PrimitiveType.Cube, "Lighter", ipo.transform, ipoPos + new Vector3(0.14f, 0.14f, 0.12f),
+                new Vector3(0.04f, 0.06f, 0.03f), mats.FlareRed, stripCollider: true);
+            ipo.SetActive(false);
+
+            // ---- the squall's rain ----
+            var rain = new GameObject("RainRig");
+            rain.transform.position = new Vector3(0f, 14f, 15f);
+            var ps = rain.AddComponent<ParticleSystem>();
+            var main = ps.main;
+            main.startLifetime = 1.1f;
+            main.startSpeed = 0f;
+            main.gravityModifier = 3.4f;
+            main.startSize = 0.045f;
+            main.maxParticles = 2500;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            var emission = ps.emission;
+            emission.rateOverTime = 1000f;
+            var shape = ps.shape;
+            shape.shapeType = ParticleSystemShapeType.Box;
+            shape.scale = new Vector3(46f, 1f, 46f);
+            var psr = rain.GetComponent<ParticleSystemRenderer>();
+            psr.renderMode = ParticleSystemRenderMode.Stretch;
+            psr.velocityScale = 0.08f;
+            psr.sharedMaterial = ParticleMat("RainDrop", new Color(0.72f, 0.8f, 0.9f, 0.55f));
+            rain.SetActive(false);
+
+            // ---- Buri, mid-audit ----
+            var buri = new GameObject("BuriRig");
+            var buriPos = new Vector3(1.5f, Height(1.5f, 16.5f) + 0.42f, 16.5f);
+            var barrel = Prim(PrimitiveType.Capsule, "Body", buri.transform, buriPos,
+                new Vector3(0.5f, 0.55f, 0.5f), mats.DarkStone, stripCollider: true);
+            barrel.transform.rotation = Quaternion.Euler(78f, 200f, 0f); // nose down in your supplies
+            Prim(PrimitiveType.Cylinder, "Snout", buri.transform, buriPos + new Vector3(-0.15f, -0.28f, -0.35f),
+                new Vector3(0.14f, 0.1f, 0.14f), mats.Wood, stripCollider: true);
+            for (int leg = 0; leg < 4; leg++)
+                Prim(PrimitiveType.Cylinder, "Leg", buri.transform,
+                    buriPos + new Vector3(leg % 2 == 0 ? -0.22f : 0.22f, -0.35f, leg < 2 ? -0.2f : 0.25f),
+                    new Vector3(0.08f, 0.2f, 0.08f), mats.DarkStone, stripCollider: true);
+            buri.SetActive(false);
+
+            // ---- Moa and the hawk ----
+            var moa = new GameObject("MoaRig");
+            var moaPos = new Vector3(10f, Height(10f, 8f) + 0.12f, 8f);
+            Prim(PrimitiveType.Sphere, "Hen", moa.transform, moaPos, new Vector3(0.24f, 0.2f, 0.3f), mats.Copper, stripCollider: true);
+            var moaTail = Prim(PrimitiveType.Cube, "Tail", moa.transform, moaPos + new Vector3(0f, 0.08f, -0.2f),
+                new Vector3(0.06f, 0.16f, 0.14f), mats.DarkStone, stripCollider: true);
+            moaTail.transform.rotation = Quaternion.Euler(-35f, 0f, 0f);
+            Prim(PrimitiveType.Sphere, "Head", moa.transform, moaPos + new Vector3(0f, 0.16f, 0.16f),
+                Vector3.one * 0.1f, mats.Copper, stripCollider: true);
+            moa.SetActive(false);
+
+            var hawk = new GameObject("HawkRig");
+            var hawkBody = Prim(PrimitiveType.Cube, "Hawk", hawk.transform,
+                moaPos + Vector3.up * 11f, new Vector3(0.9f, 0.06f, 0.3f), mats.DarkStone, stripCollider: true);
+            var circle = hawkBody.AddComponent<HawkCircle>();
+            circle.center = moaPos;
+            hawk.SetActive(false);
+
+            // ---- the ship's light, and the flare ----
+            var ship = new GameObject("ShipRig");
+            NoShadow(Prim(PrimitiveType.Sphere, "Light", ship.transform,
+                new Vector3(-280f, 1.6f, -480f), new Vector3(5f, 2.2f, 2.2f), mats.Foam, stripCollider: true));
+            ship.AddComponent<ShipCrawl>();
+            ship.SetActive(false);
+
+            var flare = new GameObject("FlareRig");
+            flare.transform.position = new Vector3(0f, 2f, -12f);
+            NoShadow(Prim(PrimitiveType.Sphere, "Ball", flare.transform,
+                flare.transform.position, Vector3.one * 0.5f, mats.FlareRed, stripCollider: true));
+            var flareLightGo = new GameObject("FlareLight");
+            flareLightGo.transform.SetParent(flare.transform, false);
+            var flareLight = flareLightGo.AddComponent<Light>();
+            flareLight.type = LightType.Point;
+            flareLight.color = new Color(1f, 0.3f, 0.2f);
+            flareLight.range = 120f;
+            flareLight.intensity = 5f;
+            flare.AddComponent<FlareBurst>();
+            flare.SetActive(false);
+
+            // ---- the director ----
+            var directorGo = new GameObject("EncounterDirector");
+            var director = directorGo.AddComponent<EncounterStageDirector>();
+            director.velaRig = vela;
+            director.fishDrop = fish;
+            director.dogNightRig = dogNight;
+            director.dogDayRig = dogDay;
+            director.ipoRig = ipo;
+            director.rainRig = rain;
+            director.buriRig = buri;
+            director.moaRig = moa;
+            director.hawkRig = hawk;
+            director.shipRig = ship;
+            director.flareRig = flare;
+            return director;
+        }
+
+        /// <summary>A storm-grey dog: capsule body, head, ears, tail — and at
+        /// night, two eyes catching the lagoon glow.</summary>
+        static GameObject BuildDog(Mats mats, Vector3 groundPos, bool nightEyes)
+        {
+            var dog = new GameObject(nightEyes ? "DogNightRig" : "DogDayRig");
+            var body = Prim(PrimitiveType.Capsule, "Body", dog.transform,
+                groundPos + new Vector3(0f, 0.52f, 0f), new Vector3(0.32f, 0.5f, 0.32f), mats.StormGrey, stripCollider: true);
+            body.transform.rotation = Quaternion.Euler(nightEyes ? 90f : 62f, 200f, 0f); // day pose sits back
+            Prim(PrimitiveType.Sphere, "Head", dog.transform,
+                groundPos + new Vector3(-0.12f, nightEyes ? 0.72f : 0.95f, -0.42f), Vector3.one * 0.3f, mats.StormGrey, stripCollider: true);
+            Prim(PrimitiveType.Cube, "EarL", dog.transform,
+                groundPos + new Vector3(-0.22f, nightEyes ? 0.92f : 1.15f, -0.42f), new Vector3(0.07f, 0.14f, 0.05f), mats.StormGrey, stripCollider: true);
+            Prim(PrimitiveType.Cube, "EarR", dog.transform,
+                groundPos + new Vector3(-0.02f, nightEyes ? 0.92f : 1.15f, -0.42f), new Vector3(0.07f, 0.14f, 0.05f), mats.StormGrey, stripCollider: true);
+            var tail = Prim(PrimitiveType.Cylinder, "Tail", dog.transform,
+                groundPos + new Vector3(0.05f, 0.55f, 0.42f), new Vector3(0.05f, 0.24f, 0.05f), mats.StormGrey, stripCollider: true);
+            tail.transform.rotation = Quaternion.Euler(35f, 0f, 0f);
+            for (int leg = 0; leg < 4; leg++)
+                Prim(PrimitiveType.Cylinder, "Leg", dog.transform,
+                    groundPos + new Vector3(leg % 2 == 0 ? -0.16f : 0.12f, 0.22f, leg < 2 ? -0.28f : 0.26f),
+                    new Vector3(0.06f, 0.24f, 0.06f), mats.StormGrey, stripCollider: true);
+            if (nightEyes)
+            {
+                var glowMat = Mat("HeartglassGlow", new Color(0.25f, 0.95f, 0.85f), 0.9f);
+                NoShadow(Prim(PrimitiveType.Sphere, "EyeL", dog.transform,
+                    groundPos + new Vector3(-0.2f, 0.74f, -0.55f), Vector3.one * 0.045f, glowMat, stripCollider: true));
+                NoShadow(Prim(PrimitiveType.Sphere, "EyeR", dog.transform,
+                    groundPos + new Vector3(-0.08f, 0.74f, -0.55f), Vector3.one * 0.045f, glowMat, stripCollider: true));
+            }
+            dog.SetActive(false);
+            return dog;
+        }
+
+        static Material ParticleMat(string name, Color color)
+        {
+            string path = MaterialDir + "/" + name + ".mat";
+            var mat = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (mat == null)
+            {
+                var shader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+                if (shader == null) shader = Shader.Find("Universal Render Pipeline/Unlit");
+                mat = new Material(shader);
+                AssetDatabase.CreateAsset(mat, path);
+            }
+            mat.SetColor("_BaseColor", color);
+            EditorUtility.SetDirty(mat);
+            return mat;
+        }
+
         // ================= systems, player, camera, sun =================
         static void BuildLightingAndAtmosphere(out GameObject systemsHost)
         {
@@ -825,7 +1016,8 @@ namespace Tidebound.EditorTools
             systemsHost.AddComponent<GameClock>();
         }
 
-        static void BuildPlayerCameraAndSystems(GameObject systemsHost, PrologueStageDirector director)
+        static void BuildPlayerCameraAndSystems(GameObject systemsHost, PrologueStageDirector director,
+            EncounterStageDirector encounterDirector)
         {
             // ---- sun ----
             var sunGo = new GameObject("Sun");
@@ -837,6 +1029,7 @@ namespace Tidebound.EditorTools
             cycle.clock = systemsHost.GetComponent<GameClock>();
             if (director != null && director.underwaterRig != null)
                 director.underwaterRig.GetComponent<UnderwaterDrift>().sun = cycle;
+            if (encounterDirector != null) encounterDirector.sun = cycle;
 
             // ---- player ----
             float px = 0f, pz = 6f;
@@ -884,6 +1077,7 @@ namespace Tidebound.EditorTools
             gm.cam = orbit;
             gm.interactor = interactor;
             gm.prologueDirector = director;
+            gm.encounterDirector = encounterDirector;
             controller.cameraTransform = camGo.transform;
             controller.gm = gm;
             interactor.gm = gm;

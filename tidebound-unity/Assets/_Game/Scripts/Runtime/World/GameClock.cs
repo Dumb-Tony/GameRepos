@@ -69,6 +69,16 @@ namespace Tidebound
             return AdvanceNormalized(_clock.FractionUntilNextDawn);
         }
 
+        /// <summary>
+        /// Advance exactly one segment boundary (one tick) — sleep uses
+        /// this so a night event can wake the sleeper mid-night.
+        /// </summary>
+        public int AdvanceOneBoundary()
+        {
+            _pendingSpend01 = 0f;
+            return AdvanceNormalized(_clock.FractionUntilNextBoundary);
+        }
+
         int AdvanceNormalized(float delta01)
         {
             if (State == null) return 0;

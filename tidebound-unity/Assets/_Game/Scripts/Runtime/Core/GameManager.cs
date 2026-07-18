@@ -43,6 +43,11 @@ namespace Tidebound
         public float exposureHealth = 6f;
         public float exposureHope = 4f;
 
+        [Header("Story pacing")]
+        [Tooltip("Real seconds of ordinary play between story events, so encounters never stack back-to-back. Sleep interruptions bypass this — being woken IS the event.")]
+        public float eventGapSeconds = 25f;
+        public EncounterStageDirector encounterDirector;
+
         public GameState State { get; private set; }
         public bool IsDead => State != null && State.DeathCause != null;
         public HudController Hud { get; private set; }
@@ -61,6 +66,8 @@ namespace Tidebound
         readonly Queue<string> _eventQueue = new Queue<string>();
         StoryScript _encounters;
         StoryScript Encounters => _encounters ??= Chapter1Encounters.Build();
+        float _nextEventAllowedAt;
+        bool _resumeSleepAfterEvent;
 
         // ---- lifecycle ---------------------------------------------------
         void Awake()
@@ -131,10 +138,19 @@ namespace Tidebound
             if (!DialogueActive && GameInput.JournalPressed) Journal.Toggle();
             if (DialogueActive || JournalOpen) return; // the world is frozen; nothing below applies
 
-            // a scheduled encounter waits until the world can hold it
-            if (!_sleeping && _eventQueue.Count > 0 && State.Is("PROLOGUE_DONE"))
+            // a scheduled encounter waits until the world can hold it — and
+            // keeps a breath of ordinary play between encounters, unless we
+            // were just woken FOR it
+            if (!_sleeping && _eventQueue.Count > 0 && State.Is("PROLOGUE_DONE")
+                && (_resumeSleepAfterEvent || Time.time >= _nextEventAllowedAt))
             {
-                Dialogue.Play(Encounters, _eventQueue.Dequeue(), () => SaveNow(), DialogueStyle.LowerThird);
+                var eventId = _eventQueue.Dequeue();
+                if (encounterDirector != null) encounterDirector.Begin(eventId);
+                Dialogue.Play(Encounters, eventId, () =>
+                {
+                    if (encounterDirector != null) encounterDirector.End();
+                    OnEventFinished();
+                }, DialogueStyle.LowerThird);
                 return;
             }
 
@@ -290,16 +306,47 @@ namespace Tidebound
                 Toast("Daylight is too expensive to sleep through.", ToastKind.Info);
                 return;
             }
-            _sleeping = true;
             var r = SurvivalActions.Sleep(State);
             Toast(r.Line, ToastKind.Info);
+            BeginSleepAdvance();
+        }
+
+        /// <summary>
+        /// Sleep one segment at a time behind the fade. A queued story event
+        /// wakes the sleeper mid-night (the VN's "you wake to…" scenes are
+        /// written for exactly this); when the event ends, sleep resumes.
+        /// </summary>
+        void BeginSleepAdvance()
+        {
+            _sleeping = true;
             Hud.SleepFade(() =>
             {
-                clock.SleepUntilDawn();
+                for (int guard = 0; guard < DayClock.SegmentsPerDay + 1; guard++)
+                {
+                    clock.AdvanceOneBoundary();
+                    if (IsDead || State.Seg == Segment.Dawn || _eventQueue.Count > 0) break;
+                }
                 _sleeping = false;
-                if (!IsDead) Toast("You wake with the light, which out here is the only alarm that never lies.", ToastKind.Good);
+                _resumeSleepAfterEvent = !IsDead && State.Seg != Segment.Dawn && _eventQueue.Count > 0;
+                if (!IsDead && State.Seg == Segment.Dawn && _eventQueue.Count == 0)
+                    Toast("You wake with the light, which out here is the only alarm that never lies.", ToastKind.Good);
                 CheckDeath();
             });
+        }
+
+        void OnEventFinished()
+        {
+            SaveNow();
+            _nextEventAllowedAt = Time.time + eventGapSeconds;
+            if (_resumeSleepAfterEvent && !IsDead)
+            {
+                _resumeSleepAfterEvent = false;
+                if (State.Seg != Segment.Dawn)
+                {
+                    Toast("Sleep takes you back, eventually.", ToastKind.Info);
+                    BeginSleepAdvance();
+                }
+            }
         }
 
         void AfterAction(ActionResult r, float timeCost)

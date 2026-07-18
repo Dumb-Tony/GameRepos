@@ -70,6 +70,23 @@ namespace Tidebound.Tests
         }
 
         [Test]
+        public void OneBoundaryAtATime_LetsTheNightInterrupt()
+        {
+            var c = new DayClock { Time01 = 0.6f }; // mid-Dusk
+            Assert.AreEqual(1, c.Advance(c.FractionUntilNextBoundary));
+            Assert.AreEqual(Segment.Night, c.CurrentSegment);
+            Assert.AreEqual(1, c.Advance(c.FractionUntilNextBoundary));
+            Assert.AreEqual(Segment.Dawn, c.CurrentSegment); // wrapped to morning
+        }
+
+        [Test]
+        public void FractionUntilNextBoundary_FromABoundary_IsAWholeSegment()
+        {
+            var c = new DayClock { Time01 = 0.25f };
+            Assert.AreEqual(0.25f, c.FractionUntilNextBoundary, 0.0001f);
+        }
+
+        [Test]
         public void ManySmallSteps_NeverDropACrossing()
         {
             // 1/1024 is exactly representable, so 1024 steps sum to exactly

@@ -403,7 +403,7 @@ namespace Tidebound
             atBlack?.Invoke();
             yield return new WaitForSeconds(0.6f);
             yield return Ramp(1f, 0f, 0.9f);
-            if (!_gm.IsDead)
+            if (!_gm.IsDead && !_gm.DialogueActive) // a cutscene may have taken over at wake
             {
                 _gm.player.inputLocked = false;
                 _gm.cam.inputLocked = false;
