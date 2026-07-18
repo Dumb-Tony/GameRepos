@@ -38,6 +38,7 @@ namespace Tidebound
         public float drinkCost = 0f;
         public float gatherCost = 0f;
         public float sosCost = 0.5f;
+        public float tidePoolCost = 0.4f;
 
         [Header("Exposure (the cold tax; warned at dusk)")]
         public float exposureHealth = 6f;
@@ -53,9 +54,11 @@ namespace Tidebound
         public HudController Hud { get; private set; }
         public DialogueUI Dialogue { get; private set; }
         public JournalUI Journal { get; private set; }
+        public WayfinderUI Wayfinder { get; private set; }
 
         public bool DialogueActive { get; private set; }
         public bool JournalOpen { get; private set; }
+        public bool MapOpen { get; private set; }
 
         readonly WarningSystem _warnings = new WarningSystem();
         bool _sleeping;
@@ -84,6 +87,7 @@ namespace Tidebound
             Hud = HudController.Create(this);
             Dialogue = DialogueUI.Create(this);
             Journal = JournalUI.Create(this);
+            Wayfinder = WayfinderUI.Create(this);
         }
 
         void Start()
@@ -97,6 +101,7 @@ namespace Tidebound
                     System.Action onPrologueDone = () =>
                     {
                         State.SetFlag("PROLOGUE_DONE");
+                        State.SetFlag(Regions.SeenFlag("bay")); // home isn't an expedition
                         clock.SyncToState(); // night0 moved us to Day 1, Dawn
                         SaveNow();
                         Toast("WASD to move · Shift to run · E/F/C to act · J opens the Ledger · Esc frees the mouse.", ToastKind.Info);
@@ -108,6 +113,7 @@ namespace Tidebound
                 {
                     // a save from before the prologue existed — don't replay it mid-run
                     State.SetFlag("PROLOGUE_DONE");
+                    State.SetFlag(Regions.SeenFlag("bay"));
                 }
             }
         }
@@ -135,8 +141,17 @@ namespace Tidebound
                 return;
             }
 
-            if (!DialogueActive && GameInput.JournalPressed) Journal.Toggle();
-            if (DialogueActive || JournalOpen) return; // the world is frozen; nothing below applies
+            if (!DialogueActive && GameInput.JournalPressed)
+            {
+                if (MapOpen) Wayfinder.Close();
+                Journal.Toggle();
+            }
+            if (!DialogueActive && GameInput.MapPressed)
+            {
+                if (JournalOpen) Journal.Close();
+                Wayfinder.Toggle();
+            }
+            if (DialogueActive || JournalOpen || MapOpen) return; // the world is frozen; nothing below applies
 
             // a scheduled encounter waits until the world can hold it — and
             // keeps a breath of ordinary play between encounters, unless we
@@ -180,9 +195,15 @@ namespace Tidebound
             ApplyFreeze();
         }
 
+        public void SetMapOpen(bool open)
+        {
+            MapOpen = open;
+            ApplyFreeze();
+        }
+
         void ApplyFreeze()
         {
-            bool frozen = DialogueActive || JournalOpen || IsDead;
+            bool frozen = DialogueActive || JournalOpen || MapOpen || IsDead;
             if (clock != null) clock.paused = frozen;
             if (player != null) player.inputLocked = frozen;
             if (cam != null) cam.inputLocked = frozen;
@@ -294,6 +315,23 @@ namespace Tidebound
         }
 
         public void Rest() => AfterAction(SurvivalActions.Rest(State), restCost);
+
+        public void WorkTidePools(ForagePoint point)
+        {
+            var r = SurvivalActions.TidePools(State);
+            if (point != null) point.Deplete(State);
+            AfterAction(r, tidePoolCost);
+            // the secret neighbor: twice into the pools, and the rock opens an eye
+            if (Chapter1Encounters.NineIsDue(State)) QueueStoryEvent("ev_nine");
+        }
+
+        /// <summary>Queue a story event outside the calendar (fires once ever).</summary>
+        public void QueueStoryEvent(string sceneId)
+        {
+            if (State.FiredEvents.TryGetValue(sceneId, out var fired) && fired) return;
+            EventScheduler.MarkFired(State, sceneId);
+            _eventQueue.Enqueue(sceneId);
+        }
 
         public void Drink() => AfterAction(SurvivalActions.Drink(State), drinkCost);
 

@@ -31,6 +31,8 @@ namespace Tidebound.Narrative
             ("FIRE_DROWNED", "A squall drowned your first fire without a sound."),
             ("FLARE_SPENT", "You spent the flare on a ship that never turned. The horizon owes you one answer."),
             ("FLARE_HELD", "A ship crossed the horizon and you held the flare. You stopped waiting; you started preparing."),
+            ("GLYPH_1", "Under moss in the interior: cut spirals, seven strokes to a row. Somebody worked stone here, once."),
+            ("WALLOW_SEEN", "You have seen the wallow. Somebody large keeps the interior, and the rent is not posted in your currency."),
         };
 
         /// <summary>The locals, as the VN's known-list keeps them (engine.js) —
@@ -123,6 +125,18 @@ namespace Tidebound.Narrative
                 lines.Add("");
                 lines.Add("<b>What you've done</b>");
                 lines.AddRange(deeds);
+            }
+
+            // ---- where you've been --------------------------------------------
+            var walked = new List<string>();
+            foreach (var region in Regions.All)
+                if (s.Is(Regions.SeenFlag(region.Id)))
+                    walked.Add(region.Name);
+            if (walked.Count > 0)
+            {
+                lines.Add("");
+                lines.Add("<b>Where you've been</b>");
+                lines.Add(string.Join(" · ", walked));
             }
 
             // ---- the locals ---------------------------------------------------

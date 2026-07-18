@@ -444,8 +444,66 @@ namespace Tidebound.Narrative
                 },
             });
 
+            AddNine(script);
             AddClearing(script);
             return script;
+        }
+
+        /// <summary>The secret neighbor's condition — scenes-chapter1.js
+        /// verbatim: the second pool visit, if she hasn't been met.</summary>
+        public static bool NineIsDue(GameState s) =>
+            s.TidePoolVisits == 2 && !(s.Met.TryGetValue("nine", out var m) && m);
+
+        // ---- the tide pools' oldest question --------------------------------
+        static void AddNine(StoryScript script)
+        {
+            script.Add(new StoryScene
+            {
+                Id = "ev_nine",
+                Speaker = "Something in the pool",
+                Text = _ => new List<string>
+                {
+                    "You're prying at an oyster when the rock beside your hand opens an eye.",
+                    "The whole \"rock\" un-rocks itself in one impossible ripple — texture, color, certainty, all abandoned at once — and becomes an octopus the size of a cat, hanging in the pool's clear water, regarding you with a slotted golden eye that is doing, unmistakably, the same thing you're doing: <i>studying</i>.",
+                    "She has been here before. You understand this suddenly and completely — the watched feeling, the moved rocks, the day you talked out loud to yourself at this pool for an hour. She was attending.",
+                    "She reaches one arm out of the water — slow, deliberate, tip curled like a question mark — and taps the oyster you're holding. Then taps the rock. Then waits.",
+                    "She is showing you where to strike it open. She has <i>opinions about your technique</i>.",
+                },
+                Choices = new List<StoryChoice>
+                {
+                    new StoryChoice
+                    {
+                        Label = "Follow her instructions exactly.",
+                        Sub = "Be teachable.",
+                        Do = s => { s.Meet("nine", 3); s.Stat(Meter.Hunger, 6); s.Stat(Meter.Hope, 4); s.AddRoute(RouteAxis.Depth, 2); },
+                        Go = "ev_nine2",
+                    },
+                    new StoryChoice
+                    {
+                        Label = "Offer her the oyster instead.",
+                        Sub = "Tribute for the professor.",
+                        Do = s => { s.Meet("nine", 2); s.Stat(Meter.Hope, 3); s.AddRoute(RouteAxis.Depth, 2); },
+                        Go = "ev_nine2",
+                    },
+                    new StoryChoice
+                    {
+                        Label = "Withdraw your hand slowly and give the pool some distance.",
+                        Sub = "Respect. Also: those arms are strong and you are far from help.",
+                        Do = s => { s.Meet("nine", 1); s.AddRoute(RouteAxis.Depth, 1); },
+                        Go = "ev_nine2",
+                    },
+                },
+            });
+            script.Add(new StoryScene
+            {
+                Id = "ev_nine2",
+                Speaker = "The neighbor",
+                Text = _ => new List<string>
+                {
+                    "When the business of the oyster is concluded to her satisfaction, she settles back into the pool, pours herself into a crevice you'd have sworn was too small — and stops, one eye out, watching you go.",
+                    "At the last moment, an arm rises above the water and traces one slow spiral in the air. It might be nothing. It might be a wave goodbye. It does not, in any way you can name, feel like nothing.",
+                },
+            });
         }
 
         /// <summary>The animals as the Clearing names them (COURTS, law #3).</summary>

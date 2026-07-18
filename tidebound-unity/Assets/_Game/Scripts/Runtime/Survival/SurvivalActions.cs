@@ -114,6 +114,17 @@ namespace Tidebound
             return ActionResult.Ok("You do the bravest thing: recover.");
         }
 
+        // ---- 🐚 Work the tide pools (VN camp hub, verbatim) -----------------
+        public static ActionResult TidePools(GameState s)
+        {
+            s.Stat(Meter.Energy, -6);
+            s.Stat(Meter.Hunger, 8);
+            s.Stat(Meter.Thirst, -2);
+            s.TidePoolVisits += 1;
+            s.AddRoute(RouteAxis.Depth, 1);
+            return ActionResult.Ok("Shellfish, and whatever else lives in the shallows' little worlds. Something in the far pool was watching you work. Probably a rock.");
+        }
+
         // ---- 💧 Drink at the trickle (3D adaptation; the bay's safe source) --
         public static ActionResult Drink(GameState s)
         {

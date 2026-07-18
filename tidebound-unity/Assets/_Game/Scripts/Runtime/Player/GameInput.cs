@@ -106,6 +106,11 @@ namespace Tidebound
         {
             get { var k = Keyboard.current; return k != null && k.jKey.wasPressedThisFrame; }
         }
+
+        public static bool MapPressed
+        {
+            get { var k = Keyboard.current; return k != null && k.mKey.wasPressedThisFrame; }
+        }
 #else
         public static Vector2 Move
         {
@@ -164,6 +169,8 @@ namespace Tidebound
         }
 
         public static bool JournalPressed => Input.GetKeyDown(KeyCode.J);
+
+        public static bool MapPressed => Input.GetKeyDown(KeyCode.M);
 #endif
     }
 }

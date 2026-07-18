@@ -40,6 +40,8 @@ namespace Tidebound.EditorTools
             BuildTerrain(mats);
             BuildSea(mats);
             BuildDistantIsland(mats);
+            BuildTidePoolsZone(mats);
+            BuildGreenDeepZone(mats);
             BuildBounds();
             BuildJungleWall(mats);
             BuildWreck(mats);
@@ -111,15 +113,39 @@ namespace Tidebound.EditorTools
         }
 
         // ================= terrain =================
-        /// <summary>The bay's height function — also used to sit objects on the sand.</summary>
+        /// <summary>
+        /// The island's height function — also used to sit objects on the
+        /// ground. Zones: the bay (unchanged where the camp lives), the
+        /// tide-pool shelf east, the fringe rising into the Green Deep's
+        /// interior shelf. The west headland still closes the bay; the east
+        /// opens onto the pools.
+        /// </summary>
         static float Height(float x, float z)
         {
             float slope = z < 0f
                 ? z * 0.16f                                   // shelf falling into the sea
                 : 6f * Smooth01(z / 95f);                     // dune rising to the treeline
-            float bowl = 3.5f * Smooth01((Mathf.Abs(x) - 78f) / 42f); // headlands close the bay
+            float bowl = 3.5f * Smooth01((-x - 78f) / 42f);   // the WEST headland
             float noise = (Mathf.PerlinNoise(x * 0.035f + 7.3f, z * 0.035f + 2.1f) - 0.5f) * 1.1f;
-            return slope + bowl + noise - 0.15f;
+            float h = slope + bowl + noise - 0.15f;
+
+            // east: the tide-pool shelf — a low rock terrace pitted with pools
+            if (x > 110f && z < 75f)
+            {
+                float blend = Smooth01((x - 110f) / 28f) * Smooth01((70f - z) / 25f);
+                float pits = (Mathf.PerlinNoise(x * 0.09f + 3.1f, z * 0.09f + 5.7f) - 0.55f) * 1.7f;
+                float shelf = 0.55f + Mathf.Max(pits, -0.55f);
+                h = Mathf.Lerp(h, shelf, blend);
+            }
+
+            // interior: the fringe climbs into the Green Deep
+            if (z > 80f)
+            {
+                h += 8f * Smooth01((z - 80f) / 160f);
+                h += (Mathf.PerlinNoise(x * 0.02f + 1.7f, z * 0.02f + 9.2f) - 0.5f) * 3f * Smooth01((z - 130f) / 60f);
+            }
+
+            return h;
         }
 
         static float Smooth01(float t)
@@ -153,8 +179,8 @@ namespace Tidebound.EditorTools
 
         static void BuildTerrain(Mats mats)
         {
-            const int nx = 97, nz = 81;
-            const float x0 = -120f, x1 = 120f, z0 = -60f, z1 = 140f;
+            const int nx = 121, nz = 134;
+            const float x0 = -140f, x1 = 220f, z0 = -60f, z1 = 340f;
 
             var verts = new Vector3[nx * nz];
             var uvs = new Vector2[nx * nz];
@@ -256,20 +282,20 @@ namespace Tidebound.EditorTools
             // the massif: overlapping domes rising landward
             var domes = new (Vector3 pos, Vector3 scale)[]
             {
-                (new Vector3(-40f, 10f, 260f), new Vector3(260f, 90f, 200f)),
-                (new Vector3(90f, 5f, 320f), new Vector3(220f, 70f, 190f)),
-                (new Vector3(-140f, 0f, 330f), new Vector3(200f, 55f, 170f)),
-                (new Vector3(20f, 20f, 420f), new Vector3(300f, 150f, 240f)), // the mountain itself
-                (new Vector3(150f, 0f, 460f), new Vector3(180f, 60f, 160f)),
+                (new Vector3(-40f, 10f, 430f), new Vector3(260f, 90f, 200f)),
+                (new Vector3(90f, 5f, 490f), new Vector3(220f, 70f, 190f)),
+                (new Vector3(-140f, 0f, 500f), new Vector3(200f, 55f, 170f)),
+                (new Vector3(20f, 20f, 590f), new Vector3(300f, 150f, 240f)), // the mountain itself
+                (new Vector3(150f, 0f, 630f), new Vector3(180f, 60f, 160f)),
             };
             foreach (var (pos, scale) in domes)
                 NoShadow(Prim(PrimitiveType.Sphere, "Terrace", parent.transform, pos, scale, mats.Mountain, stripCollider: true));
 
             // the broken crown: two rim stubs with the break between them
             NoShadow(Prim(PrimitiveType.Cylinder, "CrownWest", parent.transform,
-                new Vector3(-8f, 105f, 415f), new Vector3(52f, 26f, 48f), mats.Mountain, stripCollider: true));
+                new Vector3(-8f, 105f, 585f), new Vector3(52f, 26f, 48f), mats.Mountain, stripCollider: true));
             NoShadow(Prim(PrimitiveType.Cylinder, "CrownEast", parent.transform,
-                new Vector3(58f, 96f, 428f), new Vector3(40f, 20f, 38f), mats.Mountain, stripCollider: true));
+                new Vector3(58f, 96f, 598f), new Vector3(40f, 20f, 38f), mats.Mountain, stripCollider: true));
 
             parent.isStatic = true;
         }
@@ -283,10 +309,14 @@ namespace Tidebound.EditorTools
         static void BuildBounds()
         {
             var parent = new GameObject("Bounds");
-            Wall(parent.transform, "SeaWall", new Vector3(0, 4f, -12f), new Vector3(400f, 12f, 1f));
-            Wall(parent.transform, "JungleWall", new Vector3(0, 6f, 76f), new Vector3(400f, 16f, 1f));
-            Wall(parent.transform, "WestWall", new Vector3(-105f, 8f, 30f), new Vector3(1f, 20f, 220f));
-            Wall(parent.transform, "EastWall", new Vector3(105f, 8f, 30f), new Vector3(1f, 20f, 220f));
+            // the bay's sea line, and the pools' deeper one east of it
+            Wall(parent.transform, "SeaWallBay", new Vector3(-15f, 4f, -12f), new Vector3(250f, 12f, 1f));
+            Wall(parent.transform, "SeaWallPools", new Vector3(170f, 4f, -28f), new Vector3(120f, 12f, 1f));
+            Wall(parent.transform, "SeaWallJoin", new Vector3(110f, 4f, -20f), new Vector3(1f, 12f, 18f));
+            // the deep interior's edge — the mountain's country starts here
+            Wall(parent.transform, "InteriorWall", new Vector3(40f, 14f, 315f), new Vector3(500f, 24f, 1f));
+            Wall(parent.transform, "WestWall", new Vector3(-125f, 10f, 130f), new Vector3(1f, 28f, 560f));
+            Wall(parent.transform, "EastWall", new Vector3(212f, 10f, 130f), new Vector3(1f, 28f, 560f));
         }
 
         static void Wall(Transform parent, string name, Vector3 pos, Vector3 size)
@@ -302,11 +332,12 @@ namespace Tidebound.EditorTools
         // ================= dressing =================
         static void BuildJungleWall(Mats mats)
         {
+            // no longer a wall: the fringe is a walkable ecotone band now
             var parent = new GameObject("JungleFringe");
-            for (int i = 0; i < 46; i++)
+            for (int i = 0; i < 42; i++)
             {
-                float x = Rnd(-115f, 115f);
-                float z = Rnd(78f, 98f);
+                float x = Rnd(-130f, 205f);
+                float z = Rnd(78f, 148f);
                 float y = Height(x, z);
                 var trunk = Prim(PrimitiveType.Cylinder, "Trunk", parent.transform,
                     new Vector3(x, y + 2.6f, z), new Vector3(0.4f, 2.8f, 0.4f), mats.Wood, stripCollider: true);
@@ -813,6 +844,132 @@ namespace Tidebound.EditorTools
             return director;
         }
 
+        // ================= the eastern shelf: THE TIDE POOLS =================
+        static void BuildTidePoolsZone(Mats mats)
+        {
+            var parent = new GameObject("TidePoolsZone");
+
+            for (int i = 0; i < 14; i++)
+            {
+                float x = Rnd(125f, 205f), z = Rnd(-15f, 55f);
+                var rock = Prim(PrimitiveType.Sphere, "ShelfRock", parent.transform,
+                    new Vector3(x, Height(x, z) + 0.25f, z),
+                    new Vector3(Rnd(0.8f, 2.6f), Rnd(0.4f, 1.2f), Rnd(0.8f, 2.6f)), mats.Rock);
+                rock.transform.rotation = Quaternion.Euler(Rnd(-10f, 10f), Rnd(0f, 360f), Rnd(-10f, 10f));
+            }
+
+            // the pools themselves — cities at low tide
+            for (int i = 0; i < 10; i++)
+            {
+                float x = Rnd(128f, 202f), z = Rnd(-12f, 50f);
+                NoShadow(Prim(PrimitiveType.Cylinder, "Pool", parent.transform,
+                    new Vector3(x, 0.12f, z),
+                    new Vector3(Rnd(1.6f, 3.6f), 0.03f, Rnd(1.4f, 3f)), mats.Fresh, stripCollider: true));
+            }
+
+            // three workable pool cities
+            var poolSpots = new[] { new Vector2(140f, 12f), new Vector2(166f, 32f), new Vector2(192f, 6f) };
+            foreach (var spot in poolSpots)
+            {
+                var point = new GameObject("TidePoolPoint");
+                point.transform.SetParent(parent.transform, true);
+                point.transform.position = new Vector3(spot.x, Height(spot.x, spot.y), spot.y);
+                var shells = new GameObject("Shells");
+                shells.transform.SetParent(point.transform, true);
+                shells.transform.position = point.transform.position;
+                for (int i = 0; i < 3; i++)
+                    Prim(PrimitiveType.Sphere, "Shell", shells.transform,
+                        point.transform.position + new Vector3(Rnd(-0.5f, 0.5f), 0.08f, Rnd(-0.5f, 0.5f)),
+                        Vector3.one * 0.12f, mats.Foam, stripCollider: true);
+                var forage = point.AddComponent<ForagePoint>();
+                forage.kind = ForagePoint.Kind.TidePool;
+                forage.regrowSegments = 3;
+                forage.visual = shells;
+                forage.interactRadius = 3f;
+            }
+
+            // the gallery at the drop-off: sorted shells, stacked stones,
+            // curated by eight patient arms you don't see today
+            var gallery = new GameObject("TheGallery");
+            gallery.transform.SetParent(parent.transform, true);
+            gallery.transform.position = new Vector3(186f, Height(186f, 0f), 0f);
+            for (int i = 0; i < 6; i++)
+                Prim(PrimitiveType.Cube, "SortedStone", gallery.transform,
+                    gallery.transform.position + new Vector3(Rnd(-0.8f, 0.8f), 0.1f + i * 0.02f, Rnd(-0.8f, 0.8f)),
+                    Vector3.one * Rnd(0.1f, 0.22f), mats.DarkStone, stripCollider: true);
+        }
+
+        // ================= the interior: THE GREEN DEEP =================
+        static void BuildGreenDeepZone(Mats mats)
+        {
+            var parent = new GameObject("GreenDeepZone");
+
+            // the canopy closes like a lid; trunks keep their colliders —
+            // the interior is a maze you thread, not a lawn you cross
+            for (int i = 0; i < 70; i++)
+            {
+                float x = Rnd(-120f, 205f), z = Rnd(155f, 300f);
+                float y = Height(x, z);
+                var trunk = Prim(PrimitiveType.Cylinder, "DeepTrunk", parent.transform,
+                    new Vector3(x, y + 2.8f, z), new Vector3(Rnd(0.35f, 0.6f), 2.9f, Rnd(0.35f, 0.6f)), mats.Wood);
+                trunk.transform.rotation = Quaternion.Euler(Rnd(-5f, 5f), Rnd(0f, 360f), Rnd(-5f, 5f));
+                if (i % 2 == 0)
+                    Prim(PrimitiveType.Sphere, "DeepCanopy", parent.transform,
+                        new Vector3(x + Rnd(-2f, 2f), y + Rnd(9f, 13f), z + Rnd(-2f, 2f)),
+                        new Vector3(Rnd(8f, 14f), Rnd(3f, 5f), Rnd(8f, 14f)), mats.JungleDark, stripCollider: true);
+            }
+
+            // the fig hoard tree — the interior's one generous table
+            float fx = 60f, fz = 230f, fy = Height(fx, fz);
+            var figTree = new GameObject("FigHoardTree");
+            figTree.transform.SetParent(parent.transform, true);
+            figTree.transform.position = new Vector3(fx, fy, fz);
+            Prim(PrimitiveType.Cylinder, "Trunk", figTree.transform,
+                new Vector3(fx, fy + 3.2f, fz), new Vector3(1.1f, 3.2f, 1.1f), mats.Wood);
+            Prim(PrimitiveType.Sphere, "Crown", figTree.transform,
+                new Vector3(fx, fy + 8.5f, fz), new Vector3(11f, 5f, 11f), mats.Leaf, stripCollider: true);
+            var figs = new GameObject("Figs");
+            figs.transform.SetParent(figTree.transform, true);
+            figs.transform.position = figTree.transform.position;
+            for (int i = 0; i < 5; i++)
+                Prim(PrimitiveType.Sphere, "Fig", figs.transform,
+                    figTree.transform.position + new Vector3(Rnd(-1.5f, 1.5f), 0.15f, Rnd(-1.5f, 1.5f)),
+                    Vector3.one * 0.14f, mats.Fruit, stripCollider: true);
+            var figPoint = figTree.AddComponent<ForagePoint>();
+            figPoint.kind = ForagePoint.Kind.Berries;
+            figPoint.regrowSegments = 6;
+            figPoint.visual = figs;
+            figPoint.interactRadius = 3.2f;
+
+            // the glyph stone — the island's oldest furniture
+            float gx = -30f, gz = 210f, gy = Height(gx, gz);
+            var glyph = Prim(PrimitiveType.Cube, "GlyphStone", parent.transform,
+                new Vector3(gx, gy + 1.1f, gz), new Vector3(1.1f, 2.4f, 0.7f), mats.DarkStone);
+            glyph.transform.rotation = Quaternion.Euler(Rnd(-6f, 6f), Rnd(0f, 360f), Rnd(-6f, 6f));
+            var glyphStone = glyph.AddComponent<LoreStone>();
+            glyphStone.displayName = "A mossed standing stone";
+            glyphStone.optionLabel = "Peel the moss back";
+            glyphStone.optionSub = "Earth on this island has a habit of holding things.";
+            glyphStone.flag = "GLYPH_1";
+            glyphStone.prose = "Under the moss, cut faces: spirals and tide-lines, worked once by hands. The strokes run seven to a row. You trace one, and the jungle seems, briefly, to listen.";
+            glyphStone.interactRadius = 3f;
+
+            // the wallow — the King's home counties, posted plainly
+            float wx = -40f, wz = 260f, wy = Height(wx, wz);
+            NoShadow(Prim(PrimitiveType.Cylinder, "WallowMud", parent.transform,
+                new Vector3(wx, wy + 0.06f, wz), new Vector3(5f, 0.05f, 4f), mats.Wood, stripCollider: true));
+            var wallowMark = new GameObject("Wallow");
+            wallowMark.transform.SetParent(parent.transform, true);
+            wallowMark.transform.position = new Vector3(wx, wy, wz);
+            var wallow = wallowMark.AddComponent<LoreStone>();
+            wallow.displayName = "A wallow like a crater";
+            wallow.optionLabel = "Read the sign";
+            wallow.optionSub = "Old and new. Somebody large lives here.";
+            wallow.flag = "WALLOW_SEEN";
+            wallow.prose = "Churned mud, tusk-scored trees, sign in every age from ancient to this-morning. Rent country. You keep your tread soft and your tithe-arithmetic ready.";
+            wallow.interactRadius = 3.5f;
+        }
+
         // ================= the encounter stage =================
         static EncounterStageDirector BuildEncounterStage(Mats mats)
         {
@@ -920,6 +1077,22 @@ namespace Tidebound.EditorTools
             ship.AddComponent<ShipCrawl>();
             ship.SetActive(false);
 
+            // ---- Nine: the rock that opens an eye, at the gallery ----
+            var nine = new GameObject("NineRig");
+            var ninePos = new Vector3(186f, Height(186f, 2f) + 0.15f, 2f);
+            Prim(PrimitiveType.Sphere, "Mantle", nine.transform,
+                ninePos, new Vector3(0.5f, 0.35f, 0.5f), mats.Rock, stripCollider: true);
+            NoShadow(Prim(PrimitiveType.Sphere, "Eye", nine.transform,
+                ninePos + new Vector3(0.14f, 0.12f, 0.18f), Vector3.one * 0.09f, mats.Cushion, stripCollider: true));
+            for (int arm = 0; arm < 4; arm++)
+            {
+                var tentacle = Prim(PrimitiveType.Cylinder, "Arm", nine.transform,
+                    ninePos + Quaternion.Euler(0f, arm * 85f + 20f, 0f) * new Vector3(0.42f, -0.08f, 0f),
+                    new Vector3(0.07f, 0.3f, 0.07f), mats.Rock, stripCollider: true);
+                tentacle.transform.rotation = Quaternion.Euler(80f, arm * 85f + 20f, 0f);
+            }
+            nine.SetActive(false);
+
             var flare = new GameObject("FlareRig");
             flare.transform.position = new Vector3(0f, 2f, -12f);
             NoShadow(Prim(PrimitiveType.Sphere, "Ball", flare.transform,
@@ -948,6 +1121,7 @@ namespace Tidebound.EditorTools
             director.hawkRig = hawk;
             director.shipRig = ship;
             director.flareRig = flare;
+            director.nineRig = nine;
             return director;
         }
 
@@ -1133,6 +1307,7 @@ namespace Tidebound.EditorTools
             camGo.transform.position = player.transform.position + new Vector3(0f, 3f, -4f);
 
             // ---- game manager wiring ----
+            systemsHost.AddComponent<RegionTracker>();
             var gm = systemsHost.AddComponent<GameManager>();
             gm.clock = systemsHost.GetComponent<GameClock>();
             gm.player = controller;

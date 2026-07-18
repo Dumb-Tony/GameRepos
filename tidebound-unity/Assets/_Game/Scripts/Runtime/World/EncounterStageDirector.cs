@@ -24,6 +24,7 @@ namespace Tidebound
         public GameObject hawkRig;
         public GameObject shipRig;
         public GameObject flareRig;
+        public GameObject nineRig;
         public SunCycle sun;
 
         [Header("Shot feel")]
@@ -90,6 +91,10 @@ namespace Tidebound
                 case "ev_lights":
                     Show(shipRig);
                     Shot(new Vector3(2f, 2.4f, 10f), new Vector3(-250f, 12f, -500f));
+                    return true;
+                case "ev_nine":
+                    Show(nineRig);
+                    Shot(new Vector3(172f, 2f, 22f), new Vector3(186f, 0.2f, 2f));
                     return true;
                 case "clearing":
                     // they are all, in their various ways, present

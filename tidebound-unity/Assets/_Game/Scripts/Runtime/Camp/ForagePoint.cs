@@ -12,7 +12,7 @@ namespace Tidebound
     /// </summary>
     public class ForagePoint : Interactable
     {
-        public enum Kind { Berries, Coconut, Driftwood }
+        public enum Kind { Berries, Coconut, Driftwood, TidePool }
 
         public Kind kind = Kind.Berries;
         [Tooltip("Segments until this point is usable again. 4 = one full day.")]
@@ -34,6 +34,7 @@ namespace Tidebound
                 {
                     case Kind.Coconut: return "A coconut palm";
                     case Kind.Driftwood: return "Driftwood";
+                    case Kind.TidePool: return "A pool city";
                     default: return "The treeline";
                 }
             }
@@ -59,6 +60,11 @@ namespace Tidebound
                     options.Add(InteractionOption.Do("Gather driftwood",
                         "The sea's lumberyard restocks nightly.",
                         g => g.GatherDriftwood(this)));
+                    break;
+                case Kind.TidePool:
+                    options.Add(InteractionOption.Do("Work the tide pools",
+                        "Shellfish, and whatever else lives in the shallows' little worlds.",
+                        g => g.WorkTidePools(this)));
                     break;
             }
         }

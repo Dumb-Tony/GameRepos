@@ -176,7 +176,24 @@ tidebound-unity/
       scar. 13 new tests. Remaining: the warning sense needs a predator
       (Phase 4-5), peril/nursing arc, feel pass on follow AI — the bar is
       "someone watching asks about the dog".*
-- [ ] Phase 4 — the island (12-zone greybox generator, Wayfinder)
+- [~] Phase 4 — the island. *Session 1 (this commit; interleaved with
+      Phase 3 so the dog has somewhere to go): the v1 island — terrain
+      grows to 360×400m; the Tide Pools open EAST (per the chart): rock
+      shelf, pool cities, three workable TidePool points (VN numbers via
+      SurvivalActions.TidePools) and the gallery at the drop-off where
+      Nine waits (pools==2 && unmet, machine truth; ev_nine/ev_nine2
+      ported + staged with the rock-that-opens-an-eye rig); the Jungle
+      Fringe becomes a walkable ecotone band; the Green Deep interior —
+      collidable trunk maze under a closed canopy, the fig hoard tree,
+      the glyph stone and the wallow (LoreStone); Regions.cs ports map.js
+      names/subs/first-visit prose/fx1/deck for all four zones;
+      RegionTracker plays first-visit set pieces + daily deck draws +
+      Kavi's huff at the interior's light-line; the WAYFINDER on M
+      (fog-of-war chart at canon positions, spinning compass); journal
+      "Where you've been"; the bay auto-seen (home isn't an expedition);
+      mountains pushed back beyond the interior. 8 new tests. Remaining:
+      Bone Beach + trinkets, gates as presences (Grin/Boar King, Phase 5),
+      compass-spin near heartglass.*
 - [ ] Phase 5 — act 1–2 story + first three endings
 - [ ] Phase 6 — depth passes per act · Phase 7 — companions, NG+, polish
 
