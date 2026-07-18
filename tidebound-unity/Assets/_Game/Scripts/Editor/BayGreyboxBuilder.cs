@@ -48,8 +48,9 @@ namespace Tidebound.EditorTools
             BuildDriftwood(mats);
             BuildCamp(mats);
             BuildSosSite(mats);
-            BuildAmbientLife(mats);
-            BuildPlayerCameraAndSystems(gameClockHost);
+            var shoreAmbience = BuildAmbientLife(mats);
+            var director = BuildPrologueStage(mats, shoreAmbience);
+            BuildPlayerCameraAndSystems(gameClockHost, director);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
             AddToBuildSettings();
@@ -541,7 +542,7 @@ namespace Tidebound.EditorTools
         }
 
         // ================= ambient life =================
-        static void BuildAmbientLife(Mats mats)
+        static GameObject BuildAmbientLife(Mats mats)
         {
             // the sound of the place — synthesized, no audio files
             var ambience = new GameObject("ShoreAmbience");
@@ -569,6 +570,109 @@ namespace Tidebound.EditorTools
                     pos + new Vector3(0.12f, 0.05f, 0.08f), Vector3.one * 0.06f, mats.Crab, stripCollider: true);
                 crab.AddComponent<CrabAI>();
             }
+
+            return ambience;
+        }
+
+        // ================= the prologue stage =================
+        static PrologueStageDirector BuildPrologueStage(Mats mats, GameObject shoreAmbience)
+        {
+            // ---- the charter plane (chase-shot exterior; no fire — canon:
+            // the engines are fine, the instruments are drunk) ----
+            var plane = new GameObject("ProloguePlane");
+            var body = Prim(PrimitiveType.Capsule, "Fuselage", plane.transform,
+                Vector3.zero, new Vector3(1.5f, 1.5f, 1.5f), mats.Metal, stripCollider: true);
+            body.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+            body.transform.localScale = new Vector3(1.5f, 2.6f, 1.5f); // capsule axis = Y → lies along Z after rotation
+            Prim(PrimitiveType.Cube, "Wings", plane.transform,
+                new Vector3(0f, 0.35f, 0.4f), new Vector3(9.5f, 0.12f, 1.6f), mats.Metal, stripCollider: true);
+            var tail = Prim(PrimitiveType.Cube, "TailFin", plane.transform,
+                new Vector3(0f, 1.1f, -2.6f), new Vector3(0.12f, 1.6f, 1.1f), mats.Metal, stripCollider: true);
+            tail.transform.localRotation = Quaternion.Euler(-18f, 0f, 0f);
+            Prim(PrimitiveType.Cylinder, "EngineL", plane.transform,
+                new Vector3(-2.6f, 0.15f, 0.8f), new Vector3(0.5f, 0.6f, 0.5f), mats.DarkStone, stripCollider: true)
+                .transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+            Prim(PrimitiveType.Cylinder, "EngineR", plane.transform,
+                new Vector3(2.6f, 0.15f, 0.8f), new Vector3(0.5f, 0.6f, 0.5f), mats.DarkStone, stripCollider: true)
+                .transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+            // children were placed at world origin; re-seat them as locals
+            foreach (Transform child in plane.transform) child.localPosition = child.position;
+            plane.AddComponent<PlaneDescent>();
+            var droneSource = plane.AddComponent<AudioSource>();
+            droneSource.playOnAwake = false;
+            plane.AddComponent<EngineDrone>();
+            plane.SetActive(false);
+
+            // ---- the sinking blue dark ----
+            var underwater = new GameObject("UnderwaterStage");
+            underwater.transform.position = new Vector3(0f, -45f, -140f);
+            var underwaterDrift = underwater.AddComponent<UnderwaterDrift>();
+            var bubbleRng = new System.Random(11);
+            for (int i = 0; i < 18; i++)
+            {
+                var bubble = Prim(PrimitiveType.Sphere, "Bubble", underwater.transform,
+                    underwater.transform.position + new Vector3(
+                        (float)(bubbleRng.NextDouble() * 8 - 4),
+                        (float)(bubbleRng.NextDouble() * 12 - 6),
+                        (float)(bubbleRng.NextDouble() * 8 - 4) + 2f),
+                    Vector3.one * (0.05f + (float)bubbleRng.NextDouble() * 0.09f), mats.Foam, stripCollider: true);
+                bubble.transform.SetParent(underwater.transform, true);
+            }
+            var abyssLight = new GameObject("AbyssLight");
+            abyssLight.transform.SetParent(underwater.transform, false);
+            abyssLight.transform.localPosition = new Vector3(0f, -8f, 4f);
+            var abyss = abyssLight.AddComponent<Light>();
+            abyss.type = LightType.Point;
+            abyss.color = new Color(0.2f, 0.75f, 0.7f);
+            abyss.range = 25f;
+            abyss.intensity = 1.1f;
+            underwater.SetActive(false);
+
+            // ---- the fuselage dying on the reef (prologue only; it sinks) ----
+            var wreck = new GameObject("ReefWreck");
+            var hull = Prim(PrimitiveType.Cylinder, "Hull", wreck.transform,
+                new Vector3(-12f, -0.4f, -28f), new Vector3(2.4f, 4.5f, 2.4f), mats.Metal, stripCollider: true);
+            hull.transform.rotation = Quaternion.Euler(78f, -30f, 0f);
+            var doorway = Prim(PrimitiveType.Cube, "Doorway", wreck.transform,
+                new Vector3(-10.6f, 0.6f, -26.8f), new Vector3(1.1f, 1.4f, 0.15f), mats.DarkStone, stripCollider: true);
+            doorway.transform.rotation = Quaternion.Euler(12f, -30f, 0f);
+            wreck.SetActive(false);
+
+            // ---- the lagoon's glow (prologue night, then every night after) ----
+            var glow = new GameObject("LagoonGlow");
+            var glowRng = new System.Random(23);
+            for (int i = 0; i < 6; i++)
+            {
+                float gx = (float)(glowRng.NextDouble() * 90 - 45);
+                float gz = -6f - (float)(glowRng.NextDouble() * 32);
+                Prim(PrimitiveType.Cylinder, "GlowDisc", glow.transform,
+                    new Vector3(gx, 0.15f, gz), // riding the surface; the sea is opaque greybox
+                    new Vector3(4f + (float)glowRng.NextDouble() * 5f, 0.03f, 4f + (float)glowRng.NextDouble() * 5f),
+                    Mat("HeartglassGlow", new Color(0.25f, 0.95f, 0.85f), 0.9f), stripCollider: true);
+                if (i % 2 == 0)
+                {
+                    var lightGo = new GameObject("GlowLight");
+                    lightGo.transform.SetParent(glow.transform, false);
+                    lightGo.transform.position = new Vector3(gx, 1.2f, gz);
+                    var l = lightGo.AddComponent<Light>();
+                    l.type = LightType.Point;
+                    l.color = new Color(0.25f, 0.95f, 0.85f);
+                    l.range = 20f;
+                }
+            }
+            var lagoon = glow.AddComponent<LagoonGlow>();
+
+            // ---- the director ----
+            var directorGo = new GameObject("PrologueDirector");
+            var director = directorGo.AddComponent<PrologueStageDirector>();
+            director.planeRig = plane;
+            director.underwaterRig = underwater;
+            director.reefWreck = wreck;
+            director.lagoonGlow = lagoon;
+            director.shoreAmbience = shoreAmbience;
+            // the sun doesn't exist yet — BuildPlayerCameraAndSystems wires
+            // underwaterDrift.sun once it does
+            return director;
         }
 
         // ================= systems, player, camera, sun =================
@@ -586,7 +690,7 @@ namespace Tidebound.EditorTools
             systemsHost.AddComponent<GameClock>();
         }
 
-        static void BuildPlayerCameraAndSystems(GameObject systemsHost)
+        static void BuildPlayerCameraAndSystems(GameObject systemsHost, PrologueStageDirector director)
         {
             // ---- sun ----
             var sunGo = new GameObject("Sun");
@@ -596,6 +700,8 @@ namespace Tidebound.EditorTools
             RenderSettings.sun = sun;
             var cycle = sunGo.AddComponent<SunCycle>();
             cycle.clock = systemsHost.GetComponent<GameClock>();
+            if (director != null && director.underwaterRig != null)
+                director.underwaterRig.GetComponent<UnderwaterDrift>().sun = cycle;
 
             // ---- player ----
             float px = 0f, pz = 6f;
@@ -641,6 +747,7 @@ namespace Tidebound.EditorTools
             gm.player = controller;
             gm.cam = orbit;
             gm.interactor = interactor;
+            gm.prologueDirector = director;
             controller.cameraTransform = camGo.transform;
             controller.gm = gm;
             interactor.gm = gm;

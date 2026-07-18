@@ -41,6 +41,18 @@ namespace Tidebound
             _currentDistance = distance;
         }
 
+        /// <summary>
+        /// Re-seat the orbit behind the target at the start angles — for
+        /// handing the camera back after a director has flown it around.
+        /// </summary>
+        public void SnapBehindTarget()
+        {
+            _pitch = _targetPitch = startAngles.x;
+            _yaw = _targetYaw = target != null ? target.eulerAngles.y + startAngles.y : startAngles.y;
+            _yawVelocity = _pitchVelocity = 0f;
+            _currentDistance = distance;
+        }
+
         void LateUpdate()
         {
             if (target == null) return;

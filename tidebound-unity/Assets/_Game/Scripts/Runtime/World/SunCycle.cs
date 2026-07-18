@@ -28,6 +28,9 @@ namespace Tidebound
         [Tooltip("Also tint RenderSettings.fogColor from the ambient gradient.")]
         public bool driveFog = true;
 
+        /// <summary>Stage overrides (underwater, etc.) set this to take the wheel.</summary>
+        [HideInInspector] public bool suppressed;
+
         Light _sun;
 
         void Awake()
@@ -49,7 +52,7 @@ namespace Tidebound
 
         void LateUpdate()
         {
-            if (clock == null) return;
+            if (clock == null || suppressed) return;
             Apply(clock.Clock.Time01);
         }
 

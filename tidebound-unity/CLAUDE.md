@@ -118,8 +118,17 @@ tidebound-unity/
       every effect pinned by PrologueScriptTests), Ledger journal on J
       (JournalEntries pure + JournalUI sheet; route numbers never shown),
       GameManager freeze/cursor orchestration. New games now begin at the
-      crash. Remaining: chapter-1 scheduled encounters (Vela, the howls,
-      the squall) as world events, journal quest hooks, dialogue polish.*
+      crash. Session 2 (make it cinematic): PrologueStageDirector stages
+      the prologue as a filmed sequence — chase shot of a greybox plane
+      actually descending (PlaneDescent + synthesized EngineDrone), hard
+      cut to the sinking blue dark (UnderwaterDrift), the real shore at
+      dusk with the fuselage dying on the reef, the lagoon's seven-beat
+      glow (SevenBeat pure curve + LagoonGlow — which keeps glowing on
+      later nights once COMPASS_SPINS is set), fades between stages
+      (DialogueUI owns the screen fader), dialogue in a lower-third panel
+      (DialogueStyle) so the world plays above the words, and you wake at
+      the waterline at dawn. Remaining: chapter-1 scheduled encounters
+      (Vela, the howls, the squall) as world events, journal quest hooks.*
 - [ ] Phase 3 — the dog (Kavi; make-or-break)
 - [ ] Phase 4 — the island (12-zone greybox generator, Wayfinder)
 - [ ] Phase 5 — act 1–2 story + first three endings

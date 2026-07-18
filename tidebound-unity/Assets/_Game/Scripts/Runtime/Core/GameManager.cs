@@ -23,6 +23,7 @@ namespace Tidebound
         public PlayerController player;
         public OrbitCamera cam;
         public PlayerInteractor interactor;
+        public PrologueStageDirector prologueDirector;
 
         [Header("Time costs (segments) — pacing knobs, tune freely. The rule: " +
                 "labors (hours of work) cost time; gestures (picking up a stick, " +
@@ -80,13 +81,15 @@ namespace Tidebound
                 if (State.Day <= 0)
                 {
                     // a fresh life: the crash, who you were, the salvage, the glow
-                    Dialogue.Play(PrologueScript.Build(), PrologueScript.Start, () =>
+                    System.Action onPrologueDone = () =>
                     {
                         State.SetFlag("PROLOGUE_DONE");
                         clock.SyncToState(); // night0 moved us to Day 1, Dawn
                         SaveNow();
                         Toast("WASD to move · Shift to run · E/F/C to act · J opens the Ledger · Esc frees the mouse.", ToastKind.Info);
-                    });
+                    };
+                    if (prologueDirector != null) prologueDirector.PlayPrologue(this, onPrologueDone);
+                    else Dialogue.Play(PrologueScript.Build(), PrologueScript.Start, onPrologueDone);
                 }
                 else
                 {

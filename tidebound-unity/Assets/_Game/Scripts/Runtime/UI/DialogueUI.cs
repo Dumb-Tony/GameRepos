@@ -7,12 +7,23 @@ using UnityEngine.UI;
 
 namespace Tidebound
 {
+    /// <summary>How the reading overlay sits on the screen.</summary>
+    public enum DialogueStyle
+    {
+        /// <summary>Full dim — the words are the whole scene.</summary>
+        FullScreen,
+        /// <summary>A lower-third panel — the staged world plays above it.</summary>
+        LowerThird,
+    }
+
     /// <summary>
-    /// The VN's soul in 3D: a full-screen reading overlay with typewriter
-    /// paragraphs and choices that always show their consequence subtext.
-    /// Built entirely in code. While a story plays, the world freezes
-    /// (GameManager.SetDialogueActive) and the HUD steps aside.
-    /// Advance: Space/E/Enter/click. Choices: click or number keys.
+    /// The VN's soul in 3D: a reading overlay with typewriter paragraphs
+    /// and choices that always show their consequence subtext. Full-screen
+    /// for pure prose, lower-third when a stage director is showing the
+    /// world above the words. Built entirely in code. While a story plays,
+    /// the world freezes (GameManager.SetDialogueActive) and the HUD steps
+    /// aside. Advance: Space/E/Enter/click. Choices: click or number keys.
+    /// Also owns the screen fader, so directors can cut and fade.
     /// </summary>
     public class DialogueUI : MonoBehaviour
     {
@@ -30,6 +41,13 @@ namespace Tidebound
         Font _font;
         GameObject _root;
         RectTransform _column;
+        Image _backdrop;
+        Image _columnBg;
+        Image _fadeImage;
+        Coroutine _fadeRoutine;
+
+        /// <summary>Fired whenever a new story scene's text goes up (with its id).</summary>
+        public event Action<string> SceneEntered;
 
         StoryPlayback _playback;
         Action _onComplete;
@@ -72,20 +90,22 @@ namespace Tidebound
             _root.transform.SetParent(transform, false);
             Stretch((RectTransform)_root.transform);
 
-            var backdrop = new GameObject("Backdrop", typeof(RectTransform)).AddComponent<Image>();
-            backdrop.transform.SetParent(_root.transform, false);
-            Stretch((RectTransform)backdrop.transform);
-            backdrop.color = backdropColor;
-            backdrop.raycastTarget = true; // eat clicks aimed at the world
+            _backdrop = new GameObject("Backdrop", typeof(RectTransform)).AddComponent<Image>();
+            _backdrop.transform.SetParent(_root.transform, false);
+            Stretch((RectTransform)_backdrop.transform);
+            _backdrop.color = backdropColor;
+            _backdrop.raycastTarget = true; // eat clicks aimed at the world
 
             var columnGo = new GameObject("Column", typeof(RectTransform));
             columnGo.transform.SetParent(_root.transform, false);
             _column = (RectTransform)columnGo.transform;
-            _column.anchorMin = new Vector2(0.5f, 0.5f);
-            _column.anchorMax = new Vector2(0.5f, 0.5f);
-            _column.pivot = new Vector2(0.5f, 0.5f);
             _column.sizeDelta = new Vector2(980f, 0f);
+            _columnBg = columnGo.AddComponent<Image>();
+            _columnBg.color = new Color(0.02f, 0.03f, 0.05f, 0.82f);
+            _columnBg.raycastTarget = true;
+            _columnBg.enabled = false; // lower-third only
             var layout = columnGo.AddComponent<VerticalLayoutGroup>();
+            layout.padding = new RectOffset(26, 26, 20, 20);
             layout.childAlignment = TextAnchor.UpperLeft;
             layout.spacing = 16f;
             layout.childControlWidth = true;
@@ -94,8 +114,62 @@ namespace Tidebound
             layout.childForceExpandHeight = false;
             var fitter = columnGo.AddComponent<ContentSizeFitter>();
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            ApplyStyle(DialogueStyle.FullScreen);
+
+            // the fader sits above everything, dialogue included
+            _fadeImage = new GameObject("Fade", typeof(RectTransform)).AddComponent<Image>();
+            _fadeImage.transform.SetParent(transform, false);
+            Stretch((RectTransform)_fadeImage.transform);
+            _fadeImage.color = new Color(0f, 0f, 0f, 0f);
+            _fadeImage.raycastTarget = false;
 
             _root.SetActive(false);
+        }
+
+        void ApplyStyle(DialogueStyle style)
+        {
+            bool lower = style == DialogueStyle.LowerThird;
+            _backdrop.gameObject.SetActive(!lower);
+            _columnBg.enabled = lower;
+            if (lower)
+            {
+                _column.anchorMin = new Vector2(0.5f, 0f);
+                _column.anchorMax = new Vector2(0.5f, 0f);
+                _column.pivot = new Vector2(0.5f, 0f);
+                _column.anchoredPosition = new Vector2(0f, 26f);
+            }
+            else
+            {
+                _column.anchorMin = new Vector2(0.5f, 0.5f);
+                _column.anchorMax = new Vector2(0.5f, 0.5f);
+                _column.pivot = new Vector2(0.5f, 0.5f);
+                _column.anchoredPosition = Vector2.zero;
+            }
+        }
+
+        // ---- the screen fader (directors cut and fade through this) --------
+        public void FadeCut(float alpha)
+        {
+            if (_fadeRoutine != null) StopCoroutine(_fadeRoutine);
+            _fadeImage.color = new Color(0f, 0f, 0f, alpha);
+        }
+
+        public void FadeTo(float alpha, float seconds)
+        {
+            if (_fadeRoutine != null) StopCoroutine(_fadeRoutine);
+            _fadeRoutine = StartCoroutine(FadeCo(alpha, seconds));
+        }
+
+        System.Collections.IEnumerator FadeCo(float target, float seconds)
+        {
+            float from = _fadeImage.color.a;
+            for (float t = 0f; t < seconds; t += Time.deltaTime)
+            {
+                _fadeImage.color = new Color(0f, 0f, 0f, Mathf.Lerp(from, target, t / seconds));
+                yield return null;
+            }
+            _fadeImage.color = new Color(0f, 0f, 0f, target);
+            _fadeRoutine = null;
         }
 
         static void Stretch(RectTransform rt)
@@ -122,8 +196,10 @@ namespace Tidebound
         }
 
         // ---- playing a story ------------------------------------------------
-        public void Play(StoryScript script, string startId, Action onComplete)
+        public void Play(StoryScript script, string startId, Action onComplete,
+            DialogueStyle style = DialogueStyle.FullScreen)
         {
+            ApplyStyle(style);
             _playback = new StoryPlayback(script, _gm.State, startId);
             _onComplete = onComplete;
             _gm.SetDialogueActive(true);
@@ -152,6 +228,8 @@ namespace Tidebound
             _paragraphIndex = 0;
             if (_paragraphs.Count == 0) ShowChoices();
             else _typewriter = new Typewriter(_paragraphs[0], charsPerSecond);
+
+            SceneEntered?.Invoke(_playback.Current.Id);
         }
 
         void Update()
