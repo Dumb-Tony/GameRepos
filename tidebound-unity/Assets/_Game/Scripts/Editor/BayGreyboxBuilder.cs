@@ -190,31 +190,29 @@ namespace Tidebound.EditorTools
             Object.DestroyImmediate(sea.GetComponent<Collider>());
             sea.AddComponent<SeaMotion>();
 
-            // surf wash: polylines that trace the actual waterline (where the
-            // sand crosses sea level), washing in and out out of phase
+            // surf wash: irregular rounded patches scattered along the real
+            // waterline — no straight edges anywhere. Each line washes in
+            // and out of phase; FoamLine pulses the patches so foam swells
+            // on the push and dissolves on the retreat.
             var foamParent = new GameObject("Foam");
             float[] zOffsets = { 0.5f, -0.8f, -2.0f };
-            float[] widths = { 0.45f, 0.38f, 0.30f };
             float[] heights = { 0.10f, 0.08f, 0.06f };
+            float[] patchScale = { 1.0f, 0.85f, 0.7f };
             for (int i = 0; i < 3; i++)
             {
                 var lineGo = new GameObject("FoamLine");
                 lineGo.transform.SetParent(foamParent.transform, true);
 
-                Vector3? prev = null;
-                for (float x = -96f; x <= 96f; x += 4f)
+                for (float x = -96f; x <= 96f; x += 2.5f)
                 {
-                    var point = new Vector3(x, heights[i], WaterlineZ(x) + zOffsets[i]);
-                    if (prev.HasValue)
-                    {
-                        Vector3 a = prev.Value, b = point;
-                        Vector3 mid = (a + b) * 0.5f;
-                        float length = Vector3.Distance(a, b);
-                        var seg = Prim(PrimitiveType.Cube, "Seg", lineGo.transform,
-                            mid, new Vector3(widths[i], 0.04f, length + 0.15f), mats.Foam, stripCollider: true);
-                        seg.transform.rotation = Quaternion.LookRotation(b - a, Vector3.up);
-                    }
-                    prev = point;
+                    if (_rng.NextDouble() < 0.2) continue; // gaps — surf is patchy
+                    float px = x + Rnd(-1.1f, 1.1f);
+                    float pz = WaterlineZ(px) + zOffsets[i] + Rnd(-0.5f, 0.5f);
+                    var patch = Prim(PrimitiveType.Sphere, "Foam", lineGo.transform,
+                        new Vector3(px, heights[i], pz),
+                        new Vector3(Rnd(1.6f, 3.4f), 0.05f, Rnd(0.5f, 1.1f)) * patchScale[i],
+                        mats.Foam, stripCollider: true);
+                    patch.transform.rotation = Quaternion.Euler(0f, Rnd(-25f, 25f), 0f);
                 }
 
                 var line = lineGo.AddComponent<FoamLine>();

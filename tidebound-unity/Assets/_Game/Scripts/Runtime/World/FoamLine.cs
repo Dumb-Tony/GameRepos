@@ -15,21 +15,34 @@ namespace Tidebound
         public float phase;
         public float bobAmplitude = 0.03f;
 
-        [Tooltip("Each segment hugs the sand under it as the line washes up and down the slope.")]
+        [Tooltip("Each patch hugs the sand under it as the line washes up and down the slope.")]
         public bool conformToGround = true;
-        [Tooltip("How far above the sand a conforming segment sits.")]
+        [Tooltip("How far above the sand a conforming patch sits.")]
         public float groundClearance = 0.05f;
-        [Tooltip("Segments never sink below this height — seaward of the sand they ride the water instead.")]
+        [Tooltip("Patches never sink below this height — seaward of the sand they ride the water instead.")]
         public float minHeight = 0.07f;
 
+        [Tooltip("How much patches swell on the wash-in and shrink toward nothing on the retreat. 0 = rigid.")]
+        [Range(0f, 1f)] public float pulseAmount = 0.6f;
+
         Vector3 _basePosition;
-        Transform[] _segments;
+        Transform[] _patches;
+        Vector3[] _baseScales;
+        float[] _patchPhase;
 
         void Awake()
         {
             _basePosition = transform.position;
-            _segments = new Transform[transform.childCount];
-            for (int i = 0; i < _segments.Length; i++) _segments[i] = transform.GetChild(i);
+            int n = transform.childCount;
+            _patches = new Transform[n];
+            _baseScales = new Vector3[n];
+            _patchPhase = new float[n];
+            for (int i = 0; i < n; i++)
+            {
+                _patches[i] = transform.GetChild(i);
+                _baseScales[i] = _patches[i].localScale;
+                _patchPhase[i] = (i * 2.399f) % (2f * Mathf.PI); // golden-angle scatter
+            }
         }
 
         void Update()
@@ -40,13 +53,20 @@ namespace Tidebound
                 bobAmplitude * Mathf.Sin(t / (slidePeriod * 0.7f) + phase),
                 slideAmplitude * Mathf.Sin(t / slidePeriod + phase));
 
-            if (!conformToGround) return;
-            foreach (var seg in _segments)
+            for (int i = 0; i < _patches.Length; i++)
             {
-                Vector3 p = seg.position;
+                var patch = _patches[i];
+
+                // swell with the wash, each patch slightly out of step, so
+                // foam appears and dissolves instead of translating rigidly
+                float swell = Mathf.Sin(t / slidePeriod + phase + _patchPhase[i] * 0.45f) * 0.5f + 0.5f;
+                patch.localScale = _baseScales[i] * (1f - pulseAmount + pulseAmount * swell);
+
+                if (!conformToGround) continue;
+                Vector3 p = patch.position;
                 if (Physics.Raycast(new Vector3(p.x, p.y + 5f, p.z), Vector3.down, out var hit, 12f,
                         Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
-                    seg.position = new Vector3(p.x, Mathf.Max(hit.point.y + groundClearance, minHeight), p.z);
+                    patch.position = new Vector3(p.x, Mathf.Max(hit.point.y + groundClearance, minHeight), p.z);
             }
         }
     }
