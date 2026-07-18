@@ -48,6 +48,7 @@ namespace Tidebound.EditorTools
             BuildDriftwood(mats);
             BuildCamp(mats);
             BuildSosSite(mats);
+            BuildAmbientLife(mats);
             BuildPlayerCameraAndSystems(gameClockHost);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
@@ -73,6 +74,8 @@ namespace Tidebound.EditorTools
             public Material Metal = Mat("Metal", new Color(0.55f, 0.58f, 0.62f), 0.5f);
             public Material Flame = Mat("Flame", new Color(1.0f, 0.55f, 0.15f));
             public Material Fresh = Mat("Freshwater", new Color(0.35f, 0.65f, 0.85f), 0.8f);
+            public Material Foam = Mat("Foam", new Color(0.93f, 0.96f, 0.94f), 0.4f);
+            public Material Crab = Mat("Crab", new Color(0.72f, 0.42f, 0.30f));
         }
 
         static Material Mat(string name, Color color, float smoothness = 0.15f)
@@ -162,7 +165,20 @@ namespace Tidebound.EditorTools
             sea.transform.localScale = new Vector3(60f, 1f, 34f); // 600 × 340
             sea.GetComponent<MeshRenderer>().sharedMaterial = mats.Sea;
             Object.DestroyImmediate(sea.GetComponent<Collider>());
-            sea.isStatic = true;
+            sea.AddComponent<SeaMotion>();
+
+            // surf wash: pale strips sliding out of phase along the waterline
+            var foamParent = new GameObject("Foam");
+            for (int i = 0; i < 3; i++)
+            {
+                var strip = Prim(PrimitiveType.Cube, "FoamLine", foamParent.transform,
+                    new Vector3(0f, 0.12f, 0.8f - i * 1.5f),
+                    new Vector3(190f - i * 20f, 0.05f, 0.45f - i * 0.08f), mats.Foam, stripCollider: true);
+                var line = strip.AddComponent<FoamLine>();
+                line.phase = i * 2.1f;
+                line.slideAmplitude = 1.6f + i * 0.4f;
+                line.slidePeriod = 6.5f + i * 1.7f;
+            }
         }
 
         static void BuildBounds()
@@ -196,9 +212,12 @@ namespace Tidebound.EditorTools
                 var trunk = Prim(PrimitiveType.Cylinder, "Trunk", parent.transform,
                     new Vector3(x, y + 2.6f, z), new Vector3(0.4f, 2.8f, 0.4f), mats.Wood, stripCollider: true);
                 trunk.transform.rotation = Quaternion.Euler(Rnd(-6f, 6f), Rnd(0f, 360f), Rnd(-6f, 6f));
-                Prim(PrimitiveType.Sphere, "Canopy", parent.transform,
+                var canopy = Prim(PrimitiveType.Sphere, "Canopy", parent.transform,
                     new Vector3(x + Rnd(-1f, 1f), y + 5.6f + Rnd(0f, 1.5f), z + Rnd(-1f, 1f)),
                     new Vector3(Rnd(3f, 4.6f), Rnd(1.8f, 2.6f), Rnd(3f, 4.6f)), mats.JungleDark, stripCollider: true);
+                var sway = canopy.AddComponent<SwayInWind>();
+                sway.degrees = 2f;
+                sway.speed = 0.35f;
             }
             parent.isStatic = true;
         }
@@ -265,9 +284,9 @@ namespace Tidebound.EditorTools
         static void BuildPalms(Mats mats)
         {
             var parent = new GameObject("Palms");
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 14; i++)
             {
-                float x = Mathf.Lerp(-80f, 80f, i / 7f) + Rnd(-8f, 8f);
+                float x = Mathf.Lerp(-85f, 85f, i / 13f) + Rnd(-8f, 8f);
                 float z = Rnd(55f, 72f);
                 float y = Height(x, z);
                 var palm = new GameObject("Palm");
@@ -285,6 +304,9 @@ namespace Tidebound.EditorTools
                         new Vector3(x, y + 4.4f, z) + Quaternion.Euler(0, ang, 0) * new Vector3(1.1f, 0f, 0f),
                         new Vector3(2.1f, 0.3f, 0.7f), mats.Leaf, stripCollider: true);
                     frond.transform.rotation = Quaternion.Euler(0f, -ang, Rnd(8f, 20f));
+                    var sway = frond.AddComponent<SwayInWind>();
+                    sway.degrees = 5f;
+                    sway.speed = 0.6f;
                 }
 
                 if (i % 2 == 0)
@@ -317,8 +339,11 @@ namespace Tidebound.EditorTools
                 var bush = new GameObject("Thicket");
                 bush.transform.SetParent(parent.transform, true);
                 bush.transform.position = new Vector3(x, y, z);
-                Prim(PrimitiveType.Sphere, "Bush", bush.transform,
+                var bushBall = Prim(PrimitiveType.Sphere, "Bush", bush.transform,
                     new Vector3(x, y + 0.7f, z), new Vector3(1.8f, 1.3f, 1.8f), mats.Leaf, stripCollider: true);
+                var bushSway = bushBall.AddComponent<SwayInWind>();
+                bushSway.degrees = 3f;
+                bushSway.speed = 0.5f;
                 var fruit = new GameObject("Fruit");
                 fruit.transform.SetParent(bush.transform, true);
                 fruit.transform.position = new Vector3(x, y, z);
@@ -337,9 +362,9 @@ namespace Tidebound.EditorTools
         static void BuildDriftwood(Mats mats)
         {
             var parent = new GameObject("WrackLine");
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 16; i++)
             {
-                float x = Mathf.Lerp(-60f, 60f, i / 9f) + Rnd(-4f, 4f);
+                float x = Mathf.Lerp(-75f, 75f, i / 15f) + Rnd(-4f, 4f);
                 float z = Rnd(3f, 7f);
                 float y = Height(x, z);
                 var piece = new GameObject("DriftwoodPiece");
@@ -387,6 +412,9 @@ namespace Tidebound.EditorTools
             fireLight.color = new Color(1f, 0.62f, 0.28f);
             fireLight.range = 11f;
             fireLight.intensity = 2.2f;
+            var crackleSource = flame.AddComponent<AudioSource>();
+            crackleSource.playOnAwake = false;
+            flame.AddComponent<FireCrackle>(); // starts/stops with the flame
             flame.SetActive(false);
 
             var campfire = pit.AddComponent<CampfireInteractable>();
@@ -469,6 +497,37 @@ namespace Tidebound.EditorTools
             var sos = site.AddComponent<SosSite>();
             sos.letters = letters;
             sos.interactRadius = 3.5f;
+        }
+
+        // ================= ambient life =================
+        static void BuildAmbientLife(Mats mats)
+        {
+            // the sound of the place — synthesized, no audio files
+            var ambience = new GameObject("ShoreAmbience");
+            var shoreSource = ambience.AddComponent<AudioSource>();
+            shoreSource.playOnAwake = false;
+            ambience.AddComponent<ShoreAmbience>();
+
+            var birds = new GameObject("Birds");
+            var flights = birds.AddComponent<BirdFlights>();
+            flights.birdMaterial = mats.DarkStone;
+
+            var crabs = new GameObject("Crabs");
+            for (int i = 0; i < 12; i++)
+            {
+                float x = Rnd(-70f, 70f), z = Rnd(1f, 9f);
+                var crab = new GameObject("Crab");
+                crab.transform.SetParent(crabs.transform, true);
+                var pos = new Vector3(x, Height(x, z) + 0.06f, z);
+                crab.transform.position = pos;
+                Prim(PrimitiveType.Sphere, "Body", crab.transform,
+                    pos + new Vector3(0f, 0.04f, 0f), new Vector3(0.22f, 0.09f, 0.16f), mats.Crab, stripCollider: true);
+                Prim(PrimitiveType.Sphere, "ClawL", crab.transform,
+                    pos + new Vector3(-0.12f, 0.05f, 0.08f), Vector3.one * 0.06f, mats.Crab, stripCollider: true);
+                Prim(PrimitiveType.Sphere, "ClawR", crab.transform,
+                    pos + new Vector3(0.12f, 0.05f, 0.08f), Vector3.one * 0.06f, mats.Crab, stripCollider: true);
+                crab.AddComponent<CrabAI>();
+            }
         }
 
         // ================= systems, player, camera, sun =================

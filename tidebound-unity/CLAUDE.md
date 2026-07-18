@@ -101,6 +101,11 @@ tidebound-unity/
       dividers that flares during the sweep; segment-change narration;
       time-cost rule — labors cost segments, gestures (pick up, drink,
       feed the fire) are free, walking there is their cost.
+      Session 3 (the beach felt dead): ambience pass, all code-only — sea
+      bob + tide (SeaMotion) with sliding foam strips, 12 skittering crabs
+      (CrabAI), occasional bird flights, Perlin wind-sway on fronds/
+      canopies/bushes, synthesized shore/wind audio + fire crackle
+      (OnAudioFilterRead, zero audio files), palms 8→14, driftwood 10→16.
       Remaining for the phase: keep tuning the feel knobs (day length,
       costs, camera) until surviving three days is mildly fun.*
 - [ ] Phase 2 — words (dialogue/journal UI, prologue)
