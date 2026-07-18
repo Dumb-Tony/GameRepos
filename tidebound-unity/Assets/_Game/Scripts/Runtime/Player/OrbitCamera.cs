@@ -17,6 +17,8 @@ namespace Tidebound
         public float maxPitch = 70f;
         [Tooltip("Starting angles: x = pitch, y = yaw.")]
         public Vector2 startAngles = new Vector2(16f, 0f);
+        [Tooltip("How quickly the camera settles toward where you point it, in seconds. 0 = rigid 1:1; higher = floatier.")]
+        [Range(0f, 0.3f)] public float rotationSmoothTime = 0.08f;
 
         [Header("Framing")]
         public float distance = 4.6f;
@@ -30,12 +32,12 @@ namespace Tidebound
 
         [HideInInspector] public bool inputLocked;
 
-        float _yaw, _pitch, _currentDistance;
+        float _yaw, _pitch, _targetYaw, _targetPitch, _yawVelocity, _pitchVelocity, _currentDistance;
 
         void Start()
         {
-            _pitch = startAngles.x;
-            _yaw = target != null ? target.eulerAngles.y + startAngles.y : startAngles.y;
+            _pitch = _targetPitch = startAngles.x;
+            _yaw = _targetYaw = target != null ? target.eulerAngles.y + startAngles.y : startAngles.y;
             _currentDistance = distance;
         }
 
@@ -46,8 +48,20 @@ namespace Tidebound
             if (!inputLocked && Cursor.lockState == CursorLockMode.Locked)
             {
                 Vector2 look = GameInput.Look;
-                _yaw += look.x * lookSensitivity.x;
-                _pitch = Mathf.Clamp(_pitch - look.y * lookSensitivity.y, minPitch, maxPitch);
+                _targetYaw += look.x * lookSensitivity.x;
+                _targetPitch = Mathf.Clamp(_targetPitch - look.y * lookSensitivity.y, minPitch, maxPitch);
+            }
+
+            // ease toward the pointed direction instead of snapping to it
+            if (rotationSmoothTime > 0f)
+            {
+                _yaw = Mathf.SmoothDampAngle(_yaw, _targetYaw, ref _yawVelocity, rotationSmoothTime);
+                _pitch = Mathf.SmoothDamp(_pitch, _targetPitch, ref _pitchVelocity, rotationSmoothTime);
+            }
+            else
+            {
+                _yaw = _targetYaw;
+                _pitch = _targetPitch;
             }
 
             var rot = Quaternion.Euler(_pitch, _yaw, 0f);
