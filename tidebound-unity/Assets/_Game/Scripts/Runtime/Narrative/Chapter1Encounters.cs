@@ -444,7 +444,121 @@ namespace Tidebound.Narrative
                 },
             });
 
+            AddClearing(script);
             return script;
+        }
+
+        /// <summary>The animals as the Clearing names them (COURTS, law #3).</summary>
+        static readonly (string Animal, string Named)[] ClearingNames =
+        {
+            ("kavi", "the grey dog"),
+            ("ipo", "the macaque"),
+            ("vela", "the sea eagle"),
+            ("buri", "the bearded pig"),
+            ("moa", "the junglefowl hen"),
+            ("nine", "the octopus"),
+        };
+
+        // ---- day 5, dusk: THE CLEARING OF EYES ----------------------------
+        // V1 ships Kavi only (bible §8): the Clearing offers the grey dog or
+        // the solo road. The other courtships arrive with their companions.
+        static void AddClearing(StoryScript script)
+        {
+            script.Add(new StoryScene
+            {
+                Id = "clearing",
+                Text = s =>
+                {
+                    var met = new List<string>();
+                    foreach (var (animal, named) in ClearingNames)
+                        if (s.Met.TryGetValue(animal, out var m) && m)
+                            met.Add(named);
+                    string company = met.Count > 0 ? string.Join("; ", met) : "the island itself, watching";
+                    return new List<string>
+                    {
+                        "<i>THE CLEARING OF EYES</i>",
+                        "Dusk, the fifth day. You sit by your camp doing the honest arithmetic at last: no search plane has come. No ship has turned. Whatever happens next, it happens <i>here</i>, and it happens to you — and five days of this island have taught you exactly how long your two hands are.",
+                        "And as the light goes long and gold, you realize you have company. You've had company all along.",
+                        "They are all, in their various ways, present: " + company + ". Wild lives, orbiting your small fire of a life these five days, each for their own reasons. Curious. Hungry. Lonely, maybe — you're projecting, probably — or maybe not.",
+                        "Trust, out here, is the most expensive thing you can build, and you only have the hours to build it once. If you give your scarce time to one of them — food you can't spare, patience you can't spare, days you can't spare — one of these lives might tie itself to yours. For good.",
+                        "<i>One.</i>",
+                    };
+                },
+                Choices = new List<StoryChoice>
+                {
+                    new StoryChoice
+                    {
+                        Label = "The grey dog",
+                        Sub = "Watchful. Burn-scarred. Cast out of his own pack — and choosing, maybe, to be near yours.",
+                        When = s => s.Met.TryGetValue("kavi", out var m) && m,
+                        Do = s => { s.Companion = "kavi"; s.SetFlag("CLEARING_DONE"); },
+                        Go = "court_kavi",
+                    },
+                    new StoryChoice
+                    {
+                        Label = "No one. You will do this alone.",
+                        Sub = "No mouths to feed but yours. No one to lose but yourself. The hardest road, and wholly your own.",
+                        Do = s => { s.SetFlag("CLEARING_DONE"); s.SetFlag("SOLO_ROUTE"); s.AddRoute(RouteAxis.Roots, 1); },
+                        Go = "court_none",
+                    },
+                },
+            });
+
+            script.Add(new StoryScene
+            {
+                Id = "court_kavi",
+                Speaker = "The grey dog",
+                Text = s => new List<string>
+                {
+                    "You take your food to the open sand between the camp and the treeline, sit down at his height, and wait.",
+                    "It takes most of the evening. He circles twice at the dark's edge; sits; lies down; gets up; and finally crosses the distance the way a man crosses a rope bridge — committed and hating it — until two hundred pounds of storm-grey wild dog is standing an arm's length away, reading your face like a track.",
+                    (s.Interest.TryGetValue("kavi", out var w) && w >= 3
+                        ? "The crab you threw him, the low easy talk, the scrap in the dark — he has been running those numbers for days. Whatever total he reaches, it tips him: "
+                        : "You have given him little enough reason. But whatever he was cast out of cost him more: ")
+                    + "he takes the fish from the sand beside your hand, gravely, without snatching — and then he does not leave.",
+                    "When you finally bank the fire and lie down, he arranges himself precisely at the edge of camp, back to you, scarred flank to the flames' dying warmth, facing the treeline. On guard. You fall asleep to the sound of a wild thing breathing between you and the dark, and far away — one last time that night — the pack sings without him.",
+                    "He does not answer them.",
+                },
+                Choices = new List<StoryChoice>
+                {
+                    new StoryChoice
+                    {
+                        Label = "\"Kavi.\" You name him after the sound the reef makes at low tide.",
+                        Sub = "Named things stay.",
+                        Do = s =>
+                        {
+                            s.Warm("kavi", 2);
+                            s.Stat(Meter.Hope, 6);
+                            s.SetFlag("KAVI_NAMED");
+                            CompanionLogic.InitTrust(s);
+                        },
+                    },
+                    new StoryChoice
+                    {
+                        Label = "Say nothing. Let him keep his own name a while longer.",
+                        Sub = "He'll tell you when it's time.",
+                        Do = s =>
+                        {
+                            s.Warm("kavi", 1);
+                            s.AddRoute(RouteAxis.Depth, 1);
+                            s.Stat(Meter.Hope, 4);
+                            CompanionLogic.InitTrust(s);
+                        },
+                    },
+                },
+            });
+
+            script.Add(new StoryScene
+            {
+                Id = "court_none",
+                Text = _ => new List<string>
+                {
+                    "You bank the fire alone, on purpose, and sit with the decision while the lagoon keeps its slow time.",
+                    "It isn't coldness. It's arithmetic, and honesty: every mouth tied to yours is food you must find twice, every bond a hostage the island can take. You have watched this place for five days now. It is beautiful the way knives are beautiful. You will cross it faster alone, risk less, grieve less.",
+                    "The grey dog sings somewhere inland with a pack that isn't his. The monkey's treetops go quiet. Small feet and large ones print the morning sand at the edges of your life, and you will let them stay at the edges: neighbors, all of them. Not family.",
+                    "Alone, then. Unbroken, if you can manage it. The night is enormous, and you are exactly one person, and you find — checking, the way you'd check a knot — that this holds.",
+                },
+            });
         }
     }
 }

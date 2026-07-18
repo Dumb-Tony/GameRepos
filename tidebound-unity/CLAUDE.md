@@ -159,7 +159,23 @@ tidebound-unity/
       events. Remaining for Phase 2: nothing — ev_nine needs the Tide
       Pools zone (Phase 4) and the Clearing of Eyes belongs to the
       companion phase (Phase 3).*
-- [ ] Phase 3 — the dog (Kavi; make-or-break)
+- [~] Phase 3 — the dog. *Session 1 (this commit): CompanionLogic (pure —
+      the VN's trust seed 18+interest×5 once, tier→behavior TierProfile
+      map, bond-action values + once-per-segment rule, all 15 TIER_LINE
+      vignettes ported verbatim as the behavior spec); KaviController
+      (self-gating rig: Wary patrols the wide circle pretending not to be
+      yours, Watchful follows at five paces and rests watching you AND the
+      treeline, Warming+ takes the fireside, Bonded shadows, Kindred is
+      pack; trot-bob, ground clamp, tier vignettes as ambient narration,
+      TailWag from Warming up); KaviInteractable (share food / talk low /
+      pet / name him — trust always behavior, never numbers); the CLEARING
+      OF EYES on the calendar (day 5 dusk; v1 offers the grey dog or the
+      solo road) with court_kavi + court_none ported and staged (the met
+      animals gathered at dusk, then the dog crossing the distance);
+      journal companion line; persistent greybox Kavi rig with the burn
+      scar. 13 new tests. Remaining: the warning sense needs a predator
+      (Phase 4-5), peril/nursing arc, feel pass on follow AI — the bar is
+      "someone watching asks about the dog".*
 - [ ] Phase 4 — the island (12-zone greybox generator, Wayfinder)
 - [ ] Phase 5 — act 1–2 story + first three endings
 - [ ] Phase 6 — depth passes per act · Phase 7 — companions, NG+, polish

@@ -91,6 +91,11 @@ namespace Tidebound
                     Show(shipRig);
                     Shot(new Vector3(2f, 2.4f, 10f), new Vector3(-250f, 12f, -500f));
                     return true;
+                case "clearing":
+                    // they are all, in their various ways, present
+                    Show(dogNightRig); Show(moaRig); Show(velaRig);
+                    Shot(new Vector3(-2f, 2.2f, 10f), new Vector3(10f, 1.2f, 60f));
+                    return true;
                 default:
                     return false;
             }
@@ -99,7 +104,28 @@ namespace Tidebound
         void OnSceneEntered(string id)
         {
             // sub-scene beats inside one staged encounter
-            if (id == "ev_lights2") Show(flareRig); // the argument, made
+            switch (id)
+            {
+                case "ev_lights2":
+                    Show(flareRig); // the argument, made
+                    break;
+                case "court_kavi":
+                    HideShown();
+                    Show(dogDayRig); // he crosses the distance
+                    Shot(new Vector3(4f, 1.6f, 21f), new Vector3(8f, 0.9f, 26f));
+                    break;
+                case "court_none":
+                    HideShown(); // the eyes withdraw; the fire is yours alone
+                    Shot(new Vector3(-4f, 2.2f, 9f), new Vector3(0f, 0.8f, 15f));
+                    break;
+            }
+        }
+
+        void HideShown()
+        {
+            foreach (var rig in _shown)
+                if (rig != null) rig.SetActive(false);
+            _shown.Clear();
         }
 
         void Show(GameObject rig)

@@ -84,6 +84,19 @@ namespace Tidebound.Narrative
                 lines.Add(who);
             }
 
+            if (s.Companion == "kavi")
+            {
+                lines.Add("");
+                lines.Add(s.Is("KAVI_NAMED")
+                    ? "At your side: Kavi — the storm-grey dog who chose your fire."
+                    : "At your side: the grey dog, who has not yet told you his name.");
+            }
+            else if (s.Is("SOLO_ROUTE"))
+            {
+                lines.Add("");
+                lines.Add("You walk the solo route — you, the island, and whatever watches from the treeline.");
+            }
+
             // ---- what you know (survival state, in the VN's voice) ----------
             lines.Add("");
             lines.Add("<b>What you know</b>");

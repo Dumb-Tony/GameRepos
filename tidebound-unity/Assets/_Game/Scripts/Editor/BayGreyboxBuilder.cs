@@ -52,6 +52,7 @@ namespace Tidebound.EditorTools
             var shoreAmbience = BuildAmbientLife(mats);
             var director = BuildPrologueStage(mats, shoreAmbience);
             var encounterDirector = BuildEncounterStage(mats);
+            BuildKavi(mats);
             BuildPlayerCameraAndSystems(gameClockHost, director, encounterDirector);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
@@ -981,6 +982,67 @@ namespace Tidebound.EditorTools
             }
             dog.SetActive(false);
             return dog;
+        }
+
+        // ================= Kavi, the companion himself =================
+        /// <summary>
+        /// The persistent dog: a rig that lives in the scene from day one
+        /// and self-gates (KaviController shows him only once the Clearing
+        /// chose him). Model parts are LOCAL children so the controller can
+        /// move the root; the encounter rigs are separate set-dressing.
+        /// </summary>
+        static void BuildKavi(Mats mats)
+        {
+            var root = new GameObject("Kavi");
+            root.transform.position = new Vector3(14f, Height(14f, 70f), 70f); // starts at the treeline he came from
+
+            var model = new GameObject("Model");
+            model.transform.SetParent(root.transform, false);
+
+            LocalPrim(model.transform, PrimitiveType.Capsule, "Body",
+                new Vector3(0f, 0.55f, 0f), new Vector3(0.34f, 0.5f, 0.34f), mats.StormGrey, new Vector3(90f, 0f, 0f));
+            LocalPrim(model.transform, PrimitiveType.Sphere, "Head",
+                new Vector3(0f, 0.78f, 0.45f), Vector3.one * 0.3f, mats.StormGrey);
+            LocalPrim(model.transform, PrimitiveType.Cube, "Snout",
+                new Vector3(0f, 0.72f, 0.62f), new Vector3(0.12f, 0.1f, 0.18f), mats.StormGrey);
+            LocalPrim(model.transform, PrimitiveType.Cube, "EarL",
+                new Vector3(-0.09f, 0.98f, 0.42f), new Vector3(0.07f, 0.15f, 0.05f), mats.StormGrey);
+            LocalPrim(model.transform, PrimitiveType.Cube, "EarR",
+                new Vector3(0.09f, 0.98f, 0.42f), new Vector3(0.07f, 0.15f, 0.05f), mats.StormGrey);
+            for (int leg = 0; leg < 4; leg++)
+                LocalPrim(model.transform, PrimitiveType.Cylinder, "Leg",
+                    new Vector3(leg % 2 == 0 ? -0.14f : 0.14f, 0.26f, leg < 2 ? 0.28f : -0.28f),
+                    new Vector3(0.06f, 0.26f, 0.06f), mats.StormGrey);
+            // the old burn along one flank, where the fur grows wrong
+            LocalPrim(model.transform, PrimitiveType.Cube, "Scar",
+                new Vector3(0.17f, 0.6f, -0.05f), new Vector3(0.02f, 0.14f, 0.3f), mats.DarkStone);
+            var tail = LocalPrim(model.transform, PrimitiveType.Cylinder, "Tail",
+                new Vector3(0f, 0.62f, -0.5f), new Vector3(0.05f, 0.24f, 0.05f), mats.StormGrey, new Vector3(35f, 0f, 0f));
+            var wag = tail.AddComponent<TailWag>();
+
+            var controller = root.AddComponent<KaviController>();
+            controller.model = model;
+            controller.tailWag = wag;
+
+            var interactable = root.AddComponent<KaviInteractable>();
+            interactable.controller = controller;
+            interactable.interactRadius = 3f;
+
+            model.SetActive(false); // the controller decides when he's real
+        }
+
+        static GameObject LocalPrim(Transform parent, PrimitiveType type, string name,
+            Vector3 localPos, Vector3 localScale, Material mat, Vector3 localEuler = default)
+        {
+            var go = GameObject.CreatePrimitive(type);
+            go.name = name;
+            go.transform.SetParent(parent, false);
+            go.transform.localPosition = localPos;
+            go.transform.localScale = localScale;
+            go.transform.localRotation = Quaternion.Euler(localEuler);
+            go.GetComponent<MeshRenderer>().sharedMaterial = mat;
+            Object.DestroyImmediate(go.GetComponent<Collider>());
+            return go;
         }
 
         static Material ParticleMat(string name, Color color)

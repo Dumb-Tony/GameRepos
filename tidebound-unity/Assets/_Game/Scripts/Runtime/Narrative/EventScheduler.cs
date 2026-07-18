@@ -50,6 +50,7 @@ namespace Tidebound.Narrative
             new ScheduledEvent { Day = 4, Seg = Segment.Dawn, SceneId = "ev_moa" },
             new ScheduledEvent { Day = 4, Seg = Segment.Day, SceneId = "ev_kavi2" },
             new ScheduledEvent { Day = 4, Seg = Segment.Dusk, SceneId = "ev_lights", When = s => s.Has("flaregun") },
+            new ScheduledEvent { Day = 5, Seg = Segment.Dusk, SceneId = "clearing" },
         };
     }
 }
