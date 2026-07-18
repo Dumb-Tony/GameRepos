@@ -51,6 +51,17 @@ namespace Tidebound.Narrative
             new ScheduledEvent { Day = 4, Seg = Segment.Day, SceneId = "ev_kavi2" },
             new ScheduledEvent { Day = 4, Seg = Segment.Dusk, SceneId = "ev_lights", When = s => s.Has("flaregun") },
             new ScheduledEvent { Day = 5, Seg = Segment.Dusk, SceneId = "clearing" },
+            // ---- chapter two (scenes-chapter2.js TB.SCHEDULE, v1 subset) ----
+            new ScheduledEvent { Day = 7, Seg = Segment.Dawn, SceneId = "ev2_boarking" },
+            new ScheduledEvent { Day = 13, Seg = Segment.Day, SceneId = "ev2_smoke" },
+            new ScheduledEvent { Day = 15, Seg = Segment.Dawn, SceneId = "ev2_heart",
+                When = s => s.Companion != null && s.Trust >= 50 },
+            new ScheduledEvent { Day = 15, Seg = Segment.Dawn, SceneId = "ev2_heart_low",
+                When = s => s.Companion != null && s.Trust < 50 },
+            new ScheduledEvent { Day = 15, Seg = Segment.Dawn, SceneId = "ev2_coco",
+                When = s => s.Companion == null },
+            new ScheduledEvent { Day = 16, Seg = Segment.Night, SceneId = "ev2_kingtide",
+                When = s => s.Site == "beach" },
         };
     }
 }

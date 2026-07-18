@@ -25,6 +25,8 @@ namespace Tidebound
         public GameObject shipRig;
         public GameObject flareRig;
         public GameObject nineRig;
+        public GameObject boarKingRig;
+        public GameObject smokeColumn;
         public SunCycle sun;
 
         [Header("Shot feel")]
@@ -100,6 +102,31 @@ namespace Tidebound
                     // the banked fire, the enormous dark; no actors but the night
                     Shot(new Vector3(-4f, 2.2f, 9f), new Vector3(0f, 0.8f, 15f));
                     return true;
+                case "ev2_boarking":
+                    // the edited camp — and, if Kavi saw him first, HIM
+                    if (_gm.State.Companion == "kavi" && boarKingRig != null)
+                    {
+                        boarKingRig.transform.position = GroundAt(10f, 76f);
+                        Show(boarKingRig);
+                        Shot(new Vector3(-2f, 1.9f, 14f), new Vector3(10f, 1.6f, 76f));
+                    }
+                    else
+                    {
+                        Shot(new Vector3(-3.5f, 2f, 11f), new Vector3(1.5f, 0.6f, 16.5f));
+                    }
+                    return true;
+                case "ev2_smoke":
+                    Show(smokeColumn);
+                    Shot(new Vector3(0f, 3f, 30f), new Vector3(20f, 130f, 560f)); // the thread against the crown
+                    return true;
+                case "ev2_heart":
+                case "ev2_heart_low":
+                case "ev2_coco":
+                    Shot(new Vector3(-4f, 1.8f, 10f), new Vector3(1f, 0.7f, 15.5f));
+                    return true;
+                case "ev2_kingtide":
+                    Shot(new Vector3(6f, 2.6f, 18f), new Vector3(-4f, 0.2f, -2f)); // the silver fingers
+                    return true;
                 case "clearing":
                     // they are all, in their various ways, present
                     Show(dogNightRig); Show(moaRig); Show(velaRig);
@@ -118,6 +145,15 @@ namespace Tidebound
                 case "ev_lights2":
                     Show(flareRig); // the argument, made
                     break;
+                case "ev2_boarkface":
+                    // the audit with tusks, on his chosen ground
+                    if (boarKingRig != null)
+                    {
+                        boarKingRig.transform.position = GroundAt(-36f, 256f);
+                        Show(boarKingRig);
+                    }
+                    Shot(new Vector3(-46f, 2.4f, 248f), new Vector3(-36f, 1.4f, 256f));
+                    break;
                 case "court_kavi":
                     HideShown();
                     Show(dogDayRig); // he crosses the distance
@@ -135,6 +171,14 @@ namespace Tidebound
             foreach (var rig in _shown)
                 if (rig != null) rig.SetActive(false);
             _shown.Clear();
+        }
+
+        static Vector3 GroundAt(float x, float z)
+        {
+            if (Physics.Raycast(new Vector3(x, 40f, z), Vector3.down, out var hit, 80f,
+                    Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
+                return hit.point;
+            return new Vector3(x, 0.5f, z);
         }
 
         void Show(GameObject rig)

@@ -34,6 +34,10 @@ namespace Tidebound.Narrative
             ["injury"] = new[] { "Every cut out here is a small loan from a lender you don't know. Yours came due." },
             ["coldfire"] = new[] { "No roof, no fire, and a night that kept every promise the dusk wind made." },
             ["fever"] = new[] { "The fever finishes its argument. You had heard every word of it coming." },
+            ["boarking"] = new[]
+            {
+                "You knew nothing about him yet, and he had plainly survived everything this island ever sent — the hunters, the traps, the years. His epilogue is his own ledger, kept in scar: four now, who thought the rent was negotiable.",
+            },
             // the despair ending's full epilogue — scenes-chapter1.js death scene, verbatim
             ["despair"] = new[]
             {

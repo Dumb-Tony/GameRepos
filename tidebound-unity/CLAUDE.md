@@ -209,8 +209,20 @@ tidebound-unity/
       = hope +8 + DESPAIR_REFUSED, accept = deathCause despair with the
       full Green Swallows epilogue). GameManager: RunOver covers both
       terminal kinds; ended saves discard on load. 11 new tests.
-      Remaining: the smoke inland, the Boar King treaty (track/wall/
-      tithe), the case washing ashore, chapter-2 camp tiers.*
+      Session 2 (Foothold): Chapter2Events.cs — ch2_open (chapter turn +
+      claim-the-beach; other camp sites arrive with their zones), THE
+      BOAR KING's raid d7 dawn with all four answers (track/wall/tithe
+      per the treaty brief, plus the hunt: backed-and-strong survives at
+      a price via GoDynamic routing, otherwise deathCause boarking → THE
+      BOAR KING card with his ledger epilogue), the smoke inland d13
+      (SMOKE_SEEN/ANSWERED/WARY; staged as a cloud thread against the
+      crown), the fifteenth-morning hearts (ev2_heart kavi bond+10 /
+      heart_low / coco, trust-gated schedule), the king tide d16 (beach
+      camps pay in stores and sleep). StoryChoice.GoDynamic added (the
+      VN's function-valued go). Boar King rig (movable, broken tusk,
+      scar plate) staged at the treeline and at his wallow. 10 new
+      tests. Remaining: ev2_bond/solo + storm d9/d11, ch2_threshold +
+      chapter-2 camp tiers (shelter 3), the courier's case arc.*
 - [ ] Phase 6 — depth passes per act · Phase 7 — companions, NG+, polish
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day

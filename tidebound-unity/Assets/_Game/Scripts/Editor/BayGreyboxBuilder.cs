@@ -1134,6 +1134,36 @@ namespace Tidebound.EditorTools
             flare.AddComponent<FlareBurst>();
             flare.SetActive(false);
 
+            // ---- the Boar King: grey-black, plated in scar, one tusk a stump ----
+            var king = new GameObject("BoarKingRig");
+            LocalPrim(king.transform, PrimitiveType.Capsule, "Body",
+                new Vector3(0f, 1.15f, 0f), new Vector3(1.1f, 1.5f, 1.1f), mats.DarkStone, new Vector3(90f, 0f, 0f));
+            LocalPrim(king.transform, PrimitiveType.Sphere, "Head",
+                new Vector3(0f, 1.15f, 1.6f), Vector3.one * 0.85f, mats.DarkStone);
+            LocalPrim(king.transform, PrimitiveType.Cylinder, "Snout",
+                new Vector3(0f, 0.95f, 2.1f), new Vector3(0.32f, 0.25f, 0.32f), mats.Wood, new Vector3(90f, 0f, 0f));
+            LocalPrim(king.transform, PrimitiveType.Cube, "TuskWhole",
+                new Vector3(-0.28f, 0.85f, 2.15f), new Vector3(0.08f, 0.4f, 0.08f), mats.Foam, new Vector3(-35f, 0f, 15f));
+            LocalPrim(king.transform, PrimitiveType.Cube, "TuskStump",
+                new Vector3(0.28f, 0.8f, 2.1f), new Vector3(0.09f, 0.14f, 0.09f), mats.Foam, new Vector3(-25f, 0f, -10f));
+            LocalPrim(king.transform, PrimitiveType.Cube, "ScarPlate",
+                new Vector3(0.5f, 1.35f, 0.3f), new Vector3(0.06f, 0.5f, 1.1f), mats.StormGrey);
+            LocalPrim(king.transform, PrimitiveType.Cube, "BristleRidge",
+                new Vector3(0f, 1.95f, 0.1f), new Vector3(0.12f, 0.22f, 2.2f), mats.DarkStone);
+            for (int leg = 0; leg < 4; leg++)
+                LocalPrim(king.transform, PrimitiveType.Cylinder, "Leg",
+                    new Vector3(leg % 2 == 0 ? -0.5f : 0.5f, 0.45f, leg < 2 ? 0.9f : -0.9f),
+                    new Vector3(0.18f, 0.45f, 0.18f), mats.DarkStone);
+            king.SetActive(false);
+
+            // ---- the smoke inland: a kept fire's thread against the crown ----
+            var smoke = new GameObject("SmokeColumn");
+            for (int i = 0; i < 9; i++)
+                NoShadow(Prim(PrimitiveType.Sphere, "Puff", smoke.transform,
+                    new Vector3(18f + i * 1.2f, 118f + i * 14f, 555f + i * 2f),
+                    new Vector3(5f + i * 1.1f, 7f, 5f + i * 1.1f), mats.Cloud, stripCollider: true));
+            smoke.SetActive(false);
+
             // ---- the director ----
             var directorGo = new GameObject("EncounterDirector");
             var director = directorGo.AddComponent<EncounterStageDirector>();
@@ -1149,6 +1179,8 @@ namespace Tidebound.EditorTools
             director.shipRig = ship;
             director.flareRig = flare;
             director.nineRig = nine;
+            director.boarKingRig = king;
+            director.smokeColumn = smoke;
             return director;
         }
 

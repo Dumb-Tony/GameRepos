@@ -447,6 +447,7 @@ namespace Tidebound.Narrative
             AddNine(script);
             AddClearing(script);
             AddDespair(script);
+            Chapter2Events.AddTo(script); // Foothold shares the one event script
             return script;
         }
 
@@ -627,6 +628,7 @@ namespace Tidebound.Narrative
                             s.SetFlag("KAVI_NAMED");
                             CompanionLogic.InitTrust(s);
                         },
+                        Go = "ch2_open",
                     },
                     new StoryChoice
                     {
@@ -639,6 +641,7 @@ namespace Tidebound.Narrative
                             s.Stat(Meter.Hope, 4);
                             CompanionLogic.InitTrust(s);
                         },
+                        Go = "ch2_open",
                     },
                 },
             });
@@ -646,6 +649,8 @@ namespace Tidebound.Narrative
             script.Add(new StoryScene
             {
                 Id = "court_none",
+                Next = "ch2_open",
+                NextLabel = "The morning after",
                 Text = _ => new List<string>
                 {
                     "You bank the fire alone, on purpose, and sit with the decision while the lagoon keeps its slow time.",

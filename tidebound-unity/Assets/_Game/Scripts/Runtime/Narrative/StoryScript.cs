@@ -50,6 +50,9 @@ namespace Tidebound.Narrative
         public Action<GameState> Do;
         /// <summary>The VN's `go` — next scene id (null = the end).</summary>
         public string Go;
+        /// <summary>Dynamic destination (the VN's function-valued `go`);
+        /// wins over Go when set. Returning null ends the story.</summary>
+        public Func<GameState, string> GoDynamic;
     }
 
     /// <summary>A named bag of scenes with an entry check.</summary>
@@ -98,7 +101,7 @@ namespace Tidebound.Narrative
         {
             var choice = Options[index];
             choice.Do?.Invoke(_state);
-            Enter(choice.Go);
+            Enter(choice.GoDynamic != null ? choice.GoDynamic(_state) : choice.Go);
         }
 
         /// <summary>Advance a continue-style scene.</summary>
