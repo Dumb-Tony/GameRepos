@@ -96,6 +96,10 @@ namespace Tidebound
                     Show(nineRig);
                     Shot(new Vector3(172f, 2f, 22f), new Vector3(186f, 0.2f, 2f));
                     return true;
+                case "ev_despair":
+                    // the banked fire, the enormous dark; no actors but the night
+                    Shot(new Vector3(-4f, 2.2f, 9f), new Vector3(0f, 0.8f, 15f));
+                    return true;
                 case "clearing":
                     // they are all, in their various ways, present
                     Show(dogNightRig); Show(moaRig); Show(velaRig);

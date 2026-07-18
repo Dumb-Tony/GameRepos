@@ -64,6 +64,8 @@ namespace Tidebound
         [JsonProperty("disease")] public string Disease;
         [JsonProperty("pools")] public int TidePoolVisits;
         [JsonProperty("deathCause")] public string DeathCause;
+        /// <summary>Core ending id (scenes-chapter7.js CORES key), or null.</summary>
+        [JsonProperty("endingId")] public string EndingId;
 
         // ---- NG+ ---------------------------------------------------------
         /// <summary>Run modifier: "hard" | "silent" | "kind" | "chaos" — or null.</summary>

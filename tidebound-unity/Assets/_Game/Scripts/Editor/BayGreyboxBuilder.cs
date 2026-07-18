@@ -55,6 +55,7 @@ namespace Tidebound.EditorTools
             var director = BuildPrologueStage(mats, shoreAmbience);
             var encounterDirector = BuildEncounterStage(mats);
             BuildKavi(mats);
+            BuildRaftSite(mats);
             BuildPlayerCameraAndSystems(gameClockHost, director, encounterDirector);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
@@ -1182,6 +1183,48 @@ namespace Tidebound.EditorTools
             }
             dog.SetActive(false);
             return dog;
+        }
+
+        // ================= the raft: the early door out =================
+        static void BuildRaftSite(Mats mats)
+        {
+            float rx = -24f, rz = 4f;
+            float ry = Mathf.Max(Height(rx, rz), 0.15f);
+            var site = new GameObject("RaftSite");
+            site.transform.position = new Vector3(rx, ry, rz);
+
+            // the spot announces itself: two logs already dragged together
+            Prim(PrimitiveType.Cylinder, "MarkerLog", site.transform,
+                new Vector3(rx - 0.5f, ry + 0.15f, rz), new Vector3(0.16f, 1.4f, 0.16f), mats.Driftwood, stripCollider: true)
+                .transform.rotation = Quaternion.Euler(90f, 8f, 0f);
+            Prim(PrimitiveType.Cylinder, "MarkerLog2", site.transform,
+                new Vector3(rx + 0.4f, ry + 0.15f, rz + 0.4f), new Vector3(0.16f, 1.2f, 0.16f), mats.Driftwood, stripCollider: true)
+                .transform.rotation = Quaternion.Euler(90f, -14f, 0f);
+
+            var stage1 = new GameObject("Stage1_Frame");
+            stage1.transform.SetParent(site.transform, true);
+            stage1.transform.position = site.transform.position;
+            for (int i = 0; i < 4; i++)
+                Prim(PrimitiveType.Cylinder, "Log", stage1.transform,
+                    new Vector3(rx - 0.9f + i * 0.6f, ry + 0.22f, rz + 1.6f), new Vector3(0.18f, 1.6f, 0.18f), mats.Driftwood, stripCollider: true)
+                    .transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+            stage1.SetActive(false);
+
+            var stage2 = new GameObject("Stage2_Rigged");
+            stage2.transform.SetParent(site.transform, true);
+            stage2.transform.position = site.transform.position;
+            Prim(PrimitiveType.Cube, "Deck", stage2.transform,
+                new Vector3(rx, ry + 0.35f, rz + 1.6f), new Vector3(2.6f, 0.1f, 2f), mats.Driftwood, stripCollider: true);
+            Prim(PrimitiveType.Cylinder, "Mast", stage2.transform,
+                new Vector3(rx, ry + 1.6f, rz + 1.6f), new Vector3(0.08f, 1.2f, 0.08f), mats.Wood, stripCollider: true);
+            Prim(PrimitiveType.Cube, "Sail", stage2.transform,
+                new Vector3(rx, ry + 1.9f, rz + 1.75f), new Vector3(1.4f, 1.1f, 0.04f), mats.Cushion, stripCollider: true);
+            stage2.SetActive(false);
+
+            var raft = site.AddComponent<RaftSite>();
+            raft.stage1Visual = stage1;
+            raft.stage2Visual = stage2;
+            raft.interactRadius = 3.2f;
         }
 
         // ================= Kavi, the companion himself =================

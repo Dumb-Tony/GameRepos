@@ -51,6 +51,8 @@ namespace Tidebound
 
         public GameState State { get; private set; }
         public bool IsDead => State != null && State.DeathCause != null;
+        /// <summary>Death or a chosen ending — every terminal state.</summary>
+        public bool RunOver => State != null && Endings.RunIsOver(State);
         public HudController Hud { get; private set; }
         public DialogueUI Dialogue { get; private set; }
         public JournalUI Journal { get; private set; }
@@ -88,6 +90,7 @@ namespace Tidebound
             Dialogue = DialogueUI.Create(this);
             Journal = JournalUI.Create(this);
             Wayfinder = WayfinderUI.Create(this);
+            RunCardUI.Create(this);
         }
 
         void Start()
@@ -135,9 +138,14 @@ namespace Tidebound
                     LockCursor(true);
             }
 
-            if (IsDead)
+            if (RunOver)
             {
-                if (GameInput.ConfirmPressed) Restart();
+                if (!DialogueActive) // an ending chosen inside a dialogue closes first
+                {
+                    ApplyFreeze();
+                    TryDeleteSave();
+                    if (GameInput.ConfirmPressed) Restart();
+                }
                 return;
             }
 
@@ -203,13 +211,13 @@ namespace Tidebound
 
         void ApplyFreeze()
         {
-            bool frozen = DialogueActive || JournalOpen || MapOpen || IsDead;
+            bool frozen = DialogueActive || JournalOpen || MapOpen || RunOver;
             if (clock != null) clock.paused = frozen;
             if (player != null) player.inputLocked = frozen;
             if (cam != null) cam.inputLocked = frozen;
             if (interactor != null) interactor.inputLocked = frozen;
-            LockCursor(!(DialogueActive || IsDead)); // reading and dying free the mouse
-            if (Hud != null) Hud.gameObject.SetActive(!DialogueActive);
+            LockCursor(!(DialogueActive || RunOver)); // reading and endings free the mouse
+            if (Hud != null) Hud.gameObject.SetActive(!DialogueActive && !RunOver);
         }
 
         // ---- the segment tick ---------------------------------------------
@@ -241,6 +249,10 @@ namespace Tidebound
                 EventScheduler.MarkFired(State, due);
                 _eventQueue.Enqueue(due);
             }
+
+            // the dark door: offered once, at the bottom of the night
+            if (seg == Segment.Night && State.Stats.Hope <= 12f)
+                QueueStoryEvent("ev_despair");
 
             // the night was just consumed (we're at the new dawn)
             if (seg == Segment.Dawn)
@@ -333,6 +345,12 @@ namespace Tidebound
             _eventQueue.Enqueue(sceneId);
         }
 
+        /// <summary>The raft's question, asked properly (repeatable until answered).</summary>
+        public void OfferRaftLaunch()
+        {
+            Dialogue.Play(Endings.BuildRaftScript(), "raft_launch", () => SaveNow(), DialogueStyle.LowerThird);
+        }
+
         public void Drink() => AfterAction(SurvivalActions.Drink(State), drinkCost);
 
         public void StampSos() => AfterAction(SurvivalActions.StampSos(State), sosCost);
@@ -407,28 +425,7 @@ namespace Tidebound
             _collapsing = false;
         }
 
-        // ---- death (always traced to its cause) ------------------------------
-        static readonly Dictionary<string, (string Title, string Line)> DeathCards =
-            new Dictionary<string, (string, string)>
-            {
-                ["thirst"] = ("THE DRIFTWOOD TONGUE",
-                    "You knew. The sticking tongue, the stopped sweat — the island said it plainly, and water was always the first law."),
-                ["hunger"] = ("HUNGER'S QUIET",
-                    "It ends the way it warned you it would: not with pain but with a great soft quiet, and the sea still counting to itself."),
-                ["injury"] = ("THE SMALL LOAN",
-                    "Every cut out here is a small loan from a lender you don't know. Yours came due."),
-                ["coldfire"] = ("COLD FIRE",
-                    "No roof, no fire, and a night that kept every promise the dusk wind made."),
-                ["fever"] = ("MARSH FEVER",
-                    "The fever finishes its argument. You had heard every word of it coming."),
-            };
-
-        public (string Title, string Line) DeathCard()
-        {
-            if (State.DeathCause != null && DeathCards.TryGetValue(State.DeathCause, out var card)) return card;
-            return ("THE ISLAND KEEPS", "The island keeps what it catches.");
-        }
-
+        // ---- death (always traced to its cause; epilogues live in Endings) ---
         void CheckDeath()
         {
             if (!IsDead) return;
@@ -450,7 +447,7 @@ namespace Tidebound
         static GameState LoadOrFresh()
         {
             var s = SaveSystem.Load(SaveSystem.SlotPath());
-            return s == null || s.DeathCause != null ? FreshState() : s;
+            return s == null || Endings.RunIsOver(s) ? FreshState() : s;
         }
 
         public void SaveNow() => SaveSystem.Save(State, SaveSystem.SlotPath());

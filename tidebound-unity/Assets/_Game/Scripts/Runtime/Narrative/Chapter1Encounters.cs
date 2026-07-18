@@ -446,7 +446,44 @@ namespace Tidebound.Narrative
 
             AddNine(script);
             AddClearing(script);
+            AddDespair(script);
             return script;
+        }
+
+        // ---- the dark door — despair, offered once, at the bottom of the
+        // night (scenes-quests.js ev_despair; v1 companion variants) --------
+        static void AddDespair(StoryScript script)
+        {
+            script.Add(new StoryScene
+            {
+                Id = "ev_despair",
+                Text = s => new List<string>
+                {
+                    "You can't sleep, and tonight you stop pretending the reason is noise.",
+                    "It has been building for days — you've felt it the way you feel weather now: the tasks getting heavier while meaning nothing, the horizon you've stopped checking, the fire you feed out of habit rather than argument. Tonight it arrives whole and sits down across from you, patient, unhurried, like the island's other tide:",
+                    "<i>What if you just… stopped keeping the days?</i>",
+                    "Not dying. Nothing so decisive. Just — setting down the count. Letting the ledger blur. Walking into the green some morning without a plan to walk out, and letting the island fold over you the way it folded over every other made thing.",
+                    s.Companion == "kavi"
+                        ? "By the banked fire, Kavi shifts in sleep — one small warm fact against the whole enormous dark."
+                        : "The fire ticks. The dark does not.",
+                    "The night waits for your answer. It is not in a hurry. It is never in a hurry.",
+                },
+                Choices = new List<StoryChoice>
+                {
+                    new StoryChoice
+                    {
+                        Label = "Name one thing for the morning. Out loud. Then sleep.",
+                        Sub = "One thing. That's the whole discipline. That's always been the whole discipline.",
+                        Do = s => { s.Stat(Meter.Hope, 8); s.SetFlag("DESPAIR_REFUSED"); },
+                    },
+                    new StoryChoice
+                    {
+                        Label = "Stop keeping the days.",
+                        Sub = "Set down the count. Let the green have the rest.",
+                        Do = s => s.DeathCause = "despair",
+                    },
+                },
+            });
         }
 
         /// <summary>The secret neighbor's condition — scenes-chapter1.js

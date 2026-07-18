@@ -194,7 +194,23 @@ tidebound-unity/
       mountains pushed back beyond the interior. 8 new tests. Remaining:
       Bone Beach + trinkets, gates as presences (Grin/Boar King, Phase 5),
       compass-spin near heartglass.*
-- [ ] Phase 5 — act 1–2 story + first three endings
+- [~] Phase 5 — act 1–2 story + first three endings. *Session 1 (this
+      commit): THE ENDING PIPELINE, end to end — GameState.EndingId (VN
+      key), Endings.cs (runcard.js DEATH_TITLES complete, epilogue prose,
+      CORES v1: THE EMPTY HORIZON verbatim, run summary builder), and
+      RunCardUI: one full-screen terminal card for every death AND ending
+      (title, canon epilogue, the island's memory of the run, Enter for
+      another tide) — replaces the HUD's old death panel. The three v1
+      endings live: COLD FIRE (exposure death, already wired), THE EMPTY
+      HORIZON (RaftSite on the west beach: two lashing stages of 4
+      driftwood, then the launch question with canon subtext — refusable),
+      THE GREEN SWALLOWS (ev_despair ported from scenes-quests.js with
+      kavi/solo variants; offered once when Hope ≤ 12 at nightfall; refuse
+      = hope +8 + DESPAIR_REFUSED, accept = deathCause despair with the
+      full Green Swallows epilogue). GameManager: RunOver covers both
+      terminal kinds; ended saves discard on load. 11 new tests.
+      Remaining: the smoke inland, the Boar King treaty (track/wall/
+      tithe), the case washing ashore, chapter-2 camp tiers.*
 - [ ] Phase 6 — depth passes per act · Phase 7 — companions, NG+, polish
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day

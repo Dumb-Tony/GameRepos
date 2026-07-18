@@ -45,8 +45,6 @@ namespace Tidebound
         readonly List<(Text text, float dieAt)> _toasts = new List<(Text, float)>();
 
         Image _fade;
-        GameObject _deathPanel;
-        Text _deathTitle, _deathLine;
 
         static readonly string[] SegmentNames = { "Dawn", "Day", "Dusk", "Night" };
         static readonly string[] OptionKeys = { "E", "F", "C" };
@@ -236,33 +234,11 @@ namespace Tidebound
 
         void BuildOverlays()
         {
+            // the run card (RunCardUI) owns all terminal screens now;
+            // the HUD keeps only the sleep fade
             _fade = MakeRect(transform, "Fade", new Color(0, 0, 0, 0));
             Fill((RectTransform)_fade.transform);
             _fade.raycastTarget = false;
-
-            _deathPanel = new GameObject("DeathCard", typeof(RectTransform));
-            _deathPanel.transform.SetParent(transform, false);
-            Fill((RectTransform)_deathPanel.transform);
-            var bg = MakeRect(_deathPanel.transform, "Bg", new Color(0, 0, 0, 0.88f));
-            Fill((RectTransform)bg.transform);
-
-            _deathTitle = MakeText(_deathPanel.transform, "Title", 46, TextAnchor.MiddleCenter, new Color(0.9f, 0.85f, 0.75f), bold: true);
-            var drt = (RectTransform)_deathTitle.transform;
-            drt.anchorMin = new Vector2(0.1f, 0.55f); drt.anchorMax = new Vector2(0.9f, 0.72f);
-            drt.offsetMin = drt.offsetMax = Vector2.zero;
-
-            _deathLine = MakeText(_deathPanel.transform, "Line", 22, TextAnchor.UpperCenter, new Color(0.85f, 0.85f, 0.85f));
-            var lrt = (RectTransform)_deathLine.transform;
-            lrt.anchorMin = new Vector2(0.18f, 0.30f); lrt.anchorMax = new Vector2(0.82f, 0.54f);
-            lrt.offsetMin = lrt.offsetMax = Vector2.zero;
-
-            var hint = MakeText(_deathPanel.transform, "Hint", 18, TextAnchor.MiddleCenter, new Color(0.6f, 0.6f, 0.6f));
-            var hrt = (RectTransform)hint.transform;
-            hrt.anchorMin = new Vector2(0.2f, 0.14f); hrt.anchorMax = new Vector2(0.8f, 0.22f);
-            hrt.offsetMin = hrt.offsetMax = Vector2.zero;
-            hint.text = "Press Enter to wake on another tide.";
-
-            _deathPanel.SetActive(false);
         }
 
         // ---- runtime -----------------------------------------------------------
@@ -300,14 +276,6 @@ namespace Tidebound
 
             UpdatePrompt();
             UpdateToasts();
-
-            if (_gm.IsDead && !_deathPanel.activeSelf)
-            {
-                var (title, line) = _gm.DeathCard();
-                _deathTitle.text = title;
-                _deathLine.text = line;
-                _deathPanel.SetActive(true);
-            }
         }
 
         void UpdatePrompt()
