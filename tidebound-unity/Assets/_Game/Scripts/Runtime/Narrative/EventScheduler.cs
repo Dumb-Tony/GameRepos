@@ -68,6 +68,11 @@ namespace Tidebound.Narrative
                 When = s => s.Companion == null },
             new ScheduledEvent { Day = 11, Seg = Segment.Dusk, SceneId = "ev2_storm" },
             new ScheduledEvent { Day = 18, Seg = Segment.Dusk, SceneId = "ch2_threshold" },
+            // the sea returns the unsalvaged case (v1 adaptation — bible §Phase 5)
+            new ScheduledEvent { Day = 8, Seg = Segment.Dawn, SceneId = "ev2_case_ashore",
+                When = s => !s.Is("SALV_case") && !s.Has("case") },
+            // ---- the long game (scenes-chapter5.js, the shared events) ----
+            new ScheduledEvent { Day = 58, Seg = Segment.Night, SceneId = "ev5_cyclone" },
         };
     }
 }

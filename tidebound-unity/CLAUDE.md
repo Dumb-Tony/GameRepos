@@ -194,7 +194,7 @@ tidebound-unity/
       mountains pushed back beyond the interior. 8 new tests. Remaining:
       Bone Beach + trinkets, gates as presences (Grin/Boar King, Phase 5),
       compass-spin near heartglass.*
-- [~] Phase 5 — act 1–2 story + first three endings. *Session 1 (this
+- [x] Phase 5 — act 1–2 story + first three endings. *Session 1 (this
       commit): THE ENDING PIPELINE, end to end — GameState.EndingId (VN
       key), Endings.cs (runcard.js DEATH_TITLES complete, epilogue prose,
       CORES v1: THE EMPTY HORIZON verbatim, run summary builder), and
@@ -232,9 +232,28 @@ tidebound-unity/
       E's bark-strip note, the two silent fires) into the ch2_end Ledger
       card that remembers every thread (site, tier words, King stance,
       storm, smoke — route leanings shown, as the VN's chapter cards
-      canonically do). 7 new tests. Remaining for Phase 5: shelter tier
-      3, the courier's case arc, Cold Fire's cyclone framing — then
-      Phase 6 depth passes / Chapter Three: Edda's mountain.*
+      canonically do). 7 new tests. Session 4 (Phase 5 COMPLETE):
+      shelter tier 3 — the VN's "Fortify the camp" (ch2 camp works;
+      same cost formula, cap rises to 3 in chapter 2, palisade + raised-
+      cache greybox visual, threshold/king-tide payoffs now reachable);
+      THE COURIER'S CASE (CaseArc.cs from scenes-extra.js: contemplation
+      scene with the three openings — Ipo's audience dormant until Ipo,
+      the engineer's drill, the chart-tearing smash — CASE_CONTENTS with
+      the knowsGlass naming rule, loot flags banked for ch3's Edda scene
+      and ch4's Rosa dive; a camp CaseInteractable by the fire's flat
+      stone, opening charged as a labor; v1 adaptation per the bible:
+      the sea returns an unsalvaged case on day 8, ev2_case_ashore);
+      COLD FIRE'S CYCLONE FRAMING (CycloneNight.cs from scenes-
+      chapter5.js: ev5_cyclone on the calendar d58 night, tier taken
+      BEFORE the death door is measured exactly as the VN does, flee-or-
+      stay with the warning in plain text, staged with the storm rig;
+      the full "the storm only did the audit" epilogue — while the plain
+      exposure death keeps its lean card via a CYCLONE_APPLIED gate).
+      Fixed en route: StoryPlayback now treats a fully When-filtered
+      choice list as a continue scene (the fortified camp's cyclone
+      would have soft-locked the dialogue). Ledger + run-summary case/
+      cyclone lines. 17 new tests. Phase 5 done — next: Phase 6 depth
+      passes / Chapter Three: Edda's mountain.*
 - [x] Shakedown (first live-editor session, via Unity MCP): everything
       built blind in Phases 0–5 ran in a real Unity 6000.5 editor for the
       first time. Zero compile errors. Full EditMode suite executed for

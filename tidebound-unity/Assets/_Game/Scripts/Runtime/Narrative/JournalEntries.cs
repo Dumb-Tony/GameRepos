@@ -33,6 +33,10 @@ namespace Tidebound.Narrative
             ("FLARE_HELD", "A ship crossed the horizon and you held the flare. You stopped waiting; you started preparing."),
             ("GLYPH_1", "Under moss in the interior: cut spirals, seven strokes to a row. Somebody worked stone here, once."),
             ("WALLOW_SEEN", "You have seen the wallow. Somebody large keeps the interior, and the rent is not posted in your currency."),
+            ("CASE_ASHORE", "The sea carried the courier's case for eight days, then gave it back. The lock is unimpressed."),
+            ("CASE_OPEN", "The case is open: a dozen impossible gems, a fifty-year dossier under a crest, and a chart marking a wreck called the Rosa Dourada."),
+            ("CHART_TORN", "The chart paid for the smashing — torn through, half of two centuries' annotations gone."),
+            ("CYCLONE_APPLIED", "The fifty-eighth night was a cyclone's outer arm. You are still here to write that down."),
         };
 
         /// <summary>The locals, as the VN's known-list keeps them (engine.js) —
@@ -156,7 +160,10 @@ namespace Tidebound.Narrative
             foreach (var (key, name) in ItemNames)
             {
                 int n = s.Count(key);
-                if (n > 0) carried.Add(n > 1 ? $"{name} × {n}" : name);
+                if (n <= 0) continue;
+                string shown = key == "case" && s.Is("CASE_OPEN")
+                    ? "The courier's case (open)" : name;
+                carried.Add(n > 1 ? $"{shown} × {n}" : shown);
             }
             if (carried.Count > 0)
             {

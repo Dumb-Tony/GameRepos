@@ -73,15 +73,18 @@ namespace Tidebound
             return ActionResult.Fail("Friction, stubbornness, blisters — and no coal. Tomorrow the wood will be drier. So will you.");
         }
 
-        // ---- ⛺ Build / improve the shelter -------------------------------
+        // ---- ⛺ Build / improve / fortify the shelter ----------------------
+        // (tier 3 is the VN's chapter-2 "Fortify the camp"; same cost formula)
         public static ActionResult BuildShelter(GameState s)
         {
             s.Stat(Meter.Energy, s.Has("toolbox") || s.Is("BG_ENGINEER") ? -10 : -14);
             s.Shelter += 1;
             s.AddRoute(RouteAxis.Roots, 2);
-            return ActionResult.Ok(s.Shelter >= 2
-                ? "Walls that mean it, a roof that argues with rain and wins. It is starting to look suspiciously like a home."
-                : "A lean-to above the tide line: driftwood bones, frond skin. Hard labor now, better nights after.");
+            return ActionResult.Ok(s.Shelter >= 3
+                ? "By dusk it isn't a camp anymore. It's a position: palisade of sharpened stakes, stores raised on a platform no pig on earth could reach, fire ring walled against wind. You walk the perimeter twice for no practical reason at all."
+                : s.Shelter >= 2
+                    ? "Walls that mean it, a roof that argues with rain and wins. It is starting to look suspiciously like a home."
+                    : "A lean-to above the tide line: driftwood bones, frond skin. Hard labor now, better nights after.");
         }
 
         // ---- 🆘 Stamp SOS into the beach -----------------------------------

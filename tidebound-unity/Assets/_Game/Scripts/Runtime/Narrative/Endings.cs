@@ -32,7 +32,14 @@ namespace Tidebound.Narrative
             ["thirst"] = new[] { "You knew. The sticking tongue, the stopped sweat — the island said it plainly, and water was always the first law." },
             ["hunger"] = new[] { "It ends the way it warned you it would: not with pain but with a great soft quiet, and the sea still counting to itself." },
             ["injury"] = new[] { "Every cut out here is a small loan from a lender you don't know. Yours came due." },
-            ["coldfire"] = new[] { "No roof, no fire, and a night that kept every promise the dusk wind made." },
+            // Cold Fire's full framing — scenes-chapter1.js death scene, verbatim
+            // (the strangers variant; Ryo arrives with chapter 4)
+            ["coldfire"] = new[]
+            {
+                "No single moment killed you. That is the whole of this card, and the island would want it stated plainly: not the cyclone, not the cold, not the dark. What killed you was a season of small skipped choices arriving all at once to be paid — the shelter tier you meant to get to, the firewood store that stayed a plan, the overhang you didn't move to on Day 4 because the beach had a view.",
+                "The storm only did the audit.",
+                "They find the camp in the spring — strangers, whoever the sea sends — and the strange thing, the thing that stops them, is how CLOSE it all was: the half-built windbreak, the stacked stones, the good intentions legible in every unfinished thing. The island files it under its second-oldest heading: <i>tomorrow.</i>",
+            },
             ["fever"] = new[] { "The fever finishes its argument. You had heard every word of it coming." },
             ["boarking"] = new[]
             {
@@ -59,6 +66,14 @@ namespace Tidebound.Narrative
                 }),
             };
 
+        // Cold Fire without its cyclone (the plain cold-night exposure death,
+        // a 3D-side cause) keeps the lean card — the audit framing belongs
+        // to the storm that ran it
+        static readonly string[] ColdFireExposure =
+        {
+            "No roof, no fire, and a night that kept every promise the dusk wind made.",
+        };
+
         public static (string Title, string[] Body) Resolve(GameState s)
         {
             if (s.EndingId != null && Cores.TryGetValue(s.EndingId, out var core))
@@ -69,6 +84,8 @@ namespace Tidebound.Narrative
                 string[] body = DeathBodies.TryGetValue(s.DeathCause, out var b)
                     ? b
                     : new[] { "The island keeps what it catches." };
+                if (s.DeathCause == "coldfire" && !s.Is("CYCLONE_APPLIED"))
+                    body = ColdFireExposure;
                 return (title, body);
             }
             return ("TIDEBOUND", new[] { "The story is still being written." });
@@ -92,7 +109,6 @@ namespace Tidebound.Narrative
             ("FLARE_SPENT", "You spent your only flare on a far light that never turned. The island saw."),
             ("FLARE_HELD", "A ship's light crossed the horizon, and you held your only flare. The island saw that too."),
             ("HELPED_COURIER", "A stranger's photograph is still in your pocket. \"If it's the same island…\""),
-            ("SALV_case", "The courier's case is still locked. It was never going to open itself."),
             ("GLYPH_1", "You found the strokes that run seven to a row."),
             ("SQUALL_DRY", "A squall tested your roof, and your roof won."),
         };
@@ -117,6 +133,12 @@ namespace Tidebound.Narrative
 
             foreach (var (flag, line) in SummaryDeeds)
                 if (s.Is(flag)) lines.Add(line);
+
+            // the case remembers its state (runcard.js roads / scenes-chapter7.js)
+            if (s.Is("CASE_OPEN"))
+                lines.Add("You opened the courier's case: a dozen impossible gems, a fifty-year hunt in typed pages, and a chart older than both.");
+            else if (s.Has("case"))
+                lines.Add("A locked courier's case kept its answer to the end.");
 
             lines.Add("Nothing is decided. Everything is remembered.");
             return lines;

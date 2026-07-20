@@ -448,6 +448,8 @@ namespace Tidebound.Narrative
             AddClearing(script);
             AddDespair(script);
             Chapter2Events.AddTo(script); // Foothold shares the one event script
+            CaseArc.AddTo(script);        // the courier's case (scenes-extra.js)
+            CycloneNight.AddTo(script);   // the cyclone — Cold Fire's vehicle
             return script;
         }
 

@@ -610,10 +610,61 @@ namespace Tidebound.EditorTools
                 new Vector3(sx, sy + 1.95f, sz + 0.4f), new Vector3(3.3f, 0.12f, 2.9f), mats.Leaf, stripCollider: true);
             tier2.SetActive(false);
 
+            // tier 3 — the fortified camp: a palisade ring of sharpened stakes
+            // and the raised cache no pig on earth can reach
+            var tier3 = new GameObject("Tier3_Fortified");
+            tier3.transform.SetParent(site.transform, true);
+            tier3.transform.position = new Vector3(sx, sy, sz);
+            for (int i = 0; i < 14; i++)
+            {
+                float ang = i * (360f / 14f) * Mathf.Deg2Rad;
+                float px = sx + Mathf.Cos(ang) * 4.2f, pz = sz + Mathf.Sin(ang) * 4.2f;
+                float py = Height(px, pz);
+                var stake = Prim(PrimitiveType.Cylinder, "Stake", tier3.transform,
+                    new Vector3(px, py + 0.7f, pz), new Vector3(0.12f, 0.7f, 0.12f),
+                    mats.Driftwood, stripCollider: true);
+                stake.transform.rotation = Quaternion.Euler(
+                    Mathf.Sin(ang) * 8f, 0f, -Mathf.Cos(ang) * 8f); // leaning out, on purpose
+                Prim(PrimitiveType.Sphere, "Point", tier3.transform,
+                    new Vector3(px, py + 1.45f, pz), new Vector3(0.09f, 0.18f, 0.09f),
+                    mats.Wood, stripCollider: true);
+            }
+            float chx = sx - 2.6f, chz = sz - 2.2f, chy = Height(chx, chz);
+            for (int i = 0; i < 4; i++)
+                Prim(PrimitiveType.Cylinder, "CacheLeg", tier3.transform,
+                    new Vector3(chx + (i % 2 == 0 ? -0.5f : 0.5f), chy + 0.8f, chz + (i < 2 ? -0.4f : 0.4f)),
+                    new Vector3(0.09f, 0.8f, 0.09f), mats.Driftwood, stripCollider: true);
+            Prim(PrimitiveType.Cube, "CachePlatform", tier3.transform,
+                new Vector3(chx, chy + 1.66f, chz), new Vector3(1.5f, 0.1f, 1.2f), mats.Wood, stripCollider: true);
+            Prim(PrimitiveType.Cube, "CacheStores", tier3.transform,
+                new Vector3(chx, chy + 1.92f, chz), new Vector3(0.9f, 0.42f, 0.7f), mats.Leaf, stripCollider: true);
+            tier3.SetActive(false);
+
             var shelter = site.AddComponent<ShelterInteractable>();
             shelter.tier1Visual = tier1;
             shelter.tier2Visual = tier2;
+            shelter.tier3Visual = tier3;
             shelter.interactRadius = 3.2f;
+
+            // ---- the courier's case, by the flat stone -----------------------
+            // (a shape you last saw chained to a wrist; visible once carried)
+            float kx = cx - 1.9f, kz = cz + 1.4f, ky = Height(kx, kz);
+            var caseGo = new GameObject("CourierCase");
+            caseGo.transform.position = new Vector3(kx, ky, kz);
+            var caseVisual = new GameObject("CaseVisual");
+            caseVisual.transform.SetParent(caseGo.transform, true);
+            caseVisual.transform.position = caseGo.transform.position;
+            var body = Prim(PrimitiveType.Cube, "CaseBody", caseVisual.transform,
+                new Vector3(kx, ky + 0.16f, kz), new Vector3(0.62f, 0.3f, 0.42f), mats.Metal, stripCollider: true);
+            body.transform.rotation = Quaternion.Euler(0f, 24f, 0f);
+            var crest = Prim(PrimitiveType.Cylinder, "Crest", caseVisual.transform,
+                new Vector3(kx + 0.1f, ky + 0.325f, kz - 0.05f), new Vector3(0.12f, 0.008f, 0.12f),
+                mats.Copper, stripCollider: true);
+            crest.transform.rotation = Quaternion.Euler(0f, 24f, 0f);
+            caseVisual.SetActive(false); // CaseInteractable shows it once carried
+            var courierCase = caseGo.AddComponent<CaseInteractable>();
+            courierCase.visual = caseVisual;
+            courierCase.interactRadius = 2.4f;
         }
 
         static void BuildSosSite(Mats mats)

@@ -39,6 +39,7 @@ namespace Tidebound
         public float gatherCost = 0f;
         public float sosCost = 0.5f;
         public float tidePoolCost = 0.4f;
+        public float caseOpenCost = 0.5f; // "two patient hours" — charged only if the lock loses
 
         [Header("Exposure (the cold tax; warned at dusk)")]
         public float exposureHealth = 6f;
@@ -343,6 +344,24 @@ namespace Tidebound
             if (State.FiredEvents.TryGetValue(sceneId, out var fired) && fired) return;
             EventScheduler.MarkFired(State, sceneId);
             _eventQueue.Enqueue(sceneId);
+        }
+
+        /// <summary>
+        /// The courier's case, considered at the flat stone (repeatable until
+        /// opened). Looking is free; opening is a labor — if the lock lost
+        /// this session, the time is charged when the dialogue closes.
+        /// </summary>
+        public void OpenCaseScene()
+        {
+            bool wasOpen = State.Is("CASE_OPEN");
+            if (encounterDirector != null) encounterDirector.Begin("case_scene");
+            Dialogue.Play(Encounters, "case_scene", () =>
+            {
+                if (encounterDirector != null) encounterDirector.End();
+                if (!wasOpen && State.Is("CASE_OPEN")) clock.SpendSegments(caseOpenCost);
+                SaveNow();
+                CheckDeath();
+            }, DialogueStyle.LowerThird);
         }
 
         /// <summary>The raft's question, asked properly (repeatable until answered).</summary>

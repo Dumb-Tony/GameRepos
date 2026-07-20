@@ -137,6 +137,20 @@ namespace Tidebound
                     WeatherOn();
                     Shot(new Vector3(-7f, 3.5f, 7f), new Vector3(0f, 1f, 15f));
                     return true;
+                case "ev5_cyclone":
+                    // the season's true fist — the squall's dressing, harder light
+                    Show(rainRig);
+                    WeatherOn();
+                    Shot(new Vector3(-7f, 3.5f, 7f), new Vector3(0f, 1f, 15f));
+                    return true;
+                case "case_scene":
+                    // the flat stone, in good light
+                    Shot(new Vector3(-4f, 1.8f, 10f), new Vector3(1f, 0.7f, 15.5f));
+                    return true;
+                case "ev2_case_ashore":
+                    // the wrack line and the returned thing
+                    Shot(new Vector3(4f, 2.2f, 12f), new Vector3(-2f, 0.3f, 0f));
+                    return true;
                 case "ch2_threshold":
                     Show(smokeColumn);
                     Shot(new Vector3(0f, 3f, 30f), new Vector3(20f, 130f, 560f));
@@ -171,6 +185,10 @@ namespace Tidebound
                 case "ev2_storm2":
                     // the storm proper — rain stays; the camp endures
                     Shot(new Vector3(5f, 2.8f, 9f), new Vector3(0f, 0.9f, 16f));
+                    break;
+                case "ev5_cyclone_flee":
+                    // the treeline, the root-vaults, the world ending overhead
+                    Shot(new Vector3(4f, 2f, 66f), new Vector3(12f, 1.2f, 74f));
                     break;
                 case "ch2_end_trek":
                     HideShown();

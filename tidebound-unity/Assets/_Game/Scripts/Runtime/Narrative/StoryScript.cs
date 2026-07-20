@@ -119,6 +119,9 @@ namespace Tidebound.Narrative
             Current = _script.Get(id);
             Current.OnEnter?.Invoke(_state);
             Options = Current.AvailableChoices(_state);
+            // every choice When-filtered away = a continue-style scene (the
+            // VN's choices() returning [] shows nextLabel — same rule here)
+            if (Options != null && Options.Count == 0) Options = null;
         }
     }
 }

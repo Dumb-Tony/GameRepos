@@ -156,7 +156,8 @@ namespace Tidebound.Narrative
                 Text = s => new List<string>
                 {
                     "<i>THE SMOKE</i>",
-                    "Dusk, day eighteen. Two weeks of foothold behind you: a working camp, "
+                    "Dusk, day eighteen. Two weeks of foothold behind you: "
+                        + (s.Shelter >= 3 ? "a fortified camp" : "a working camp") + ", "
                         + (s.Companion != null
                             ? "a bond growing real enough to plan around"
                             : "a solitude you've built into a structure")
