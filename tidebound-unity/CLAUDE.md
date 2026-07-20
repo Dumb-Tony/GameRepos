@@ -24,6 +24,12 @@ Canon lives in `../tidebound/design/` (writers' bible) and `../tidebound/*.js`
   `claude/phase-1-setup-klievx` (the project's active line; push nowhere
   else). Cloud sessions are fallback-only and must not assume they can run
   Unity — if one is ever used, it leaves testing to the next local session.
+- **Work in the dedicated worktree `C:\Dev\GameRepos-claude`** (created
+  2026-07-20), which holds this branch permanently; the owner uses GitHub
+  Desktop on `C:\Dev\GameRepos` for the other game, so that checkout's
+  branch flips mid-session. The Unity editor for dev sessions opens
+  `C:\Dev\GameRepos-claude\tidebound-unity`. Never `git switch` the main
+  checkout; the worktree pin also stops Desktop from taking this branch.
 - **One phase (or less) per conversation** (build order in the bible §7).
   Commit and push every session.
 - **Everything code-driven.** Claude can't click the editor: scene setup,
@@ -288,6 +294,25 @@ tidebound-unity/
       deliberate, see "No Input System package"). This commit carries
       the regenerated scene, re-serialized materials, and the finale
       scripts' fresh .cs.meta files.
+- [~] Chapter Three — The Green Deep. *Session 1 (this commit): the
+      chapter turn — ch3_open ported from scenes-chapter3.js with its
+      three doors (branch on the Smoke decision): the night meeting on
+      Edda's floor (SMOKE_NOW), the noon appointment with the note
+      (SMOKE_LATER), and the signal-keeper's cold open (SMOKE_IGNORED);
+      both meeting scenes' choices with the full Edda-meter math
+      (base + eddaChem companion chemistry; kavi/solo live, the rest of
+      the map ported for later companions), EDDA_PRESSED/EDDA_PATIENT,
+      Depth route pays; the walk-down scenes (ch3_after_open with the
+      unearned basket +12 hunger, ch3_after_press warily) banking
+      GROVE_OPENED + LORE_FEVERBARK once each; ch2_end's card now
+      continues into ch3_open (the VN's "start a new run" option stays
+      with RunCardUI, v1 adaptation); VN mid-dialogue tickSegment calls
+      folded into effects per the ch2 precedent. 10 new tests.
+      Remaining for the chapter: the grove as a place (terrain, region,
+      Wayfinder pin, hub actions incl. feverbark + grove-day deck), the
+      ev3_* calendar (river d20, Edda's visit d21, fever d22, Grin d24,
+      king2 d27, pulse d28, heart2 d31, ch3_threshold d35), Old Grin,
+      the Silverthread, the mangrove east.*
 - [ ] Phase 6 — depth passes per act · Phase 7 — companions, NG+, polish
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day

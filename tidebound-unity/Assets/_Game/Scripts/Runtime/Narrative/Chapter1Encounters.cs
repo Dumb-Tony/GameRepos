@@ -450,6 +450,7 @@ namespace Tidebound.Narrative
             Chapter2Events.AddTo(script); // Foothold shares the one event script
             CaseArc.AddTo(script);        // the courier's case (scenes-extra.js)
             CycloneNight.AddTo(script);   // the cyclone — Cold Fire's vehicle
+            Chapter3Events.AddTo(script); // The Green Deep opens (ch3_open cluster)
             return script;
         }
 

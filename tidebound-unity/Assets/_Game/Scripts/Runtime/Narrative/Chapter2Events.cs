@@ -282,10 +282,12 @@ namespace Tidebound.Narrative
                             ? "you prepared first — and the mountain left you a note. \"Come at noon. Come slow.\" Signed E. Chapter Three has an appointment."
                             : "you turned your back on it and fed your signal instead. The mountain's fire burns on, unanswered, patient. Chapter Three will not wait forever."));
                     t.Add($"Route leanings — Signal {s.Route.Signal} · Roots {s.Route.Roots} · Depth {s.Route.Depth}. Nothing is decided. Everything is remembered.");
-                    t.Add("<i>Chapter Three: The Green Deep — in development. The island continues; so can you.</i>");
                     return t;
                 },
-                NextLabel = "Back to the island",
+                // The VN offers "start a new run" here too; v1 keeps run resets
+                // on the RunCardUI flow, so the card continues into chapter 3.
+                Next = "ch3_open",
+                NextLabel = "Continue — Chapter Three: The Green Deep ➤",
             });
         }
 
