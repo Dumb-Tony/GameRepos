@@ -16,8 +16,16 @@ Canon lives in `../tidebound/design/` (writers' bible) and `../tidebound/*.js`
 
 ## Workflow
 
+- **As of Phase 5 complete: ONE local session does everything.** Development
+  happens in a single Claude session on the owner's machine
+  (`C:\Dev\GameRepos`) with Unity MCP connected — write the code, run the
+  EditMode suite and the scene builder live in the editor, fix what breaks,
+  then commit and push the same session. Branch:
+  `claude/phase-1-setup-klievx` (the project's active line; push nowhere
+  else). Cloud sessions are fallback-only and must not assume they can run
+  Unity — if one is ever used, it leaves testing to the next local session.
 - **One phase (or less) per conversation** (build order in the bible §7).
-  Commit and push every session. Branch: `claude/visual-novel-3d-rpg-ss5ld2`.
+  Commit and push every session.
 - **Everything code-driven.** Claude can't click the editor: scene setup,
   placement, and configuration are editor scripts/menu items under
   `Tidebound ▸ …` that the human runs. Feel-tuning is exposed as inspector
@@ -77,8 +85,9 @@ tidebound-unity/
   WASD + mouse, Shift run, E/F/C interact, Esc frees the cursor.
 - Tests (CLI): `Unity -batchmode -projectPath tidebound-unity -runTests
   -testPlatform EditMode -logFile - -testResults results.xml` (or the Test
-  Runner window). Unity/graphics tooling can't run in the cloud sandbox —
-  code must arrive compile-clean; the human runs tests and reports back.
+  Runner window). Local sessions run tests through Unity MCP directly and
+  fix failures in the same sitting; only a cloud fallback session needs the
+  old rule (arrive compile-clean, let the next local session verify).
 
 ## Phase status (bible §7)
 
