@@ -278,6 +278,16 @@ tidebound-unity/
       .cs.meta files, builder-generated materials now referenced by the
       saved scene, package resolves incl. the owner's newly installed
       Unity AI/MCP packages, real-editor scene re-serialization).
+- [x] Phase 5 finale verified live (local Unity MCP session): the
+      fortified-camp / courier's-case / cyclone commit compiled clean on
+      first contact with the editor and the full EditMode suite passed
+      210/210 first try (was 190 — the finale's 20 new tests included).
+      Build Castaway Bay regenerated the scene with Tier3_Fortified
+      (palisade + raised cache) and the CourierCase prop; 0 errors,
+      only known-benign warnings (Input Manager deprecation notice —
+      deliberate, see "No Input System package"). This commit carries
+      the regenerated scene, re-serialized materials, and the finale
+      scripts' fresh .cs.meta files.
 - [ ] Phase 6 — depth passes per act · Phase 7 — companions, NG+, polish
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day
