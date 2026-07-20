@@ -22,7 +22,7 @@ namespace Tidebound.Tests
         [Test]
         public void EveryRegion_HasItsCanon()
         {
-            Assert.AreEqual(5, Regions.All.Length); // the v1 island + Edda's grove (ch3)
+            Assert.AreEqual(6, Regions.All.Length); // the v1 island + the grove + the mangroves (ch3)
             foreach (var r in Regions.All)
             {
                 Assert.AreEqual(2, r.First.Length, r.Id);

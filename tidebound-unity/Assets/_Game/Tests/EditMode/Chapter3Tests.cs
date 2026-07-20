@@ -456,6 +456,42 @@ namespace Tidebound.Tests
             Assert.IsTrue(CaseArc.KnowsGlass(s)); // Edda supplied the name
         }
 
+        // ---- session 5: the drowned east, and the medic's road out ------------
+        [Test]
+        public void Mangroves_AreARegion_InTheDrownedEast()
+        {
+            var m = Regions.Get("mangrove");
+            Assert.AreEqual("The Mangroves", m.Name);
+            Assert.AreEqual("mangrove", Regions.IdAt(180f, 160f));
+            Assert.AreEqual("tidepools", Regions.IdAt(180f, 60f)); // the shelf stays the shelf
+            Assert.AreEqual("grove", Regions.IdAt(100f, 285f));    // the knee stays the knee
+
+            var s = GameState.NewGame();
+            s.Stats.Hunger = 60f;
+            m.FirstEffects(s);
+            Assert.AreEqual(2, s.Route.Depth);
+            Assert.AreEqual(70f, s.Stats.Hunger);
+        }
+
+        [Test]
+        public void FeverBurnout_TakesTheKitAndTheDay()
+        {
+            var s = GameState.NewGame();
+            s.Background = "medic";
+            s.Disease = "fever";
+            s.AddItem("medkit", 3);
+            float health = s.Stats.Health;
+            Script.Get("camp_fever_burnout").OnEnter(s);
+            Assert.IsNull(s.Disease);
+            Assert.AreEqual(1, s.Count("medkit"));
+            Assert.AreEqual(health - 5, s.Stats.Health);
+
+            var well = GameState.NewGame(); // no fever: the scene does nothing
+            well.AddItem("medkit", 3);
+            Script.Get("camp_fever_burnout").OnEnter(well);
+            Assert.AreEqual(3, well.Count("medkit"));
+        }
+
         // ---- the grove as a place --------------------------------------------
         [Test]
         public void Grove_IsARegion_OnTheMountainsKnee()

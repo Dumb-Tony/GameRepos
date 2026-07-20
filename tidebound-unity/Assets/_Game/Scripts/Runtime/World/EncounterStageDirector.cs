@@ -28,6 +28,11 @@ namespace Tidebound
         public GameObject boarKingRig;
         public GameObject smokeColumn;
         public GameObject lanternShape;
+        [Header("Chapter 3 rigs")]
+        public GameObject eddaCampRig;
+        public GameObject eastMastRig;
+        [Tooltip("Old Grin is permanent furniture in his channel; the director only aims at him.")]
+        public GameObject grinRig;
         public SunCycle sun;
 
         [Header("Shot feel")]
@@ -160,6 +165,65 @@ namespace Tidebound
                     Show(dogNightRig); Show(moaRig); Show(velaRig);
                     Shot(new Vector3(-2f, 2.2f, 10f), new Vector3(10f, 1.2f, 60f));
                     return true;
+                // ---- chapter three ----
+                case "ch3_open":
+                    // the country, considered from the treeline
+                    Shot(new Vector3(0f, 3f, 30f), new Vector3(20f, 130f, 560f));
+                    return true;
+                case "ev3_river":
+                    // the artery, first heard then seen
+                    Shot(GroundAt(-24f, 176f) + Vector3.up * 2.4f, GroundAt(-36f, 196f) + Vector3.up * 0.6f);
+                    return true;
+                case "ev3_eddavisit":
+                    // a woman IN your camp, shotgun broken open over one arm
+                    Show(eddaCampRig);
+                    Shot(new Vector3(-3.5f, 1.9f, 11f), new Vector3(2.2f, 1.2f, 13.2f));
+                    return true;
+                case "ev3_fever":
+                    // the camp, seen from inside the shivering
+                    Shot(new Vector3(-4f, 1.6f, 10f), new Vector3(1f, 0.7f, 15.5f));
+                    return true;
+                case "ev3_grin1":
+                case "ch3_threshold":
+                    // the channel, and the log that was never a log
+                    Shot(new Vector3(172f, 2.6f, 148f), new Vector3(185f, 0.4f, 160f));
+                    return true;
+                case "ev3_king2":
+                    if (_gm.State.Is("KING_TRACKED"))
+                    {
+                        // the wallow, the wire, the small skulls — no King today
+                        Shot(new Vector3(-46f, 2.4f, 248f), new Vector3(-36f, 1.4f, 256f));
+                    }
+                    else if (boarKingRig != null)
+                    {
+                        boarKingRig.transform.position = GroundAt(10f, 76f);
+                        Show(boarKingRig);
+                        Shot(new Vector3(-2f, 1.9f, 14f), new Vector3(10f, 1.6f, 76f));
+                    }
+                    return true;
+                case "ev3_pulse":
+                    // the bay at the black bottom of the night, mid-breath
+                    Shot(new Vector3(2f, 2.6f, 12f), new Vector3(-6f, 0f, -30f));
+                    return true;
+                case "ev3_heart2":
+                case "ev3_heart2_low":
+                case "ev3_coco2":
+                    Shot(new Vector3(-4f, 1.8f, 10f), new Vector3(1f, 0.7f, 15.5f));
+                    return true;
+                case "grove_work":
+                case "grove_plants":
+                case "grove_wound":
+                case "grove_cure":
+                case "grove_lore":
+                case "grove_gems":
+                case "grove_case":
+                case "grove_graves":
+                    // her fence, her terraces, her tea
+                    Shot(GroundAt(99f, 288f) + Vector3.up * 1.9f, GroundAt(104f, 293f) + Vector3.up * 1.3f);
+                    return true;
+                case "camp_fever_burnout":
+                    Shot(new Vector3(-4f, 1.6f, 10f), new Vector3(1f, 0.7f, 15.5f));
+                    return true;
                 default:
                     return false;
             }
@@ -208,6 +272,28 @@ namespace Tidebound
                     break;
                 case "court_none":
                     HideShown(); // the eyes withdraw; the fire is yours alone
+                    Shot(new Vector3(-4f, 2.2f, 9f), new Vector3(0f, 0.8f, 15f));
+                    break;
+                case "ch3_toll_baited":
+                case "ch3_toll_timed":
+                case "ch3_toll_kavi":
+                case "ch3_toll_fight":
+                    // the ford itself: low, close, the water reading you back
+                    Shot(new Vector3(178f, 1.4f, 152f), new Vector3(192f, 0.3f, 166f));
+                    break;
+                case "ch3_east":
+                    // the held breath released — and the mast against the far light
+                    HideShown();
+                    Show(eastMastRig);
+                    Shot(new Vector3(214f, 6f, 178f), new Vector3(640f, 40f, 480f));
+                    break;
+                case "ch3_end_stay":
+                    // the long walk home, the mangroves at your back
+                    HideShown();
+                    Shot(new Vector3(160f, 3f, 140f), new Vector3(120f, 1f, 100f));
+                    break;
+                case "ch3_end":
+                    HideShown();
                     Shot(new Vector3(-4f, 2.2f, 9f), new Vector3(0f, 0.8f, 15f));
                     break;
             }

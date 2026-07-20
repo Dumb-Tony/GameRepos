@@ -52,6 +52,29 @@ namespace Tidebound.Narrative
             AddHearts2(script);
             AddThreshold(script);
             AddGroveVisits(script);
+            AddFeverBurnout(script);
+        }
+
+        // ---- the medic's road out of the fever (ch3Actions) -------------------
+        static void AddFeverBurnout(StoryScript script)
+        {
+            script.Add(new StoryScene
+            {
+                Id = "camp_fever_burnout",
+                OnEnter = s =>
+                {
+                    if (s.Disease != "fever") return;
+                    s.AddItem("medkit", -2);
+                    s.Disease = null;
+                    s.Stat(Meter.Health, -5);
+                    s.Stat(Meter.Hope, 4);
+                },
+                Text = _ => new List<string>
+                {
+                    "You treat yourself the way you'd treat a stranger: ruthlessly. Fluids on schedule, the kit's antipyretics split and rationed, cold compresses through the worst of the spikes, and no heroics about staying on your feet.",
+                    "It takes a day you can't spare and most of the kit. On the far side of it you are wrung out, five pounds lighter — and <i>clear</i>. The fever's hooks are out.",
+                },
+            });
         }
 
         // ---- the grove, visitable (the VN's 'grove' hub scene, split into

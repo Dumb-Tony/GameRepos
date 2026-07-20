@@ -33,6 +33,7 @@ namespace Tidebound.Narrative
         public static string IdAt(float x, float z)
         {
             if (z > 230f && x > 40f) return "grove"; // the mountain's knee
+            if (x > 145f && z > 90f && z <= 230f) return "mangrove"; // the drowned east
             if (z > 150f) return "deepgreen";
             if (z > 78f) return "fringe";
             if (x > 115f && z < 70f) return "tidepools";
@@ -153,6 +154,26 @@ namespace Tidebound.Narrative
                         s => { s.Edda = Math.Min(100, s.Edda + 5); s.AddRoute(RouteAxis.Roots, 2); }),
                     ("You trade the day's catch for the garden's surplus and the island's best gossip (the junglefowl are feuding; the bees have expanded; the mountain, she says, glancing up without stopping her hands, is 'talkative lately').",
                         s => { s.Stat(Meter.Hunger, 12); s.Edda = Math.Min(100, s.Edda + 3); }),
+                },
+            },
+            new RegionDef
+            {
+                Id = "mangrove",
+                Name = "The Mangroves",
+                Sub = "The east's drowned forest. Half water, half secret.",
+                ChartX = 318f, ChartY = 176f,
+                First = new[]
+                {
+                    "The eastern mangroves are a country with its own physics: forest standing in sea, roots like drowned cathedrals, channels that go somewhere and channels that only pretend to. You pole in on a borrowed tide, and the light goes green-gold and strange, and the usual island noises hand over to frog-parliament and drip and the patient conversation of water with wood.",
+                    "It is the best larder on the island and the easiest place on the island to stop existing, and it makes no apology for being both. You take crabs and mud-clams and one wrong turn — one — and the wrong turn is the real lesson: in here, attention is the fee, charged continuously.",
+                },
+                FirstEffects = s => { s.AddRoute(RouteAxis.Depth, 2); s.Stat(Meter.Hunger, 10); },
+                Deck = new (string, Action<GameState>)[]
+                {
+                    ("You run the channels at slack water with yesterday's wrong turn corrected, and the drowned forest pays out: crabs, clams, a mullet trapped in a root-pen that was practically an invoice.",
+                        s => { s.Stat(Meter.Hunger, 14); s.Food += 1; }),
+                    ("You find claw-marks on a root-buttress, high as your chest, old as rumor — the landlord's eastern boundary, filed where tenants can read it.",
+                        s => s.AddRoute(RouteAxis.Depth, 2)),
                 },
             },
         };

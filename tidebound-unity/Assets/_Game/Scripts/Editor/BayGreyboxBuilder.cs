@@ -44,6 +44,7 @@ namespace Tidebound.EditorTools
             BuildGreenDeepZone(mats);
             BuildEddasGrove(mats);
             BuildSilverthread(mats);
+            BuildMangroveEast(mats);
             BuildBounds();
             BuildJungleWall(mats);
             BuildWreck(mats);
@@ -87,6 +88,7 @@ namespace Tidebound.EditorTools
             public Material Crab = Mat("Crab", new Color(0.72f, 0.42f, 0.30f));
             public Material Cloud = Mat("Cloud", new Color(0.95f, 0.96f, 0.97f), 0.05f);
             public Material Mountain = Mat("Mountain", new Color(0.30f, 0.37f, 0.34f));
+            public Material TeaWater = Mat("TeaWater", new Color(0.16f, 0.20f, 0.14f), 0.88f);
             public Material Cushion = Mat("Cushion", new Color(0.85f, 0.45f, 0.15f)); // life-vest orange
             public Material Slick = Mat("FuelSlick", new Color(0.08f, 0.06f, 0.12f), 0.95f);
             public Material StormGrey = Mat("StormGrey", new Color(0.44f, 0.45f, 0.48f));
@@ -491,6 +493,69 @@ namespace Tidebound.EditorTools
             var bank = Prim(PrimitiveType.Cube, "RiverBank", parent.transform,
                 new Vector3(bankX, Height(bankX, bankZ) + 0.25f, bankZ), new Vector3(2.4f, 0.5f, 2.0f), mats.DarkStone);
             bank.AddComponent<RiverInteractable>();
+        }
+
+        // ================= the mangrove east =================
+        /// <summary>
+        /// The east's drowned forest: tea-dark water standing between root
+        /// cathedrals, one clear channel through the middle — and lying in
+        /// it, permanent as geology, Old Grin. Half water, half secret.
+        /// </summary>
+        static GameObject BuildMangroveEast(Mats mats)
+        {
+            var parent = new GameObject("MangroveEast");
+
+            // the standing water, one sheet, a hand's width over the ground
+            const float waterY = 0.45f;
+            NoShadow(Prim(PrimitiveType.Cube, "TeaWater", parent.transform,
+                new Vector3(180f, waterY, 160f), new Vector3(72f, 0.1f, 132f), mats.TeaWater, stripCollider: true));
+
+            // root cathedrals: trunk + a tripod of angled prop roots
+            for (int i = 0; i < 34; i++)
+            {
+                float x = Rnd(148f, 214f), z = Rnd(98f, 222f);
+                if (Mathf.Abs(z - 160f) < 7f && x > 150f) continue; // the landlord's channel stays clear
+                var trunk = Prim(PrimitiveType.Cylinder, "MangroveTrunk", parent.transform,
+                    new Vector3(x, waterY + 2.4f, z), new Vector3(Rnd(0.28f, 0.45f), 2.5f, Rnd(0.28f, 0.45f)), mats.JungleDark);
+                trunk.transform.rotation = Quaternion.Euler(Rnd(-4f, 4f), Rnd(0f, 360f), Rnd(-4f, 4f));
+                for (int r = 0; r < 3; r++)
+                {
+                    float a = (r / 3f + Rnd(0f, 0.2f)) * Mathf.PI * 2f;
+                    var root = Prim(PrimitiveType.Cylinder, "PropRoot", parent.transform,
+                        new Vector3(x + Mathf.Cos(a) * 0.9f, waterY + 0.7f, z + Mathf.Sin(a) * 0.9f),
+                        new Vector3(0.09f, 1.1f, 0.09f), mats.Wood);
+                    root.transform.rotation = Quaternion.Euler(Mathf.Sin(a) * 28f, 0f, -Mathf.Cos(a) * 28f);
+                }
+                if (i % 3 == 0)
+                    NoShadow(Prim(PrimitiveType.Sphere, "MangroveCanopy", parent.transform,
+                        new Vector3(x, waterY + 5.4f, z), new Vector3(Rnd(2.6f, 4f), Rnd(1.4f, 2f), Rnd(2.6f, 4f)),
+                        mats.JungleDark, stripCollider: true));
+            }
+
+            // OLD GRIN — six meters of patience, moss-backed, mostly submerged
+            var grin = new GameObject("GrinRig");
+            grin.transform.SetParent(parent.transform, true);
+            var gp = new Vector3(185f, waterY + 0.08f, 160f);
+            var body = Prim(PrimitiveType.Capsule, "GrinBody", grin.transform,
+                gp, new Vector3(1.15f, 2.6f, 0.5f), mats.JungleDark);
+            body.transform.rotation = Quaternion.Euler(90f, 20f, 0f); // lying along the channel
+            var snout = Prim(PrimitiveType.Cube, "GrinSnout", grin.transform,
+                gp + new Vector3(2.6f, 0.02f, 0.95f), new Vector3(1.5f, 0.3f, 0.62f), mats.JungleDark);
+            snout.transform.rotation = Quaternion.Euler(0f, 20f, 0f);
+            var tail = Prim(PrimitiveType.Cube, "GrinTail", grin.transform,
+                gp + new Vector3(-2.7f, 0f, -1.0f), new Vector3(2.2f, 0.28f, 0.42f), mats.JungleDark);
+            tail.transform.rotation = Quaternion.Euler(0f, 32f, 0f);
+            NoShadow(Prim(PrimitiveType.Sphere, "GrinEye", grin.transform,
+                gp + new Vector3(1.9f, 0.24f, 0.55f), Vector3.one * 0.14f, mats.Flame, stripCollider: true));
+            NoShadow(Prim(PrimitiveType.Sphere, "GrinEye", grin.transform,
+                gp + new Vector3(1.75f, 0.24f, 1.05f), Vector3.one * 0.14f, mats.Flame, stripCollider: true));
+
+            // claw-marks on a root-buttress, high as your chest, old as rumor
+            var buttress = Prim(PrimitiveType.Cube, "MarkedButtress", parent.transform,
+                new Vector3(156f, waterY + 0.9f, 176f), new Vector3(0.7f, 1.8f, 0.5f), mats.Wood);
+            buttress.transform.rotation = Quaternion.Euler(0f, 25f, 0f);
+
+            return grin;
         }
 
         static void BuildBounds()
@@ -1425,9 +1490,39 @@ namespace Tidebound.EditorTools
             lampLight.intensity = 2.4f;
             lantern.SetActive(false);
 
+            // ---- Edda, come down the mountain (ev3_eddavisit) ----
+            var eddaCamp = new GameObject("EddaCampRig");
+            float ecY = Height(2.2f, 13.2f);
+            Prim(PrimitiveType.Capsule, "Body", eddaCamp.transform,
+                new Vector3(2.2f, ecY + 0.8f, 13.2f), new Vector3(0.42f, 0.8f, 0.42f), mats.Driftwood, stripCollider: true);
+            Prim(PrimitiveType.Sphere, "Head", eddaCamp.transform,
+                new Vector3(2.2f, ecY + 1.75f, 13.2f), new Vector3(0.32f, 0.32f, 0.32f), mats.Driftwood, stripCollider: true);
+            var ecBraid = Prim(PrimitiveType.Cylinder, "Braid", eddaCamp.transform,
+                new Vector3(2.2f, ecY + 1.35f, 13.38f), new Vector3(0.07f, 0.35f, 0.07f), mats.Foam, stripCollider: true);
+            ecBraid.transform.rotation = Quaternion.Euler(12f, 0f, 0f);
+            var ecGun = Prim(PrimitiveType.Cylinder, "BrokenShotgun", eddaCamp.transform,
+                new Vector3(2.55f, ecY + 1.05f, 13.2f), new Vector3(0.05f, 0.5f, 0.05f), mats.DarkStone, stripCollider: true);
+            ecGun.transform.rotation = Quaternion.Euler(0f, 0f, 65f); // broken open over one arm
+            eddaCamp.SetActive(false);
+
+            // ---- the Halcyon mast, against the far light (ch3_east) ----
+            var mast = new GameObject("EastMastRig");
+            Prim(PrimitiveType.Cylinder, "Mast", mast.transform,
+                new Vector3(640f, 42f, 480f), new Vector3(1.6f, 42f, 1.6f), mats.Metal, stripCollider: true);
+            var mastLean = mast.transform.Find("Mast");
+            if (mastLean != null) mastLean.rotation = Quaternion.Euler(0f, 0f, 4f); // decades of lean
+            Prim(PrimitiveType.Cube, "Rooftop", mast.transform,
+                new Vector3(628f, 4f, 470f), new Vector3(26f, 8f, 18f), mats.Foam, stripCollider: true);
+            Prim(PrimitiveType.Cube, "Rooftop", mast.transform,
+                new Vector3(654f, 3f, 492f), new Vector3(18f, 6f, 14f), mats.Foam, stripCollider: true);
+            mast.SetActive(false);
+
             // ---- the director ----
             var directorGo = new GameObject("EncounterDirector");
             var director = directorGo.AddComponent<EncounterStageDirector>();
+            director.eddaCampRig = eddaCamp;
+            director.eastMastRig = mast;
+            director.grinRig = GameObject.Find("GrinRig");
             director.velaRig = vela;
             director.fishDrop = fish;
             director.dogNightRig = dogNight;

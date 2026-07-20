@@ -360,10 +360,31 @@ tidebound-unity/
       until ev3_river fires — law #3) with the VN's haul numbers via
       GameManager.HaulRiverWater. 7 new tests (241 total). Verified
       via CLI batchmode; scene rebuilt clean.
-      Remaining for the chapter: staging for the ev3 events (river
-      reveal, Edda-in-camp, the croc, the toll crossings), the
-      mangrove east as a place, Old Grin's rig, the medic's burn-it-
-      out fever self-cure, grove seasonal flavor + arrival framing.*
+      Session 5 (CHAPTER THREE COMPLETE for v1): the MANGROVE EAST is
+      a place — tea-dark standing water between root cathedrals (34
+      trunk clusters with prop-root tripods), one clear channel, the
+      claw-marked buttress, and OLD GRIN himself, permanent furniture
+      lying mostly submerged in the crossing (six meters, moss-backed,
+      two Flame eyes; the director only aims at him, never hides
+      him); mangrove region ported from map.js (first-visit, fx1,
+      deck; almanac hooks trimmed) with its IdAt footprint; STAGING
+      for every ch3 beat — ch3_open against the crown, the river
+      reveal (GroundAt shots), Edda IN the camp (EddaCampRig with the
+      broken-open shotgun, built hidden by the fire ring), the fever,
+      the channel shot for grin1/threshold, king2 branching (wallow
+      for the tracked, rig at the treeline otherwise), the night bay
+      for the pulse, the grove fence for every grove_* visit, toll-
+      crossing sub-beats, and the ch3_east reveal that shows the
+      EastMastRig (rusted mast + rooftops at x640, hidden until the
+      crossing so the reveal stays a reveal); the medic's burn-it-out
+      fever self-cure (camp_fever_burnout scene + CampfireInteractable
+      option, medkit −2, guarded to fever only). Region pins updated
+      to 6. 2 new tests (243 total). Verified via CLI batchmode;
+      scene rebuilt clean with all rigs serialized.
+      Chapter remainder deferred to later phases by design: grove
+      seasonal variants (monsoon dressing belongs to ch5), Rumors
+      integration, and non-Kavi companion variants arrive with their
+      companions (Phase 7).*
 - [ ] Phase 6 — depth passes per act · Phase 7 — companions, NG+, polish
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day

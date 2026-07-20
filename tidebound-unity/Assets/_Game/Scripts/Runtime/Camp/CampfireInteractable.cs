@@ -49,6 +49,12 @@ namespace Tidebound
                 options.Add(InteractionOption.Do("Cook a real meal",
                     "Crab, limpets, figs, fire. Hunger ++, hope +. Takes time.",
                     g => g.CookMeal()));
+
+            // the medic's road out of the marsh fever (scenes-chapter3.js ch3Actions)
+            if (options.Count < 3 && s.Disease == "fever" && s.Background == "medic" && s.Count("medkit") >= 2)
+                options.Add(InteractionOption.Do("Burn the fever out yourself",
+                    "Antipyretics, fluids, and a medic's discipline. Costs two kit uses and a day you can't spare.",
+                    g => g.VisitEdda("camp_fever_burnout", 1)));
         }
 
         void Update()
