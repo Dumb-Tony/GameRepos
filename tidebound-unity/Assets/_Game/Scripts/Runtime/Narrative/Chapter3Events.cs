@@ -47,6 +47,323 @@ namespace Tidebound.Narrative
             AddEddaVisit(script);
             AddFever(script);
             AddGrin(script);
+            AddKing2(script);
+            AddPulse(script);
+            AddHearts2(script);
+            AddThreshold(script);
+        }
+
+        // ---- day 27: the Boar King, continued --------------------------------
+        static void AddKing2(StoryScript script)
+        {
+            script.Add(new StoryScene
+            {
+                Id = "ev3_king2",
+                OnEnter = s =>
+                {
+                    if (s.Is("KING2_APPLIED")) return;
+                    s.SetFlag("KING2_APPLIED");
+                    if (s.Is("KING_TITHED")) { s.Stat(Meter.Hunger, -4); s.AddRoute(RouteAxis.Roots, 1); }
+                    else if (s.Is("KING_TRACKED")) { s.AddRoute(RouteAxis.Depth, 2); s.SetFlag("KING_SYMPATHY"); }
+                    else if (s.Is("KING_WALLED")) { s.AddRoute(RouteAxis.Roots, 1); s.Stat(Meter.Hope, 3); }
+                    else { s.Stat(Meter.Energy, -8); if (s.Food > 0) s.Food -= 1; }
+                },
+                Text = s =>
+                {
+                    if (s.Is("KING_TITHED")) return new List<string>
+                    {
+                        "Mid-morning, the treeline delivers a state visit.",
+                        "The Boar King walks the edge of your camp in full daylight — unhurried, enormous, scar-plated — and does not touch one stake, one store, one stone. He inspects the boundary like a magistrate reviewing a treaty, pauses at the spot where you leave the offerings, and looks at you for a long, level moment across the clearing.",
+                        "Then he is gone, at his own pace, the jungle closing behind him like a door with good hinges.",
+                        "The tithe holds. You are, apparently, the first neighbor in some time to grasp the concept of rent.",
+                    };
+                    if (s.Is("KING_TRACKED")) return new List<string>
+                    {
+                        "You go back along his road, deeper this time, to the wallow the trail promised — a mud pan the size of a house floor, generations deep, walled with rubbing-posts polished like furniture.",
+                        "And at its edge, half-grown into a strangler fig: more snare wire. Old, rusted, industrial — not castaway improvisation. Dozens of loops of it, and among them, pressed into the fig's grown-over bark, small tusked skulls. Young ones. A sounder's worth.",
+                        "You stand a while in the quiet, recalculating your monster. Something with instruments and funding came to this island once, and it snared and it took, and one scar-plated survivor has been at war with the smell of people ever since. He is not a monster. He is a <i>veteran</i>.",
+                    };
+                    if (s.Is("KING_WALLED")) return new List<string>
+                    {
+                        "He tests the wall on the thirteenth day — once, at dawn, a shuddering headlong blow you feel through the ground and your teeth — and the wall, your wall, groans and <i>holds</i>.",
+                        "Through the stakes you watch him back off three paces and regard the structure: not enraged, you realize, but assessing, the way you'd assess weather. Then he screams at the jungle — a sound like sheet metal tearing, purely for the record — and departs.",
+                        "The message is received in both directions: you will not be moved cheaply; he has not conceded the ground. The treaty is the wall itself.",
+                    };
+                    return new List<string>
+                    {
+                        "He comes back on the thirteenth day, at dusk, and this time you're in camp to meet it: the Boar King, scar-plated and enormous, testing your boundary with the confidence of prior success.",
+                        "What follows is loud, close, and expensive — pans beaten, brands waved, one stake splintered, one store scattered — before he withdraws into the dark, unhurried even in retreat, promising nothing.",
+                        "You rebuild by firelight, doing the honest math: he is a fact of the inland, like weather, and your policy toward him — wall, war, or tribute — is still unwritten. Facts don't wait forever.",
+                    };
+                },
+            });
+        }
+
+        // ---- day 28, night: the pulse skips ----------------------------------
+        static void AddPulse(StoryScript script)
+        {
+            script.Add(new StoryScene
+            {
+                Id = "ev3_pulse",
+                OnEnter = s =>
+                {
+                    if (s.Is("PULSE_SKIPPED")) return;
+                    s.SetFlag("PULSE_SKIPPED");
+                    s.AddRoute(RouteAxis.Depth, s.Companion == "nine" ? 2 : 1);
+                },
+                Text = s => new List<string>
+                {
+                    "You wake at the black bottom of the night with no idea why — and then you have exactly an idea why, and it raises the hair on your arms:",
+                    "<i>The lagoon missed a beat.</i>",
+                    "Thirteen nights you have slept against that slow glow, seven beats, rising and falling, reliable as your own pulse. Tonight, once — you'd testify to it — the whole bay went dark on the sixth beat, held its breath for a count that felt like the island listening, and resumed.",
+                    s.Companion == "kavi"
+                        ? "Kavi is sitting bolt upright beside you, ears full forward — at the water. Not the treeline. The <i>water</i>."
+                        : "Nothing else stirs. The reef breathes. The palms tick. Whatever counted that pause, it wasn't counting for your benefit.",
+                },
+            });
+        }
+
+        // ---- day 31: the second hearts ---------------------------------------
+        static void AddHearts2(StoryScript script)
+        {
+            script.Add(new StoryScene
+            {
+                Id = "ev3_heart2",
+                Speaker = "Kavi",
+                OnEnter = s =>
+                {
+                    if (s.Is("HEART2_DONE")) return;
+                    s.SetFlag("HEART2_DONE");
+                    s.Bond(10);
+                    s.Stat(Meter.Hope, 8);
+                },
+                Text = _ => new List<string>
+                {
+                    "On the fourteenth night the pack sings inland, the old ragged chorus, and you feel Kavi lift his head against your knee the way he does — and then, for the first time in your acquaintance, he answers.",
+                    "He sings from beside your fire — long, rough, unpracticed, a voice with two springs of rust in it — and the inland chorus stumbles, recalibrates around the new bearing, and answers back. He sings his position. He sings it from <i>here</i>.",
+                    "When it's done he looks at you, embarrassed as a dog can be, and thumps his tail once. You have just been declared, to the entire island, in the only language that ever mattered to him.",
+                },
+            });
+            script.Add(new StoryScene
+            {
+                Id = "ev3_heart2_low",
+                Speaker = "Kavi",
+                OnEnter = s =>
+                {
+                    if (s.Is("HEART2_LOW")) return;
+                    s.SetFlag("HEART2_LOW");
+                    s.Bond(3);
+                },
+                Text = _ => new List<string>
+                {
+                    "Kavi is still here. That's not nothing — out here, staying is the first vow and the hardest. But on the fourteenth morning you catch yourself narrating your plans to the fire instead of to them, and you feel the shape of the distance you've kept.",
+                    "The wild keeps honest books. Walls, water, smoke, survival — all fair entries. But the bond is a crop like any other on this island: it grows exactly as much as you tend it, and the season does not wait.",
+                },
+            });
+            script.Add(new StoryScene
+            {
+                Id = "ev3_coco2",
+                OnEnter = s =>
+                {
+                    if (s.Is("COCO_SHELF")) return;
+                    s.SetFlag("COCO_SHELF");
+                    s.Stat(Meter.Hope, 5);
+                    s.AddRoute(RouteAxis.Roots, 1);
+                },
+                Text = _ => new List<string>
+                {
+                    "On the fourteenth morning you build Coco a shelf.",
+                    "It isn't much — a flat of driftwood lashed at eye height, out of the rain, with a view of the fire, the works, and the sea. He presides. You find, arranging him, that you've started angling his face toward whatever you're working on, for the supervision.",
+                    "You are aware of what this is. You have decided it's <i>working</i>, which out here is the only review that counts. Morale infrastructure, you note in the day's mental log, and Coco — three pores of him, weathered and constant — declines, with perfect tact, to comment.",
+                },
+            });
+        }
+
+        // ---- day 35: OLD GRIN'S TOLL (the chapter threshold) ------------------
+        static void AddThreshold(StoryScript script)
+        {
+            script.Add(new StoryScene
+            {
+                Id = "ch3_threshold",
+                Text = s =>
+                {
+                    string why = s.Route.Signal >= s.Route.Roots && s.Route.Signal >= s.Route.Depth
+                        ? "Because the east is where the answers to <i>leaving</i> live: Edda's station had a radio once, and radios have parts, and parts can be made to speak."
+                        : s.Route.Roots >= s.Route.Depth
+                            ? "Because the east is where the old terraces run richest — seed stock, tools, ground that remembers farming — everything a real foothold becomes a real <i>home</i> with."
+                            : "Because the east is where the island keeps its locked drawers: the station, the stones, the answers under the answers.";
+                    return new List<string>
+                    {
+                        "<i>OLD GRIN'S TOLL</i>",
+                        "Day thirty-five. You stand at the mangrove edge with your kit weighed and your reasons rehearsed. " + why,
+                        "Between you and all of it: the East Passage — one crossing, one channel, one landlord. He is there now. He is always there. Six meters of patience in tea-dark water, older than Edda, undefeated by everyone who ever carried better equipment than yours into this swamp.",
+                        "The toll gets paid one way or another. Choose the currency.",
+                    };
+                },
+                Choices = new List<StoryChoice>
+                {
+                    new StoryChoice
+                    {
+                        Label = "Pay him in meat. Bait the far channel and cross behind his back.",
+                        Sub = "Costs your smoked reserve (2 stores). Undignified, effective, honest.",
+                        When = s => s.Food >= 2,
+                        Do = s => { s.Food -= 2; s.SetFlag("GRIN_BAITED"); s.SetFlag("EAST_OPEN"); },
+                        Go = "ch3_toll_baited",
+                    },
+                    new StoryChoice
+                    {
+                        Label = "The dawn window. Cross while the cold still owns him.",
+                        Sub = "Your scouting: first light, low tide, a lethargic landlord.",
+                        When = s => s.Is("GRIN_SCOUTED"),
+                        Do = s => { s.SetFlag("GRIN_TIMED"); s.SetFlag("EAST_OPEN"); },
+                        Go = "ch3_toll_timed",
+                    },
+                    new StoryChoice
+                    {
+                        Label = "Cross under Kavi's watch. Slow, loud, and unblinking.",
+                        Sub = "Predator etiquette: you are not prey if you never once act it.",
+                        When = s => s.Companion == "kavi" && s.Trust >= 50,
+                        Do = s => { s.SetFlag("GRIN_STANDOFF"); s.SetFlag("EAST_OPEN"); s.Bond(4); },
+                        Go = "ch3_toll_kavi",
+                    },
+                    new StoryChoice
+                    {
+                        Label = "Fight him for it.",
+                        Sub = "Spear, fire, and the worst idea available. It might even work — but hurt or weakened, he will collect you like rent.",
+                        Do = s =>
+                        {
+                            if (s.Stats.Health < 35f) { s.DeathCause = "grin"; return; }
+                            s.SetFlag("GRIN_FOUGHT");
+                            s.SetFlag("EAST_OPEN");
+                            s.Injury = "laceration";
+                            s.Stat(Meter.Health, -25);
+                            s.Stat(Meter.Hope, 4);
+                        },
+                        GoDynamic = s => s.DeathCause != null ? null : "ch3_toll_fight",
+                    },
+                    new StoryChoice
+                    {
+                        Label = "Turn back. The east can wait; the toll's too rich today.",
+                        Sub = "Live castaways get to change their minds later.",
+                        Do = s => { s.SetFlag("GRIN_UNRESOLVED"); s.AddRoute(RouteAxis.Roots, 1); },
+                        Go = "ch3_end_stay",
+                    },
+                },
+            });
+
+            AddToll(script, "ch3_toll_baited",
+                "You lay your smoked reserve on the far mudbank at slack tide, upwind and obvious, and it costs you exactly what food costs on an island: everything it took to make. Then you wait in the roots, not breathing, while six meters of appetite makes its unhurried, regal way toward the free meal.",
+                "You cross the channel with your heart in your ears while the landlord dines. It is the least heroic thing you have ever done flawlessly. From the far bank you watch him finish, settle, and slide one eye across the water to where you now stand — and the eye holds no grudge at all. Rent was paid. The lease is stamped. Business is business in the mangrove country.");
+            AddToll(script, "ch3_toll_timed",
+                "First light, low tide. You come to the ford exactly on the schedule the swamp taught you, and there he is — hauled out on his mud throne, grey-cold and logy, a king at his most constitutional.",
+                "You cross the channel at a steady wade, close enough to count his teeth if your eyes had dared leave the far bank, and the cold holds him like a law of physics. By the time the sun finds the water you are east of everything, standing in country no castaway footprint has touched in fifty years, shaking slightly, entirely whole.");
+            AddToll(script, "ch3_toll_kavi",
+                "Kavi teaches you the crossing the way the wild taught him: <i>never once be prey</i>. You enter the ford side by side, slow as ceremony, loud as ownership — no darting, no freezing, no scent of flight — while he holds the water's edge with his eyes and a growl pitched to travel through mud and bone.",
+                "Old Grin surfaces at thirty feet and considers you both: the upright thing that isn't running, the grey thing that isn't backing down, the whole expensive, unprofitable prospect of it. Patience does arithmetic. Arithmetic says wait for cheaper. He sinks like a decision, and you walk — walk — up the eastern bank.");
+            AddToll(script, "ch3_toll_fight",
+                "You fight him for it, because the island has not yet taught you everything, and this lesson enrolls you the hard way.",
+                "It is fast and enormous and wrong — the lunge like the ground itself moving, the fire-hardened spear finding the one soft seam above the foreleg more by fate than skill, the tail-blow that takes your legs and opens your side on the mangrove roots. There is a white interval you never fully recover the order of. Then you are on the eastern bank, bleeding, alive, and six meters of affronted antiquity is withdrawing into deep water with your spear standing in its shoulder like a flag it intends to keep.",
+                "You have crossed. You are torn open and lighter one spear, and something tells you the ledger between you and the landlord now has a standing entry — but you have crossed, on your own terms, which were terrible terms, which were yours.");
+
+            script.Add(new StoryScene
+            {
+                Id = "ch3_east",
+                Text = s =>
+                {
+                    var t = new List<string>
+                    {
+                        "The eastern country opens from the first rise like a held breath released: fold on fold of green running down to a coast you've never seen, wilder than yours, wreck-strewn — and climbing the far light, unmistakable, <i>made</i>:",
+                        "A mast. Steel, guyed, red-rusted, standing crooked above the canopy miles off — an antenna mast, the tallest human thing on the island, marking a compound of pale rooftops half-drowned in green.",
+                        s.Is("LORE_HALCYON")
+                            ? "Edda's station. <i>The</i> station — the one that drilled the singing rock and dug two graves under her flowering tree. Her whole warning stands in the air between you and it, and so does everything the place must still hold: tools, records, machines. A radio."
+                            : "A station. Buildings, order, purpose — decades abandoned by the look of the mast's lean, and utterly out of place, like finding a filing cabinet in a cathedral. Who measured this island, and what did they find, and why did they stop?",
+                    };
+                    if (s.Is("IPO_KEY"))
+                        t.Add("In your pocket, the flat steel key from Ipo's hoard seems suddenly heavier: <i>HALCYON — E WING</i>.");
+                    t.Add("The light is going. You mark the bearing, build a dry camp on the high ground, and sit a long time watching the mast rust against the sunset, tomorrow already knocking.");
+                    return t;
+                },
+                Next = "ch3_end",
+                NextLabel = "Chapter Three ends ➤",
+            });
+            script.Add(new StoryScene
+            {
+                Id = "ch3_end_stay",
+                Text = _ => new List<string>
+                {
+                    "You look at the tea-dark water a long time, and then you turn around.",
+                    "Not defeat — <i>policy</i>. The east has waited fifty years; it will wait for a better-provisioned, better-informed, better-armed version of you. Live castaways get to change their minds. Drowned ones file no appeals.",
+                    "The walk home is long, and the mast you never saw stands in your imagination taller than any real one could — but your fire, when you reach it, is your fire, and the west half of an island is still an island.",
+                    "Old Grin keeps his toll, uncollected. The east keeps its answers. Everyone's patience, on this island, is very long.",
+                },
+                Next = "ch3_end",
+                NextLabel = "Chapter Three ends ➤",
+            });
+            script.Add(new StoryScene
+            {
+                Id = "ch3_end",
+                Text = s =>
+                {
+                    var t = new List<string>
+                    {
+                        "<i>END OF CHAPTER THREE — THE GREEN DEEP</i>",
+                        "The Ledger fills another page. These weeks, as the island will remember them:",
+                    };
+                    t.Add("— Edda Voss: " + (s.Edda >= 60
+                        ? "the fence is open, the tea is poured without asking, and the teaching has begun in earnest. Sixty years of island, cracking open for you."
+                        : s.Edda >= 35
+                            ? "probation continues, but she feeds you while insulting you now, which you've learned to bank as affection."
+                            : s.Is("EDDA_MET")
+                                ? "wary, watchful, unconvinced. She has buried better-prepared castaways than you."
+                                : "still a thread of smoke on a mountain you haven't climbed."));
+                    if (s.Is("EDDA_GRAVES"))
+                        t.Add("— You know about Ilsa now. And Aleksander. Two mounds under a flowering tree, and the shape of what staying sixty years actually costs.");
+                    if (s.Is("LORE_HALCYON"))
+                        t.Add("— She told you about the station. About the drilling, and the answer, and the graves. The east half of this island has a wound in it with a roof over it.");
+                    t.Add("— The Silverthread " + (s.Is("RIVER_KNOWN")
+                        ? "runs through your daily life now. The water problem, that old tyrant, is dead."
+                        : "still runs unfound in the mountain's shadow."));
+                    if (s.Disease == "fever")
+                        t.Add("— ⚠️ The marsh fever is still in your blood, and it is not idling. Edda's bark or a medic's discipline — soon.");
+                    else if (s.Is("FEVER_STRUCK"))
+                        t.Add("— You caught the marsh fever, and you beat it. The fringe's dusk tax has been renegotiated.");
+                    t.Add("— The Boar King: " + (s.Is("KING_TITHED")
+                        ? "the treaty holds. He inspected your boundary like a magistrate and touched nothing. Rent, it turns out, is a language."
+                        : s.Is("KING_SYMPATHY")
+                            ? "you found the wallow, the industrial snare-wire, the small skulls. Your monster is a veteran of someone else's war."
+                            : s.Is("KING_WALLED")
+                                ? "he tested your wall once, at dawn, and your wall won. The treaty is the wall itself."
+                                : "still unfinished business, circling."));
+                    t.Add("— And Old Grin's Toll: " + (s.Is("GRIN_BAITED")
+                        ? "paid in smoked meat, crossed in cold blood. Business is business."
+                        : s.Is("GRIN_TIMED")
+                            ? "dodged entirely — you crossed at the dawn window while the cold held him. The swamp respects homework."
+                            : s.Is("GRIN_STANDOFF")
+                                ? "faced down, side by side with Kavi, at a walk. Never once prey."
+                                : s.Is("GRIN_FOUGHT")
+                                    ? "paid in blood — some his, more yours. You crossed on your own terrible terms, and the ledger between you has a standing entry now."
+                                    : "refused. The east keeps its answers, and the landlord keeps his channel. For now."));
+                    if (s.Is("EAST_OPEN"))
+                        t.Add("— The east is open. A rusted mast stands above the far canopy, and under it, everything Halcyon left behind."
+                            + (s.Is("IPO_KEY") ? " The key in your pocket says E WING." : ""));
+                    t.Add($"Route leanings — Signal {s.Route.Signal} · Roots {s.Route.Roots} · Depth {s.Route.Depth}. Nothing is decided. Everything is remembered.");
+                    t.Add("<i>Chapter Four: The Hum — in development. The island continues; so can you.</i>");
+                    return t;
+                },
+                NextLabel = "Back to the island",
+            });
+        }
+
+        static void AddToll(StoryScript script, string id, params string[] paragraphs)
+        {
+            var text = new List<string>(paragraphs);
+            script.Add(new StoryScene
+            {
+                Id = id,
+                Text = _ => text,
+                Next = "ch3_east",
+                NextLabel = "The east opens ➤",
+            });
         }
 
         // ---- day 20, dusk: the Silverthread ---------------------------------

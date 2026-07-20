@@ -328,11 +328,28 @@ tidebound-unity/
       cuttings), ev3_fever d22 dusk (guard is the VN's; FEVER_SEED
       stays dormant until fringe camping arrives), ev3_grin1 d24 dusk
       (GRIN_MET, the log that was never a log). 7 new tests.
-      Remaining for the chapter: ev3_king2 d27, ev3_pulse d28,
-      ev3_heart2 d31, ch3_threshold d35, grove hub actions (feverbark
-      brew, the trek as a labor), staging for the ev3 events (river
-      reveal, Edda-in-camp, the croc), the Silverthread as terrain, the
-      mangrove east, Old Grin's rig.*
+      Session 3 (the back half): ev3_king2 d27 day — all four Boar King
+      continuations (the state visit, the wallow's snare-wire and small
+      skulls → KING_SYMPATHY, the wall that holds, the expensive
+      unresolved return) with KING2_APPLIED effects pinned; ev3_pulse
+      d28 night (the lagoon misses a beat; Kavi watches the WATER);
+      the d31 hearts — ev3_heart2 (Kavi answers the pack from beside
+      your fire, bond +10), ev3_heart2_low, ev3_coco2 (the shelf);
+      and OLD GRIN'S TOLL, ch3_threshold d35 dusk, with the v1
+      currencies — bait the far channel (2 stores), the dawn window
+      (GRIN_SCOUTED), Kavi's predator-etiquette standoff (trust 50+),
+      the fight (health < 35 = deathCause grin, the warning in the
+      choice's own subtext, per law #1; survivors take a laceration
+      and −25 health), or turn back (policy, not defeat) — each toll
+      with its full canon text into ch3_east (the mast, LORE_HALCYON /
+      IPO_KEY conditionals ported for later) or ch3_end_stay, then the
+      ch3_end Ledger card remembering Edda's regard tiers, the fever,
+      the King, the toll, and the east. 8 new tests (234 total).
+      Remaining for the chapter: grove hub actions (feverbark brew,
+      the trek as a labor), staging for the ev3 events (river reveal,
+      Edda-in-camp, the croc, the toll crossings), the Silverthread as
+      terrain, the mangrove east as a place, Old Grin's rig, Edda's
+      grove interactables (tea, lore, the graves, the case showing).*
 - [ ] Phase 6 — depth passes per act · Phase 7 — companions, NG+, polish
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day

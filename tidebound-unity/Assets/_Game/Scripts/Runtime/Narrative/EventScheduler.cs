@@ -80,6 +80,15 @@ namespace Tidebound.Narrative
             new ScheduledEvent { Day = 22, Seg = Segment.Dusk, SceneId = "ev3_fever",
                 When = s => s.Is("FEVER_SEED") && !s.Is("SALVE") && s.Disease == null },
             new ScheduledEvent { Day = 24, Seg = Segment.Dusk, SceneId = "ev3_grin1" },
+            new ScheduledEvent { Day = 27, Seg = Segment.Day, SceneId = "ev3_king2" },
+            new ScheduledEvent { Day = 28, Seg = Segment.Night, SceneId = "ev3_pulse" },
+            new ScheduledEvent { Day = 31, Seg = Segment.Dawn, SceneId = "ev3_heart2",
+                When = s => s.Companion != null && s.Trust >= 75 },
+            new ScheduledEvent { Day = 31, Seg = Segment.Dawn, SceneId = "ev3_heart2_low",
+                When = s => s.Companion != null && s.Trust < 75 },
+            new ScheduledEvent { Day = 31, Seg = Segment.Dawn, SceneId = "ev3_coco2",
+                When = s => s.Companion == null },
+            new ScheduledEvent { Day = 35, Seg = Segment.Dusk, SceneId = "ch3_threshold" },
             // ---- the long game (scenes-chapter5.js, the shared events) ----
             new ScheduledEvent { Day = 58, Seg = Segment.Night, SceneId = "ev5_cyclone" },
         };

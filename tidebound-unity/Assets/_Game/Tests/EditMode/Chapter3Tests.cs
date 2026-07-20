@@ -220,6 +220,141 @@ namespace Tidebound.Tests
             Assert.AreEqual("ev3_grin1", EventScheduler.Due(s, schedule));
         }
 
+        // ---- session 3: the king, the pulse, the hearts, the toll ------------
+        [Test]
+        public void King2_TitheHolds_AndTheHuntedGetSympathy()
+        {
+            var tithed = GameState.NewGame();
+            tithed.SetFlag("KING_TITHED");
+            tithed.Stats.Hunger = 50f;
+            Script.Get("ev3_king2").OnEnter(tithed);
+            Assert.IsTrue(tithed.Is("KING2_APPLIED"));
+            Assert.AreEqual(46f, tithed.Stats.Hunger); // the offerings cost
+            Assert.AreEqual(1, tithed.Route.Roots);
+
+            var tracked = GameState.NewGame();
+            tracked.SetFlag("KING_TRACKED");
+            Script.Get("ev3_king2").OnEnter(tracked);
+            Assert.IsTrue(tracked.Is("KING_SYMPATHY"));
+            Assert.AreEqual(2, tracked.Route.Depth);
+
+            var unresolved = GameState.NewGame();
+            unresolved.Food = 2;
+            float energy = unresolved.Stats.Energy;
+            Script.Get("ev3_king2").OnEnter(unresolved);
+            Assert.AreEqual(energy - 8, unresolved.Stats.Energy);
+            Assert.AreEqual(1, unresolved.Food); // one store scattered
+        }
+
+        [Test]
+        public void Pulse_SkipsOnce_AndKaviWatchesTheWater()
+        {
+            var s = GameState.NewGame();
+            s.Companion = "kavi";
+            Script.Get("ev3_pulse").OnEnter(s);
+            Assert.IsTrue(s.Is("PULSE_SKIPPED"));
+            Assert.AreEqual(1, s.Route.Depth);
+            Script.Get("ev3_pulse").OnEnter(s);
+            Assert.AreEqual(1, s.Route.Depth); // once
+        }
+
+        [Test]
+        public void Heart2_KaviSingsHisPosition()
+        {
+            var s = GameState.NewGame();
+            s.Companion = "kavi";
+            s.Trust = 80;
+            float hope = s.Stats.Hope;
+            Script.Get("ev3_heart2").OnEnter(s);
+            Assert.IsTrue(s.Is("HEART2_DONE"));
+            Assert.AreEqual(90, s.Trust); // +10
+            Assert.AreEqual(hope + 8, s.Stats.Hope);
+        }
+
+        [Test]
+        public void Threshold_OffersTheRightCurrencies()
+        {
+            var s = GameState.NewGame(); // solo, no food, no scouting
+            var options = Script.Get("ch3_threshold").AvailableChoices(s);
+            Assert.AreEqual(2, options.Count); // fight, or turn back
+
+            s.Food = 2;
+            s.SetFlag("GRIN_SCOUTED");
+            s.Companion = "kavi";
+            s.Trust = 60;
+            options = Script.Get("ch3_threshold").AvailableChoices(s);
+            Assert.AreEqual(5, options.Count); // bait, dawn window, Kavi, fight, turn back
+        }
+
+        [Test]
+        public void Toll_Baited_CostsTheReserve()
+        {
+            var s = GameState.NewGame();
+            s.Food = 3;
+            var bait = Script.Get("ch3_threshold").AvailableChoices(s)[0];
+            bait.Do(s);
+            Assert.AreEqual(1, s.Food);
+            Assert.IsTrue(s.Is("GRIN_BAITED"));
+            Assert.IsTrue(s.Is("EAST_OPEN"));
+            Assert.AreEqual("ch3_toll_baited", bait.Go);
+            Assert.AreEqual("ch3_east", Script.Get("ch3_toll_baited").Next);
+        }
+
+        [Test]
+        public void Toll_Fight_WoundsTheStrong_AndCollectsTheWeak()
+        {
+            var strong = GameState.NewGame();
+            var fight = Script.Get("ch3_threshold").AvailableChoices(strong)[0]; // solo no-food: fight first
+            fight.Do(strong);
+            Assert.IsTrue(strong.Is("GRIN_FOUGHT"));
+            Assert.IsTrue(strong.Is("EAST_OPEN"));
+            Assert.AreEqual("laceration", strong.Injury);
+            Assert.AreEqual(75f, strong.Stats.Health); // 100 - 25
+            Assert.AreEqual("ch3_toll_fight", fight.GoDynamic(strong));
+
+            var weak = GameState.NewGame();
+            weak.Stats.Health = 30f; // the island warned in the choice's own subtext
+            fight.Do(weak);
+            Assert.AreEqual("grin", weak.DeathCause);
+            Assert.IsNull(fight.GoDynamic(weak)); // dialogue ends; the run card takes it
+            Assert.IsFalse(weak.Is("EAST_OPEN"));
+        }
+
+        [Test]
+        public void Toll_TurnBack_IsPolicyNotDefeat()
+        {
+            var s = GameState.NewGame();
+            var back = Script.Get("ch3_threshold").AvailableChoices(s)[1]; // solo no-food: fight, then back
+            back.Do(s);
+            Assert.IsTrue(s.Is("GRIN_UNRESOLVED"));
+            Assert.AreEqual(1, s.Route.Roots);
+            Assert.AreEqual("ch3_end_stay", back.Go);
+            Assert.AreEqual("ch3_end", Script.Get("ch3_end_stay").Next);
+        }
+
+        [Test]
+        public void Schedule_CarriesTheBackHalf()
+        {
+            var schedule = Chapter1Schedule.Build();
+            var s = GameState.NewGame();
+            s.Day = 27; s.Seg = Segment.Day;
+            Assert.AreEqual("ev3_king2", EventScheduler.Due(s, schedule));
+
+            s.Day = 28; s.Seg = Segment.Night;
+            Assert.AreEqual("ev3_pulse", EventScheduler.Due(s, schedule));
+
+            s.Day = 31; s.Seg = Segment.Dawn;
+            Assert.AreEqual("ev3_coco2", EventScheduler.Due(s, schedule)); // solo
+            s.Companion = "kavi";
+            s.Trust = 80;
+            Assert.AreEqual("ev3_heart2", EventScheduler.Due(s, schedule));
+            s.Trust = 40;
+            Assert.AreEqual("ev3_heart2_low", EventScheduler.Due(s, schedule));
+
+            s.Day = 35; s.Seg = Segment.Dusk;
+            Assert.AreEqual("ch3_threshold", EventScheduler.Due(s, schedule));
+        }
+
         // ---- the grove as a place --------------------------------------------
         [Test]
         public void Grove_IsARegion_OnTheMountainsKnee()
