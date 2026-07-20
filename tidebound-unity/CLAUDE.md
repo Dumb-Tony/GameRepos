@@ -345,11 +345,25 @@ tidebound-unity/
       IPO_KEY conditionals ported for later) or ch3_end_stay, then the
       ch3_end Ledger card remembering Edda's regard tiers, the fever,
       the King, the toll, and the east. 8 new tests (234 total).
-      Remaining for the chapter: grove hub actions (feverbark brew,
-      the trek as a labor), staging for the ev3 events (river reveal,
-      Edda-in-camp, the croc, the toll crossings), the Silverthread as
-      terrain, the mangrove east as a place, Old Grin's rig, Edda's
-      grove interactables (tea, lore, the graves, the case showing).*
+      Session 4: EDDA IS VISITABLE — the VN's 'grove' hub scene split
+      into per-purpose story scenes (grove_work / plants with the
+      one-time marshmint speech / wound / cure / the three-stage lore
+      ask ending in the Halcyon story at regard 55+ or a refusal that
+      keeps the door open / gems naming the heartglass via
+      CaseArc.KnowsGlass / the case and its crest / the graves: Ilsa
+      and Aleksander), offered by EddaInteractable at the EddaRig
+      (priority order, cure and wound first, max-3 prompt; talks free,
+      labors charge segments via GameManager.VisitEdda); the
+      SILVERTHREAD is real — a carved ravine down the west interior
+      (Height + RiverX), water strips and amber stones, no trunks
+      mid-channel, and a hauling bank (RiverInteractable, unnamed
+      until ev3_river fires — law #3) with the VN's haul numbers via
+      GameManager.HaulRiverWater. 7 new tests (241 total). Verified
+      via CLI batchmode; scene rebuilt clean.
+      Remaining for the chapter: staging for the ev3 events (river
+      reveal, Edda-in-camp, the croc, the toll crossings), the
+      mangrove east as a place, Old Grin's rig, the medic's burn-it-
+      out fever self-cure, grove seasonal flavor + arrival framing.*
 - [ ] Phase 6 — depth passes per act · Phase 7 — companions, NG+, polish
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day

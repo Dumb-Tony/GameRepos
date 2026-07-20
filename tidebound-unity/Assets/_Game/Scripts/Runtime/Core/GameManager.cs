@@ -364,6 +364,34 @@ namespace Tidebound
             }, DialogueStyle.LowerThird);
         }
 
+        /// <summary>
+        /// A grove visit scene, played at Edda's fence (Chapter 3). Talks are
+        /// free — the trek up the mountain was their cost; labors (the
+        /// terraces, the cure) charge segments when the dialogue closes.
+        /// </summary>
+        public void VisitEdda(string sceneId, int laborSegments = 0)
+        {
+            if (encounterDirector != null) encounterDirector.Begin(sceneId);
+            Dialogue.Play(Encounters, sceneId, () =>
+            {
+                if (encounterDirector != null) encounterDirector.End();
+                if (laborSegments > 0) clock.SpendSegments(laborSegments);
+                SaveNow();
+                CheckDeath();
+            }, DialogueStyle.LowerThird);
+        }
+
+        /// <summary>The Silverthread: haul water (scenes-chapter3.js ch3Actions numbers).</summary>
+        public void HaulRiverWater()
+        {
+            State.Stat(Meter.Thirst, 40);
+            State.Stat(Meter.Energy, State.Site == "overhang" ? -10 : -6);
+            State.Stat(Meter.Health, 2);
+            Toast("Cold, clean, and endless. The island's artery is yours now.", ToastKind.Good);
+            clock.SpendSegments(1);
+            SaveNow();
+        }
+
         /// <summary>The raft's question, asked properly (repeatable until answered).</summary>
         public void OfferRaftLaunch()
         {

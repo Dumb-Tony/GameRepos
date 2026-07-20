@@ -43,6 +43,7 @@ namespace Tidebound.EditorTools
             BuildTidePoolsZone(mats);
             BuildGreenDeepZone(mats);
             BuildEddasGrove(mats);
+            BuildSilverthread(mats);
             BuildBounds();
             BuildJungleWall(mats);
             BuildWreck(mats);
@@ -147,6 +148,16 @@ namespace Tidebound.EditorTools
                 h += (Mathf.PerlinNoise(x * 0.02f + 1.7f, z * 0.02f + 9.2f) - 0.5f) * 3f * Smooth01((z - 130f) / 60f);
             }
 
+            // the Silverthread: a green ravine carved down the west interior,
+            // draining the mountain's shadow toward the deep green
+            if (z > 160f)
+            {
+                float rx = RiverX(z);
+                float d = Mathf.Abs(x - rx);
+                if (d < 9f)
+                    h -= 2.2f * Smooth01((9f - d) / 6f) * Smooth01((z - 160f) / 25f);
+            }
+
             // northeast: the mountain's knee — the ground climbs out of the
             // interior toward the broken crown, and near the grove the rise
             // quantizes into cut terraces (sixty years of Edda's spadework).
@@ -171,6 +182,9 @@ namespace Tidebound.EditorTools
             t = Mathf.Clamp01(t);
             return t * t * (3f - 2f * t);
         }
+
+        /// <summary>The Silverthread's centerline through the west interior.</summary>
+        static float RiverX(float z) => -40f + 10f * Mathf.Sin((z - 160f) * 0.03f);
 
         /// <summary>
         /// The z where this column of sand crosses sea level (y = 0) — the
@@ -442,6 +456,41 @@ namespace Tidebound.EditorTools
             var braid = Prim(PrimitiveType.Cylinder, "EddaBraid", edda.transform,
                 new Vector3(104f, ey + 1.35f, 293.18f), new Vector3(0.07f, 0.35f, 0.07f), mats.Foam);
             braid.transform.rotation = Quaternion.Euler(12f, 0f, 0f);
+            edda.AddComponent<EddaInteractable>().interactRadius = 3.5f;
+        }
+
+        // ================= the Silverthread =================
+        /// <summary>
+        /// The river down the west interior: water strips laid along the
+        /// carved ravine, and a hauling bank at the reachable end. The bank
+        /// stays a nameless murmur of running water until ev3_river names it.
+        /// </summary>
+        static void BuildSilverthread(Mats mats)
+        {
+            var parent = new GameObject("Silverthread");
+            for (float z = 170f; z <= 338f; z += 8f)
+            {
+                float rx = RiverX(z);
+                float bed = Height(rx, z);
+                NoShadow(Prim(PrimitiveType.Cube, "RiverWater", parent.transform,
+                    new Vector3(rx, bed + 0.55f, z), new Vector3(5.2f, 0.12f, 8.4f),
+                    mats.Fresh, stripCollider: true));
+            }
+            // amber stones in the shallows
+            for (int i = 0; i < 12; i++)
+            {
+                float z = Rnd(175f, 330f);
+                float rx = RiverX(z) + Rnd(-2f, 2f);
+                NoShadow(Prim(PrimitiveType.Sphere, "RiverStone", parent.transform,
+                    new Vector3(rx, Height(rx, z) + 0.35f, z), new Vector3(Rnd(0.4f, 0.9f), 0.35f, Rnd(0.4f, 0.9f)),
+                    mats.Driftwood, stripCollider: true));
+            }
+            // the hauling bank — cut clay, grey and thick
+            float bankZ = 185f;
+            float bankX = RiverX(bankZ) + 6f;
+            var bank = Prim(PrimitiveType.Cube, "RiverBank", parent.transform,
+                new Vector3(bankX, Height(bankX, bankZ) + 0.25f, bankZ), new Vector3(2.4f, 0.5f, 2.0f), mats.DarkStone);
+            bank.AddComponent<RiverInteractable>();
         }
 
         static void BuildBounds()
@@ -1126,6 +1175,8 @@ namespace Tidebound.EditorTools
                 float x = Rnd(-120f, 205f), z = Rnd(155f, 300f);
                 // the grove is kept ground — no wild interior inside the fence
                 if ((x - 100f) * (x - 100f) + (z - 285f) * (z - 285f) < 40f * 40f) continue;
+                // and nothing grows mid-channel in the Silverthread
+                if (z > 160f && Mathf.Abs(x - RiverX(z)) < 6f) continue;
                 float y = Height(x, z);
                 var trunk = Prim(PrimitiveType.Cylinder, "DeepTrunk", parent.transform,
                     new Vector3(x, y + 2.8f, z), new Vector3(Rnd(0.35f, 0.6f), 2.9f, Rnd(0.35f, 0.6f)), mats.Wood);

@@ -51,6 +51,178 @@ namespace Tidebound.Narrative
             AddPulse(script);
             AddHearts2(script);
             AddThreshold(script);
+            AddGroveVisits(script);
+        }
+
+        // ---- the grove, visitable (the VN's 'grove' hub scene, split into
+        // ---- one scene per visit purpose; EddaInteractable offers them) ------
+        static void AddGroveVisits(StoryScript script)
+        {
+            script.Add(new StoryScene
+            {
+                Id = "grove_work",
+                Speaker = "Edda Voss",
+                OnEnter = s =>
+                {
+                    s.Edda = Clamp100(s.Edda + 7);
+                    s.Stat(Meter.Hunger, 14);
+                    s.Stat(Meter.Energy, -6);
+                    s.AddRoute(RouteAxis.Roots, 1);
+                },
+                Text = _ => new List<string>
+                {
+                    "You weed, stake, haul and mulch to her exacting standard, and somewhere in the second hour the instruction stops being suspicious and becomes — teaching. Real teaching, decades deep, poured into the first hands that have turned up to receive it.",
+                    "\"You'll do,\" she says at the end, loading your basket with more than you earned, and looks appalled at herself all the way to the fence.",
+                },
+            });
+            script.Add(new StoryScene
+            {
+                Id = "grove_plants",
+                Speaker = "Edda Voss",
+                OnEnter = s =>
+                {
+                    if (s.Is("SALVE")) s.SetFlag("PLANTS_AGAIN");
+                    s.Edda = Clamp100(s.Edda + 3);
+                    s.SetFlag("LORE_PLANTS");
+                    s.SetFlag("SALVE");
+                },
+                Text = s => new List<string>
+                {
+                    "She walks you through the beds like a general reviewing troops: the fever-tree and how to strip its bark without killing it; the fat-leafed aloe-kin for burns; bittergreen for guts; and a grey-green shrub whose crushed leaves smell like medicine feels.",
+                    s.Is("PLANTS_AGAIN")
+                        ? "You take fresh cuttings and better instructions, and the almanac in your head gains pages."
+                        : "\"Marshmint,\" she says. \"Rub it on at dusk and the biting flies will dine elsewhere.\" You take cuttings. Your evenings — and your blood — just got considerably safer.",
+                },
+            });
+            script.Add(new StoryScene
+            {
+                Id = "grove_wound",
+                Speaker = "Edda Voss",
+                OnEnter = s =>
+                {
+                    s.Injury = null;
+                    s.Edda = Clamp100(s.Edda + 3);
+                    s.Stat(Meter.Health, 8);
+                },
+                Text = _ => new List<string>
+                {
+                    "She unwraps your dressing, pronounces your field medicine \"ambitious,\" and redoes all of it: the wound irrigated with something that hisses, packed with honey and a moss you now know by name, bound in boiled cloth.",
+                    "\"Keep it dry, which on this island in this season is a joke, so keep it CLEAN.\" She flicks your ear like a schoolmistress. \"You heal fast, castaway. Stop giving it so much to do.\"",
+                },
+            });
+            script.Add(new StoryScene
+            {
+                Id = "grove_cure",
+                Speaker = "Edda Voss",
+                OnEnter = s =>
+                {
+                    s.Disease = null;
+                    s.Edda = Clamp100(s.Edda + 4);
+                    s.Stat(Meter.Health, 5);
+                    s.Stat(Meter.Hope, 6);
+                },
+                Text = _ => new List<string>
+                {
+                    "She takes one look at your eyes and the conversation is over — you are steered into shade, dosed with a decoction so bitter your ancestors flinch, wrapped, watered, and ordered to sleep like it's a chore assignment.",
+                    "You surface hours later, soaked through and ravenous, with the fever's grip broken and an old woman pretending to garden nearby, exactly within earshot. \"Three more doses,\" she says, not looking up, pressing a paper of stripped bark into your kit. \"And move your camp off that fringe at dusk, fool.\"",
+                },
+            });
+            script.Add(new StoryScene
+            {
+                Id = "grove_lore",
+                Speaker = "Edda Voss",
+                OnEnter = s =>
+                {
+                    s.AddRoute(RouteAxis.Depth, 1);
+                    int stage = s.Is("EDDA_LORE2") ? 3 : s.Is("EDDA_LORE1") ? 2 : 1;
+                    if (stage == 1) s.SetFlag("EDDA_LORE1");
+                    else if (stage == 2) s.SetFlag("EDDA_LORE2");
+                    else
+                    {
+                        s.SetFlag("EDDA_LORE3");
+                        if (s.Edda >= 55) { s.SetFlag("LORE_HALCYON"); s.AddRoute(RouteAxis.Depth, 2); }
+                    }
+                },
+                Text = s =>
+                {
+                    if (s.Is("EDDA_LORE3"))
+                        return s.Is("LORE_HALCYON")
+                            ? new List<string>
+                            {
+                                "She's quiet so long you think the door has shut. Then: \"You'll have noticed your compass is a liar and your radio drowned. There's a reason, and it's not spirits, whatever I let fools believe. It's in the rock. It sings in the rock, seven beats — you've seen the lagoon keep time to it.\"",
+                                "\"There was a station, once. East side, past the mangroves — past that damned crocodile. People with instruments and funding and no sense at all, come to find out what sings.\" Her jaw sets like mortar. \"I was the youngest of them. The bark you take your fever cure from is a tree I planted in nineteen sixty-nine.\"",
+                                "\"They drilled it. The rock. The song. And the island—\" she stops, and finishes with her voice hoarse: \"—<i>answered</i>. Two graves under my flowering tree, and I stayed. That's the whole story you're getting today, and more than the world ever got.\"",
+                            }
+                            : new List<string>
+                            {
+                                "She studies you over the tea. \"No,\" she says at last, gently enough. \"The rest of it isn't a story I hand to acquaintances. Earn your way past the fence and ask again.\"",
+                            };
+                    if (s.Is("EDDA_LORE2"))
+                        return new List<string>
+                        {
+                            "\"Where did they go.\" She looks at the mountain a long time. \"The mountain broke — you've seen the crown. The east half of the island tore, the sea came in over the fields, ash for years after. The stones stop being cut about then. Every book would tell you they died or sailed away.\"",
+                            "She pulls a weed with great attention. \"Books,\" she says, \"have never once walked up my mountain and looked in the caldera. That's all I'll say, and I've already said more of it than I meant to.\"",
+                        };
+                    return new List<string>
+                    {
+                        "\"You've found the stones, then.\" Not a question. \"There are thirty on this island that I know, and I don't claim to know them all. The people who cut them were farmers and sailors — better sailors than anyone who's wrecked here since, which is every one of us.\"",
+                        "\"The spiral?\" She traces one in the air, exactly right. \"It's the island. The way in, the way down, the way the water moves under it. They didn't worship this place, whatever a fool would tell you. They <i>kept</i> it. There's a difference. I'd know.\"",
+                    };
+                },
+            });
+            script.Add(new StoryScene
+            {
+                Id = "grove_gems",
+                Speaker = "Edda Voss",
+                OnEnter = s =>
+                {
+                    if (s.Is("GEMS_NAMED")) return;
+                    s.SetFlag("GEMS_NAMED");
+                    s.Edda = Clamp100(s.Edda + 2);
+                    s.AddRoute(RouteAxis.Depth, 1);
+                },
+                Text = _ => new List<string>
+                {
+                    "You unroll the lead-lined pouch on her table, and Edda Voss looks at the dozen cut stones for a long, level moment — and then, notably, does <i>not</i> touch them.",
+                    "\"Heartglass,\" she says. \"The mountain's own. It runs in veins under this island, down where the survey drilled — alive, for any definition of the word that will stretch. Cutting cores of it was the station's sin, and the island answered it.\" A nod at the pouch. \"Someone kept the habit. Someone out in the world has been cutting it into <i>trinkets</i>.\"",
+                    "She pushes the pouch back across the table with one knuckle, lead-side in. \"Keep it wrapped. And when you finally see it living in the rock, castaway — you'll understand why I didn't touch it.\"",
+                },
+            });
+            script.Add(new StoryScene
+            {
+                Id = "grove_case",
+                Speaker = "Edda Voss",
+                OnEnter = s =>
+                {
+                    if (s.Is("CASE_EDDA")) return;
+                    s.SetFlag("CASE_EDDA");
+                    s.AddRoute(RouteAxis.Depth, 2);
+                },
+                Text = _ => new List<string>
+                {
+                    "You unwrap the courier's case and set it on her table, and Edda Voss goes still in a way you have not seen her go still.",
+                    "\"Where,\" she says quietly, \"did you get that.\" Not the case, you realize — she's not looking at the case. She's looking at the small stamped crest by the lock, half worn away, that you'd taken for a maker's mark.",
+                    "She turns it to the light with one finger, like it might wake. \"This crest belonged to the people who funded the station,\" she says at last. \"It stopped existing — publicly — in nineteen eighty. And a man was carrying this over the island last week.\" She pushes it back across the table as if returning something to a fire. \"Don't open that near me. And don't open it stupidly. Some locks are the only honest warning you get.\"",
+                },
+            });
+            script.Add(new StoryScene
+            {
+                Id = "grove_graves",
+                Speaker = "Edda Voss",
+                OnEnter = s =>
+                {
+                    if (s.Is("EDDA_GRAVES")) return;
+                    s.SetFlag("EDDA_GRAVES");
+                    s.Edda = Clamp100(s.Edda + 5);
+                    s.Stat(Meter.Hope, 2);
+                },
+                Text = _ => new List<string>
+                {
+                    "She doesn't answer for a long time, and you let the silence do its work, the way she taught you without teaching.",
+                    "\"Ilsa,\" she says finally. \"Doctor Ilsa Vane. The best mind ever wasted on this island, and the only person I've loved past the age of reason. The tree is hers; she chose it herself, at the end. Faces the sea, because she never did stop watching for the ship that would take her results home.\"",
+                    "A pause. Your eye moves to the second, smaller mound, and the old woman almost — almost — smiles. \"Aleksander,\" she says. \"A rooster. Absolute tyrant. Ilsa's, then mine, then neither of ours; he owned us both and crowed like the sun answered to him personally, seventeen years.\" She stands, briskly, gathering cups. \"That's enough archaeology for one visit.\"",
+                },
+            });
         }
 
         // ---- day 27: the Boar King, continued --------------------------------

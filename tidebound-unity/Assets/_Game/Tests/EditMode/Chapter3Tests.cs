@@ -355,6 +355,107 @@ namespace Tidebound.Tests
             Assert.AreEqual("ch3_threshold", EventScheduler.Due(s, schedule));
         }
 
+        // ---- session 4: the grove, visitable ---------------------------------
+        [Test]
+        public void GroveWork_EarnsWithYourBack()
+        {
+            var s = GameState.NewGame();
+            s.Edda = 20;
+            s.Stats.Hunger = 50f;
+            float energy = s.Stats.Energy;
+            Script.Get("grove_work").OnEnter(s);
+            Assert.AreEqual(27, s.Edda);
+            Assert.AreEqual(64f, s.Stats.Hunger);
+            Assert.AreEqual(energy - 6, s.Stats.Energy);
+            Assert.AreEqual(1, s.Route.Roots);
+        }
+
+        [Test]
+        public void GrovePlants_TeachTheMarshmintOnce()
+        {
+            var s = GameState.NewGame();
+            var plants = Script.Get("grove_plants");
+            plants.OnEnter(s);
+            Assert.IsTrue(s.Is("SALVE"));
+            Assert.IsTrue(s.Is("LORE_PLANTS"));
+            Assert.IsFalse(s.Is("PLANTS_AGAIN")); // first visit: the marshmint speech
+            plants.OnEnter(s);
+            Assert.IsTrue(s.Is("PLANTS_AGAIN")); // repeats: fresh cuttings
+        }
+
+        [Test]
+        public void GroveCure_BreaksTheFever()
+        {
+            var s = GameState.NewGame();
+            s.Disease = "fever";
+            Script.Get("grove_cure").OnEnter(s);
+            Assert.IsNull(s.Disease);
+            Assert.AreEqual(4, s.Edda);
+        }
+
+        [Test]
+        public void GroveWound_SeenTo()
+        {
+            var s = GameState.NewGame();
+            s.Injury = "laceration";
+            s.Stats.Health = 70f;
+            Script.Get("grove_wound").OnEnter(s);
+            Assert.IsNull(s.Injury);
+            Assert.AreEqual(78f, s.Stats.Health);
+        }
+
+        [Test]
+        public void GroveLore_StagesToHalcyon_OnlyPastTheFence()
+        {
+            var lore = Script.Get("grove_lore");
+
+            var s = GameState.NewGame();
+            s.Edda = 60;
+            lore.OnEnter(s);
+            Assert.IsTrue(s.Is("EDDA_LORE1"));
+            lore.OnEnter(s);
+            Assert.IsTrue(s.Is("EDDA_LORE2"));
+            lore.OnEnter(s);
+            Assert.IsTrue(s.Is("EDDA_LORE3"));
+            Assert.IsTrue(s.Is("LORE_HALCYON")); // regard 55+: the whole story
+            Assert.AreEqual(5, s.Route.Depth);   // 1+1+1 asks + 2 for the story
+
+            var cold = GameState.NewGame(); // regard too low at stage 3
+            cold.Edda = 30;
+            lore.OnEnter(cold); lore.OnEnter(cold); lore.OnEnter(cold);
+            Assert.IsTrue(cold.Is("EDDA_LORE3"));
+            Assert.IsFalse(cold.Is("LORE_HALCYON")); // refused, door stays open
+        }
+
+        [Test]
+        public void GroveCaseAndGraves_BankTheirFlags()
+        {
+            var s = GameState.NewGame();
+            s.AddItem("case", 1);
+            s.Edda = 50;
+            Script.Get("grove_case").OnEnter(s);
+            Assert.IsTrue(s.Is("CASE_EDDA"));
+            Assert.AreEqual(2, s.Route.Depth);
+
+            Script.Get("grove_graves").OnEnter(s);
+            Assert.IsTrue(s.Is("EDDA_GRAVES"));
+            Assert.AreEqual(55, s.Edda); // +5
+
+            Script.Get("grove_graves").OnEnter(s); // once
+            Assert.AreEqual(55, s.Edda);
+        }
+
+        [Test]
+        public void GroveGems_NamesTheHeartglass()
+        {
+            var s = GameState.NewGame();
+            s.SetFlag("GEMS");
+            Assert.IsFalse(CaseArc.KnowsGlass(s));
+            Script.Get("grove_gems").OnEnter(s);
+            Assert.IsTrue(s.Is("GEMS_NAMED"));
+            Assert.IsTrue(CaseArc.KnowsGlass(s)); // Edda supplied the name
+        }
+
         // ---- the grove as a place --------------------------------------------
         [Test]
         public void Grove_IsARegion_OnTheMountainsKnee()
