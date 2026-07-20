@@ -310,11 +310,29 @@ tidebound-unity/
       continues into ch3_open (the VN's "start a new run" option stays
       with RunCardUI, v1 adaptation); VN mid-dialogue tickSegment calls
       folded into effects per the ch2 precedent. 10 new tests.
-      Remaining for the chapter: the grove as a place (terrain, region,
-      Wayfinder pin, hub actions incl. feverbark + grove-day deck), the
-      ev3_* calendar (river d20, Edda's visit d21, fever d22, Grin d24,
-      king2 d27, pulse d28, heart2 d31, ch3_threshold d35), Old Grin,
-      the Silverthread, the mangrove east.*
+      Session 2: the grove is a PLACE — the terrain grows the mountain's
+      knee (northeast rise whose slope quantizes into cut terraces near
+      the grove), BuildEddasGrove in the scene builder (fence ring with
+      a south gate, the hut with the shotgun by the door, rain tanks,
+      drying rack, six planted terrace beds, the flowering tree over the
+      two kept graves, the feverbark at the edge, boundary stones, the
+      marked path up from the interior, and a greybox EddaRig for the
+      stage director to borrow later; the Green Deep's wild trunks now
+      skip her fenced ground); grove region in Regions.cs (map.js
+      verbatim: first-visit workday, Edda+6 fx1, the three-card deck)
+      with IdAt footprint x>40 z>230, auto-pinned on the Wayfinder once
+      seen (law #3); and the first four ev3 calendar events ported +
+      scheduled — ev3_river d20 dusk (RIVER_KNOWN, thirst +40, the
+      artery), ev3_eddavisit d21 dawn on the signal road (coldest door:
+      edda 10+chem, GROVE_OPENED + LORE_FEVERBARK + SALVE — she leaves
+      cuttings), ev3_fever d22 dusk (guard is the VN's; FEVER_SEED
+      stays dormant until fringe camping arrives), ev3_grin1 d24 dusk
+      (GRIN_MET, the log that was never a log). 7 new tests.
+      Remaining for the chapter: ev3_king2 d27, ev3_pulse d28,
+      ev3_heart2 d31, ch3_threshold d35, grove hub actions (feverbark
+      brew, the trek as a labor), staging for the ev3 events (river
+      reveal, Edda-in-camp, the croc), the Silverthread as terrain, the
+      mangrove east, Old Grin's rig.*
 - [ ] Phase 6 — depth passes per act · Phase 7 — companions, NG+, polish
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day

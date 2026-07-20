@@ -133,5 +133,109 @@ namespace Tidebound.Tests
             Assert.IsTrue(s.Is("LORE_FEVERBARK"));
             Assert.AreEqual(hunger, s.Stats.Hunger); // warily: no basket
         }
+
+        // ---- session 2: the river, her visit, the fever, Old Grin ------------
+        [Test]
+        public void River_OpensTheArtery_Once()
+        {
+            var s = GameState.NewGame();
+            s.Stats.Thirst = 40f;
+            float hope = s.Stats.Hope;
+            var river = Script.Get("ev3_river");
+            river.OnEnter(s);
+            Assert.IsTrue(s.Is("RIVER_KNOWN"));
+            Assert.AreEqual(80f, s.Stats.Thirst);
+            Assert.AreEqual(hope + 8, s.Stats.Hope);
+            Assert.AreEqual(1, s.Route.Roots);
+
+            river.OnEnter(s); // once only
+            Assert.AreEqual(80f, s.Stats.Thirst);
+        }
+
+        [Test]
+        public void EddaVisit_MeetsHerOnTheSignalRoad_WithCuttings()
+        {
+            var s = GameState.NewGame();
+            s.Companion = "kavi";
+            Script.Get("ev3_eddavisit").OnEnter(s);
+            Assert.IsTrue(s.Is("EDDA_MET"));
+            Assert.IsTrue(s.Is("GROVE_OPENED"));
+            Assert.IsTrue(s.Is("LORE_FEVERBARK"));
+            Assert.IsTrue(s.Is("SALVE")); // she leaves cuttings
+            Assert.AreEqual(15, s.Edda); // 10 + kavi 5 — the coldest of the three doors
+        }
+
+        [Test]
+        public void Fever_Strikes_OnlyTheUntreated()
+        {
+            var s = GameState.NewGame();
+            float energy = s.Stats.Energy;
+            Script.Get("ev3_fever").OnEnter(s);
+            Assert.AreEqual("fever", s.Disease);
+            Assert.IsTrue(s.Is("FEVER_STRUCK"));
+            Assert.AreEqual(energy - 15, s.Stats.Energy);
+
+            var sick = GameState.NewGame();
+            sick.Disease = "infection"; // already fighting something: no double strike
+            Script.Get("ev3_fever").OnEnter(sick);
+            Assert.AreEqual("infection", sick.Disease);
+            Assert.IsFalse(sick.Is("FEVER_STRUCK"));
+        }
+
+        [Test]
+        public void OldGrin_SettlesIntoPerfectComfort()
+        {
+            var s = GameState.NewGame();
+            float hope = s.Stats.Hope;
+            Script.Get("ev3_grin1").OnEnter(s);
+            Assert.IsTrue(s.Is("GRIN_MET"));
+            Assert.AreEqual(hope - 3, s.Stats.Hope);
+            Assert.AreEqual(1, s.Route.Depth);
+        }
+
+        // ---- the calendar ----------------------------------------------------
+        [Test]
+        public void Schedule_CarriesTheChapterThreeWeek()
+        {
+            var schedule = Chapter1Schedule.Build();
+            var s = GameState.NewGame();
+            s.Day = 20; s.Seg = Segment.Dusk;
+            Assert.AreEqual("ev3_river", EventScheduler.Due(s, schedule));
+
+            s.Day = 21; s.Seg = Segment.Dawn;
+            Assert.IsNull(EventScheduler.Due(s, schedule)); // took a mountain road: no visit
+            s.SetFlag("SMOKE_IGNORED");
+            Assert.AreEqual("ev3_eddavisit", EventScheduler.Due(s, schedule));
+            s.SetFlag("EDDA_MET");
+            Assert.IsNull(EventScheduler.Due(s, schedule)); // already met: she stays home
+
+            s.Day = 22; s.Seg = Segment.Dusk;
+            Assert.IsNull(EventScheduler.Due(s, schedule)); // no FEVER_SEED: no fever
+            s.SetFlag("FEVER_SEED");
+            Assert.AreEqual("ev3_fever", EventScheduler.Due(s, schedule));
+            s.SetFlag("SALVE");
+            Assert.IsNull(EventScheduler.Due(s, schedule)); // the cuttings worked
+
+            s.Day = 24; s.Seg = Segment.Dusk;
+            Assert.AreEqual("ev3_grin1", EventScheduler.Due(s, schedule));
+        }
+
+        // ---- the grove as a place --------------------------------------------
+        [Test]
+        public void Grove_IsARegion_OnTheMountainsKnee()
+        {
+            var grove = Regions.Get("grove");
+            Assert.AreEqual("Edda's Grove", grove.Name);
+            Assert.AreEqual(288f, grove.ChartX);
+            Assert.AreEqual(110f, grove.ChartY);
+            Assert.AreEqual("grove", Regions.IdAt(100f, 285f));
+            Assert.AreEqual("deepgreen", Regions.IdAt(-40f, 285f)); // west interior stays wild
+
+            var s = GameState.NewGame();
+            s.Stats.Hunger = 60f;
+            grove.FirstEffects(s);
+            Assert.AreEqual(6, s.Edda);
+            Assert.AreEqual(68f, s.Stats.Hunger); // greens and a cutting
+        }
     }
 }

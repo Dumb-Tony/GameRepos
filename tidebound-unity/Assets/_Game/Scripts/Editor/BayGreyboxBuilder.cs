@@ -42,6 +42,7 @@ namespace Tidebound.EditorTools
             BuildDistantIsland(mats);
             BuildTidePoolsZone(mats);
             BuildGreenDeepZone(mats);
+            BuildEddasGrove(mats);
             BuildBounds();
             BuildJungleWall(mats);
             BuildWreck(mats);
@@ -144,6 +145,22 @@ namespace Tidebound.EditorTools
             {
                 h += 8f * Smooth01((z - 80f) / 160f);
                 h += (Mathf.PerlinNoise(x * 0.02f + 1.7f, z * 0.02f + 9.2f) - 0.5f) * 3f * Smooth01((z - 130f) / 60f);
+            }
+
+            // northeast: the mountain's knee — the ground climbs out of the
+            // interior toward the broken crown, and near the grove the rise
+            // quantizes into cut terraces (sixty years of Edda's spadework).
+            if (z > 230f && x > 30f)
+            {
+                float knee = Smooth01((z - 230f) / 70f) * Smooth01((x - 30f) / 50f);
+                float rise = 14f * knee;
+                float dGrove = Mathf.Sqrt((x - 100f) * (x - 100f) + (z - 285f) * (z - 285f));
+                if (dGrove < 48f)
+                {
+                    float steps = Mathf.Round(rise / 1.5f) * 1.5f;
+                    rise = Mathf.Lerp(rise, steps, Smooth01((48f - dGrove) / 18f));
+                }
+                h += rise;
             }
 
             return h;
@@ -305,6 +322,126 @@ namespace Tidebound.EditorTools
         {
             go.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             return go;
+        }
+
+        // ================= Edda's Grove =================
+        /// <summary>
+        /// The grove on the mountain's knee (Chapter 3): terraced beds,
+        /// her hut, rain tanks, the drying rack, the two graves under the
+        /// flowering tree, the feverbark at the edge, boundary stones and
+        /// a marked path up from the interior. Greybox; the EddaRig stands
+        /// by the hut for the stage director to borrow later.
+        /// </summary>
+        static void BuildEddasGrove(Mats mats)
+        {
+            var parent = new GameObject("EddasGrove");
+            const float cx = 100f, cz = 285f;
+
+            // fence — a ring of posts with a gap where the path enters (south)
+            for (int i = 0; i < 26; i++)
+            {
+                float a = i / 26f * Mathf.PI * 2f;
+                float deg = a * Mathf.Rad2Deg;
+                if (deg > 250f && deg < 290f) continue; // the gate gap
+                float x = cx + Mathf.Cos(a) * 32f, z = cz + Mathf.Sin(a) * 32f;
+                Prim(PrimitiveType.Cylinder, "FencePost", parent.transform,
+                    new Vector3(x, Height(x, z) + 0.45f, z), new Vector3(0.15f, 0.5f, 0.15f), mats.Wood);
+            }
+
+            // the hut, with the shotgun leaning by the door
+            float hutY = Height(108f, 296f);
+            Prim(PrimitiveType.Cube, "EddaHut", parent.transform,
+                new Vector3(108f, hutY + 1.3f, 296f), new Vector3(4.4f, 2.6f, 3.6f), mats.Wood);
+            Prim(PrimitiveType.Cube, "EddaHutRoof", parent.transform,
+                new Vector3(108f, hutY + 2.85f, 296f), new Vector3(5.0f, 0.5f, 4.2f), mats.JungleDark);
+            var gun = Prim(PrimitiveType.Cylinder, "Shotgun", parent.transform,
+                new Vector3(105.6f, hutY + 0.62f, 294.4f), new Vector3(0.06f, 0.65f, 0.06f), mats.DarkStone);
+            gun.transform.rotation = Quaternion.Euler(0f, 0f, 18f);
+
+            // rain tanks and the drying rack
+            for (int i = 0; i < 2; i++)
+            {
+                float x = 104.6f - i * 1.6f, z = 297.8f;
+                Prim(PrimitiveType.Cylinder, "RainTank", parent.transform,
+                    new Vector3(x, Height(x, z) + 0.7f, z), new Vector3(1.1f, 0.7f, 1.1f), mats.Metal);
+            }
+            float rackY = Height(96f, 292f);
+            Prim(PrimitiveType.Cylinder, "RackPost", parent.transform,
+                new Vector3(95.2f, rackY + 0.8f, 292f), new Vector3(0.1f, 0.85f, 0.1f), mats.Wood);
+            Prim(PrimitiveType.Cylinder, "RackPost", parent.transform,
+                new Vector3(97.4f, rackY + 0.8f, 292f), new Vector3(0.1f, 0.85f, 0.1f), mats.Wood);
+            var bar = Prim(PrimitiveType.Cylinder, "RackBar", parent.transform,
+                new Vector3(96.3f, rackY + 1.5f, 292f), new Vector3(0.07f, 1.25f, 0.07f), mats.Driftwood);
+            bar.transform.rotation = Quaternion.Euler(0f, 0f, 90f);
+
+            // terraced beds stepping down the south slope, planted in rows
+            for (int b = 0; b < 6; b++)
+            {
+                float bx = 88f + (b % 3) * 8.5f, bz = 264f + (b / 3) * 7f;
+                float by = Height(bx, bz);
+                Prim(PrimitiveType.Cube, "TerraceBed", parent.transform,
+                    new Vector3(bx, by + 0.15f, bz), new Vector3(6.2f, 0.3f, 2.2f), mats.JungleDark);
+                for (int c = 0; c < 5; c++)
+                    NoShadow(Prim(PrimitiveType.Sphere, "Crop", parent.transform,
+                        new Vector3(bx - 2.4f + c * 1.2f, by + 0.45f, bz), new Vector3(0.5f, 0.45f, 0.5f),
+                        mats.Leaf, stripCollider: true));
+            }
+
+            // the flowering tree, and the two graves kept clear beneath it
+            float treeY = Height(80f, 300f);
+            Prim(PrimitiveType.Cylinder, "FloweringTree", parent.transform,
+                new Vector3(80f, treeY + 1.9f, 300f), new Vector3(0.4f, 2.0f, 0.4f), mats.Wood);
+            NoShadow(Prim(PrimitiveType.Sphere, "FloweringCanopy", parent.transform,
+                new Vector3(80f, treeY + 4.4f, 300f), new Vector3(4.4f, 3.0f, 4.4f), mats.Leaf, stripCollider: true));
+            for (int i = 0; i < 7; i++)
+                NoShadow(Prim(PrimitiveType.Sphere, "Blossom", parent.transform,
+                    new Vector3(80f + Rnd(-2f, 2f), treeY + 4.2f + Rnd(-0.8f, 1.2f), 300f + Rnd(-2f, 2f)),
+                    new Vector3(0.35f, 0.35f, 0.35f), mats.Fruit, stripCollider: true));
+            for (int i = 0; i < 2; i++)
+            {
+                float gx = 78.4f + i * 2.4f, gz = 297.2f;
+                NoShadow(Prim(PrimitiveType.Sphere, "GraveMound", parent.transform,
+                    new Vector3(gx, Height(gx, gz) + 0.12f, gz), new Vector3(1.7f, 0.45f, 0.95f),
+                    mats.Sand, stripCollider: true));
+            }
+
+            // the feverbark — a tall straight grey-barked tree at the edge
+            float fevY = Height(122f, 270f);
+            Prim(PrimitiveType.Cylinder, "Feverbark", parent.transform,
+                new Vector3(122f, fevY + 3.2f, 270f), new Vector3(0.35f, 3.4f, 0.35f), mats.Driftwood);
+            NoShadow(Prim(PrimitiveType.Sphere, "FeverbarkCrown", parent.transform,
+                new Vector3(122f, fevY + 7.1f, 270f), new Vector3(2.6f, 1.8f, 2.6f), mats.Leaf, stripCollider: true));
+
+            // the marked path up from the interior, and the boundary stones
+            for (int i = 0; i < 10; i++)
+            {
+                float t = i / 9f;
+                float x = Mathf.Lerp(88f, 100f, t) + Mathf.Sin(t * 5.2f) * 2.4f;
+                float z = Mathf.Lerp(206f, 251f, t);
+                NoShadow(Prim(PrimitiveType.Cylinder, "PathStone", parent.transform,
+                    new Vector3(x, Height(x, z) + 0.05f, z), new Vector3(0.9f, 0.05f, 0.9f),
+                    mats.Rock, stripCollider: true));
+            }
+            for (int i = 0; i < 3; i++)
+            {
+                float x = 93f + i * 3.4f, z = 232f + i * 8f;
+                var stone = Prim(PrimitiveType.Cube, "BoundaryStone", parent.transform,
+                    new Vector3(x, Height(x, z) + 0.55f, z), new Vector3(0.8f, 1.1f, 0.5f), mats.DarkStone);
+                stone.transform.rotation = Quaternion.Euler(Rnd(-6f, 6f), Rnd(0f, 360f), Rnd(-4f, 4f));
+            }
+
+            // Edda herself — a greybox keeper by the hut, weathered as driftwood
+            var edda = new GameObject("EddaRig");
+            edda.transform.SetParent(parent.transform, true);
+            float ey = Height(104f, 293f);
+            edda.transform.position = new Vector3(104f, ey, 293f);
+            Prim(PrimitiveType.Capsule, "EddaBody", edda.transform,
+                new Vector3(104f, ey + 0.8f, 293f), new Vector3(0.42f, 0.8f, 0.42f), mats.Driftwood);
+            Prim(PrimitiveType.Sphere, "EddaHead", edda.transform,
+                new Vector3(104f, ey + 1.75f, 293f), new Vector3(0.32f, 0.32f, 0.32f), mats.Driftwood);
+            var braid = Prim(PrimitiveType.Cylinder, "EddaBraid", edda.transform,
+                new Vector3(104f, ey + 1.35f, 293.18f), new Vector3(0.07f, 0.35f, 0.07f), mats.Foam);
+            braid.transform.rotation = Quaternion.Euler(12f, 0f, 0f);
         }
 
         static void BuildBounds()
@@ -987,6 +1124,8 @@ namespace Tidebound.EditorTools
             for (int i = 0; i < 70; i++)
             {
                 float x = Rnd(-120f, 205f), z = Rnd(155f, 300f);
+                // the grove is kept ground — no wild interior inside the fence
+                if ((x - 100f) * (x - 100f) + (z - 285f) * (z - 285f) < 40f * 40f) continue;
                 float y = Height(x, z);
                 var trunk = Prim(PrimitiveType.Cylinder, "DeepTrunk", parent.transform,
                     new Vector3(x, y + 2.8f, z), new Vector3(Rnd(0.35f, 0.6f), 2.9f, Rnd(0.35f, 0.6f)), mats.Wood);

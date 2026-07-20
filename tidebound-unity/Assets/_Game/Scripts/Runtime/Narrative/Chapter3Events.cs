@@ -43,6 +43,112 @@ namespace Tidebound.Narrative
             AddEddaLater(script);
             AddOpenSignal(script);
             AddAfterScenes(script);
+            AddRiver(script);
+            AddEddaVisit(script);
+            AddFever(script);
+            AddGrin(script);
+        }
+
+        // ---- day 20, dusk: the Silverthread ---------------------------------
+        static void AddRiver(StoryScript script)
+        {
+            script.Add(new StoryScene
+            {
+                Id = "ev3_river",
+                OnEnter = s =>
+                {
+                    if (s.Is("RIVER_KNOWN")) return;
+                    s.SetFlag("RIVER_KNOWN");
+                    s.Stat(Meter.Thirst, 40);
+                    s.Stat(Meter.Hope, 8);
+                    s.AddRoute(RouteAxis.Roots, 1);
+                },
+                Text = _ => new List<string>
+                {
+                    "You hear it before you see it — a sound your body identifies faster than your mind, older than either: <i>running water</i>. Real, cold, moving water.",
+                    "The Silverthread comes down out of the mountain's shadow through a green ravine, wide as a road, clear as glass over amber stones. Fish hang in the current like held breath. The banks are cut clay, grey and thick. Upstream, the water sounds bigger — falls, somewhere up in the folded country.",
+                    "You drink like a horse, laugh at nothing, and drink again. The daily arithmetic of coconuts and rain-catch — the tax your every plan has paid since Day 1 — just fell over dead.",
+                    "The island has an artery, and now you hold it.",
+                },
+            });
+        }
+
+        // ---- day 21, dawn: Edda comes down (the signal road) -----------------
+        static void AddEddaVisit(StoryScript script)
+        {
+            script.Add(new StoryScene
+            {
+                Id = "ev3_eddavisit",
+                Speaker = "Edda Voss",
+                OnEnter = s =>
+                {
+                    if (s.Is("EDDA_MET")) return;
+                    s.SetFlag("EDDA_MET");
+                    s.SetFlag("GROVE_OPENED");
+                    s.SetFlag("LORE_FEVERBARK");
+                    s.SetFlag("SALVE");
+                    s.Edda = Clamp100(10 + EddaChem(s));
+                },
+                Text = s => new List<string>
+                {
+                    "On the twenty-first morning there is a woman in your camp.",
+                    "Not arriving — <i>in</i> it: standing at your fire ring with a shotgun broken open over one arm and the proprietary air of a health inspector, an old woman, weathered as driftwood, with a long grey braid and eyes that have finished three audits since you sat up.",
+                    "\"Twenty-one days,\" she says, without preamble. \"Twenty-one days of watching you signal an empty sea and ignore a lit fire on a mountain. I came down to see if you were proud, stupid, or dying.\" A glance at your camp — the stores, the defenses, "
+                        + (s.Companion == "kavi" ? "Kavi, whom she takes in with one long unreadable look" : "your tidy solitary arrangements")
+                        + ". \"Hm. Not dying.\"",
+                    "\"Edda Voss. Up the mountain, past the third ridge, the fire you've been snubbing. Marshmint for the flies, feverbark for the fever you're courting, camped where you're camped — I'll leave cuttings.\" She snaps the shotgun closed, business concluded. \"The sea's deaf, castaway. The mountain isn't. When you're done being proud, the path is marked.\"",
+                    "She is gone into the treeline before your manners finish rebooting.",
+                },
+            });
+        }
+
+        // ---- day 22, dusk: marsh fever --------------------------------------
+        static void AddFever(StoryScript script)
+        {
+            script.Add(new StoryScene
+            {
+                Id = "ev3_fever",
+                OnEnter = s =>
+                {
+                    if (s.Disease != null || s.Is("FEVER_STRUCK")) return;
+                    s.SetFlag("FEVER_STRUCK");
+                    s.Disease = "fever";
+                    s.Stat(Meter.Energy, -15);
+                    s.Stat(Meter.Hope, -6);
+                },
+                Text = _ => new List<string>
+                {
+                    "It starts as a headache with ambitions.",
+                    "By dusk you're cold in the tropics — cold from the inside, teeth chattering in air like soup — and then the pendulum swings and you're burning, wringing wet, joints full of ground glass. You know this catalogue. You've been paying the fringe's little dusk tax in bites for a week, and the bill has come due.",
+                    "<i>Marsh fever.</i> It will not leave on its own. Left to run, it will take your strength, then your hours, then everything else — and there is a cure on this island, in a grey-barked tree on an old woman's mountain, if you can get to it.",
+                },
+            });
+        }
+
+        // ---- day 24, dusk: Old Grin, introduced ------------------------------
+        static void AddGrin(StoryScript script)
+        {
+            script.Add(new StoryScene
+            {
+                Id = "ev3_grin1",
+                OnEnter = s =>
+                {
+                    if (s.Is("GRIN_MET")) return;
+                    s.SetFlag("GRIN_MET");
+                    s.Stat(Meter.Hope, -3);
+                    s.AddRoute(RouteAxis.Depth, 1);
+                },
+                Text = s => new List<string>
+                {
+                    "You take the day east, following Edda's hand-drawn line toward the mangroves — the drowned forest that guards the island's other half — to see the East Passage for yourself.",
+                    s.Companion == "kavi"
+                        ? "Kavi stops you. Flat stop: a shoulder against your knee, hackles in a ridge, a growl pitched below hearing — aimed at a stretch of tea-dark water you'd already put your next footstep beside."
+                        : "Some assembly of small wrongnesses stops you — the herons all facing one way, the crabs gone from a socketed log, a silence with a shape to it.",
+                    "And the log in the channel opens an eye.",
+                    "It is not a log. It was never a log. It is six meters of saltwater crocodile, moss-backed and patient as geology, lying in the one channel every crossing of the East Passage must use — and it has been watching you since before you knew there was anything to watch. It does not lunge. It does something worse: it settles, minutely, into perfect comfort. <i>No hurry</i>, says every line of it. <i>You'll be back. They always come back. I am always here.</i>",
+                    "You withdraw with great correctness, heart hammering, and the mangroves let you go — this time, the courtesy of a landlord who prefers his tenants to understand the lease before signing.",
+                },
+            });
         }
 
         // ---- day 19: the chapter turn --------------------------------------

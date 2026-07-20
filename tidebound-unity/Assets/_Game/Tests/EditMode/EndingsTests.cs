@@ -136,7 +136,7 @@ namespace Tidebound.Tests
             StringAssert.Contains("Day 7", text);
             StringAssert.Contains("flight medic", text);
             StringAssert.Contains("Kavi", text);
-            StringAssert.Contains("2 of the island's 4", text);
+            StringAssert.Contains("2 of the island's 5", text); // grove joined the chart (ch3)
             StringAssert.Contains("eyes that fly", text);
             StringAssert.Contains("Everything is remembered", text);
         }

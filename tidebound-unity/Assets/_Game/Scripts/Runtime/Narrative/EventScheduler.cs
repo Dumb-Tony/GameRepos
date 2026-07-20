@@ -71,6 +71,15 @@ namespace Tidebound.Narrative
             // the sea returns the unsalvaged case (v1 adaptation — bible §Phase 5)
             new ScheduledEvent { Day = 8, Seg = Segment.Dawn, SceneId = "ev2_case_ashore",
                 When = s => !s.Is("SALV_case") && !s.Has("case") },
+            // ---- chapter three (scenes-chapter3.js TB.SCHEDULE, v1 subset) ----
+            new ScheduledEvent { Day = 20, Seg = Segment.Dusk, SceneId = "ev3_river" },
+            new ScheduledEvent { Day = 21, Seg = Segment.Dawn, SceneId = "ev3_eddavisit",
+                When = s => s.Is("SMOKE_IGNORED") && !s.Is("EDDA_MET") },
+            // FEVER_SEED is planted by fringe-site camping (scenes-chapter2.js);
+            // dormant until the fringe camp arrives — the guard is the VN's.
+            new ScheduledEvent { Day = 22, Seg = Segment.Dusk, SceneId = "ev3_fever",
+                When = s => s.Is("FEVER_SEED") && !s.Is("SALVE") && s.Disease == null },
+            new ScheduledEvent { Day = 24, Seg = Segment.Dusk, SceneId = "ev3_grin1" },
             // ---- the long game (scenes-chapter5.js, the shared events) ----
             new ScheduledEvent { Day = 58, Seg = Segment.Night, SceneId = "ev5_cyclone" },
         };

@@ -32,6 +32,7 @@ namespace Tidebound.Narrative
         /// <summary>Which region a world position lies in.</summary>
         public static string IdAt(float x, float z)
         {
+            if (z > 230f && x > 40f) return "grove"; // the mountain's knee
             if (z > 150f) return "deepgreen";
             if (z > 78f) return "fringe";
             if (x > 115f && z < 70f) return "tidepools";
@@ -125,6 +126,33 @@ namespace Tidebound.Narrative
                         s => { s.Stat(Meter.Hunger, 8); s.Stat(Meter.Hope, 3); }),
                     ("Boar-sign, old and new, and a wallow like a crater: you are traversing the King's home counties, and you do it with your tread soft and your tithe-arithmetic ready.",
                         s => s.AddRoute(RouteAxis.Depth, 1)),
+                },
+            },
+            new RegionDef
+            {
+                Id = "grove",
+                Name = "Edda's Grove",
+                Sub = "Tea, insults, and the best-tended ground on the island.",
+                ChartX = 288f, ChartY = 110f,
+                First = new[]
+                {
+                    "You climb to the grove without an errand for once, and Edda — after establishing at length that you have no errand, and auditing the concept — puts you to WORK, which you slowly understand is the honor: the beds weeded side by side, the seedlings pricked out, the compost turned, two people keeping ground together in the oldest arrangement there is.",
+                    "Tea happens when the work says so, not the clock. You leave with greens, a cutting she pretends is nothing, and the strange warm cargo of having been, for one afternoon, somebody's help rather than somebody's problem.",
+                },
+                FirstEffects = s =>
+                {
+                    s.Edda = Math.Min(100, s.Edda + 6);
+                    s.Stat(Meter.Hope, 4);
+                    s.Stat(Meter.Hunger, 8);
+                },
+                Deck = new (string, Action<GameState>)[]
+                {
+                    ("A grove day: labor, tea, and Edda's running commentary on your technique, your posture, your generation, and — once, sidelong, almost inaudible — your progress, which is apparently 'not entirely hopeless.' You float home.",
+                        s => { s.Edda = Math.Min(100, s.Edda + 5); s.Stat(Meter.Hope, 4); }),
+                    ("She teaches with her hands today more than her mouth: graft, tie, seal, the old orchard-craft. You catch her watching you repeat it, and her face doing arithmetic about the future she won't name.",
+                        s => { s.Edda = Math.Min(100, s.Edda + 5); s.AddRoute(RouteAxis.Roots, 2); }),
+                    ("You trade the day's catch for the garden's surplus and the island's best gossip (the junglefowl are feuding; the bees have expanded; the mountain, she says, glancing up without stopping her hands, is 'talkative lately').",
+                        s => { s.Stat(Meter.Hunger, 12); s.Edda = Math.Min(100, s.Edda + 3); }),
                 },
             },
         };
