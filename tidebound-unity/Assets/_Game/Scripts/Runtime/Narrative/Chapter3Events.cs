@@ -542,10 +542,10 @@ namespace Tidebound.Narrative
                         t.Add("— The east is open. A rusted mast stands above the far canopy, and under it, everything Halcyon left behind."
                             + (s.Is("IPO_KEY") ? " The key in your pocket says E WING." : ""));
                     t.Add($"Route leanings — Signal {s.Route.Signal} · Roots {s.Route.Roots} · Depth {s.Route.Depth}. Nothing is decided. Everything is remembered.");
-                    t.Add("<i>Chapter Four: The Hum — in development. The island continues; so can you.</i>");
                     return t;
                 },
-                NextLabel = "Back to the island",
+                Next = "ch4_open",
+                NextLabel = "Continue — Chapter Four: The Hum ➤",
             });
         }
 

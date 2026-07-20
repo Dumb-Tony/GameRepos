@@ -555,6 +555,20 @@ namespace Tidebound.EditorTools
                 new Vector3(156f, waterY + 0.9f, 176f), new Vector3(0.7f, 1.8f, 0.5f), mats.Wood);
             buttress.transform.rotation = Quaternion.Euler(0f, 25f, 0f);
 
+            // the east bank: a cairn where the swallowed service road begins
+            var trailhead = new GameObject("StationTrailhead");
+            trailhead.transform.SetParent(parent.transform, true);
+            float thY = Height(215f, 166f);
+            trailhead.transform.position = new Vector3(215f, thY, 166f);
+            for (int i = 0; i < 4; i++)
+                Prim(PrimitiveType.Cube, "CairnStone", trailhead.transform,
+                    new Vector3(215f + Rnd(-0.3f, 0.3f), thY + 0.2f + i * 0.28f, 166f + Rnd(-0.3f, 0.3f)),
+                    new Vector3(0.7f - i * 0.12f, 0.28f, 0.6f - i * 0.1f), mats.Rock);
+            var stake = Prim(PrimitiveType.Cylinder, "TrailStake", trailhead.transform,
+                new Vector3(215.8f, thY + 0.8f, 166f), new Vector3(0.08f, 0.85f, 0.08f), mats.Driftwood);
+            stake.transform.rotation = Quaternion.Euler(0f, 0f, -6f);
+            trailhead.AddComponent<StationTrailhead>().interactRadius = 3.2f;
+
             return grin;
         }
 

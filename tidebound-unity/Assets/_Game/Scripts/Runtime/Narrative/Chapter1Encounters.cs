@@ -451,6 +451,7 @@ namespace Tidebound.Narrative
             CaseArc.AddTo(script);        // the courier's case (scenes-extra.js)
             CycloneNight.AddTo(script);   // the cyclone — Cold Fire's vehicle
             Chapter3Events.AddTo(script); // The Green Deep opens (ch3_open cluster)
+            Chapter4Events.AddTo(script); // The Hum: the station, one building at a time
             return script;
         }
 

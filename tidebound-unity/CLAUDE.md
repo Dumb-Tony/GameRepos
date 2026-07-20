@@ -385,6 +385,33 @@ tidebound-unity/
       seasonal variants (monsoon dressing belongs to ch5), Rumors
       integration, and non-Kavi companion variants arrive with their
       companions (Phase 7).*
+- [~] Chapter Four — The Hum. *Session 1 (this commit): the chapter
+      turn under the monsoon warning (ch4_open, branch on EAST_OPEN);
+      Edda's escort across the ford for toll-refusers (GRIN_ESCORTED,
+      edda +5) or the west locked by choice (WEST_LOCKED — the whole
+      west-variant season stays reachable); STATION HALCYON's arrival
+      (STATION_OPENED once, the held breath fifty years long,
+      kavi/solo variants) and the station itself as a room-per-
+      expedition hub: the interrupted mess (2 stores, hope −2),
+      Vane's journals rationed in three stages (VANE_J1-3 +
+      DRAWER_KNOWN: "burn unread"), the radio room's list (signal +2,
+      engineer/lay variants), the E WING — defeated doors don't
+      re-ask until tomorrow (EwingTry, new GameState key), opened by
+      Ipo's key or the engineer's hinge-work (TRANSMITTER, HEARTGLASS,
+      INCIDENT_HINTED, GEMS_LINKED when the courier's stones were a
+      riddle), the generator shed (FUEL), the cable sweep (WIRE), and
+      staging the radio when the list closes (RADIO_STAGED, hope +6,
+      "an engineering question"); ch3_end now continues into ch4_open;
+      StationTrailhead cairn on the east bank runs the expedition
+      (energy −6, one segment, retires when the station is stripped);
+      stage shots for the turn, her fence, the ford escort, and the
+      yard under the mast (EastMastRig shown). 11 new tests (254).
+      Remaining for the chapter: the ev4 calendar (recorder d38 /
+      west wreck, Ryo's conditional arrival d40 + the Kingfisher
+      actions and the Ryo meter, companion station beat d44, pulse2
+      d47, Vane's Question ch4_threshold d52 + the west threshold),
+      the station as walkable terrain (currently framed shots), the
+      drawer, ch4_end.*
 - [ ] Phase 6 — depth passes per act · Phase 7 — companions, NG+, polish
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day

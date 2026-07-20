@@ -224,6 +224,21 @@ namespace Tidebound
                 case "camp_fever_burnout":
                     Shot(new Vector3(-4f, 1.6f, 10f), new Vector3(1f, 0.7f, 15.5f));
                     return true;
+                // ---- chapter four ----
+                case "ch4_open":
+                    // the southern sky, standing like a wall
+                    Shot(new Vector3(2f, 2.6f, 12f), new Vector3(-40f, 30f, -400f));
+                    return true;
+                case "ch4_west_offer":
+                    // her fence, the staff, and the deliberated shotgun
+                    Shot(GroundAt(99f, 288f) + Vector3.up * 1.9f, GroundAt(104f, 293f) + Vector3.up * 1.3f);
+                    return true;
+                case "station":
+                case "ch4_arrive":
+                    // the yard's fifty-year quiet, the mast weeping rust
+                    Show(eastMastRig);
+                    Shot(new Vector3(214f, 6f, 178f), new Vector3(640f, 40f, 480f));
+                    return true;
                 default:
                     return false;
             }
@@ -295,6 +310,23 @@ namespace Tidebound
                 case "ch3_end":
                     HideShown();
                     Shot(new Vector3(-4f, 2.2f, 9f), new Vector3(0f, 0.8f, 15f));
+                    break;
+                case "ch4_west_offer":
+                    // up the mountain to put the question to her
+                    Shot(GroundAt(99f, 288f) + Vector3.up * 1.9f, GroundAt(104f, 293f) + Vector3.up * 1.3f);
+                    break;
+                case "ch4_escort":
+                    // the ford at the cold hour, sixty years conducting
+                    Shot(new Vector3(172f, 2.2f, 148f), new Vector3(192f, 0.4f, 166f));
+                    break;
+                case "ch4_west_open":
+                    HideShown();
+                    Shot(new Vector3(-4f, 2.2f, 9f), new Vector3(0f, 0.8f, 15f));
+                    break;
+                case "ch4_arrive":
+                    // up the rise: the mast against the sky
+                    Show(eastMastRig);
+                    Shot(new Vector3(214f, 6f, 178f), new Vector3(640f, 40f, 480f));
                     break;
             }
         }
