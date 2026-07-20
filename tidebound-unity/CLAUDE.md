@@ -235,6 +235,21 @@ tidebound-unity/
       canonically do). 7 new tests. Remaining for Phase 5: shelter tier
       3, the courier's case arc, Cold Fire's cyclone framing — then
       Phase 6 depth passes / Chapter Three: Edda's mountain.*
+- [x] Shakedown (first live-editor session, via Unity MCP): everything
+      built blind in Phases 0–5 ran in a real Unity 6000.5 editor for the
+      first time. Zero compile errors. Full EditMode suite executed for
+      the first time ever: 190 tests, 189 passed, one failure —
+      SurvivalActionsTests.Sleep_RoughCostsHope assumed Sleep SETS energy
+      to the floor; the VN (scenes-chapter1.js sleep: floor = 45 +
+      shelter*12 + fire*8, lift-only) says it only raises energy, and
+      SurvivalActions.Sleep ports that faithfully, so the TEST was fixed
+      (energy now dropped to 20 first so the floor-lift is actually
+      exercised). Rerun: 190/190. Tidebound ▸ Scenes ▸ Build Castaway Bay
+      (Greybox) ran clean — scene built and saved, 0 errors, 0 warnings.
+      Committed alongside: first-editor-launch fallout (long-missing
+      .cs.meta files, builder-generated materials now referenced by the
+      saved scene, package resolves incl. the owner's newly installed
+      Unity AI/MCP packages, real-editor scene re-serialization).
 - [ ] Phase 6 — depth passes per act · Phase 7 — companions, NG+, polish
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day

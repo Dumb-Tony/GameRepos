@@ -214,8 +214,9 @@ namespace Tidebound.Tests
         public void Sleep_RoughCostsHope()
         {
             var s = GameState.NewGame();
+            s.Stats.Energy = 20f; // below the rough floor of 45
             SurvivalActions.Sleep(s);
-            Assert.AreEqual(45f, s.Stats.Energy);
+            Assert.AreEqual(45f, s.Stats.Energy); // floor only lifts, never lowers (scenes-chapter1.js sleep)
             Assert.AreEqual(52f, s.Stats.Hope); // −3
         }
 
