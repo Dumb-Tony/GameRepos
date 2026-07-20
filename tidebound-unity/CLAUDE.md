@@ -30,6 +30,8 @@ Canon lives in `../tidebound/design/` (writers' bible) and `../tidebound/*.js`
   branch flips mid-session. The Unity editor for dev sessions opens
   `C:\Dev\GameRepos-claude\tidebound-unity`. Never `git switch` the main
   checkout; the worktree pin also stops Desktop from taking this branch.
+  **Owner's rule: this branch only — NEVER touch the `GPT-Unity` branch**
+  (no checkouts, no commits, no edits; it is the owner's other game).
 - **One phase (or less) per conversation** (build order in the bible §7).
   Commit and push every session.
 - **Everything code-driven.** Claude can't click the editor: scene setup,
