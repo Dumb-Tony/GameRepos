@@ -463,7 +463,37 @@ tidebound-unity/
       Remaining: the Gullet as a walkable place + Naia's rig, the
       permanent monsoon world dressing (rain outside cutscenes),
       grove monsoon flavor, ev5 companion cyclone beats (Phase 7).*
-- [ ] Phase 6 — depth passes per act · Phase 7 — companions, NG+, polish
+- [~] Chapter Six — Ashes and Stairs. *Session 1 (this commit, the
+      whole chapter): the rains break (ch6_open d71, Naia at the fire
+      for the invited, Ryo minding the sea things, heavy/light pack);
+      the LINEAR ascent — the Terrace of Steps (grandmothers' road,
+      spoon-worn centers), the Tidewell Temple (TEMPLE_SEEN, the
+      breathing pool plumbed through the mountain, the keepers' murals
+      ending in an extended hand), the time-slip for glyph-completers
+      (ch6_vision: the unbroken mountain, the arrival, the placing
+      gesture), the tremor ladder (camp on bedrock, or push at night
+      and MOTHER ASH collects you — warned in the subtext, law #1);
+      the INNER GREEN judged on TB.regard ported as
+      Chapter6Events.Regard (11 ledger lines; trinkets lines dormant
+      until that economy exists) — admitted (Tekau recites your month,
+      guests eat first), probation (the scales don't settle), or the
+      rim and the pointed spear; and THE TIDEWELL's doors — SILENCE
+      (gated on wound knowledge; the veil thins, the world comes),
+      FEED (the veil holds, every reeled-in soul yours to receive),
+      KEEP (gated regard ≥ 4; the covenant, the post refilled after
+      three hundred years), WITNESS (choose not to choose; "it will
+      weigh more than everything you did") — each with its full canon
+      resolution into the ch6_end Ledger card. The expedition's five
+      days charge as a 10-segment sweep when the chain closes
+      (GameManager hooks CH6_DONE — real drains, honest death
+      checks). ch5_end continues in; ascent staging against the
+      crown. 8 new tests (281 total). Verified via CLI.
+      Remaining: the temple/caldera as places (framed shots carry
+      v1), Naia's rig, other companions' mountain beats (Phase 7).*
+- [ ] Phase 6 — depth passes per act · Phase 7 — companions, NG+,
+      polish · Chapter Seven — Convergence (the endings chapter;
+      next session's work, fresh: it resolves every ledger line into
+      the CORES and deserves unhurried care)
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day
 loop, Kavi only, chapters 1–2, the Boar King, five endings.

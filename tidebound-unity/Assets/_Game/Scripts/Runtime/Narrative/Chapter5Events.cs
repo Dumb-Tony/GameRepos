@@ -690,10 +690,10 @@ namespace Tidebound.Narrative
                     if (s.Is("FILES_TO_EDDA"))
                         t.Add("— And one wet evening, by your shared fire, she opened Ilsa's drawer with you — her testimony filling the torn pages: the bore, the nine hours, the two she buried. <i>Tend the skin,</i> Vane wrote. Edda's translation: \"Don't be them, castaway. Don't ever be them.\"");
                     t.Add($"Route standings — Signal {s.Route.Signal} · Roots {s.Route.Roots} · Depth {s.Route.Depth}. Nothing is decided. Everything is remembered.");
-                    t.Add("<i>Chapter Six: Ashes and Stairs — in development. The island continues; so can you.</i>");
                     return t;
                 },
-                NextLabel = "Back to the island",
+                Next = "ch6_open",
+                NextLabel = "Continue — Chapter Six: Ashes and Stairs ➤",
             });
         }
 

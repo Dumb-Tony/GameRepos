@@ -307,6 +307,11 @@ namespace Tidebound
                 case "ch5_end":
                     Shot(new Vector3(-4f, 2.2f, 9f), new Vector3(0f, 0.8f, 15f));
                     return true;
+                // ---- chapter six: the mountain, faced ----
+                case "ch6_open":
+                    // the washed-blue morning, the crown finally lit
+                    Shot(new Vector3(0f, 3f, 30f), new Vector3(20f, 130f, 560f));
+                    return true;
                 default:
                     return false;
             }
@@ -409,6 +414,23 @@ namespace Tidebound
                     Shot(GroundAt(99f, 288f) + Vector3.up * 1.9f, GroundAt(104f, 293f) + Vector3.up * 1.3f);
                     break;
                 case "ch4_end":
+                    HideShown();
+                    Shot(new Vector3(-4f, 2.2f, 9f), new Vector3(0f, 0.8f, 15f));
+                    break;
+                case "ch6_terrace":
+                case "ch6_temple":
+                case "ch6_vision":
+                case "ch6_tremor":
+                case "ch6_inner":
+                case "ch6_threshold":
+                case "ch6_silence":
+                case "ch6_feed":
+                case "ch6_keep":
+                case "ch6_witness":
+                    // the ascent: ever higher against the broken crown
+                    Shot(new Vector3(10f, 8f, 120f), new Vector3(20f, 130f, 560f));
+                    break;
+                case "ch6_end":
                     HideShown();
                     Shot(new Vector3(-4f, 2.2f, 9f), new Vector3(0f, 0.8f, 15f));
                     break;

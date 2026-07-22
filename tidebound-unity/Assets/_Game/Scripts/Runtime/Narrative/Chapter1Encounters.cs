@@ -453,6 +453,7 @@ namespace Tidebound.Narrative
             Chapter3Events.AddTo(script); // The Green Deep opens (ch3_open cluster)
             Chapter4Events.AddTo(script); // The Hum: the station, one building at a time
             Chapter5Events.AddTo(script); // The Long Rain: the crucible's three plans
+            Chapter6Events.AddTo(script); // Ashes and Stairs: the mountain opens
             return script;
         }
 

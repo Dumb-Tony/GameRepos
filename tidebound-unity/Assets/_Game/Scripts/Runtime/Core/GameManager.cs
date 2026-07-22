@@ -439,6 +439,14 @@ namespace Tidebound
 
         void OnEventFinished()
         {
+            // the mountain expedition's five days, charged when the ch6 chain
+            // closes — the sweep runs the real drains and honest death checks
+            // (the VN's chain() ticks, summed; bible-noted v1 adaptation)
+            if (State.Is("CH6_DONE") && !State.Is("CH6_CHARGED"))
+            {
+                State.SetFlag("CH6_CHARGED");
+                clock.SpendSegments(10f);
+            }
             SaveNow();
             _nextEventAllowedAt = Time.time + eventGapSeconds;
             if (_resumeSleepAfterEvent && !IsDead)
