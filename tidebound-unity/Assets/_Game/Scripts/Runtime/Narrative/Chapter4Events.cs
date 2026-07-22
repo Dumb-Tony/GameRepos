@@ -280,10 +280,10 @@ namespace Tidebound.Narrative
                                 ? "you carried the drawer up the mountain unopened, and watched sixty years take its coat off. When the rains are down, you'll open it together."
                                 : "deferred — the drawer keeps, and the season won't."));
                     t.Add($"Route leanings — Signal {s.Route.Signal} · Roots {s.Route.Roots} · Depth {s.Route.Depth}. Nothing is decided. Everything is remembered.");
-                    t.Add("<i>Chapter Five: The Long Rain — in development. The island continues; so can you.</i>");
                     return t;
                 },
-                NextLabel = "Back to the island",
+                Next = "ch5_open",
+                NextLabel = "Continue — Chapter Five: The Long Rain ➤",
             });
         }
 

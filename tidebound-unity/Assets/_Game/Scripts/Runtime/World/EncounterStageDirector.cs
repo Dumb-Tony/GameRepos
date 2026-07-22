@@ -266,6 +266,47 @@ namespace Tidebound
                     // the sailor, the fire, and the boat above the tideline
                     Shot(new Vector3(2.5f, 1.9f, 10f), new Vector3(-2.2f, 0.9f, 13.6f));
                     return true;
+                // ---- chapter five: everything under the rain ----
+                case "ch5_open":
+                case "ch5_finale":
+                case "ev5_home3":
+                    Show(rainRig);
+                    WeatherOn();
+                    Shot(new Vector3(-4f, 2.2f, 9f), new Vector3(0f, 0.8f, 15f));
+                    return true;
+                case "ev5_sea1":
+                case "ev5_sea2":
+                case "ev5_sea3":
+                    Show(rainRig);
+                    WeatherOn();
+                    Shot(new Vector3(-28f, 2.4f, 8f), new Vector3(-34f, 0.8f, 3f)); // the vessel
+                    return true;
+                case "ev5_home1":
+                case "ev5_home2":
+                    Show(rainRig);
+                    WeatherOn();
+                    Shot(GroundAt(-24f, 176f) + Vector3.up * 2.4f, GroundAt(-36f, 196f) + Vector3.up * 0.6f);
+                    return true;
+                case "ev5_way1":
+                case "ev5_way2":
+                case "ev5_way3":
+                case "ev5_deep1":
+                case "ev5_deep2":
+                case "ev5_deep3":
+                case "ch5_deepgreed":
+                    // the river path upstream, toward the waterfall and the gap
+                    Show(rainRig);
+                    WeatherOn();
+                    Shot(GroundAt(-30f, 300f) + Vector3.up * 2.2f, GroundAt(-38f, 330f) + Vector3.up * 1f);
+                    return true;
+                case "ev5_edda":
+                    Show(rainRig);
+                    WeatherOn();
+                    Shot(GroundAt(99f, 288f) + Vector3.up * 1.9f, GroundAt(104f, 293f) + Vector3.up * 1.3f);
+                    return true;
+                case "ch5_end":
+                    Shot(new Vector3(-4f, 2.2f, 9f), new Vector3(0f, 0.8f, 15f));
+                    return true;
                 default:
                     return false;
             }

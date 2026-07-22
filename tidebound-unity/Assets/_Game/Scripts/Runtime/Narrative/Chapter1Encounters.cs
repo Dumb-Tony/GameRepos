@@ -452,6 +452,7 @@ namespace Tidebound.Narrative
             CycloneNight.AddTo(script);   // the cyclone — Cold Fire's vehicle
             Chapter3Events.AddTo(script); // The Green Deep opens (ch3_open cluster)
             Chapter4Events.AddTo(script); // The Hum: the station, one building at a time
+            Chapter5Events.AddTo(script); // The Long Rain: the crucible's three plans
             return script;
         }
 

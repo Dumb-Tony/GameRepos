@@ -432,6 +432,37 @@ tidebound-unity/
       Deferred by design: the station as walkable terrain (framed
       shots carry v1), other companions' station gifts (Phase 7),
       Ryo's radio-list arc (chapter 5's monsoon story).*
+- [~] Chapter Five — The Long Rain. *Session 1 (this commit, the whole
+      story spine): ch5_open d53 — the change of government, the three
+      master plans (COUNTDOWN/HOMESTEAD/DESCENT, GameState.Plan new
+      key, route pays, IsMonsoon turns the drains by itself) and the
+      committed echo; THE COUNTDOWN — assembly day (RADIO_DONE, the
+      WINDOW_PLAN insight when the recorder/pulse2 taught you the
+      skips) or the vessel push, the sixtieth-day sea trial
+      (VESSEL_READY, Ryo's unfinished question), and the sixty-sixth
+      night: MAYDAY through the skip — four seconds of the world,
+      CONTACT_MADE — or the shipping lane as traffic report; THE
+      HOMESTEAD — planting day (FARM, Kaari terrace/seed-cabinet
+      variants), the Silverthread flood (dike the farm or save the
+      stores), and the starving Boar King at the boundary (feed him:
+      KING_ALLY and the shoulder-signed fence post; refuse: the
+      heaviest arithmetic); THE DESCENT — three surge-lulls down the
+      Gullet (GULLET1, the sounding pulse), the Gallery of Hands
+      (SUNDERING_SEEN: they went IN), the deep-greed gamble (injected
+      Rng, 35% THE LONG DARK death, else the heartglass spur), and
+      the Heartroom's guttering wound where NAIA steps into the
+      lamplight (NAIA_MET, "come and be decided" at the finale);
+      shared: ev5_edda d63 — her smoke doesn't rise; she cures her
+      feverish visitor from the pillow first (EDDA_CURED_YOU), winter
+      her down at camp or in place; the three finales (the horizon's
+      promise, THE TABLE with the household guest list and the three
+      names, the watcher's offer) into the ch5_end Ledger card;
+      ch4_end continues into ch5_open; full calendar d56-d69 with
+      plan guards; monsoon stage dressing (rain + weather override)
+      on every ch5 shot. 11 new tests (273 total). Verified via CLI.
+      Remaining: the Gullet as a walkable place + Naia's rig, the
+      permanent monsoon world dressing (rain outside cutscenes),
+      grove monsoon flavor, ev5 companion cyclone beats (Phase 7).*
 - [ ] Phase 6 — depth passes per act · Phase 7 — companions, NG+, polish
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day

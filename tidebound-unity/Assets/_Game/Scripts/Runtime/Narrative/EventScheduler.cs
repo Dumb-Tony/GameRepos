@@ -105,6 +105,18 @@ namespace Tidebound.Narrative
                 When = s => s.Is("STATION_OPENED") },
             new ScheduledEvent { Day = 52, Seg = Segment.Dusk, SceneId = "ch4_threshold_west",
                 When = s => !s.Is("STATION_OPENED") },
+            // ---- chapter five (scenes-chapter5.js TB.SCHEDULE; cyclone d58 above) ----
+            new ScheduledEvent { Day = 56, Seg = Segment.Dusk, SceneId = "ev5_sea1", When = s => s.Plan == "sea" },
+            new ScheduledEvent { Day = 56, Seg = Segment.Dusk, SceneId = "ev5_home1", When = s => s.Plan == "home" },
+            new ScheduledEvent { Day = 56, Seg = Segment.Dusk, SceneId = "ev5_way1", When = s => s.Plan == "deep" },
+            new ScheduledEvent { Day = 60, Seg = Segment.Day, SceneId = "ev5_sea2", When = s => s.Plan == "sea" },
+            new ScheduledEvent { Day = 60, Seg = Segment.Day, SceneId = "ev5_home2", When = s => s.Plan == "home" },
+            new ScheduledEvent { Day = 60, Seg = Segment.Day, SceneId = "ev5_way2", When = s => s.Plan == "deep" },
+            new ScheduledEvent { Day = 63, Seg = Segment.Dawn, SceneId = "ev5_edda" },
+            new ScheduledEvent { Day = 66, Seg = Segment.Dusk, SceneId = "ev5_sea3", When = s => s.Plan == "sea" },
+            new ScheduledEvent { Day = 66, Seg = Segment.Dusk, SceneId = "ev5_home3", When = s => s.Plan == "home" },
+            new ScheduledEvent { Day = 66, Seg = Segment.Dusk, SceneId = "ev5_way3", When = s => s.Plan == "deep" },
+            new ScheduledEvent { Day = 69, Seg = Segment.Dusk, SceneId = "ch5_finale" },
             // ---- the long game (scenes-chapter5.js, the shared events) ----
             new ScheduledEvent { Day = 58, Seg = Segment.Night, SceneId = "ev5_cyclone" },
         };

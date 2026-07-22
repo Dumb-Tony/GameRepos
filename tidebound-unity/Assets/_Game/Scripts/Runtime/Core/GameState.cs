@@ -65,6 +65,8 @@ namespace Tidebound
         [JsonProperty("pools")] public int TidePoolVisits;
         /// <summary>Day of the last defeated E-wing attempt (a beaten door doesn't re-ask until tomorrow).</summary>
         [JsonProperty("ewingTry")] public int EwingTry = -1;
+        /// <summary>The monsoon season's master plan: "sea" | "home" | "deep" — or null before chapter 5 commits.</summary>
+        [JsonProperty("plan")] public string Plan;
         [JsonProperty("deathCause")] public string DeathCause;
         /// <summary>Core ending id (scenes-chapter7.js CORES key), or null.</summary>
         [JsonProperty("endingId")] public string EndingId;
