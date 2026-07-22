@@ -235,9 +235,36 @@ namespace Tidebound
                     return true;
                 case "station":
                 case "ch4_arrive":
+                case "ev4_recorder":
+                case "ev4_companion":
+                case "ch4_threshold":
                     // the yard's fifty-year quiet, the mast weeping rust
                     Show(eastMastRig);
                     Shot(new Vector3(214f, 6f, 178f), new Vector3(640f, 40f, 480f));
+                    return true;
+                case "ev4_west_wreck":
+                    // the wrack line, and the fresh-painted arithmetic
+                    Shot(new Vector3(4f, 2.2f, 12f), new Vector3(-2f, 0.3f, 0f));
+                    return true;
+                case "ev4_ryo":
+                    // the sail out of the southern haze, the reef, the lagoon
+                    Shot(new Vector3(2f, 2.8f, 14f), new Vector3(-20f, 0f, -60f));
+                    return true;
+                case "ev4_noryo":
+                    // seven miles up, straight as a ruled line
+                    Shot(new Vector3(26f, 2f, 15f), new Vector3(60f, 260f, -700f));
+                    return true;
+                case "ev4_pulse2":
+                    // the bay again, mid-breath, twice
+                    Shot(new Vector3(2f, 2.6f, 12f), new Vector3(-6f, 0f, -30f));
+                    return true;
+                case "ch4_threshold_west":
+                    Shot(new Vector3(-4f, 2.2f, 9f), new Vector3(0f, 0.8f, 15f));
+                    return true;
+                case "ryo_tend":
+                case "ryo_boat":
+                    // the sailor, the fire, and the boat above the tideline
+                    Shot(new Vector3(2.5f, 1.9f, 10f), new Vector3(-2.2f, 0.9f, 13.6f));
                     return true;
                 default:
                     return false;
@@ -327,6 +354,22 @@ namespace Tidebound
                     // up the rise: the mast against the sky
                     Show(eastMastRig);
                     Shot(new Vector3(214f, 6f, 178f), new Vector3(640f, 40f, 480f));
+                    break;
+                case "ev4_ryo2":
+                    // the fire, the mug, the first human laugh
+                    Shot(new Vector3(-3.5f, 1.9f, 11f), new Vector3(-2.2f, 0.9f, 13.6f));
+                    break;
+                case "ch4_burned":
+                    // the fire barrel at dusk, standing witness
+                    Shot(new Vector3(212f, 3f, 174f), new Vector3(640f, 30f, 480f));
+                    break;
+                case "ch4_carried":
+                    // her table, the label upward
+                    Shot(GroundAt(99f, 288f) + Vector3.up * 1.9f, GroundAt(104f, 293f) + Vector3.up * 1.3f);
+                    break;
+                case "ch4_end":
+                    HideShown();
+                    Shot(new Vector3(-4f, 2.2f, 9f), new Vector3(0f, 0.8f, 15f));
                     break;
             }
         }

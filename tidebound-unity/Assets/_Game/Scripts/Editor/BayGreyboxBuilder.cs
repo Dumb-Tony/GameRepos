@@ -45,6 +45,7 @@ namespace Tidebound.EditorTools
             BuildEddasGrove(mats);
             BuildSilverthread(mats);
             BuildMangroveEast(mats);
+            BuildRyoAndKingfisher(mats);
             BuildBounds();
             BuildJungleWall(mats);
             BuildWreck(mats);
@@ -570,6 +571,55 @@ namespace Tidebound.EditorTools
             trailhead.AddComponent<StationTrailhead>().interactRadius = 3.2f;
 
             return grin;
+        }
+
+        // ================= Ryo and the Kingfisher =================
+        /// <summary>
+        /// The sailor by the fire and his boat above the tideline — both
+        /// hidden until the sea delivers them on day 40 (RyoCamp shows them
+        /// once RYO_MET). The hull lies canted on the west beach, mast
+        /// snapped at the spreaders, pointed at the sea like a held argument.
+        /// </summary>
+        static void BuildRyoAndKingfisher(Mats mats)
+        {
+            var host = new GameObject("RyoCampSite");
+
+            // Ryo, convalescing by the fire pit
+            var ryo = new GameObject("RyoRig");
+            ryo.transform.SetParent(host.transform, true);
+            float ry = Height(-2.2f, 13.6f);
+            var body = Prim(PrimitiveType.Capsule, "RyoBody", ryo.transform,
+                new Vector3(-2.2f, ry + 0.55f, 13.6f), new Vector3(0.45f, 0.55f, 0.45f), mats.Cushion);
+            body.transform.rotation = Quaternion.Euler(-18f, 40f, 0f); // propped, not standing
+            Prim(PrimitiveType.Sphere, "RyoHead", ryo.transform,
+                new Vector3(-2.2f, ry + 1.25f, 13.6f), new Vector3(0.3f, 0.3f, 0.3f), mats.Cushion);
+            NoShadow(Prim(PrimitiveType.Cube, "Bedroll", ryo.transform,
+                new Vector3(-2.2f, ry + 0.06f, 13.6f), new Vector3(0.9f, 0.12f, 2.0f), mats.StormGrey, stripCollider: true));
+            ryo.SetActive(false);
+
+            // the Kingfisher, hauled above the high-water line on the west beach
+            var hull = new GameObject("KingfisherHull");
+            hull.transform.SetParent(host.transform, true);
+            float hx = -34f, hz = 3f;
+            float hy = Height(hx, hz);
+            var keel = Prim(PrimitiveType.Cube, "Hull", hull.transform,
+                new Vector3(hx, hy + 0.7f, hz), new Vector3(2.1f, 1.1f, 6.4f), mats.Wood);
+            keel.transform.rotation = Quaternion.Euler(0f, 12f, 14f); // canted where the sea spat her out
+            var mastStub = Prim(PrimitiveType.Cylinder, "SnappedMast", hull.transform,
+                new Vector3(hx - 0.2f, hy + 1.9f, hz + 0.6f), new Vector3(0.12f, 0.8f, 0.12f), mats.Driftwood);
+            mastStub.transform.rotation = Quaternion.Euler(8f, 0f, 20f);
+            var boom = Prim(PrimitiveType.Cylinder, "FallenBoom", hull.transform,
+                new Vector3(hx + 1.6f, hy + 0.15f, hz - 1.2f), new Vector3(0.09f, 1.6f, 0.09f), mats.Driftwood);
+            boom.transform.rotation = Quaternion.Euler(0f, 30f, 88f);
+            NoShadow(Prim(PrimitiveType.Cube, "DraggedCanvas", hull.transform,
+                new Vector3(hx + 1.1f, hy + 0.08f, hz + 2.2f), new Vector3(1.6f, 0.08f, 2.4f), mats.Foam, stripCollider: true));
+            hull.SetActive(false);
+
+            var camp = host.AddComponent<RyoCamp>();
+            camp.ryoRig = ryo;
+            camp.hullRig = hull;
+            camp.interactRadius = 3.2f;
+            host.transform.position = new Vector3(-2.2f, ry, 13.6f); // the prompt stands with the sailor
         }
 
         static void BuildBounds()

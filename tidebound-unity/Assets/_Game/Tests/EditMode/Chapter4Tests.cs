@@ -139,6 +139,134 @@ namespace Tidebound.Tests
             Assert.AreEqual(2, s.Route.Depth);
         }
 
+        // ---- session 2: the calendar, Ryo, and Vane's Question ---------------
+        [Test]
+        public void Recorder_FindsTheScarInTheRhythm()
+        {
+            var s = GameState.NewGame();
+            Script.Get("ev4_recorder").OnEnter(s);
+            Assert.IsTrue(s.Is("RECORDER"));
+            Assert.AreEqual(2, s.Route.Depth);
+        }
+
+        [Test]
+        public void WestWreck_SendsTheWireWithTheArithmetic()
+        {
+            var s = GameState.NewGame();
+            Script.Get("ev4_west_wreck").OnEnter(s);
+            Assert.IsTrue(s.Is("WRECK_DRIFT"));
+            Assert.IsTrue(s.Is("WIRE")); // rigging wire — west parity for the cable sweep
+            Assert.AreEqual(1, s.Route.Signal);
+        }
+
+        [Test]
+        public void Ryo_Arrives_GenerousOrCold()
+        {
+            var generous = GameState.NewGame();
+            generous.SetFlag("BG_MEDIC");
+            var save = Script.Get("ev4_ryo").AvailableChoices(generous)[0];
+            save.Do(generous);
+            Assert.IsTrue(generous.Is("RYO_MET"));
+            Assert.AreEqual(32, generous.Ryo); // 20 + medic 12
+            Assert.AreEqual("ev4_ryo2", save.Go);
+
+            var cold = GameState.NewGame();
+            var strip = Script.Get("ev4_ryo").AvailableChoices(cold)[1];
+            strip.Do(cold);
+            Assert.IsTrue(cold.Is("KINGFISHER_STRIPPED"));
+            Assert.AreEqual(12, cold.Ryo);
+            Assert.AreEqual(1, cold.Food);
+            Assert.AreEqual(2, cold.Count("rations"));
+        }
+
+        [Test]
+        public void RyoActions_TendThenBoat_StageByStage()
+        {
+            var s = GameState.NewGame();
+            s.SetFlag("RYO_MET");
+            s.Ryo = 33;
+            Script.Get("ryo_tend").OnEnter(s);
+            Assert.AreEqual(40, s.Ryo); // +7: he makes it to standing
+
+            var boat = Script.Get("ryo_boat");
+            boat.OnEnter(s);
+            Assert.IsTrue(s.Is("BOAT1"));
+            Assert.IsFalse(s.Is("BOAT2"));
+            boat.OnEnter(s);
+            Assert.IsTrue(s.Is("BOAT2"));
+            boat.OnEnter(s);
+            Assert.IsTrue(s.Is("BOAT3")); // the held argument, repeatable
+            Assert.AreEqual(6, s.Route.Signal); // 2 per work day
+        }
+
+        [Test]
+        public void CompanionBeat_KaviFilesTheWarning()
+        {
+            var s = GameState.NewGame();
+            s.Companion = "kavi";
+            s.Trust = 60;
+            Script.Get("ev4_companion").OnEnter(s);
+            Assert.IsTrue(s.Is("COMP4_DONE"));
+            Assert.IsTrue(s.Is("KAVI_WARNING"));
+            Assert.AreEqual(64, s.Trust); // +4
+        }
+
+        [Test]
+        public void VanesQuestion_ThreeAnswers()
+        {
+            var open = GameState.NewGame();
+            var choice = Script.Get("ch4_threshold").AvailableChoices(open)[0];
+            choice.Do(open);
+            Assert.IsTrue(open.Is("INCIDENT_FILES"));
+            Assert.AreEqual(3, open.Route.Depth);
+            Assert.AreEqual("ch4_opened", choice.Go);
+            var opened = Script.Get("ch4_opened");
+            opened.OnEnter(open);
+            Assert.IsTrue(open.Is("GULLET_MAP")); // her map is in your kit
+            Assert.AreEqual("ch4_end", opened.Next);
+
+            var burn = GameState.NewGame();
+            Script.Get("ch4_threshold").AvailableChoices(burn)[1].Do(burn);
+            Assert.IsTrue(burn.Is("FILES_BURNED"));
+
+            var carry = GameState.NewGame();
+            carry.Edda = 40;
+            Script.Get("ch4_threshold").AvailableChoices(carry)[2].Do(carry);
+            Assert.IsTrue(carry.Is("FILES_TO_EDDA"));
+            Assert.AreEqual(48, carry.Edda); // +8
+        }
+
+        [Test]
+        public void TheVigil_CommitsTheSeason()
+        {
+            var s = GameState.NewGame();
+            Script.Get("ch4_threshold_west").AvailableChoices(s)[2].Do(s);
+            Assert.IsTrue(s.Is("WEST_PLAN_EAST"));
+            Assert.AreEqual(2, s.Route.Depth);
+            Assert.IsTrue(s.Is("CH4_DONE"));
+        }
+
+        [Test]
+        public void Schedule_CarriesTheHum()
+        {
+            var schedule = Chapter1Schedule.Build();
+            var s = GameState.NewGame();
+
+            s.Day = 38; s.Seg = Segment.Dusk;
+            Assert.AreEqual("ev4_west_wreck", EventScheduler.Due(s, schedule)); // no east: the sea sends the wire
+            s.SetFlag("EAST_OPEN");
+            s.SetFlag("STATION_OPENED");
+            Assert.AreEqual("ev4_recorder", EventScheduler.Due(s, schedule));
+
+            s.Day = 40; s.Seg = Segment.Day;
+            Assert.AreEqual("ev4_noryo", EventScheduler.Due(s, schedule)); // signal < 5: the contrail
+            s.AddRoute(RouteAxis.Signal, 5);
+            Assert.AreEqual("ev4_ryo", EventScheduler.Due(s, schedule));
+
+            s.Day = 52; s.Seg = Segment.Dusk;
+            Assert.AreEqual("ch4_threshold", EventScheduler.Due(s, schedule));
+        }
+
         [Test]
         public void TheList_FinishesIntoAStagedRadio()
         {

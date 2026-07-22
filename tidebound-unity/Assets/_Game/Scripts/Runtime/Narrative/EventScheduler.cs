@@ -89,6 +89,22 @@ namespace Tidebound.Narrative
             new ScheduledEvent { Day = 31, Seg = Segment.Dawn, SceneId = "ev3_coco2",
                 When = s => s.Companion == null },
             new ScheduledEvent { Day = 35, Seg = Segment.Dusk, SceneId = "ch3_threshold" },
+            // ---- chapter four (scenes-chapter4.js TB.SCHEDULE, v1 subset) ----
+            new ScheduledEvent { Day = 38, Seg = Segment.Dusk, SceneId = "ev4_recorder",
+                When = s => s.Is("STATION_OPENED") },
+            new ScheduledEvent { Day = 38, Seg = Segment.Dusk, SceneId = "ev4_west_wreck",
+                When = s => !s.Is("EAST_OPEN") },
+            new ScheduledEvent { Day = 40, Seg = Segment.Day, SceneId = "ev4_ryo",
+                When = s => s.Route.Signal >= 5 },
+            new ScheduledEvent { Day = 40, Seg = Segment.Day, SceneId = "ev4_noryo",
+                When = s => s.Route.Signal < 5 },
+            new ScheduledEvent { Day = 44, Seg = Segment.Dusk, SceneId = "ev4_companion",
+                When = s => s.Companion != null && s.Is("STATION_OPENED") },
+            new ScheduledEvent { Day = 47, Seg = Segment.Night, SceneId = "ev4_pulse2" },
+            new ScheduledEvent { Day = 52, Seg = Segment.Dusk, SceneId = "ch4_threshold",
+                When = s => s.Is("STATION_OPENED") },
+            new ScheduledEvent { Day = 52, Seg = Segment.Dusk, SceneId = "ch4_threshold_west",
+                When = s => !s.Is("STATION_OPENED") },
             // ---- the long game (scenes-chapter5.js, the shared events) ----
             new ScheduledEvent { Day = 58, Seg = Segment.Night, SceneId = "ev5_cyclone" },
         };

@@ -406,12 +406,32 @@ tidebound-unity/
       (energy −6, one segment, retires when the station is stripped);
       stage shots for the turn, her fence, the ford escort, and the
       yard under the mast (EastMastRig shown). 11 new tests (254).
-      Remaining for the chapter: the ev4 calendar (recorder d38 /
-      west wreck, Ryo's conditional arrival d40 + the Kingfisher
-      actions and the Ryo meter, companion station beat d44, pulse2
-      d47, Vane's Question ch4_threshold d52 + the west threshold),
-      the station as walkable terrain (currently framed shots), the
-      drawer, ch4_end.*
+      Session 2 (CHAPTER FOUR COMPLETE for v1): the ev4 calendar —
+      the chart recorder d38 (the March 1979 nine-hour flatline, the
+      scar in the rhythm) with the west-variant wreck drift (fresh
+      timber, half a nameplate, WIRE parity for the never-crossed);
+      RYO NAKATA d40 when Signal ≥ 5 (the sail out of the southern
+      haze, generous triage vs the cold strip of the Kingfisher, the
+      ryo meter live, "there are two castaways on Vessakai now") or
+      the seven-mile contrail for the quiet (ev4_noryo's two answers);
+      Kavi's station warning d44 (the crack at the E wing's
+      foundation); ev4_pulse2 d47 (twice in one night, the recorder
+      comparison closing your throat); and VANE'S QUESTION d52 — open
+      the drawer (the full Incident: the bore site, the throat,
+      Ostrander and Kim, "tend the skin", GULLET_MAP banked for act
+      3), burn it unread (the line in the updraft), or carry it up
+      the mountain (sixty years taking its coat off, edda +8) — plus
+      THE VIGIL for west-locked runs (sea/ground/east season plans)
+      into the ch4_end Ledger card that remembers the station, the
+      radio list, the journals, the recorder, Ryo, and the question.
+      Ryo lives at the fire (RyoCamp interactable + rigs hidden until
+      RYO_MET: tend him below 40, then the Kingfisher's three
+      boat-work stages toward the held argument); stage shots for
+      every beat. 8 new tests (262 total). Verified via CLI; scene
+      rebuilt with RyoRig + KingfisherHull serialized.
+      Deferred by design: the station as walkable terrain (framed
+      shots carry v1), other companions' station gifts (Phase 7),
+      Ryo's radio-list arc (chapter 5's monsoon story).*
 - [ ] Phase 6 — depth passes per act · Phase 7 — companions, NG+, polish
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day
