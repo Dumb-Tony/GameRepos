@@ -112,6 +112,17 @@ namespace Tidebound
             foreach (var paragraph in body)
                 MakeLine(paragraph, 19, proseColor, TextAnchor.UpperLeft);
 
+            // an ending's card carries the run's assembled epilogue and
+            // THE LEDGER OPENS after the core; deaths keep their lean cards
+            if (_gm.State.EndingId != null)
+            {
+                foreach (var line in Endings.Epilogue(_gm.State))
+                    MakeLine(line, 17, proseColor, TextAnchor.UpperLeft);
+                MakeLine("", 10, proseColor, TextAnchor.MiddleCenter);
+                foreach (var line in Endings.LedgerReport(_gm.State))
+                    MakeLine(line, 16, summaryColor, TextAnchor.UpperLeft);
+            }
+
             MakeLine("", 10, proseColor, TextAnchor.MiddleCenter);
             MakeLine("— the island will remember it like this —", 15, summaryColor, TextAnchor.MiddleCenter, italic: true);
             foreach (var line in Endings.Summary(_gm.State))

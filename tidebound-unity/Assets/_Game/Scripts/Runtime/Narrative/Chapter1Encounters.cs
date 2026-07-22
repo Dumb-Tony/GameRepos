@@ -454,6 +454,7 @@ namespace Tidebound.Narrative
             Chapter4Events.AddTo(script); // The Hum: the station, one building at a time
             Chapter5Events.AddTo(script); // The Long Rain: the crucible's three plans
             Chapter6Events.AddTo(script); // Ashes and Stairs: the mountain opens
+            Chapter7Events.AddTo(script); // Convergence: the hundred days come due
             return script;
         }
 

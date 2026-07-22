@@ -420,11 +420,11 @@ namespace Tidebound.Narrative
                                     ? "you put your hand in the water and took the covenant. Keeper of Vessakai — the post refilled after three hundred years, with a parish the size of a sea and, as the old man says, a great deal of work."
                                     : "you witnessed, and chose not to choose for an island — and left the covenant with the people whose grandmothers built the pool. Naia says it will weigh more than everything you did."),
                         $"Route standings — Signal {s.Route.Signal} · Roots {s.Route.Roots} · Depth {s.Route.Depth}.",
-                        "<i>Chapter Seven: Convergence — in development. The island continues; so can you.</i>",
                     };
                     return t;
                 },
-                NextLabel = "Back to the island",
+                Next = "ch7_open",
+                NextLabel = "Continue — Chapter Seven: Convergence ➤",
             });
         }
     }

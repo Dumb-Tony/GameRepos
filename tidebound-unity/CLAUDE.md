@@ -490,10 +490,37 @@ tidebound-unity/
       crown. 8 new tests (281 total). Verified via CLI.
       Remaining: the temple/caldera as places (framed shots carry
       v1), Naia's rig, other companions' mountain beats (Phase 7).*
+- [x] Chapter Seven — Convergence (THE STORY SPINE IS COMPLETE:
+      prologue → chapters 1–7 → endings, crash to card). *ch7_open —
+      the aftermath week, its face set by the Tidewell's door (the
+      found world's countdown, the veil's quiet, the keeper's parish,
+      the witness's gentler island); THE CONVERGENCE at the hundredth
+      dusk — the full option assembly ported with every VN guard
+      verbatim (options whose systems aren't in v1 — trinkets, the
+      fire-tower, vigils, NG+, other companions — stay dormant until
+      their flags can exist, exactly as the VN gates them): the Found
+      Shore / the Regret at low hope, the First Citizen, the
+      Interpreter, Guardian of the Deep / the Covenant Passed, Keeper
+      of the Window, Rootstead / Driftwood Rising, the Inner Green,
+      the Whole Sky (kindred + regard 6 + edda 60 + standing), Two
+      Sails Out, Two Tickets / the Long Swim, the Empty Horizon,
+      Remain Willingly, the Tide Price, THE ISLAND'S OWN (Keeper
+      Kavi), the Hum Silenced (depth 15+, warned), the Cartographer's
+      Return, the Hermit's Heir, Ilsa's Answer, the Drowned Door,
+      What Remains, Alone Unbroken, and more; every choice sets
+      EndingId and hands the run to the RunCardUI. Endings.cs grew
+      27 CORES verbatim (unwritten VN cores fall back to ROOTSTEAD,
+      mirroring `CORES[id] || CORES.HOME`), the parameterized
+      EPILOGUE engine (Kavi's stay/leave fates, Edda's three
+      farewells, Ryo the harbormaster, the King's held treaty, the
+      name that outlives its plans, the Green's counting songs), and
+      THE LEDGER OPENS report (days, entries, routes, trust tier,
+      roads not taken). RunCardUI appends epilogue + ledger to ending
+      cards; deaths keep their lean cards. 10 new tests (291 total).
+      Verified via CLI.*
 - [ ] Phase 6 — depth passes per act · Phase 7 — companions, NG+,
-      polish · Chapter Seven — Convergence (the endings chapter;
-      next session's work, fresh: it resolves every ledger line into
-      the CORES and deserves unhurried care)
+      polish · world-side depth for chapters 4–7 (station/temple/
+      caldera as places, Naia's rig, monsoon world dressing)
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day
 loop, Kavi only, chapters 1–2, the Boar King, five endings.
