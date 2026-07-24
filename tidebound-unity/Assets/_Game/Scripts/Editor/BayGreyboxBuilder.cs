@@ -1641,7 +1641,11 @@ namespace Tidebound.EditorTools
         // ================= the raft: the early door out =================
         static void BuildRaftSite(Mats mats)
         {
-            float rx = -24f, rz = 4f;
+            // the far southwestern strand, around the bay's curve where the
+            // headland begins to close it — a discovery, not a misclick by
+            // the tent (owner's call: the raft must be walked to, not
+            // stumbled into while gathering driftwood at camp)
+            float rx = -112f, rz = 2f;
             float ry = Mathf.Max(Height(rx, rz), 0.15f);
             var site = new GameObject("RaftSite");
             site.transform.position = new Vector3(rx, ry, rz);
