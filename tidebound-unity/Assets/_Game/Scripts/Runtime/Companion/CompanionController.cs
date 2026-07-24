@@ -78,9 +78,7 @@ namespace Tidebound
 
             if (profile.Follows && playerDist > profile.FollowTrigger)
             {
-                Vector3 back = transform.position - playerPos;
-                back.y = 0f;
-                Vector3 station = playerPos + back.normalized * profile.FollowDistance;
+                Vector3 station = FollowStation(profile, playerPos);
                 MoveToward(station, playerDist > profile.FollowTrigger * 1.8f ? runSpeed : trotSpeed);
             }
             else
@@ -109,7 +107,16 @@ namespace Tidebound
             }
         }
 
-        Vector3 PickRestSpot(GameManager gm, TierProfile profile, Vector3 playerPos)
+        /// <summary>Where to stand while keeping up. Ground species trail the
+        /// player's wake; airborne ones may orbit instead.</summary>
+        protected virtual Vector3 FollowStation(TierProfile profile, Vector3 playerPos)
+        {
+            Vector3 back = transform.position - playerPos;
+            back.y = 0f;
+            return playerPos + back.normalized * profile.FollowDistance;
+        }
+
+        protected virtual Vector3 PickRestSpot(GameManager gm, TierProfile profile, Vector3 playerPos)
         {
             switch (gm.State.Tier)
             {
@@ -140,7 +147,7 @@ namespace Tidebound
             }
         }
 
-        void MoveToward(Vector3 target, float speed)
+        protected virtual void MoveToward(Vector3 target, float speed)
         {
             Vector3 to = target - transform.position;
             to.y = 0f;
@@ -167,7 +174,7 @@ namespace Tidebound
             transform.rotation = Quaternion.RotateTowards(transform.rotation, wanted, (turnDegreesPerSecond * 0.4f) * Time.deltaTime);
         }
 
-        void GroundClamp()
+        protected virtual void GroundClamp()
         {
             if (Physics.Raycast(transform.position + Vector3.up * 4f, Vector3.down, out var hit, 12f,
                     Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))

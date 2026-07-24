@@ -326,7 +326,7 @@ namespace Tidebound.Narrative
             script.Add(new StoryScene
             {
                 Id = "ev3_heart2",
-                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : "Kavi",
+                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : "Kavi",
                 OnEnter = s =>
                 {
                     if (s.Is("HEART2_DONE")) return;
@@ -342,6 +342,13 @@ namespace Tidebound.Narrative
                             "On the fourteenth day you finally understand what Buri does at dusk when he vanishes toward the treeline: he walks the perimeter. Your perimeter. All of it — beach line, water path, forage trail — nose down, unhurried, thorough as a nightwatchman, before galloping back to collapse into your fire's light.",
                             "Tonight you follow, and at the treeline you find his work: every fence-gap rubbed with his scent, every approach marked, the whole map of your small kingdom re-signed, nightly, in the only ink the inland dark respects: <i>occupied. Defended. His.</i>",
                             "He finds you watching and grins his whole pig grin, tail going, absurd and mighty. You walk the last of the rounds together, landlord and enforcer, and the night makes way.",
+                        };
+                    if (s.Companion == "vela")
+                        return new List<string>
+                        {
+                            "On the fourteenth morning, on the high stone, Vela does the impossible thing.",
+                            "She steps close — closer than transaction, closer than the blind-side courtesy — and lowers her head, and presses it to your chest, and <i>leaves it there</i>. One breath. Three. Wind-cold feathers and forty knots of muscle standing utterly still against your heartbeat, letting itself be — for exactly as long as she permits — held.",
+                            "Then it's over, and she's three feet away tidying a wing like nothing occurred, and the sea and you both know better than to remark on it. Some payments aren't in fish. The books have gone somewhere past balance, into whatever birds keep instead of love.",
                         };
                     if (s.Companion == "moa")
                         return new List<string>
@@ -361,7 +368,7 @@ namespace Tidebound.Narrative
             script.Add(new StoryScene
             {
                 Id = "ev3_heart2_low",
-                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : "Kavi",
+                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : "Kavi",
                 OnEnter = s =>
                 {
                     if (s.Is("HEART2_LOW")) return;
@@ -370,7 +377,7 @@ namespace Tidebound.Narrative
                 },
                 Text = s => new List<string>
                 {
-                    (s.Companion == "buri" ? "Buri" : "Kavi") + " is still here. That's not nothing — out here, staying is the first vow and the hardest. But on the fourteenth morning you catch yourself narrating your plans to the fire instead of to them, and you feel the shape of the distance you've kept.",
+                    (s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : "Kavi") + " is still here. That's not nothing — out here, staying is the first vow and the hardest. But on the fourteenth morning you catch yourself narrating your plans to the fire instead of to them, and you feel the shape of the distance you've kept.",
                     "The wild keeps honest books. Walls, water, smoke, survival — all fair entries. But the bond is a crop like any other on this island: it grows exactly as much as you tend it, and the season does not wait.",
                 },
             });
@@ -442,6 +449,22 @@ namespace Tidebound.Narrative
                     },
                     new StoryChoice
                     {
+                        Label = "Cross at Buri's shoulder. A two-body convoy.",
+                        Sub = "Make the meal too expensive. He has never once lost this argument.",
+                        When = s => s.Companion == "buri" && s.Trust >= 50,
+                        Do = s => { s.SetFlag("GRIN_CONVOY"); s.SetFlag("EAST_OPEN"); s.Bond(4); },
+                        Go = "ch3_toll_buri",
+                    },
+                    new StoryChoice
+                    {
+                        Label = "Cross under Vela's overwatch.",
+                        Sub = "Nothing moves in that channel that she won't call first.",
+                        When = s => s.Companion == "vela" && s.Trust >= 50,
+                        Do = s => { s.SetFlag("GRIN_OVERWATCH"); s.SetFlag("EAST_OPEN"); s.Bond(4); },
+                        Go = "ch3_toll_vela",
+                    },
+                    new StoryChoice
+                    {
                         Label = "Fight him for it.",
                         Sub = "Spear, fire, and the worst idea available. It might even work — but hurt or weakened, he will collect you like rent.",
                         Do = s =>
@@ -474,6 +497,12 @@ namespace Tidebound.Narrative
             AddToll(script, "ch3_toll_kavi",
                 "Kavi teaches you the crossing the way the wild taught him: <i>never once be prey</i>. You enter the ford side by side, slow as ceremony, loud as ownership — no darting, no freezing, no scent of flight — while he holds the water's edge with his eyes and a growl pitched to travel through mud and bone.",
                 "Old Grin surfaces at thirty feet and considers you both: the upright thing that isn't running, the grey thing that isn't backing down, the whole expensive, unprofitable prospect of it. Patience does arithmetic. Arithmetic says wait for cheaper. He sinks like a decision, and you walk — walk — up the eastern bank.");
+            AddToll(script, "ch3_toll_buri",
+                "Buri crosses the ford the way a bulldozer crosses an objection. You go with him, hip against his shoulder, one fist in his bristles, a two-body convoy displacing water and doubt in equal measure.",
+                "Old Grin rises once, measures the proposition — two hundred pounds of tusked, furious calcium with a human attachment, all of it radiating expense — and declines the meal with the dignity of a king who was, of course, never hungry in the first place. Buri screams one entirely unnecessary victory scream at the settling water. You do not tell him it was unnecessary. It wasn't, quite.");
+            AddToll(script, "ch3_toll_vela",
+                "You cross on Vela's word and nothing else — and it is enough. She holds station over the channel, riding the swamp's bad air in flat circles, and twice her cry cracks across the water and you stop dead mid-ford, thigh-deep, while something vast realigns itself invisibly below the tea-dark surface.",
+                "Twice the cry softens. Twice you move. It takes an hour to cross two hundred yards, on a bird's syllables, and when your boots find the eastern bank the relief arrives with a strange gift inside it: the knowledge that you just trusted your one life, entirely, to her — and that she took the weight like it was nothing at all.");
             AddToll(script, "ch3_toll_fight",
                 "You fight him for it, because the island has not yet taught you everything, and this lesson enrolls you the hard way.",
                 "It is fast and enormous and wrong — the lunge like the ground itself moving, the fire-hardened spear finding the one soft seam above the foreleg more by fate than skill, the tail-blow that takes your legs and opens your side on the mangrove roots. There is a white interval you never fully recover the order of. Then you are on the eastern bank, bleeding, alive, and six meters of affronted antiquity is withdrawing into deep water with your spear standing in its shoulder like a flag it intends to keep.",
@@ -554,9 +583,13 @@ namespace Tidebound.Narrative
                             ? "dodged entirely — you crossed at the dawn window while the cold held him. The swamp respects homework."
                             : s.Is("GRIN_STANDOFF")
                                 ? "faced down, side by side with Kavi, at a walk. Never once prey."
-                                : s.Is("GRIN_FOUGHT")
-                                    ? "paid in blood — some his, more yours. You crossed on your own terrible terms, and the ledger between you has a standing entry now."
-                                    : "refused. The east keeps its answers, and the landlord keeps his channel. For now."));
+                                : s.Is("GRIN_CONVOY")
+                                    ? "declined — Buri made the meal too expensive. One unnecessary victory scream was screamed."
+                                    : s.Is("GRIN_OVERWATCH")
+                                        ? "crossed on Vela's syllables alone. You bet your life on her word and she took the weight."
+                                        : s.Is("GRIN_FOUGHT")
+                                            ? "paid in blood — some his, more yours. You crossed on your own terrible terms, and the ledger between you has a standing entry now."
+                                            : "refused. The east keeps its answers, and the landlord keeps his channel. For now."));
                     if (s.Is("EAST_OPEN"))
                         t.Add("— The east is open. A rusted mast stands above the far canopy, and under it, everything Halcyon left behind."
                             + (s.Is("IPO_KEY") ? " The key in your pocket says E WING." : ""));
@@ -732,7 +765,9 @@ namespace Tidebound.Narrative
                             ? "Then her eyes find Buri, asleep against your leg, and she snorts. \"The tide brings me a castaway with a <i>pig</i>. Fatten it through monsoon and it'll winter you better than a smokehouse.\" You decide not to translate for Buri."
                             : s.Companion == "moa"
                                 ? "Then her eyes find Moa, riding your basket like copper cargo, and something happens to the old face that it clearly wasn't warned about — a softening, quickly arrested. \"…You keep fowl,\" she says, in an entirely different voice, and pours Moa a saucer of water like it's nothing at all."
-                                : "She studies you a while, alone as you are, and something like approval crosses the old face. \"No pets, no partners, no nonsense. You'll either die quick or do well. I've seen both.\"");
+                                : s.Companion == "vela"
+                                    ? "Then a shadow crosses the grove — Vela, wheeling once overhead, checking — and Edda tracks her with genuine respect. \"The old sea eagle. Blind-eyed. She's buried two mates and raised nine broods off Kestrel Cliffs. If she's keeping accounts with you, mind you stay solvent.\""
+                                    : "She studies you a while, alone as you are, and something like approval crosses the old face. \"No pets, no partners, no nonsense. You'll either die quick or do well. I've seen both.\"");
                     return t;
                 },
                 Choices = new List<StoryChoice>

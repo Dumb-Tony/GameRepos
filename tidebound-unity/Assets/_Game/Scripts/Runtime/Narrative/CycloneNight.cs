@@ -10,10 +10,11 @@ namespace Tidebound.Narrative
     /// below tier 2 when the night's question is asked (the enter effects
     /// have already taken their tier first, exactly as the VN does), the
     /// stay-choice carries its warning in plain text, and the flee-choice
-    /// is always offered. V1 adaptations noted inline: only Kavi and the
-    /// solo lines are live (the other companions arrive with their own
-    /// phases), and v1 camps are always the beach, so the overhang branches
-    /// wait dormant for the site choice to exist.
+    /// is always offered. V1 adaptations noted inline: the Kavi, Vela
+    /// (mantled or gone — her whole arc, by storm-light) and solo lines are
+    /// live (other companions arrive with their phases), and v1 camps are
+    /// always the beach, so the overhang branches wait dormant for the site
+    /// choice to exist.
     /// </summary>
     public static class CycloneNight
     {
@@ -54,6 +55,10 @@ namespace Tidebound.Narrative
                         : s.Shelter >= 3
                             ? "Your fortified camp takes it the way a good hull takes a sea: groaning, flexing, shedding. You lose thatch, a windbreak, a night's sleep — and keep everything that bleeds. Every hour you ever spent bracing and lashing pays out tonight, with interest."
                             : "Your camp loses its argument with the sky in the first hour. After that it's endurance: you and everything living pressed into the lee of what holds, taking the night one gust at a time while your work disassembles around you in the dark.");
+                    if (s.Companion == "vela")
+                        t.Add(s.Is("VELA_MANTLED")
+                            ? "And Vela stays. The storm-wise one, the one with a hidden roost and a blind eye full of cyclone history and every reason to be gone — she plants herself on your food cache in the screaming dark, shaking, wings mantled over it like it's a nest, her whole broken-weather past held down by will alone, because the flock she has left is you and yours. In the morning she is soaked to the pin-feathers and furious and PRESENT, and you understand you have seen the whole of her heart, once, by storm-light."
+                            : "Vela was gone before the front hit — storm-wise as ever, to her hidden roost — and the night is longer for the empty snag where the weight of her should be.");
                     if (s.Companion == "kavi")
                         t.Add(s.Is("KAVI_FIRE_NIGHT") && s.Site == "overhang"
                             ? "The fire is Kavi's war tonight: it must burn — the overhang holds it safe — and so he lies all night at the far wall, ears flat, watching his oldest enemy dance in the wind-eddies, trembling and unmoving, guarding you from inside his fear. Twice you wake and find his eyes going between you and the flames, doing sums. Twice you put your hand on the scarred flank until the shaking stops."

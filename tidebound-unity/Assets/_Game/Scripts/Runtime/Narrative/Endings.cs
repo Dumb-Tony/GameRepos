@@ -190,6 +190,12 @@ namespace Tidebound.Narrative
                     "You go because you can, which is the whole of the reason and always was: no lineage, no sanction, just a castaway the island fed and taught and kept, paying the only bill that was ever going to come due for all of it. The descent takes a day. The lamp knows the way. And at the seam — hands on the wounded glass, the island's whole pulse coming up your arms — you feel the price taken and the payment <i>received</i>: the tremors easing, the beats steadying, two thousand lives above you unclenching in a night, forever.",
                     "The epilogue is not yours; that is the point of the price. It belongs to the ones on the beaches and the terraces: to the fires that keep burning, the boats that come home, the festivals that return year on year to a lagoon that pulses seven and true. They tell your story in the counting songs — the hundredth-day stranger who carried the lamp — and every king tide, at the temple pool, someone leaves a light burning all night at the waterline. You are not there to see it. You are not entirely not.",
                 }),
+                ["WIND_TAKES"] = ("THE WIND TAKES HER", new[]
+                {
+                    "The exodus builds for a week — every thermal off Kestrel Cliffs stacked with wings going somewhere, the whole island's bird-nations answering a season older than the charts — and Vela watches it from your shoulder with her one good eye, and you feel it through her talons: the pull, and the choosing not to, and the cost of the choosing not to.",
+                    "So you walk to the cliffs at first light and you do the thing that a hundred days of debts and fish and stubborn one-eyed grace have earned you both: you open your hand. She stands on your wrist a long moment — heavier than she looks; she was always heavier than she looks — and then the wind comes up the cliff face like a door opening, and she goes into it, and does not circle, because circling is for birds with doubts.",
+                    "What you were to each other survives what you couldn't keep; that is the whole lesson of her, learned at last. The ledge stays hers — nothing on the island dares it for three winters. And on a spring morning years on, a young eagle with a pale eye and a familiar contempt for gravity lands on your fence post, inspects your holdings like an auditor, and accepts — gravely, imperiously, exactly the way you were taught — one fish. The account, whoever now holds it, remains open.",
+                }),
                 ["WHAT_REMAINS"] = ("WHAT REMAINS", new[]
                 {
                     "You stay because of the afternoon you almost didn't get to. That's the whole ledger of it: once, in the middle of these hundred days, the island reached out and nearly took the one warm life it had lent you — and then, for reasons you nursed into being with boiled water and your two hands and every hour you had, it didn't. The scar is right there. You can rest your hand on it. You do, more than you'd admit.",
@@ -230,6 +236,7 @@ namespace Tidebound.Narrative
             ["kavi"] = "It sees a dog descended from the drowned, grief braided into loyalty and both worn like a working harness — a creature that has spent every night of a hundred keeping watch over the one thing the sea gave him to keep. The seven beats pause. Recount. <i>Accept.</i> Keeper Kavi takes the post the way he took your camp: quietly, entirely, forever. The ridge songs change that very night — the whole pack singing the new covenant down the length of the island — and the island, for the first time in four hundred years, sings something back.",
             ["buri"] = "It sees devotion that never once stopped to ask what it would cost — a warm boulder that walked through a gore-line, a heart that audits the camps at night to be sure everyone is still where he left them. The seven beats pause. Recount. <i>Accept.</i> Keeper Buri does for the island what he did for your acre: everything, twice, with his whole chest — and the old treaties of the inland dark put roots down around him the way a forest roots around a spring.",
             ["moa"] = "It sees six ounces of copper courage that has never yielded a path in her life — the smallest keeper any mural will ever show, and the murals <i>will</i> show her; you live to watch the Kaari cut the first one. The seven beats pause. Recount. <i>Accept.</i> Keeper Moa stands her watch the way she stood every one of yours: entirely. In the years after, storms are observed — measured, Ryo insists, logged — to go <i>around</i>.",
+            ["vela"] = "It sees an empress with one eye and a ledger where a heart should be — no. You have watched closer than that, all season. A ledger <i>as</i> a heart: every debt remembered, every payment honored, forgiveness at fair market rates and no defaults, not one, in thirty years of wind. The seven beats pause. Recount. <i>Accept.</i> Keeper Vela takes the whole sky for her parish, and the island's weather begins arriving, there is no other word for it, punctually.",
         };
 
         static (string, string[]) BuildIslandsOwn(GameState s)
@@ -284,7 +291,7 @@ namespace Tidebound.Narrative
             string id = s.EndingId;
             if (id == null) return t;
             bool leaving = Leaving(id);
-            bool companionCovered = id == "ISLANDS_OWN" || id == "LAST_PACK" || id == "SOUNDER";
+            bool companionCovered = id == "ISLANDS_OWN" || id == "LAST_PACK" || id == "SOUNDER" || id == "WIND_TAKES";
 
             if (id == "ISLANDS_OWN" && s.Is("EDDA_MET"))
                 t.Add("— Edda hears it before you finish saying it — she always hears it — and sets down the pestle and looks at you for a long, still moment. \"Forty years,\" she says at last, \"I wondered what that pool was holding the post open <i>for</i>. It was never waiting for a better human.\" A snort, at herself, at everything. \"It was waiting for you to introduce them.\" She takes tea up the mountain every new moon after. She is, every time, received.");
@@ -320,6 +327,13 @@ namespace Tidebound.Narrative
                 else if (!leaving)
                     t.Add("— Moa rules. There is no other verb: the flock she founds owns your acres, her descendants carry her copper and her courage, and she herself lives to a preposterous age, storm-proof to the end, and dies on Edda's old blanket, on duty. You bury the bravest heart you ever met under the good tree, with a full parade.");
             }
+            else if (s.Companion == "vela" && !companionCovered)
+            {
+                if (leaving && id != "SAIL_BLESSED" && id != "WHOLE_SKY")
+                    t.Add("— Vela escorts you to the reef gate and one mile beyond — further over open water than she has flown in years — and banks away at last in one wide, deliberate circle: the blind side, then the good eye, then gone. The account closes in credit. Hers.");
+                else if (!leaving)
+                    t.Add("— Vela outlives every actuarial table for her kind, imperious to the last, and raises three more broods off Kestrel Cliffs with her fish-debts always settled at your rock. When she is gone the wind over the cliffs is never quite unoccupied — and the young eagle who takes her ledge, pale-eyed, knows your silhouette on sight.");
+            }
             else if (s.Companion == null && id != "ALONE_UNBROKEN")
                 t.Add("— You did the whole of it alone — the solo route, the hardest road on the island — and the Ledger marks it in the old way: <i>Alone, unbroken.</i>");
             if (s.Is("EDDA_MET") && id != "HERMIT_HEIR" && id != "ISLANDS_OWN")
@@ -354,7 +368,7 @@ namespace Tidebound.Narrative
             if (!s.Is("CONTACT_MADE")) roads.Add("a radio's four-second window opened for no one");
             if (s.Companion != null) roads.Add("five other wild lives waited at a clearing that only ever chose one");
             string tier = s.Trust >= 100 ? "kindred" : s.Trust >= 75 ? "devoted" : s.Trust >= 50 ? "bonded" : s.Trust >= 25 ? "tolerant" : "wary";
-            string companionName = s.Companion == "kavi" ? "Kavi" : s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion;
+            string companionName = s.Companion == "kavi" ? "Kavi" : s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : s.Companion;
             return new List<string>
             {
                 "<i>— THE LEDGER OPENS —</i>",

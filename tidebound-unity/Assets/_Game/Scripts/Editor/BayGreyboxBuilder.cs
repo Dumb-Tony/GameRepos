@@ -61,6 +61,7 @@ namespace Tidebound.EditorTools
             BuildKavi(mats);
             BuildBuriCompanion(mats);
             BuildMoaCompanion(mats);
+            BuildVelaCompanion(mats);
             BuildRaftSite(mats);
             BuildPlayerCameraAndSystems(gameClockHost, director, encounterDirector);
 
@@ -1822,6 +1823,60 @@ namespace Tidebound.EditorTools
             var interactable = root.AddComponent<MoaInteractable>();
             interactable.controller = controller;
             interactable.interactRadius = 2.4f;
+
+            model.SetActive(false); // the controller decides when she's real
+        }
+
+        /// <summary>Vela the companion (distinct from the story-stage VelaRig):
+        /// the one-eyed accountant on the first flight chassis, shown once the
+        /// Clearing chose her. She orbits when you move and perches when you
+        /// stop — the dead palm at camp's edge is her post.</summary>
+        static void BuildVelaCompanion(Mats mats)
+        {
+            var root = new GameObject("VelaCompanion");
+            float px = 5.5f, pz = 12f; // the dead palm her rig already haunts
+            root.transform.position = new Vector3(px - 0.85f, Height(px, pz) + 3.4f, pz);
+
+            var model = new GameObject("Model");
+            model.transform.SetParent(root.transform, false);
+
+            // white belly, storm-dark back: the species named by its underside
+            LocalPrim(model.transform, PrimitiveType.Sphere, "Body",
+                new Vector3(0f, 0.28f, 0f), new Vector3(0.32f, 0.4f, 0.46f), mats.Foam);
+            LocalPrim(model.transform, PrimitiveType.Cube, "Mantle",
+                new Vector3(0f, 0.44f, -0.04f), new Vector3(0.3f, 0.16f, 0.4f), mats.DarkStone);
+            LocalPrim(model.transform, PrimitiveType.Cube, "WingL",
+                new Vector3(-0.22f, 0.34f, -0.02f), new Vector3(0.08f, 0.3f, 0.5f), mats.DarkStone);
+            LocalPrim(model.transform, PrimitiveType.Cube, "WingR",
+                new Vector3(0.22f, 0.34f, -0.02f), new Vector3(0.08f, 0.3f, 0.5f), mats.DarkStone);
+            LocalPrim(model.transform, PrimitiveType.Sphere, "Head",
+                new Vector3(0f, 0.62f, 0.14f), Vector3.one * 0.2f, mats.Foam);
+            LocalPrim(model.transform, PrimitiveType.Cube, "Beak",
+                new Vector3(0f, 0.6f, 0.28f), new Vector3(0.05f, 0.05f, 0.12f), mats.Cushion);
+            // the amber eye, and the pale one — sea-glass blind, shown to no one
+            LocalPrim(model.transform, PrimitiveType.Sphere, "EyeGood",
+                new Vector3(-0.07f, 0.66f, 0.22f), Vector3.one * 0.04f, mats.Fruit);
+            LocalPrim(model.transform, PrimitiveType.Sphere, "EyeBlind",
+                new Vector3(0.07f, 0.66f, 0.22f), Vector3.one * 0.04f, mats.Foam);
+            var tailF = LocalPrim(model.transform, PrimitiveType.Cube, "TailFeathers",
+                new Vector3(0f, 0.3f, -0.3f), new Vector3(0.16f, 0.06f, 0.24f), mats.Foam, new Vector3(12f, 0f, 0f));
+            var wag = tailF.AddComponent<TailWag>(); // the resettle of wings, repurposed
+
+            var controller = root.AddComponent<VelaController>();
+            controller.model = model;
+            controller.tailWag = wag;
+            controller.trotSpeed = 5f;
+            controller.runSpeed = 9f;
+            controller.turnDegreesPerSecond = 160f;
+            controller.bobAmplitude = 0f; // she does not bob; she banks
+            controller.bobFrequency = 0f;
+            controller.perchHeight = 3.4f;
+            controller.campPerchPoint = new Vector3(px - 0.85f, 0f, pz);
+            controller.farSnagPoint = new Vector3(-16f, 0f, 6f); // the high snag up the strand
+
+            var interactable = root.AddComponent<VelaInteractable>();
+            interactable.controller = controller;
+            interactable.interactRadius = 4f; // she keeps the extra distance; the rock is the meeting place
 
             model.SetActive(false); // the controller decides when she's real
         }

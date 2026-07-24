@@ -615,6 +615,14 @@ namespace Tidebound.Narrative
                     },
                     new StoryChoice
                     {
+                        Label = "The sea eagle",
+                        Sub = "One blind eye, one open ledger. The hardest to win, and the only one who starts as your equal.",
+                        When = s => s.Met.TryGetValue("vela", out var m) && m,
+                        Do = s => { s.Companion = "vela"; s.SetFlag("CLEARING_DONE"); },
+                        Go = "court_vela",
+                    },
+                    new StoryChoice
+                    {
                         Label = "No one. You will do this alone.",
                         Sub = "No mouths to feed but yours. No one to lose but yourself. The hardest road, and wholly your own.",
                         Do = s => { s.SetFlag("CLEARING_DONE"); s.SetFlag("SOLO_ROUTE"); s.AddRoute(RouteAxis.Roots, 1); },
@@ -754,6 +762,52 @@ namespace Tidebound.Narrative
                             s.Warm("moa", 1);
                             s.Stat(Meter.Hunger, -2);
                             s.Stat(Meter.Hope, 5);
+                            CompanionLogic.InitTrust(s);
+                        },
+                        Go = "ch2_open",
+                    },
+                },
+            });
+
+            script.Add(new StoryScene
+            {
+                Id = "court_vela",
+                Speaker = "Vela",
+                Text = s => new List<string>
+                {
+                    "You do not go to her. You have understood this much: nothing approaches a sea eagle. You go to the tide pools instead, spear the fattest mullet of your five days, and lay it — whole, untouched — on the high rock below the dead palm. Then you step back exactly ten paces and stand in plain view, empty-handed, in the evening light.",
+                    "She makes you wait long enough to establish that waiting is happening. Then she drops from the palm in one silent falling arc, mantles over the fish, and eats — never once taking the amber eye off you. Payment received. Books balanced. That should be the whole transaction.",
+                    "Except that when she finishes, she doesn't leave. She sidles along the rock — an awkward, deliberate, un-flightlike walk — and turns her head to study you with the <i>pale</i> eye, the blind one, the one she shows nothing.",
+                    (s.Interest.TryGetValue("vela", out var w) && w >= 2
+                        ? "She has watched you honor a debt before. Something in the ledger tips."
+                        : "Whatever she reads in you, it is sufficient — barely, provisionally, pending review.")
+                    + " She stands one full minute in the last gold light, blind side offered like the most reluctant gift on earth. Then she is simply airborne, gone up the darkening sky toward the cliffs.",
+                    "But the next dawn — and every dawn after — you wake to find a fish on the high rock, and a huge patient shape on the dead palm, waiting to see what you're worth.",
+                },
+                Choices = new List<StoryChoice>
+                {
+                    new StoryChoice
+                    {
+                        Label = "\"Vela.\" A sail. Something that works with the wind and owes it nothing.",
+                        Sub = "She would approve, insofar as she approves of anything.",
+                        Do = s =>
+                        {
+                            s.Warm("vela", 2);
+                            s.Stat(Meter.Hope, 5);
+                            s.SetFlag("VELA_NAMED");
+                            CompanionLogic.InitTrust(s);
+                        },
+                        Go = "ch2_open",
+                    },
+                    new StoryChoice
+                    {
+                        Label = "Name nothing. Feed the account. Let the books speak.",
+                        Sub = "Transactional. She'd call it correct.",
+                        Do = s =>
+                        {
+                            s.Warm("vela", 1);
+                            s.AddRoute(RouteAxis.Signal, 1);
+                            s.Stat(Meter.Hope, 4);
                             CompanionLogic.InitTrust(s);
                         },
                         Go = "ch2_open",

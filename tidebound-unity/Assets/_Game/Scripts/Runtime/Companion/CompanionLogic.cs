@@ -174,12 +174,48 @@ namespace Tidebound
             },
         };
 
+        // ---- scenes-chapter2.js TIER_LINE.vela, verbatim ---------------------
+        static readonly string[][] VelaVignettes =
+        {
+            new[]
+            {
+                "Vela keeps to the dead palm, books open, judgment pending.",
+                "Vela times her patrols over your camp — high, once, at noon — the way an inspector visits a establishment she has not yet decided to certify.",
+                "Vela watched you fumble the fish spear from her snag for a full hour today and offered nothing. The tuition is observation. Class dismissed at dusk.",
+            },
+            new[]
+            {
+                "Vela lands nearer now, and stays longer than transactions require.",
+                "Vela has begun announcing her arrivals — one short call on approach, so you'll look up. She does not perform for nobody.",
+                "The dead palm is bare this morning; Vela is on the driftwood inside camp instead, at the edge of it, testing the word <i>inside</i>.",
+            },
+            new[]
+            {
+                "Vela walks on your left, giving you her good eye.",
+                "Vela rides the wind above you on the long beach walks, stationed off your shoulder like a second thought. When you stop, she circles. When you turn, she's already turned.",
+                "Today Vela stood on the sand — actually stood, folded, earthbound — a full wingspan from you for the better part of an hour. From an empress, this is an embrace.",
+            },
+            new[]
+            {
+                "Vela brings fish you didn't ask for and pretends otherwise.",
+                "A commotion of gulls off the point at midday, and Vela returning low over the water: she took something back from them. It lands by your fire, hers by conquest, yours by decree.",
+                "Vela has learned the sound of your knife on the whetstone and arrives shortly after, supervising the fish-cleaning with an accountant's interest in her percentage.",
+            },
+            new[]
+            {
+                "Vela mantles over your camp in storms like it were a nest.",
+                "You woke in the night to weather turning and a shape on the ridgepole: Vela, hunched against the first rain, guarding a camp that could not fly away. She was gone by light. The dry patch under her stayed.",
+                "Vela preens on the snag while you work below, and every so often a small white feather spirals down into camp. You have started keeping them. She has, you suspect, started counting them.",
+            },
+        };
+
         static readonly Dictionary<string, string[][]> VignettesByCompanion =
             new Dictionary<string, string[][]>
             {
                 ["kavi"] = KaviVignettes,
                 ["buri"] = BuriVignettes,
                 ["moa"] = MoaVignettes,
+                ["vela"] = VelaVignettes,
             };
 
         public static IReadOnlyList<string> VignettesFor(TrustTier tier) => KaviVignettes[(int)tier];

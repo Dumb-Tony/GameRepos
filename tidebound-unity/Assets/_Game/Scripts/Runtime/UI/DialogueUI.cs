@@ -293,7 +293,7 @@ namespace Tidebound
                 for (int i = 0; i < options.Count; i++)
                 {
                     int index = i;
-                    _choiceWidgets.Add(MakeButton(i + 1, options[i].Label, options[i].Sub, () => StepChoose(index)));
+                    _choiceWidgets.Add(MakeButton(i + 1, options[i].Label, options[i].SubFor(_gm.State), () => StepChoose(index)));
                 }
             }
         }

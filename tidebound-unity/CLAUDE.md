@@ -572,9 +572,43 @@ tidebound-unity/
       and letting Unity mint it fixed the import; compiles also only
       pump while the editor has focus (focused it via Win32 from the
       session).
-      Next companions: Vela/Ipo/Nine (flight, canopy, and tide-pool
-      chassis — each needs new movement beyond the ground-follow
-      base).*
+      Session 3: VELA, end to end, on the game's FIRST FLIGHT CHASSIS —
+      CompanionController opened four virtual seams (FollowStation /
+      PickRestSpot / MoveToward / GroundClamp) so species can replace
+      locomotion, not just tune it; VelaController orbits the player
+      in slow circles while you move (FollowStation advances an orbit
+      angle), perches when you stop (far snag at Wary, the dead palm
+      inside camp after), flies at altitude and lands on approach
+      (airborne flag decays into a landing; no bob — she banks).
+      The Clearing offers the sea eagle (court_vela verbatim: the
+      mullet on the high rock, the blind side offered, and the second
+      choice that NAMES NOTHING — VELA_NAMED only if you name her);
+      VelaVignettes five tiers verbatim (books open → announcing
+      arrivals → your left side → fish by decree → mantling the
+      camp); VelaInteractable (lay a fish on the high rock / stand in
+      the open / and the touch LOCKED until Kindred — she cannot be
+      hugged until the very end of her arc, and the game makes you
+      feel it); BuildVelaCompanion greybox (white belly, storm-dark
+      mantle, one amber eye, one sea-glass blind). Her voice threads
+      everything: the credit-extension heart, the head-to-chest
+      heart2, Edda's "mind you stay solvent," the toll crossed on
+      her syllables alone (GRIN_OVERWATCH — and ch3_toll_buri's
+      convoy crossing backfilled while in there), the mast sentry
+      post, the radio-room WIRE gift, the DRILL_ROAD find (depth 2,
+      lighting the descent's sub via new StoryChoice.SubDynamic),
+      the cyclone that shows her whole heart once (VELA_MANTLED at
+      75+ or the empty snag), escort formation up the stairs, the
+      stillest pillar in the temple, landing ON you at the tremor,
+      the sentry wall at bedrock, Tekau's "old blind-eyed queen of
+      the cliffs." Endings: THE WIND TAKES HER ported whole (her
+      exclusive — the open hand at Kestrel Cliffs, trust 75+),
+      ISLANDS_OWN accepts Keeper Vela (a ledger AS a heart),
+      epilogues (leaving: reef-gate escort one mile beyond; staying:
+      she outlives every actuarial table). 10 new tests (321 total,
+      all green first run, synchronous runner). Scene rebuilt with
+      VelaCompanion serialized.
+      Next companions: Ipo (canopy chassis) and Nine (tide-pool-bound
+      — found only by returning to the pools twice before Day 3).*
 - [ ] Phase 6 — depth passes per act · world-side depth for chapters
       4–7 (station/temple/caldera as places, Naia's rig, monsoon
       world dressing) · NG+, polish

@@ -61,7 +61,12 @@ namespace Tidebound.Narrative
                     new StoryChoice
                     {
                         Label = "THE DESCENT — the season bends toward the answer.",
-                        Sub = "The skipping pulse has a source. Find it.",
+                        SubDynamic = s => (s.Is("GULLET_MAP")
+                            ? "Vane's map names the throat. "
+                            : s.Is("DRILL_ROAD")
+                                ? "Vela's road points at the bore site. "
+                                : "You'd be going in on courage and tide-math alone. ")
+                            + "The skipping pulse has a source. Find it.",
                         Do = s => { s.Plan = "deep"; s.AddRoute(RouteAxis.Depth, 2); s.SetFlag("CH5_DEEP"); },
                         Go = "ch5_committed",
                     },
@@ -694,7 +699,10 @@ namespace Tidebound.Narrative
                         t.Add("— You gave the rains to THE DESCENT: the throat, the Gallery of Hands — <i>they went in</i> — and the wound itself, guttering around Halcyon's bore. And the dark finally introduced itself: Naia, watcher, sixty-nine days your shadow, who ended the season standing in your firelight saying <i>come and be decided</i>.");
                     t.Add("— The cyclone night: " + (s.Shelter >= 3
                         ? "your walls earned every hour you ever spent on them."
-                        : "the sky took its tax in full, and you paid and rebuilt."));
+                        : "the sky took its tax in full, and you paid and rebuilt.")
+                        + (s.Is("VELA_MANTLED")
+                            ? " And Vela stayed through it — mantled over your stores, shaking, present. The whole of her heart, seen once by storm-light."
+                            : ""));
                     t.Add("— Edda's season turned: " + (s.Is("EDDA_WINTER")
                         ? "she winters at your fire now, imperious and mending, and the household clicked around her like a joint finding its socket."
                         : s.Is("EDDA_TENDED")
@@ -719,6 +727,7 @@ namespace Tidebound.Narrative
             if (s.Companion == "kavi") guests.Add("Kavi, at your side where the world belongs");
             else if (s.Companion == "buri") guests.Add("Buri, at your side where the world belongs");
             else if (s.Companion == "moa") guests.Add("Moa, at your side where the world belongs");
+            else if (s.Companion == "vela") guests.Add("Vela, on the ridgepole above the feast — attending, in her way, which is the highest compliment she pays");
             return guests.Count > 0 ? string.Join("; ", guests) : "everyone the season gathered";
         }
     }

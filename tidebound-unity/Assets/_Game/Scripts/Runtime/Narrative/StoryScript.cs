@@ -50,6 +50,10 @@ namespace Tidebound.Narrative
         public string Label;
         /// <summary>The VN's `sub` — what it might cost. Always show it.</summary>
         public string Sub;
+        /// <summary>The VN's function-valued `sub`, for costs that read the
+        /// run (wins over Sub when set).</summary>
+        public Func<GameState, string> SubDynamic;
+        public string SubFor(GameState s) => SubDynamic != null ? SubDynamic(s) : Sub;
         /// <summary>The VN's conditional choice guard.</summary>
         public Func<GameState, bool> When;
         /// <summary>The VN's `do` — effects on state.</summary>

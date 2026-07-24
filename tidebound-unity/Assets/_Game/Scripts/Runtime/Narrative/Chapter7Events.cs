@@ -173,6 +173,12 @@ namespace Tidebound.Narrative
                     End("Walk Moa up the mountain. The post was never yours to fill.",
                         "The Island's Own. A keeper is the one still kneeling — and you know who never left.",
                         "ISLANDS_OWN", s => s.Companion == "moa" && Kindred(s) && (s.Is("TIDEWELL_WITNESS") || s.Is("TIDEWELL_FEED"))),
+                    End("Walk Vela up the mountain. The post was never yours to fill.",
+                        "The Island's Own. A keeper is the one still kneeling — and you know who never left.",
+                        "ISLANDS_OWN", s => s.Companion == "vela" && Kindred(s) && (s.Is("TIDEWELL_WITNESS") || s.Is("TIDEWELL_FEED"))),
+                    End("Walk to Kestrel Cliffs at first light. And open your hand.",
+                        "The wind has been asking after her all season. You've heard it too.",
+                        "WIND_TAKES", s => !s.Is("TIDEWELL_SILENCE") && s.Companion == "vela" && s.Trust >= 75),
 
                     // ---- the Locked Things ----
                     End("Leave RICH — the Rosa's gold, the cut stones, the whole ransom.",

@@ -272,6 +272,12 @@ namespace Tidebound.Narrative
                         t.Add("— A jet crossed your sky seven miles up, straight as a ruled line, and taught you the size of the silence you live in.");
                     if (s.Is("COMP4_DONE") && s.Companion == "kavi")
                         t.Add("— Kavi's station gift: a warning, filed by nose, about what sleeps under the E wing.");
+                    else if (s.Is("COMP4_DONE") && s.Companion == "buri")
+                        t.Add("— Buri's station gift: a stores trailer excavated from the yard, and a hauling capacity you didn't have before.");
+                    else if (s.Is("COMP4_DONE") && s.Companion == "moa")
+                        t.Add("— Moa's station gift: a dead station's living garden — feral tomatoes and a cabinet of maybe-viable seed.");
+                    else if (s.Is("COMP4_DONE") && s.Companion == "vela")
+                        t.Add("— Vela's station gift: a road no ground-bound eye could see — the drill's road, running for the mountain.");
                     t.Add("— And Vane's Question: " + (s.Is("INCIDENT_FILES")
                         ? "you opened her drawer. The Incident has a shape now — the bore site, the throat, the nine silent hours, and her last instruction: <i>tend the skin.</i> Her map is in your kit."
                         : s.Is("FILES_BURNED")
@@ -430,7 +436,7 @@ namespace Tidebound.Narrative
             script.Add(new StoryScene
             {
                 Id = "ev4_companion",
-                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : "Kavi",
+                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : "Kavi",
                 OnEnter = s =>
                 {
                     if (s.Is("COMP4_DONE")) return;
@@ -439,9 +445,16 @@ namespace Tidebound.Narrative
                     if (s.Companion == "kavi") { s.SetFlag("KAVI_WARNING"); s.AddRoute(RouteAxis.Depth, 1); }
                     else if (s.Companion == "buri") { s.SetFlag("TRAILER"); s.AddRoute(RouteAxis.Roots, 2); }
                     else if (s.Companion == "moa") { s.SetFlag("SEEDS"); s.AddRoute(RouteAxis.Roots, 2); }
+                    else if (s.Companion == "vela") { s.SetFlag("DRILL_ROAD"); s.AddRoute(RouteAxis.Depth, 2); }
                 },
                 Text = s =>
                 {
+                    if (s.Companion == "vela")
+                        return new List<string>
+                        {
+                            "Vela has never once come down inside the compound — but today, from the mast-top, she starts <i>calling</i>: short, sharp, insistent, a note you know. The finding note. You climb the water tower to follow her sightline, out over the eastern canopy, and see it: a straightness in the green, running from behind the station toward the mountain's flank. A road. An overgrown service road, invisible from the ground, arrow-straight toward the high country.",
+                            "The drill didn't operate here, you realize. The station only <i>housed</i> it. Somewhere up that swallowed road is where they actually put the hole in the island's song — and the only soul who'd know that is one who's watched this compound from the sky for twenty years.",
+                        };
                     if (s.Companion == "buri")
                         return new List<string>
                         {
@@ -606,7 +619,8 @@ namespace Tidebound.Narrative
                 {
                     var t = new List<string>
                     {
-                        "The yard receives you with its fifty-year quiet. The mast ticks in the wind overhead.",
+                        "The yard receives you with its fifty-year quiet. The mast ticks in the wind overhead"
+                            + (s.Companion == "vela" ? " — Vela already on her sentry post at its top." : "."),
                     };
                     var done = new List<string>();
                     if (s.Is("STATION_MESS")) done.Add("mess");
@@ -741,13 +755,20 @@ namespace Tidebound.Narrative
                     if (s.Is("RADIO_SURVEYED")) return;
                     s.SetFlag("RADIO_SURVEYED");
                     s.AddRoute(RouteAxis.Signal, 2);
+                    if (s.Companion == "vela") s.SetFlag("WIRE");
                 },
-                Text = s => new List<string>
+                Text = s =>
                 {
-                    "The radio room is a ruin with good bones. Console gutted by fifty wet seasons, mice in the wiring loom, the operator's chair rusted mid-swivel — but the mast feed runs true up the wall and out, and the antenna, for all its lean, is <i>up</i>.",
-                    s.Is("BG_ENGINEER")
-                        ? "You read the wreck the way Vane read her instruments, and the verdict is: solvable. Three absences stand between this room and a working transmitter: the transmitter itself (the console's is corrosion in a box — but stations like this kept spares, crated, in secure storage: the E wing, if anywhere), heavy antenna cable to replace the perished run, and fuel for the generator. Parts, cable, fuel. A list. Lists can be finished."
-                        : "You're no radio engineer, but the shape of the problem shows even to you: the console's heart is corroded past prayer — a spare would live in secure storage, which means the E wing; the fat cable to the mast crumbles in your hand — salvage might replace it; and none of it means anything without generator fuel. Parts, cable, fuel. A list. You can work a list.",
+                    var t = new List<string>
+                    {
+                        "The radio room is a ruin with good bones. Console gutted by fifty wet seasons, mice in the wiring loom, the operator's chair rusted mid-swivel — but the mast feed runs true up the wall and out, and the antenna, for all its lean, is <i>up</i>.",
+                        s.Is("BG_ENGINEER")
+                            ? "You read the wreck the way Vane read her instruments, and the verdict is: solvable. Three absences stand between this room and a working transmitter: the transmitter itself (the console's is corrosion in a box — but stations like this kept spares, crated, in secure storage: the E wing, if anywhere), heavy antenna cable to replace the perished run, and fuel for the generator. Parts, cable, fuel. A list. Lists can be finished."
+                            : "You're no radio engineer, but the shape of the problem shows even to you: the console's heart is corroded past prayer — a spare would live in secure storage, which means the E wing; the fat cable to the mast crumbles in your hand — salvage might replace it; and none of it means anything without generator fuel. Parts, cable, fuel. A list. You can work a list.",
+                    };
+                    if (s.Companion == "vela")
+                        t.Add("And one absence, it turns out, is already solved: as you leave, Vela drops from the mast-top and deposits at your feet — with the air of a creditor settling an account you didn't know was open — a full coil of bright copper antenna wire, salvaged from only she knows where along fifty miles of coast. You stand there holding a solved problem, watching her resume her post, and revise your estimate of how much she understands upward, again.");
+                    return t;
                 },
             });
 
