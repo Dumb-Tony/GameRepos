@@ -599,6 +599,14 @@ namespace Tidebound.Narrative
                     },
                     new StoryChoice
                     {
+                        Label = "The bearded pig",
+                        Sub = "Young, enormous, and openly delighted by you. He knows where you sleep, and approves.",
+                        When = s => s.Met.TryGetValue("buri", out var m) && m,
+                        Do = s => { s.Companion = "buri"; s.SetFlag("CLEARING_DONE"); },
+                        Go = "court_buri",
+                    },
+                    new StoryChoice
+                    {
                         Label = "No one. You will do this alone.",
                         Sub = "No mouths to feed but yours. No one to lose but yourself. The hardest road, and wholly your own.",
                         Do = s => { s.SetFlag("CLEARING_DONE"); s.SetFlag("SOLO_ROUTE"); s.AddRoute(RouteAxis.Roots, 1); },
@@ -646,6 +654,52 @@ namespace Tidebound.Narrative
                             s.Warm("kavi", 1);
                             s.AddRoute(RouteAxis.Depth, 1);
                             s.Stat(Meter.Hope, 4);
+                            CompanionLogic.InitTrust(s);
+                        },
+                        Go = "ch2_open",
+                    },
+                },
+            });
+
+            script.Add(new StoryScene
+            {
+                Id = "court_buri",
+                Speaker = "Buri",
+                Text = s => new List<string>
+                {
+                    "Strategy is not required. Strategy would, in fact, be wasted. You simply cook dinner — a real one, doubled — and leave the second portion on a flat stone at the edge of the firelight, and by full dark the beach transmits the seismic information that he is inbound.",
+                    "He eats the offering in one biblical inhalation. Then he inspects the empty stone, inspects you, inspects the stone again — establishing the facts of the case — and, satisfied, performs the least wild act you have ever seen from a wild animal: he walks a circle exactly three times and collapses against your legs like scaffolding coming down.",
+                    "Two hundred pounds of bristled, sand-crusted, gently steaming pig, pinning you to the spot, asleep in under a minute. Trusting you with all of it, instantly and completely, the way he does everything.",
+                    (s.Interest.TryGetValue("buri", out var w) && w >= 2
+                        ? "You think of him dozing in your camp that first night, rent paid in excavated crabs. Apparently that was the interview, and you passed."
+                        : "It occurs to you that you have been adopted, and that consent was never really on the agenda.")
+                    + " Somewhere in the small hours he begins — softly at first, then with gathering orchestral confidence — to snore.",
+                    "You fall asleep against a wild pig's back, warmer than you've been in five days, listening to the lagoon keep time. It is completely ridiculous. It is the safest you have felt since the sky broke.",
+                },
+                Choices = new List<StoryChoice>
+                {
+                    new StoryChoice
+                    {
+                        Label = "\"Buri.\" Short, sturdy, shouts well across a beach.",
+                        Sub = "You'll be shouting it a lot.",
+                        Do = s =>
+                        {
+                            s.Warm("buri", 2);
+                            s.Stat(Meter.Hope, 7);
+                            s.SetFlag("BURI_NAMED");
+                            CompanionLogic.InitTrust(s);
+                        },
+                        Go = "ch2_open",
+                    },
+                    new StoryChoice
+                    {
+                        Label = "Whatever you name him, he's clearly staying. Budget accordingly.",
+                        Sub = "He eats like a delegation.",
+                        Do = s =>
+                        {
+                            s.Warm("buri", 1);
+                            s.AddRoute(RouteAxis.Roots, 1);
+                            s.Stat(Meter.Hope, 6);
                             CompanionLogic.InitTrust(s);
                         },
                         Go = "ch2_open",

@@ -59,6 +59,7 @@ namespace Tidebound.EditorTools
             var director = BuildPrologueStage(mats, shoreAmbience);
             var encounterDirector = BuildEncounterStage(mats);
             BuildKavi(mats);
+            BuildBuriCompanion(mats);
             BuildRaftSite(mats);
             BuildPlayerCameraAndSystems(gameClockHost, director, encounterDirector);
 
@@ -1727,6 +1728,57 @@ namespace Tidebound.EditorTools
             var interactable = root.AddComponent<KaviInteractable>();
             interactable.controller = controller;
             interactable.interactRadius = 3f;
+
+            model.SetActive(false); // the controller decides when he's real
+        }
+
+        /// <summary>Buri the companion (distinct from the story-stage BuriRig):
+        /// a warm boulder on four short legs, shown once the Clearing chose him.</summary>
+        static void BuildBuriCompanion(Mats mats)
+        {
+            var root = new GameObject("BuriCompanion");
+            root.transform.position = new Vector3(6f, Height(6f, 60f), 60f); // ambles in from the fringe he grazes
+
+            var model = new GameObject("Model");
+            model.transform.SetParent(root.transform, false);
+
+            LocalPrim(model.transform, PrimitiveType.Capsule, "Body",
+                new Vector3(0f, 0.62f, 0f), new Vector3(0.62f, 0.62f, 0.62f), mats.Wood, new Vector3(90f, 0f, 0f));
+            LocalPrim(model.transform, PrimitiveType.Sphere, "Head",
+                new Vector3(0f, 0.68f, 0.62f), Vector3.one * 0.42f, mats.Wood);
+            LocalPrim(model.transform, PrimitiveType.Cube, "Snout",
+                new Vector3(0f, 0.58f, 0.88f), new Vector3(0.2f, 0.16f, 0.2f), mats.Cushion);
+            // the beard that names the species
+            LocalPrim(model.transform, PrimitiveType.Cube, "Beard",
+                new Vector3(0f, 0.46f, 0.72f), new Vector3(0.3f, 0.1f, 0.24f), mats.Driftwood);
+            LocalPrim(model.transform, PrimitiveType.Cube, "TuskL",
+                new Vector3(-0.12f, 0.56f, 0.86f), new Vector3(0.04f, 0.1f, 0.04f), mats.Foam);
+            LocalPrim(model.transform, PrimitiveType.Cube, "TuskR",
+                new Vector3(0.12f, 0.56f, 0.86f), new Vector3(0.04f, 0.1f, 0.04f), mats.Foam);
+            LocalPrim(model.transform, PrimitiveType.Cube, "EarL",
+                new Vector3(-0.18f, 0.92f, 0.5f), new Vector3(0.1f, 0.12f, 0.05f), mats.Wood);
+            LocalPrim(model.transform, PrimitiveType.Cube, "EarR",
+                new Vector3(0.18f, 0.92f, 0.5f), new Vector3(0.1f, 0.12f, 0.05f), mats.Wood);
+            for (int leg = 0; leg < 4; leg++)
+                LocalPrim(model.transform, PrimitiveType.Cylinder, "Leg",
+                    new Vector3(leg % 2 == 0 ? -0.2f : 0.2f, 0.2f, leg < 2 ? 0.32f : -0.32f),
+                    new Vector3(0.1f, 0.2f, 0.1f), mats.Wood);
+            var tail = LocalPrim(model.transform, PrimitiveType.Cylinder, "Tail",
+                new Vector3(0f, 0.72f, -0.62f), new Vector3(0.04f, 0.14f, 0.04f), mats.Wood, new Vector3(60f, 0f, 0f));
+            var wag = tail.AddComponent<TailWag>(); // the tail helicopter, engaged at Warming+
+
+            var controller = root.AddComponent<BuriController>();
+            controller.model = model;
+            controller.tailWag = wag;
+            controller.trotSpeed = 1.9f;
+            controller.runSpeed = 3.6f;
+            controller.turnDegreesPerSecond = 220f;
+            controller.bobAmplitude = 0.045f;
+            controller.bobFrequency = 2.2f;
+
+            var interactable = root.AddComponent<BuriInteractable>();
+            interactable.controller = controller;
+            interactable.interactRadius = 3.2f;
 
             model.SetActive(false); // the controller decides when he's real
         }

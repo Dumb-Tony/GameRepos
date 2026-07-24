@@ -213,14 +213,6 @@ namespace Tidebound.Narrative
                     "Edda does not come down to see you off.",
                     "Every compass you ever own again points true.",
                 }),
-                ["ISLANDS_OWN"] = ("THE ISLAND'S OWN", new[]
-                {
-                    "You had it wrong for weeks, and the wrongness only shows itself on the stair: the covenant stood open like a door nobody fit, and you kept measuring <i>yourself</i> against the frame. But the stone on the fifth landing says it plainly, has said it all along. A keeper is not chosen. A keeper is the one still kneeling when the tide has asked everyone else to leave.",
-                    "You know somebody like that. You have known them for exactly one hundred days.",
-                    "So you climb the broken mountain one last time, the two of you, dusk going to dark going to the pool's own light — and at the Tidewell you do the introducing the old way, the way the murals show it: name, and debt, and gift. And then you shut your mouth, castaway, and let the water look.",
-                    "It sees a dog descended from the drowned, grief braided into loyalty and both worn like a working harness — a creature that has spent every night of a hundred keeping watch over the one thing the sea gave him to keep. The seven beats pause. Recount. <i>Accept.</i> Keeper Kavi takes the post the way he took your camp: quietly, entirely, forever. The ridge songs change that very night — the whole pack singing the new covenant down the length of the island — and the island, for the first time in four hundred years, sings something back.",
-                    "And you? You stay — obviously, permanently, gladly. You are the keeper's person: no mural has a rank for it yet, and one day one will. You build your fire at the mountain's foot and learn the work from the outside — the rounds you can share, the errands a keeper without thumbs prefers delegated — and on clear nights the two of you sit at the pool's lip in the seven-beat light, the island's own and the island's guest, neither of you ever entirely off duty again. Neither of you, not once, ever wanting to be.",
-                }),
             };
 
         // Cold Fire without its cyclone (the plain cold-night exposure death,
@@ -231,8 +223,32 @@ namespace Tidebound.Narrative
             "No roof, no fire, and a night that kept every promise the dusk wind made.",
         };
 
+        // THE ISLAND'S OWN: the VN's function-valued core — the water's
+        // ACCEPT verdict is written per companion (scenes-chapter7.js).
+        static readonly Dictionary<string, string> IslandsOwnAccept = new Dictionary<string, string>
+        {
+            ["kavi"] = "It sees a dog descended from the drowned, grief braided into loyalty and both worn like a working harness — a creature that has spent every night of a hundred keeping watch over the one thing the sea gave him to keep. The seven beats pause. Recount. <i>Accept.</i> Keeper Kavi takes the post the way he took your camp: quietly, entirely, forever. The ridge songs change that very night — the whole pack singing the new covenant down the length of the island — and the island, for the first time in four hundred years, sings something back.",
+            ["buri"] = "It sees devotion that never once stopped to ask what it would cost — a warm boulder that walked through a gore-line, a heart that audits the camps at night to be sure everyone is still where he left them. The seven beats pause. Recount. <i>Accept.</i> Keeper Buri does for the island what he did for your acre: everything, twice, with his whole chest — and the old treaties of the inland dark put roots down around him the way a forest roots around a spring.",
+        };
+
+        static (string, string[]) BuildIslandsOwn(GameState s)
+        {
+            string accept = IslandsOwnAccept.TryGetValue(s.Companion ?? "kavi", out var a)
+                ? a : IslandsOwnAccept["kavi"];
+            return ("THE ISLAND'S OWN", new[]
+            {
+                "You had it wrong for weeks, and the wrongness only shows itself on the stair: the covenant stood open like a door nobody fit, and you kept measuring <i>yourself</i> against the frame. But the stone on the fifth landing says it plainly, has said it all along. A keeper is not chosen. A keeper is the one still kneeling when the tide has asked everyone else to leave.",
+                "You know somebody like that. You have known them for exactly one hundred days.",
+                "So you climb the broken mountain one last time, the two of you, dusk going to dark going to the pool's own light — and at the Tidewell you do the introducing the old way, the way the murals show it: name, and debt, and gift. And then you shut your mouth, castaway, and let the water look.",
+                accept,
+                "And you? You stay — obviously, permanently, gladly. You are the keeper's person: no mural has a rank for it yet, and one day one will. You build your fire at the mountain's foot and learn the work from the outside — the rounds you can share, the errands a keeper without thumbs prefers delegated — and on clear nights the two of you sit at the pool's lip in the seven-beat light, the island's own and the island's guest, neither of you ever entirely off duty again. Neither of you, not once, ever wanting to be.",
+            });
+        }
+
         public static (string Title, string[] Body) Resolve(GameState s)
         {
+            if (s.EndingId == "ISLANDS_OWN")
+                return BuildIslandsOwn(s);
             if (s.EndingId != null && Cores.TryGetValue(s.EndingId, out var core))
                 return core;
             if (s.EndingId != null)
@@ -267,7 +283,7 @@ namespace Tidebound.Narrative
             string id = s.EndingId;
             if (id == null) return t;
             bool leaving = Leaving(id);
-            bool companionCovered = id == "ISLANDS_OWN" || id == "LAST_PACK";
+            bool companionCovered = id == "ISLANDS_OWN" || id == "LAST_PACK" || id == "SOUNDER";
 
             if (id == "ISLANDS_OWN" && s.Is("EDDA_MET"))
                 t.Add("— Edda hears it before you finish saying it — she always hears it — and sets down the pestle and looks at you for a long, still moment. \"Forty years,\" she says at last, \"I wondered what that pool was holding the post open <i>for</i>. It was never waiting for a better human.\" A snort, at herself, at everything. \"It was waiting for you to introduce them.\" She takes tea up the mountain every new moon after. She is, every time, received.");
@@ -286,6 +302,13 @@ namespace Tidebound.Narrative
                     t.Add("— Kavi watches your boat from the tideline until it is nothing, and then — the pack has long since made its peace — turns inland, to the wild that always held his other half. Some nights, sailors becalmed off an uncharted sea swear they hear a dog singing.");
                 else if (!leaving)
                     t.Add("— Kavi grows grey-muzzled at your fire, patriarch of a line of half-wild pups who own the middle distance of your every horizon. He sleeps touching your back to the end of his days, and he is buried on the hill with honors, and the pack sings over it, and you finally, fully, sing back.");
+            }
+            else if (s.Companion == "buri" && !companionCovered)
+            {
+                if (leaving && id != "SAIL_BLESSED" && id != "WHOLE_SKY")
+                    t.Add("— Buri cannot come — you know it, he knows it, and the last morning he leans his whole warm mass against you one final time and then, with the dignity of a king, does not watch you go. The homestead is his now. Heaven help anything that raids it.");
+                else if (!leaving)
+                    t.Add("— Buri anchors your world like a warm boulder for years upon years, foreman of every project, uncle to every arriving creature, undefeated in the field of enthusiastic destruction. He dies old, in the sun, mid-nap, entirely certain of his welcome everywhere — the only fate he would have accepted.");
             }
             else if (s.Companion == null && id != "ALONE_UNBROKEN")
                 t.Add("— You did the whole of it alone — the solo route, the hardest road on the island — and the Ledger marks it in the old way: <i>Alone, unbroken.</i>");
@@ -321,11 +344,12 @@ namespace Tidebound.Narrative
             if (!s.Is("CONTACT_MADE")) roads.Add("a radio's four-second window opened for no one");
             if (s.Companion != null) roads.Add("five other wild lives waited at a clearing that only ever chose one");
             string tier = s.Trust >= 100 ? "kindred" : s.Trust >= 75 ? "devoted" : s.Trust >= 50 ? "bonded" : s.Trust >= 25 ? "tolerant" : "wary";
+            string companionName = s.Companion == "kavi" ? "Kavi" : s.Companion == "buri" ? "Buri" : s.Companion;
             return new List<string>
             {
                 "<i>— THE LEDGER OPENS —</i>",
                 $"Run of {s.Day} days · {s.Flags.Count} entries in the Ledger · Signal {s.Route.Signal} / Roots {s.Route.Roots} / Depth {s.Route.Depth}"
-                    + (s.Companion == "kavi" ? $" · Companion: Kavi (trust {tier})" : " · Solo route"),
+                    + (s.Companion != null ? $" · Companion: {companionName} (trust {tier})" : " · Solo route"),
                 "Roads not taken this life: " + string.Join("; ", roads.GetRange(0, roads.Count < 3 ? roads.Count : 3)) + ".",
                 "The island is long, and other lives through it are still yours to try.",
             };

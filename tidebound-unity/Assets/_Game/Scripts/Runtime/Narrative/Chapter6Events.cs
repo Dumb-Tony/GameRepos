@@ -62,7 +62,9 @@ namespace Tidebound.Narrative
                             : "The mountain waits. Whatever the season decided in you, its proof lies up there — the temple the paintings promised, the caldera behind the broken crown, the source of the seven beats you've slept against for a month.",
                         s.Companion == "kavi"
                             ? "Kavi reads the pack you're loading and takes up position by the trailhead: coming. That was never going to be a discussion."
-                            : "You bank the fire, square Coco on his shelf facing the mountain — someone should keep an eye on camp — and shoulder the pack alone.",
+                            : s.Companion == "buri"
+                                ? "Buri reads the pack you're loading and plants himself at the trailhead like a boulder that has decided to be luggage: coming. That was never going to be a discussion."
+                                : "You bank the fire, square Coco on his shelf facing the mountain — someone should keep an eye on camp — and shoulder the pack alone.",
                     };
                     if (s.Is("RYO_MET"))
                         t.Add("Ryo talks himself out of coming at his own boat's gunwale: \"Mountains,\" he says, with a sailor's full contempt for gradients, \"are just waves that gave up. Somebody has to mind the sea things. Come back with a good story.\" His handshake says the rest of it.");
@@ -111,7 +113,9 @@ namespace Tidebound.Narrative
                         : "You climb the worn centers of the steps — it feels wrong anywhere else — and the mountain accepts you upward, flight after flight, the sea unrolling behind you until your whole known world is a bright toy at the stair's foot.",
                     s.Companion == "kavi"
                         ? "Kavi climbs the stair the way he entered your camp two months ago: committed and hating it. This is not his country — no cover, no scent-map, stone underfoot instead of honest ground — and he does it anyway, one flight below you or one above, triangulating the whole climb around the fixed point of your back."
-                        : "You climb alone, and the stair does what enormous old things do to a person alone: it makes room for you. By the fortieth flight the rhythm of your boots on the spoon-worn stone is a kind of company in itself — yours, and everyone's who ever wore the stone into spoons.",
+                        : s.Companion == "buri"
+                            ? "Buri takes the ten thousand stairs as a personal enemy and defeats them one by one, with commentary. By the top of the fourth flight he has opinions about the Kaari's attitude to ramps."
+                            : "You climb alone, and the stair does what enormous old things do to a person alone: it makes room for you. By the fortieth flight the rhythm of your boots on the spoon-worn stone is a kind of company in itself — yours, and everyone's who ever wore the stone into spoons.",
                     "You camp the first night on a terrace lip under the washed stars, the stair vanishing up into the dark above like an argument the mountain hasn't finished making.",
                 },
                 Next = "ch6_temple",
@@ -137,7 +141,9 @@ namespace Tidebound.Narrative
                         : "Murals ring the nave in fading procession: boats, fields, the mountain breaking, the survivors walking into stone — and, repeated down the centuries of panels, one hooded figure alone at the pool's edge. A keeper. Generations of them. The last panel's keeper faces outward, hand extended, unfinished — or waiting.",
                     s.Companion == "kavi"
                         ? "Kavi will not enter the nave. He stops at the threshold stone, sits — the deliberate, formal sit he does at boundaries — and holds the door the whole time you're inside, facing out. Whatever this place is, his manners for it are older than training, older than packs: <i>you do not walk on graves. You watch over the ones who must.</i>"
-                        : "You do not touch the water. Not yet. Some doors you knock on from a respectful distance first.",
+                        : s.Companion == "buri"
+                            ? "Buri stops dead at the nave's mouth, nose working the air with a thoroughness you know from boundary-stones and storm-mornings — and then he does the thing that makes your breath catch: he kneels. Forelegs folding, great head lowering, the way pigs fold to rest but slower, aimed, at the water. You stopped laughing at the old carved travel-charm weeks ago. His people have been coming here longer than yours."
+                            : "You do not touch the water. Not yet. Some doors you knock on from a respectful distance first.",
                 },
                 Choices = new List<StoryChoice>
                 {
@@ -188,7 +194,9 @@ namespace Tidebound.Narrative
                     "The mountain moves on the third day.",
                     s.Companion == "kavi"
                         ? "Kavi knows first — a full minute first: he stops mid-stride, drops his head below his shoulders, and braces all four feet against ground that hasn't moved yet. Then the birds go up, every wing on the mountainside at once—"
-                        : "The birds know first: every wing on the mountainside goes up at once, a rattling sheet of them against the blue—",
+                        : s.Companion == "buri"
+                            ? "Buri knows first — a full minute first: he plants himself broadside across the trail ahead of you, an immovable roadblock with his snout to the stone, reading the mountain through his feet. Then the birds go up, every wing at once—"
+                            : "The birds know first: every wing on the mountainside goes up at once, a rattling sheet of them against the blue—",
                     "Then the ground shrugs. Not violently — a long, muscular roll, like something enormous turning over in shallow sleep — but it goes ON, seven, eight, nine seconds, while the stair's ancient stones grate and settle and a slab of cliff lets go somewhere across the valley with a boom like the E-wing door.",
                     "Then stillness. Then, distinctly, twenty minutes later: again, smaller. And in the evening: again.",
                     "A ladder of tremors, climbing." + (s.Is("WOUND_SEEN")
@@ -241,7 +249,9 @@ namespace Tidebound.Narrative
                     {
                         s.Companion == "kavi"
                             ? "The night on bedrock is long, and Kavi stands the whole of it — not sleeping, not pacing, just standing at the camp's uphill edge with his back to the fire, a grey wall between you and the mountain's bad mood. Twice the ground murmurs. Twice, without turning, he leans his weight back against your legs: <i>still here. Still held.</i>"
-                            : "The night on bedrock is the loneliest of the climb: no treeline, no surf, just you, a small fire guttering in thin air, and a mountain turning over in its sleep. Twice the ground murmurs and you sit up alone in the enormous dark — and find, both times, that what steadies you is the list itself: the fires built, the tolls paid, the hundred days of proof that you are harder to shake than ground.",
+                            : s.Companion == "buri"
+                                ? "Buri arranges himself uphill of your bedroll on the bare stone — windbreak, avalanche-break, two hundred pounds of deliberate placement — and sleeps in shifts you can hear change. When the ground murmurs after midnight he answers it: one low note through the stone under you, less a sound than a fact. The mountain has opinions. So does he."
+                                : "The night on bedrock is the loneliest of the climb: no treeline, no surf, just you, a small fire guttering in thin air, and a mountain turning over in its sleep. Twice the ground murmurs and you sit up alone in the enormous dark — and find, both times, that what steadies you is the list itself: the fires built, the tolls paid, the hundred days of proof that you are harder to shake than ground.",
                         "The broken crown takes the last morning: a scramble up ash-slopes and rope-worn chimneys to the rim itself — and then the world ends, and starts over.",
                         "The caldera opens under you like a secret the size of a valley: two miles across, ringed in shattered crown-rock — and <i>green</i>. Not jungle-green: <i>garden</i>-green. Terraces, orchards, roofs of woven living trees, threads of smoke rising straight in the sheltered air, water gleaming in channels that run — you follow them with your eye and your breath goes — in spirals. A town. A living town, in the wound of the mountain, invisible to every chart, every plane, every year of the world since the seventeenth century.",
                         "The Inner Green. They went in. <i>They stayed in.</i>",
@@ -254,7 +264,11 @@ namespace Tidebound.Narrative
                         t.Add("\"Castaway. Seventy days and more, the island has watched you.\" He begins, staff striking soft time on the stone, to recite — and it is your Ledger, spoken aloud on a mountaintop by a stranger: the fires you built and banked. The one you fed at your boundary. The toll you paid without blood. The graves you didn't disturb, the drawer you "
                             + (s.Is("FILES_BURNED") ? "burned" : s.Is("FILES_TO_EDDA") ? "carried, unopened, up a mountain" : "weighed")
                             + ", the hand you set in the hollow of a people you'd never met."
-                            + (s.Companion == "kavi" ? " And last, longest: \"…and the grey dog, who chose you, and stayed. The island speaks through its lives, castaway. That one's testimony outweighs the rest of this list.\"" : ""));
+                            + (s.Companion == "kavi"
+                                ? " And last, longest: \"…and the grey dog, who chose you, and stayed. The island speaks through its lives, castaway. That one's testimony outweighs the rest of this list.\""
+                                : s.Companion == "buri"
+                                    ? " And last, longest: \"…and the young tusker, who chose you, and stayed. The island speaks through its lives, castaway. That one's testimony outweighs the rest of this list.\""
+                                    : ""));
                         t.Add("He lowers the staff. Behind him, Naia is not breathing. \"Come down,\" Tekau says simply, and turns. \"Guests eat first. It is a rule older than the mountain's temper.\"");
                         t.Add("You walk down into the Inner Green as the first outsider in three hundred and something years, and the town watches you pass with eyes like held questions — and children, at the edges, whose curiosity has already escaped custody entirely.");
                     }

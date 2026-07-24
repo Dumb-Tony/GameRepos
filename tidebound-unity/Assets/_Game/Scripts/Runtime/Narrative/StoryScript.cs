@@ -16,6 +16,12 @@ namespace Tidebound.Narrative
         /// <summary>The VN's `who` — shown as a header. Law #3: descriptive
         /// names only until the player learns real ones.</summary>
         public string Speaker;
+        /// <summary>The VN's function-valued `who` (per-companion nameplates).
+        /// When set, wins over Speaker.</summary>
+        public Func<GameState, string> SpeakerDynamic;
+
+        /// <summary>The nameplate for this state (dynamic wins).</summary>
+        public string SpeakerFor(GameState s) => SpeakerDynamic != null ? SpeakerDynamic(s) : Speaker;
         /// <summary>The VN's `enter` — effects applied once on scene entry.
         /// Guard with a flag if re-entry must not double-apply.</summary>
         public Action<GameState> OnEnter;

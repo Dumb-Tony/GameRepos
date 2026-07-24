@@ -518,9 +518,39 @@ tidebound-unity/
       roads not taken). RunCardUI appends epilogue + ledger to ending
       cards; deaths keep their lean cards. 10 new tests (291 total).
       Verified via CLI.*
-- [ ] Phase 6 — depth passes per act · Phase 7 — companions, NG+,
-      polish · world-side depth for chapters 4–7 (station/temple/
-      caldera as places, Naia's rig, monsoon world dressing)
+- [~] Phase 7 — companions. *Session 1: BURI, end to end — the
+      Clearing offers the bearded pig (court_buri ported verbatim:
+      the doubled dinner, the three circles, the orchestral snoring;
+      BURI_NAMED, trust seed through the shared formula); the
+      companion machinery refactored into CompanionController (shared
+      trust-tier AI — serialized field names preserved so the scene's
+      Kavi rig keeps its wiring; KaviController and BuriController
+      are now thin species chassis: Buri trots slower, strides
+      heavier); CompanionLogic grows per-companion TIER_LINE
+      vignettes (Buri's five tiers verbatim: tax collector →
+      woodpile fixture → two hundred pounds of NO → honor guard →
+      the two-person wallow) behind back-compatible accessors;
+      BuriInteractable (share food / talk at him / lean into the
+      lean); BuildBuriCompanion greybox (barrel body, beard, tusks,
+      tail helicopter via TailWag) self-gated like Kavi's; his VOICE
+      threads the chapters (StoryScene.SpeakerDynamic added for
+      per-companion nameplates): Edda's smokehouse verdict, the d31
+      perimeter-walk heart, the HALCYON STORES trailer at d44
+      (TRAILER + roots, feeding ch5's dike), planting-day plowing,
+      the Boar King send-off, the mountain — stairs-as-enemy, the
+      kneel at the nave, the broadside tremor warning, the bedrock
+      windbreak — Tekau's "young tusker" testimony, THE ISLAND'S OWN
+      accepts Keeper Buri (per-companion core body), his epilogue
+      fates (stays: the warm boulder; leaves: he does not watch you
+      go), SOUNDER's gate live. 6 new tests (304 total), verified
+      via the SYNCHRONOUS TestRunner (runSynchronously: works
+      unfocused, instantly — the method of record for MCP sessions).
+      Scene rebuilt with BuriCompanion serialized.
+      Next companions: Moa (shoulder-rider), then Vela/Ipo/Nine
+      (flight, canopy, and tide-pool chassis).*
+- [ ] Phase 6 — depth passes per act · world-side depth for chapters
+      4–7 (station/temple/caldera as places, Naia's rig, monsoon
+      world dressing) · NG+, polish
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day
 loop, Kavi only, chapters 1–2, the Boar King, five endings.

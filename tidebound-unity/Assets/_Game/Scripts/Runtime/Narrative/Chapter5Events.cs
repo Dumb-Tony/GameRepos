@@ -194,16 +194,22 @@ namespace Tidebound.Narrative
                     s.Stat(Meter.Energy, -12);
                     s.Stat(Meter.Hope, 6);
                 },
-                Text = s => new List<string>
+                Text = s =>
                 {
-                    "Planting day. You choose your ground the way the season taught you: "
-                        + (s.Is("GLYPH2")
-                            ? "the old Kaari terrace, cleared back to its dry-laid wall — ground that was a farm before your language existed, drained and leveled by hands that knew this exact rain."
-                            : "the high fringe flat behind camp, ditched and mounded against the wet."),
-                    s.Is("SEEDS")
-                        ? "Halcyon's seed cabinet gives up its dead and its living: half the foil packets are dust, but the heavy-foil rice runs a sprout test at nearly full strength, the beans wake up angry, and the feral tomatoes transplant like they've been waiting fifty years for staff."
-                        : "Your stock is the island's own: taro crowns from the river margins, yam vines, seagrape cuttings, the breadfruit saplings you've been nursing — wild things half-tamed, like everything else you love here.",
-                    "By dark it's in the ground — all of it, everything you have to bet, planted into the loudest, wettest, most generous season the sky owns. Farming, you realize, standing soaked and filthy in the last light, is just hope with drainage.",
+                    var t = new List<string>
+                    {
+                        "Planting day. You choose your ground the way the season taught you: "
+                            + (s.Is("GLYPH2")
+                                ? "the old Kaari terrace, cleared back to its dry-laid wall — ground that was a farm before your language existed, drained and leveled by hands that knew this exact rain."
+                                : "the high fringe flat behind camp, ditched and mounded against the wet."),
+                        s.Is("SEEDS")
+                            ? "Halcyon's seed cabinet gives up its dead and its living: half the foil packets are dust, but the heavy-foil rice runs a sprout test at nearly full strength, the beans wake up angry, and the feral tomatoes transplant like they've been waiting fifty years for staff."
+                            : "Your stock is the island's own: taro crowns from the river margins, yam vines, seagrape cuttings, the breadfruit saplings you've been nursing — wild things half-tamed, like everything else you love here.",
+                    };
+                    if (s.Companion == "buri")
+                        t.Add("Buri plows. There is no other verb: harnessed to nothing but enthusiasm, he opens your rows in dark wet ribbons, and by dusk the plot looks professional and he looks like a delighted landslide.");
+                    t.Add("By dark it's in the ground — all of it, everything you have to bet, planted into the loudest, wettest, most generous season the sky owns. Farming, you realize, standing soaked and filthy in the last light, is just hope with drainage.");
+                    return t;
                 },
             });
             script.Add(new StoryScene
@@ -294,11 +300,13 @@ namespace Tidebound.Narrative
             script.Add(new StoryScene
             {
                 Id = "ev5_home3_fed",
-                Text = _ => new List<string>
+                Text = s => new List<string>
                 {
                     "You carry it out to him yourself — an armload of yams and flood-spoiled rice, laid on the boundary stone — and step back, and stand in the rain at a respectful distance while the old veteran eats like the starving eat: carefully, forcing slowness, dignity gripped in both tusks.",
                     "When he's done he does not leave. He raises the great scarred head and looks at you — a long, level, unhurried accounting — and then he walks the boundary of your homestead, once, the full circuit, and puts his shoulder against the biggest fence post gently, like a signature, and goes.",
-                    "Whatever you just bought, it wasn't bought with yams.",
+                    s.Companion == "buri"
+                        ? "Buri watches him into the dark, utterly silent, and then leans against you with his whole weight, and you stand together in the rain like a family seeing off a hard old relative."
+                        : "Whatever you just bought, it wasn't bought with yams.",
                 },
             });
             script.Add(new StoryScene

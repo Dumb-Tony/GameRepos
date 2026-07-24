@@ -324,7 +324,7 @@ namespace Tidebound.Narrative
             script.Add(new StoryScene
             {
                 Id = "ev3_heart2",
-                Speaker = "Kavi",
+                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : "Kavi",
                 OnEnter = s =>
                 {
                     if (s.Is("HEART2_DONE")) return;
@@ -332,26 +332,33 @@ namespace Tidebound.Narrative
                     s.Bond(10);
                     s.Stat(Meter.Hope, 8);
                 },
-                Text = _ => new List<string>
-                {
-                    "On the fourteenth night the pack sings inland, the old ragged chorus, and you feel Kavi lift his head against your knee the way he does — and then, for the first time in your acquaintance, he answers.",
-                    "He sings from beside your fire — long, rough, unpracticed, a voice with two springs of rust in it — and the inland chorus stumbles, recalibrates around the new bearing, and answers back. He sings his position. He sings it from <i>here</i>.",
-                    "When it's done he looks at you, embarrassed as a dog can be, and thumps his tail once. You have just been declared, to the entire island, in the only language that ever mattered to him.",
-                },
+                Text = s => s.Companion == "buri"
+                    ? new List<string>
+                    {
+                        "On the fourteenth day you finally understand what Buri does at dusk when he vanishes toward the treeline: he walks the perimeter. Your perimeter. All of it — beach line, water path, forage trail — nose down, unhurried, thorough as a nightwatchman, before galloping back to collapse into your fire's light.",
+                        "Tonight you follow, and at the treeline you find his work: every fence-gap rubbed with his scent, every approach marked, the whole map of your small kingdom re-signed, nightly, in the only ink the inland dark respects: <i>occupied. Defended. His.</i>",
+                        "He finds you watching and grins his whole pig grin, tail going, absurd and mighty. You walk the last of the rounds together, landlord and enforcer, and the night makes way.",
+                    }
+                    : new List<string>
+                    {
+                        "On the fourteenth night the pack sings inland, the old ragged chorus, and you feel Kavi lift his head against your knee the way he does — and then, for the first time in your acquaintance, he answers.",
+                        "He sings from beside your fire — long, rough, unpracticed, a voice with two springs of rust in it — and the inland chorus stumbles, recalibrates around the new bearing, and answers back. He sings his position. He sings it from <i>here</i>.",
+                        "When it's done he looks at you, embarrassed as a dog can be, and thumps his tail once. You have just been declared, to the entire island, in the only language that ever mattered to him.",
+                    },
             });
             script.Add(new StoryScene
             {
                 Id = "ev3_heart2_low",
-                Speaker = "Kavi",
+                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : "Kavi",
                 OnEnter = s =>
                 {
                     if (s.Is("HEART2_LOW")) return;
                     s.SetFlag("HEART2_LOW");
                     s.Bond(3);
                 },
-                Text = _ => new List<string>
+                Text = s => new List<string>
                 {
-                    "Kavi is still here. That's not nothing — out here, staying is the first vow and the hardest. But on the fourteenth morning you catch yourself narrating your plans to the fire instead of to them, and you feel the shape of the distance you've kept.",
+                    (s.Companion == "buri" ? "Buri" : "Kavi") + " is still here. That's not nothing — out here, staying is the first vow and the hardest. But on the fourteenth morning you catch yourself narrating your plans to the fire instead of to them, and you feel the shape of the distance you've kept.",
                     "The wild keeps honest books. Walls, water, smoke, survival — all fair entries. But the bond is a crop like any other on this island: it grows exactly as much as you tend it, and the season does not wait.",
                 },
             });
@@ -709,7 +716,9 @@ namespace Tidebound.Narrative
                     };
                     t.Add(s.Companion == "kavi"
                         ? "Then her eyes find Kavi, sitting grave and grey at the fence line, and she nods once, dog to woman, woman to dog, two watchful professionals recognizing each other. \"The pariah,\" she says. \"The pack put him out two springs back. He chose better this time.\""
-                        : "She studies you a while, alone as you are, and something like approval crosses the old face. \"No pets, no partners, no nonsense. You'll either die quick or do well. I've seen both.\"");
+                        : s.Companion == "buri"
+                            ? "Then her eyes find Buri, asleep against your leg, and she snorts. \"The tide brings me a castaway with a <i>pig</i>. Fatten it through monsoon and it'll winter you better than a smokehouse.\" You decide not to translate for Buri."
+                            : "She studies you a while, alone as you are, and something like approval crosses the old face. \"No pets, no partners, no nonsense. You'll either die quick or do well. I've seen both.\"");
                     return t;
                 },
                 Choices = new List<StoryChoice>

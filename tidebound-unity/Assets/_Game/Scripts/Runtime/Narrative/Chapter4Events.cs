@@ -430,19 +430,26 @@ namespace Tidebound.Narrative
             script.Add(new StoryScene
             {
                 Id = "ev4_companion",
-                Speaker = "Kavi",
+                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : "Kavi",
                 OnEnter = s =>
                 {
                     if (s.Is("COMP4_DONE")) return;
                     s.SetFlag("COMP4_DONE");
                     s.Bond(4);
                     if (s.Companion == "kavi") { s.SetFlag("KAVI_WARNING"); s.AddRoute(RouteAxis.Depth, 1); }
+                    else if (s.Companion == "buri") { s.SetFlag("TRAILER"); s.AddRoute(RouteAxis.Roots, 2); }
                 },
-                Text = _ => new List<string>
-                {
-                    "Kavi has kept his stiff-legged truce with the compound for days — but today, at the E wing's corner, he stops and will not be moved. Not at the door: at the <i>foundation</i>, where a hairline crack runs down into earth, and out of it, faint past your senses, comes whatever he has been smelling since the first hour.",
-                    "He looks from the crack to you — the long, grave, weighing look — and then deliberately, unmistakably, he steps between you and it. Whatever is under this station, in the rock the drill touched: his nose files it with fire, floods, and the Boar King. <i>Things that end packs.</i>",
-                },
+                Text = s => s.Companion == "buri"
+                    ? new List<string>
+                    {
+                        "Buri, working the yard's compost like a paid contractor, hits something that clangs. He excavates it with mounting outrage — roots, mud, a grown-over tarpaulin — and stands back, filthy and triumphant, over his find: a service trailer, small-wheeled, rust-locked but sound, stenciled HALCYON STORES.",
+                        "Inside: hand tools gone to rust and lime — and a wooden crate of unbroken glass carboys, and a coil of hose, and cement in drums gone to stone except the center of one. You look from the trailer to your pig — who is already asleep against it, guarding the claim — and start planning around a hauling capacity you didn't have this morning.",
+                    }
+                    : new List<string>
+                    {
+                        "Kavi has kept his stiff-legged truce with the compound for days — but today, at the E wing's corner, he stops and will not be moved. Not at the door: at the <i>foundation</i>, where a hairline crack runs down into earth, and out of it, faint past your senses, comes whatever he has been smelling since the first hour.",
+                        "He looks from the crack to you — the long, grave, weighing look — and then deliberately, unmistakably, he steps between you and it. Whatever is under this station, in the rock the drill touched: his nose files it with fire, floods, and the Boar King. <i>Things that end packs.</i>",
+                    },
             });
         }
 
