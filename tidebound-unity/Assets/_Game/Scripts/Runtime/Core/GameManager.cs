@@ -58,10 +58,12 @@ namespace Tidebound
         public DialogueUI Dialogue { get; private set; }
         public JournalUI Journal { get; private set; }
         public WayfinderUI Wayfinder { get; private set; }
+        public InventoryUI Inventory { get; private set; }
 
         public bool DialogueActive { get; private set; }
         public bool JournalOpen { get; private set; }
         public bool MapOpen { get; private set; }
+        public bool InventoryOpen { get; private set; }
 
         readonly WarningSystem _warnings = new WarningSystem();
         bool _sleeping;
@@ -91,6 +93,7 @@ namespace Tidebound
             Dialogue = DialogueUI.Create(this);
             Journal = JournalUI.Create(this);
             Wayfinder = WayfinderUI.Create(this);
+            Inventory = InventoryUI.Create(this);
             RunCardUI.Create(this);
         }
 
@@ -153,14 +156,22 @@ namespace Tidebound
             if (!DialogueActive && GameInput.JournalPressed)
             {
                 if (MapOpen) Wayfinder.Close();
+                if (InventoryOpen) Inventory.Close();
                 Journal.Toggle();
             }
             if (!DialogueActive && GameInput.MapPressed)
             {
                 if (JournalOpen) Journal.Close();
+                if (InventoryOpen) Inventory.Close();
                 Wayfinder.Toggle();
             }
-            if (DialogueActive || JournalOpen || MapOpen) return; // the world is frozen; nothing below applies
+            if (!DialogueActive && GameInput.InventoryPressed)
+            {
+                if (JournalOpen) Journal.Close();
+                if (MapOpen) Wayfinder.Close();
+                Inventory.Toggle();
+            }
+            if (DialogueActive || JournalOpen || MapOpen || InventoryOpen) return; // the world is frozen; nothing below applies
 
             // a scheduled encounter waits until the world can hold it — and
             // keeps a breath of ordinary play between encounters, unless we
@@ -210,9 +221,15 @@ namespace Tidebound
             ApplyFreeze();
         }
 
+        public void SetInventoryOpen(bool open)
+        {
+            InventoryOpen = open;
+            ApplyFreeze();
+        }
+
         void ApplyFreeze()
         {
-            bool frozen = DialogueActive || JournalOpen || MapOpen || RunOver;
+            bool frozen = DialogueActive || JournalOpen || MapOpen || InventoryOpen || RunOver;
             if (clock != null) clock.paused = frozen;
             if (player != null) player.inputLocked = frozen;
             if (cam != null) cam.inputLocked = frozen;
