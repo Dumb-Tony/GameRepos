@@ -234,7 +234,7 @@ namespace Tidebound
             if (player != null) player.inputLocked = frozen;
             if (cam != null) cam.inputLocked = frozen;
             if (interactor != null) interactor.inputLocked = frozen;
-            LockCursor(!(DialogueActive || RunOver)); // reading and endings free the mouse
+            LockCursor(!(DialogueActive || InventoryOpen || RunOver)); // reading, rummaging, and endings free the mouse
             if (Hud != null) Hud.gameObject.SetActive(!DialogueActive && !RunOver);
         }
 
@@ -416,6 +416,24 @@ namespace Tidebound
         }
 
         public void Drink() => AfterAction(SurvivalActions.Drink(State), drinkCost);
+
+        [Tooltip("How much water the pack can carry (vessels' worth). Feel knob.")]
+        public int canteenCap = 3;
+
+        /// <summary>Fill at a source — a gesture, free (walking there was the cost).</summary>
+        public void FillCanteen()
+        {
+            Toast(SurvivalActions.FillCanteen(State, canteenCap).Line, ToastKind.Good);
+            SaveNow();
+        }
+
+        /// <summary>Drink carried water straight from the pack — a gesture, free.</summary>
+        public void DrinkFromPack()
+        {
+            Toast(SurvivalActions.DrinkFromPack(State).Line, ToastKind.Good);
+            if (Inventory != null && Inventory.IsOpen) Inventory.Open(); // refresh the sheet's counts
+            SaveNow();
+        }
 
         public void StampSos() => AfterAction(SurvivalActions.StampSos(State), sosCost);
 

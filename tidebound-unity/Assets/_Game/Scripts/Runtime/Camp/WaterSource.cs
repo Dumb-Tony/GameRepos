@@ -16,6 +16,10 @@ namespace Tidebound
             options.Add(InteractionOption.Do("Drink",
                 "Cold from the rock. Thirst ++.",
                 g => g.Drink()));
+            if (gm.State.Count("water") < gm.canteenCap)
+                options.Add(InteractionOption.Do("Fill the canteen",
+                    "Carried water is carried time. Drink it later, from the pack.",
+                    g => g.FillCanteen()));
         }
     }
 }

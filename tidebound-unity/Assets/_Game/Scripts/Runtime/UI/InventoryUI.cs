@@ -100,8 +100,57 @@ namespace Tidebound
         public void Open()
         {
             _body.text = string.Join("\n", ItemCatalog.Build(_gm.State));
+            BuildUseButtons();
             _root.SetActive(true);
             _gm.SetInventoryOpen(true);
+        }
+
+        // ---- use-from-the-pack: one button per usable row, along the
+        // ---- sheet's right edge (the canteen is the first; more follow)
+        readonly System.Collections.Generic.List<GameObject> _useButtons =
+            new System.Collections.Generic.List<GameObject>();
+
+        void BuildUseButtons()
+        {
+            foreach (var b in _useButtons) if (b != null) Destroy(b);
+            _useButtons.Clear();
+
+            float y = -34f;
+            foreach (var row in ItemCatalog.Rows(_gm.State))
+            {
+                if (row.Use == null) continue;
+                var go = new GameObject("Use_" + row.Id, typeof(RectTransform));
+                go.transform.SetParent(_root.transform, false);
+                var rt = (RectTransform)go.transform;
+                rt.anchorMin = new Vector2(1f, 1f);
+                rt.anchorMax = new Vector2(1f, 1f);
+                rt.pivot = new Vector2(1f, 1f);
+                rt.anchoredPosition = new Vector2(-16f, y);
+                rt.sizeDelta = new Vector2(120f, 30f);
+                y -= 38f;
+
+                var img = go.AddComponent<Image>();
+                img.color = new Color(0.25f, 0.32f, 0.24f, 0.95f);
+                var button = go.AddComponent<Button>();
+                var captured = row;
+                button.onClick.AddListener(() => captured.Use(_gm));
+
+                var labelGo = new GameObject("Label", typeof(RectTransform));
+                labelGo.transform.SetParent(go.transform, false);
+                var lrt = (RectTransform)labelGo.transform;
+                lrt.anchorMin = Vector2.zero;
+                lrt.anchorMax = Vector2.one;
+                lrt.offsetMin = Vector2.zero;
+                lrt.offsetMax = Vector2.zero;
+                var label = labelGo.AddComponent<Text>();
+                label.font = _font;
+                label.fontSize = 15;
+                label.color = inkColor;
+                label.alignment = TextAnchor.MiddleCenter;
+                label.text = row.UseLabel + " — " + row.Name.ToLowerInvariant();
+
+                _useButtons.Add(go);
+            }
         }
 
         public void Close()

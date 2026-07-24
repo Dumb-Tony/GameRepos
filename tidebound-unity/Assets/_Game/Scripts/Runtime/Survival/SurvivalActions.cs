@@ -51,6 +51,27 @@ namespace Tidebound
             return ActionResult.Ok("Seagrapes, a crab that objects, pale figs the birds have been at first — the birds know their business, so you trust their leavings.");
         }
 
+        // ---- 🥤 The canteen (a 3D-side addition, like fireFuel: carried
+        // ---- water so thirst can be answered from the pack; "water" is a
+        // ---- Unity-only inventory key, absent from VN saves) ----------------
+        public static ActionResult FillCanteen(GameState s, int cap)
+        {
+            int have = s.Count("water");
+            if (have >= cap)
+                return ActionResult.Ok("Every vessel you own is already full. The first law, obeyed in advance.");
+            s.AddItem("water", cap - have);
+            return ActionResult.Ok("You fill everything that holds water and stopper it against the day. Carried water is carried time.");
+        }
+
+        public static ActionResult DrinkFromPack(GameState s)
+        {
+            if (!s.Has("water"))
+                return ActionResult.Ok("The canteen is empty. The river and the trickle refill it.");
+            s.AddItem("water", -1);
+            s.Stat(Meter.Thirst, 25);
+            return ActionResult.Ok("You drink from the carried store — warm, flat, and exactly enough. The pack just paid for itself.");
+        }
+
         // ---- 🔥 Make fire --------------------------------------------------
         public static ActionResult MakeFire(GameState s, Func<float> rng)
         {

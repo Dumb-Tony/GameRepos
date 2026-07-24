@@ -51,13 +51,20 @@ namespace Tidebound.Narrative
             {
                 int n = s.Count(kv.Key);
                 if (n <= 0) continue;
-                rows.Add(new ItemRow
+                var row = new ItemRow
                 {
                     Id = kv.Key,
                     Name = kv.Value.Name,
                     Count = n,
                     Flavor = kv.Value.Flavor,
-                });
+                };
+                // the first pack-usable: carried water answers thirst on the spot
+                if (kv.Key == "water")
+                {
+                    row.UseLabel = "Drink";
+                    row.Use = gm => gm.DrinkFromPack();
+                }
+                rows.Add(row);
             }
             foreach (var kv in s.Inventory)
             {

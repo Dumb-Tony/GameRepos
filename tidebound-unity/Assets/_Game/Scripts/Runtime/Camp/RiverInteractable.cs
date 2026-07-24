@@ -21,6 +21,10 @@ namespace Tidebound
             options.Add(InteractionOption.Do("Haul water",
                 "Cold, clean, and endless. Thirst ++, health +. Costs a stretch of the day.",
                 g => g.HaulRiverWater()));
+            if (gm.State.Count("water") < gm.canteenCap)
+                options.Add(InteractionOption.Do("Fill the canteen",
+                    "The artery, bottled. Drink it later, from the pack.",
+                    g => g.FillCanteen()));
         }
     }
 }
