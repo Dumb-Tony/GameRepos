@@ -170,6 +170,9 @@ namespace Tidebound.Narrative
                     End("Walk Buri up the mountain. The post was never yours to fill.",
                         "The Island's Own. A keeper is the one still kneeling — and you know who never left.",
                         "ISLANDS_OWN", s => s.Companion == "buri" && Kindred(s) && (s.Is("TIDEWELL_WITNESS") || s.Is("TIDEWELL_FEED"))),
+                    End("Walk Moa up the mountain. The post was never yours to fill.",
+                        "The Island's Own. A keeper is the one still kneeling — and you know who never left.",
+                        "ISLANDS_OWN", s => s.Companion == "moa" && Kindred(s) && (s.Is("TIDEWELL_WITNESS") || s.Is("TIDEWELL_FEED"))),
 
                     // ---- the Locked Things ----
                     End("Leave RICH — the Rosa's gold, the cut stones, the whole ransom.",

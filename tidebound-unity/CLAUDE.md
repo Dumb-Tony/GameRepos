@@ -546,8 +546,35 @@ tidebound-unity/
       via the SYNCHRONOUS TestRunner (runSynchronously: works
       unfocused, instantly — the method of record for MCP sessions).
       Scene rebuilt with BuriCompanion serialized.
-      Next companions: Moa (shoulder-rider), then Vela/Ipo/Nine
-      (flight, canopy, and tide-pool chassis).*
+      Session 2: MOA, end to end on the same machinery — the Clearing
+      offers the copper hen (court_moa verbatim: the perimeter
+      patrol, the ruined-hawk morning filed as precedent, MOA_NAMED,
+      the shared trust seed); MoaController chassis (fast affronted
+      trot 2.8/5.2, snap turns at 540°/s, quick tiny bob — she
+      declines every perch and marches); MoaVignettes five tiers
+      verbatim (wound like a spring → the briefing → exactly one
+      gathering → blanketed-feet sentry → her flock); MoaInteractable
+      (scatter grubs / receive the briefing / gather her in);
+      BuildMoaCompanion greybox (copper body, comb, beak, tail
+      feathers on TailWag) self-gated; her voice threads the
+      chapters: the lap-step d31 heart, mantled-to-twice-her-size,
+      the greenhouse seed cabinet at d44 (SEEDS + roots, paying off
+      as ev5's planting inspector-general), Edda's blanketed feet,
+      the sergeant's march up the ten thousand stairs, the rigid
+      flat-note tremor warning, Tekau's "small brave hen", THE
+      ISLAND'S OWN accepts Keeper Moa (six ounces of copper
+      courage), epilogues (REMAIN: head of the column; stays: Moa
+      rules; leaves: carried to Edda's grove). 7 new tests (311
+      total, all green, synchronous runner). Scene rebuilt with
+      MoaCompanion serialized. Field note: a hand-written .cs.meta
+      left MoaController out of the compile graph (CS0246 from its
+      referencer while the file sat in the ADB) — deleting the meta
+      and letting Unity mint it fixed the import; compiles also only
+      pump while the editor has focus (focused it via Win32 from the
+      session).
+      Next companions: Vela/Ipo/Nine (flight, canopy, and tide-pool
+      chassis — each needs new movement beyond the ground-follow
+      base).*
 - [ ] Phase 6 — depth passes per act · world-side depth for chapters
       4–7 (station/temple/caldera as places, Naia's rig, monsoon
       world dressing) · NG+, polish

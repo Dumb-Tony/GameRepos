@@ -60,6 +60,7 @@ namespace Tidebound.EditorTools
             var encounterDirector = BuildEncounterStage(mats);
             BuildKavi(mats);
             BuildBuriCompanion(mats);
+            BuildMoaCompanion(mats);
             BuildRaftSite(mats);
             BuildPlayerCameraAndSystems(gameClockHost, director, encounterDirector);
 
@@ -1781,6 +1782,48 @@ namespace Tidebound.EditorTools
             interactable.interactRadius = 3.2f;
 
             model.SetActive(false); // the controller decides when he's real
+        }
+
+        /// <summary>Moa the companion (distinct from the story-stage MoaRig):
+        /// two pounds of copper courage, shown once the Clearing chose her.</summary>
+        static void BuildMoaCompanion(Mats mats)
+        {
+            var root = new GameObject("MoaCompanion");
+            root.transform.position = new Vector3(10f, Height(10f, 40f), 40f); // patrols in from the fringe's fern-shadow
+
+            var model = new GameObject("Model");
+            model.transform.SetParent(root.transform, false);
+
+            LocalPrim(model.transform, PrimitiveType.Sphere, "Body",
+                new Vector3(0f, 0.22f, 0f), new Vector3(0.24f, 0.22f, 0.3f), mats.Copper);
+            LocalPrim(model.transform, PrimitiveType.Sphere, "Head",
+                new Vector3(0f, 0.4f, 0.14f), Vector3.one * 0.12f, mats.Copper);
+            LocalPrim(model.transform, PrimitiveType.Cube, "Comb",
+                new Vector3(0f, 0.48f, 0.13f), new Vector3(0.02f, 0.06f, 0.08f), mats.Fruit);
+            LocalPrim(model.transform, PrimitiveType.Cube, "Beak",
+                new Vector3(0f, 0.39f, 0.22f), new Vector3(0.03f, 0.03f, 0.06f), mats.Cushion);
+            var tailF = LocalPrim(model.transform, PrimitiveType.Cube, "TailFeathers",
+                new Vector3(0f, 0.32f, -0.18f), new Vector3(0.06f, 0.16f, 0.1f), mats.Copper, new Vector3(-35f, 0f, 0f));
+            for (int leg = 0; leg < 2; leg++)
+                LocalPrim(model.transform, PrimitiveType.Cylinder, "Leg",
+                    new Vector3(leg == 0 ? -0.05f : 0.05f, 0.08f, 0f),
+                    new Vector3(0.02f, 0.08f, 0.02f), mats.Cushion);
+            var wag = tailF.AddComponent<TailWag>(); // the affronted feather-shake, repurposed
+
+            var controller = root.AddComponent<MoaController>();
+            controller.model = model;
+            controller.tailWag = wag;
+            controller.trotSpeed = 2.8f;
+            controller.runSpeed = 5.2f;
+            controller.turnDegreesPerSecond = 540f;
+            controller.bobAmplitude = 0.03f;
+            controller.bobFrequency = 6.5f;
+
+            var interactable = root.AddComponent<MoaInteractable>();
+            interactable.controller = controller;
+            interactable.interactRadius = 2.4f;
+
+            model.SetActive(false); // the controller decides when she's real
         }
 
         static GameObject LocalPrim(Transform parent, PrimitiveType type, string name,

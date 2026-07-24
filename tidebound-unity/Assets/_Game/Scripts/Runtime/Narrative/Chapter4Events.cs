@@ -430,7 +430,7 @@ namespace Tidebound.Narrative
             script.Add(new StoryScene
             {
                 Id = "ev4_companion",
-                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : "Kavi",
+                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : "Kavi",
                 OnEnter = s =>
                 {
                     if (s.Is("COMP4_DONE")) return;
@@ -438,18 +438,28 @@ namespace Tidebound.Narrative
                     s.Bond(4);
                     if (s.Companion == "kavi") { s.SetFlag("KAVI_WARNING"); s.AddRoute(RouteAxis.Depth, 1); }
                     else if (s.Companion == "buri") { s.SetFlag("TRAILER"); s.AddRoute(RouteAxis.Roots, 2); }
+                    else if (s.Companion == "moa") { s.SetFlag("SEEDS"); s.AddRoute(RouteAxis.Roots, 2); }
                 },
-                Text = s => s.Companion == "buri"
-                    ? new List<string>
-                    {
-                        "Buri, working the yard's compost like a paid contractor, hits something that clangs. He excavates it with mounting outrage — roots, mud, a grown-over tarpaulin — and stands back, filthy and triumphant, over his find: a service trailer, small-wheeled, rust-locked but sound, stenciled HALCYON STORES.",
-                        "Inside: hand tools gone to rust and lime — and a wooden crate of unbroken glass carboys, and a coil of hose, and cement in drums gone to stone except the center of one. You look from the trailer to your pig — who is already asleep against it, guarding the claim — and start planning around a hauling capacity you didn't have this morning.",
-                    }
-                    : new List<string>
+                Text = s =>
+                {
+                    if (s.Companion == "buri")
+                        return new List<string>
+                        {
+                            "Buri, working the yard's compost like a paid contractor, hits something that clangs. He excavates it with mounting outrage — roots, mud, a grown-over tarpaulin — and stands back, filthy and triumphant, over his find: a service trailer, small-wheeled, rust-locked but sound, stenciled HALCYON STORES.",
+                            "Inside: hand tools gone to rust and lime — and a wooden crate of unbroken glass carboys, and a coil of hose, and cement in drums gone to stone except the center of one. You look from the trailer to your pig — who is already asleep against it, guarding the claim — and start planning around a hauling capacity you didn't have this morning.",
+                        };
+                    if (s.Companion == "moa")
+                        return new List<string>
+                        {
+                            "Moa's week-long annexation of the compound completes today at the greenhouse — a glass ruin you'd written off, panes down, benches collapsed. She won't leave it. She scratches, insists, performs the found-food dance at a patch of riot growth in the corner until you finally look properly:",
+                            "Tomatoes. Feral, tiny, centuries of selection collapsing back toward the wild — but tomatoes, and beside them the woody ghosts of pepper plants gone to seed, and volunteer greens, and in a rusted seed cabinet her scratching has burst open: foil packets, dozens, some certainly dead, some — the heavy foil ones — <i>maybe not</i>. Fifty years ago someone planted a garden against homesickness. Your hen just claimed the inheritance.",
+                        };
+                    return new List<string>
                     {
                         "Kavi has kept his stiff-legged truce with the compound for days — but today, at the E wing's corner, he stops and will not be moved. Not at the door: at the <i>foundation</i>, where a hairline crack runs down into earth, and out of it, faint past your senses, comes whatever he has been smelling since the first hour.",
                         "He looks from the crack to you — the long, grave, weighing look — and then deliberately, unmistakably, he steps between you and it. Whatever is under this station, in the rock the drill touched: his nose files it with fire, floods, and the Boar King. <i>Things that end packs.</i>",
-                    },
+                    };
+                },
             });
         }
 

@@ -208,6 +208,8 @@ namespace Tidebound.Narrative
                     };
                     if (s.Companion == "buri")
                         t.Add("Buri plows. There is no other verb: harnessed to nothing but enthusiasm, he opens your rows in dark wet ribbons, and by dusk the plot looks professional and he looks like a delighted landslide.");
+                    else if (s.Companion == "moa")
+                        t.Add("Moa works the turned rows behind you all day like a tiny inspector-general, executing grubs, and by dusk has eaten approximately her own weight in future crop failures.");
                     t.Add("By dark it's in the ground — all of it, everything you have to bet, planted into the loudest, wettest, most generous season the sky owns. Farming, you realize, standing soaked and filthy in the last light, is just hope with drainage.");
                     return t;
                 },
@@ -537,10 +539,13 @@ namespace Tidebound.Narrative
             script.Add(new StoryScene
             {
                 Id = "ev5_edda_down",
-                Text = _ => new List<string>
+                Text = s => new List<string>
                 {
                     "The argument lasts an hour and you win it by packing while she conducts it. The trip down takes the day — her on the travois past the worst stretches, radiating indignity, gripping your arm at the steep parts with a strength that tells you exactly how frightened she's actually been, alone up there, listening to her own chest.",
-                    "By nightfall Edda Voss is installed at your fire in the driest corner of everything you own, criticizing the camp's layout in a voice already stronger, and something in the household clicks into place that you didn't know was loose. The rain drums on. The fire holds. The census of your kingdom is up one.",
+                    "By nightfall Edda Voss is installed at your fire in the driest corner of everything you own, criticizing the camp's layout in a voice already stronger, and something in the household clicks into place that you didn't know was loose. "
+                        + (s.Companion == "moa"
+                            ? "Moa takes up permanent post on her blanketed feet. Neither of them acknowledges the arrangement. Neither of them ends it."
+                            : "The rain drums on. The fire holds. The census of your kingdom is up one."),
                 },
             });
             script.Add(new StoryScene
@@ -712,6 +717,8 @@ namespace Tidebound.Narrative
             else if (s.Is("EDDA_TENDED")) guests.Add("Edda, down off her mountain for one night, under extreme protest, carried up the last stretch by dignity alone");
             if (s.Is("RYO_MET")) guests.Add("Ryo, who has made something with lime and sugarcane that should be illegal");
             if (s.Companion == "kavi") guests.Add("Kavi, at your side where the world belongs");
+            else if (s.Companion == "buri") guests.Add("Buri, at your side where the world belongs");
+            else if (s.Companion == "moa") guests.Add("Moa, at your side where the world belongs");
             return guests.Count > 0 ? string.Join("; ", guests) : "everyone the season gathered";
         }
     }

@@ -229,6 +229,7 @@ namespace Tidebound.Narrative
         {
             ["kavi"] = "It sees a dog descended from the drowned, grief braided into loyalty and both worn like a working harness — a creature that has spent every night of a hundred keeping watch over the one thing the sea gave him to keep. The seven beats pause. Recount. <i>Accept.</i> Keeper Kavi takes the post the way he took your camp: quietly, entirely, forever. The ridge songs change that very night — the whole pack singing the new covenant down the length of the island — and the island, for the first time in four hundred years, sings something back.",
             ["buri"] = "It sees devotion that never once stopped to ask what it would cost — a warm boulder that walked through a gore-line, a heart that audits the camps at night to be sure everyone is still where he left them. The seven beats pause. Recount. <i>Accept.</i> Keeper Buri does for the island what he did for your acre: everything, twice, with his whole chest — and the old treaties of the inland dark put roots down around him the way a forest roots around a spring.",
+            ["moa"] = "It sees six ounces of copper courage that has never yielded a path in her life — the smallest keeper any mural will ever show, and the murals <i>will</i> show her; you live to watch the Kaari cut the first one. The seven beats pause. Recount. <i>Accept.</i> Keeper Moa stands her watch the way she stood every one of yours: entirely. In the years after, storms are observed — measured, Ryo insists, logged — to go <i>around</i>.",
         };
 
         static (string, string[]) BuildIslandsOwn(GameState s)
@@ -310,6 +311,15 @@ namespace Tidebound.Narrative
                 else if (!leaving)
                     t.Add("— Buri anchors your world like a warm boulder for years upon years, foreman of every project, uncle to every arriving creature, undefeated in the field of enthusiastic destruction. He dies old, in the sun, mid-nap, entirely certain of his welcome everywhere — the only fate he would have accepted.");
             }
+            else if (s.Companion == "moa" && !companionCovered)
+            {
+                if (id == "REMAIN")
+                    t.Add("— Moa stood with you in the treeline while your old life called your name across the water — a small copper hen, holding still because you were holding still, on duty because you were on watch. When the horn faded she looked up at you once, and led the way home, down the path, at the head of the column, as if the choosing had been jointly ratified. As far as she was ever concerned, it had been. You never once told the story without stopping at that part.");
+                else if (leaving && id != "SAIL_BLESSED" && id != "WHOLE_SKY")
+                    t.Add("— Moa you carry to Edda's grove yourself, the night before — the one goodbye you couldn't do at a tideline. The old woman takes the basket without a word, and the small copper hen stands on her wrist facing the sea, and between the two of them your leaving is, at last, permitted.");
+                else if (!leaving)
+                    t.Add("— Moa rules. There is no other verb: the flock she founds owns your acres, her descendants carry her copper and her courage, and she herself lives to a preposterous age, storm-proof to the end, and dies on Edda's old blanket, on duty. You bury the bravest heart you ever met under the good tree, with a full parade.");
+            }
             else if (s.Companion == null && id != "ALONE_UNBROKEN")
                 t.Add("— You did the whole of it alone — the solo route, the hardest road on the island — and the Ledger marks it in the old way: <i>Alone, unbroken.</i>");
             if (s.Is("EDDA_MET") && id != "HERMIT_HEIR" && id != "ISLANDS_OWN")
@@ -344,7 +354,7 @@ namespace Tidebound.Narrative
             if (!s.Is("CONTACT_MADE")) roads.Add("a radio's four-second window opened for no one");
             if (s.Companion != null) roads.Add("five other wild lives waited at a clearing that only ever chose one");
             string tier = s.Trust >= 100 ? "kindred" : s.Trust >= 75 ? "devoted" : s.Trust >= 50 ? "bonded" : s.Trust >= 25 ? "tolerant" : "wary";
-            string companionName = s.Companion == "kavi" ? "Kavi" : s.Companion == "buri" ? "Buri" : s.Companion;
+            string companionName = s.Companion == "kavi" ? "Kavi" : s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion;
             return new List<string>
             {
                 "<i>— THE LEDGER OPENS —</i>",

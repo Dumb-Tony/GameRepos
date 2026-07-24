@@ -607,6 +607,14 @@ namespace Tidebound.Narrative
                     },
                     new StoryChoice
                     {
+                        Label = "The copper hen",
+                        Sub = "Two pounds of terror and refusal. Everything frightens her; nothing stops her.",
+                        When = s => s.Met.TryGetValue("moa", out var m) && m,
+                        Do = s => { s.Companion = "moa"; s.SetFlag("CLEARING_DONE"); },
+                        Go = "court_moa",
+                    },
+                    new StoryChoice
+                    {
                         Label = "No one. You will do this alone.",
                         Sub = "No mouths to feed but yours. No one to lose but yourself. The hardest road, and wholly your own.",
                         Do = s => { s.SetFlag("CLEARING_DONE"); s.SetFlag("SOLO_ROUTE"); s.AddRoute(RouteAxis.Roots, 1); },
@@ -700,6 +708,52 @@ namespace Tidebound.Narrative
                             s.Warm("buri", 1);
                             s.AddRoute(RouteAxis.Roots, 1);
                             s.Stat(Meter.Hope, 6);
+                            CompanionLogic.InitTrust(s);
+                        },
+                        Go = "ch2_open",
+                    },
+                },
+            });
+
+            script.Add(new StoryScene
+            {
+                Id = "court_moa",
+                Speaker = "Moa",
+                Text = s => new List<string>
+                {
+                    "You do it the slow way, the only way: a scatter of grubs a little nearer the camp each time, and yourself — planted, quiet, unthreatening — a little nearer the scatter. All evening the copper hen shuttles between the fern-shadow and the food, wound like a spring, retreating from every noise the island makes.",
+                    "And every time, she comes back. That is the whole of her, you are learning: everything frightens her, and nothing stops her. Terror as a lifestyle. Persistence as a rebuttal.",
+                    (s.Interest.TryGetValue("moa", out var w) && w >= 2
+                        ? "You are the human who ruined a hawk's morning on her behalf, and she has clearly filed that information somewhere behind the bright, frantic eyes. "
+                        : "")
+                    + "At full dark, the decision arrives — hers, entirely. She crosses the last open ground at a fast, affronted trot, hops onto the driftwood at your fire's edge, and settles into a loaf of copper feathers, facing the treeline, exactly one arm's length from your knee.",
+                    "Guarding you, plainly. All two pounds of her. Against the entire night.",
+                    "When the jungle makes its midnight noises she flattens and trembles and does not leave. You watch the smallest, most frightened creature on this beach refuse — and refuse — and refuse — and you think: <i>of all of them, this one might have the most to teach you about surviving here.</i>",
+                },
+                Choices = new List<StoryChoice>
+                {
+                    new StoryChoice
+                    {
+                        Label = "\"Moa.\" An old word for a bird too stubborn for its own story.",
+                        Sub = "It suits her.",
+                        Do = s =>
+                        {
+                            s.Warm("moa", 2);
+                            s.Stat(Meter.Hope, 6);
+                            s.SetFlag("MOA_NAMED");
+                            CompanionLogic.InitTrust(s);
+                        },
+                        Go = "ch2_open",
+                    },
+                    new StoryChoice
+                    {
+                        Label = "Slide one more grub across the driftwood. Words later.",
+                        Sub = "The vocabulary you share is food and staying.",
+                        Do = s =>
+                        {
+                            s.Warm("moa", 1);
+                            s.Stat(Meter.Hunger, -2);
+                            s.Stat(Meter.Hope, 5);
                             CompanionLogic.InitTrust(s);
                         },
                         Go = "ch2_open",

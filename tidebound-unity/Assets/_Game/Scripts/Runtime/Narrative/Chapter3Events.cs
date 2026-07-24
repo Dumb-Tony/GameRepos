@@ -313,7 +313,9 @@ namespace Tidebound.Narrative
                     "Thirteen nights you have slept against that slow glow, seven beats, rising and falling, reliable as your own pulse. Tonight, once — you'd testify to it — the whole bay went dark on the sixth beat, held its breath for a count that felt like the island listening, and resumed.",
                     s.Companion == "kavi"
                         ? "Kavi is sitting bolt upright beside you, ears full forward — at the water. Not the treeline. The <i>water</i>."
-                        : "Nothing else stirs. The reef breathes. The palms tick. Whatever counted that pause, it wasn't counting for your benefit.",
+                        : s.Companion == "moa"
+                            ? "Moa is awake in her box, utterly silent, feathers slicked flat — and facing the lagoon, which she has never once considered worth her professional attention before."
+                            : "Nothing else stirs. The reef breathes. The palms tick. Whatever counted that pause, it wasn't counting for your benefit.",
                 },
             });
         }
@@ -324,7 +326,7 @@ namespace Tidebound.Narrative
             script.Add(new StoryScene
             {
                 Id = "ev3_heart2",
-                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : "Kavi",
+                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : "Kavi",
                 OnEnter = s =>
                 {
                     if (s.Is("HEART2_DONE")) return;
@@ -332,19 +334,29 @@ namespace Tidebound.Narrative
                     s.Bond(10);
                     s.Stat(Meter.Hope, 8);
                 },
-                Text = s => s.Companion == "buri"
-                    ? new List<string>
-                    {
-                        "On the fourteenth day you finally understand what Buri does at dusk when he vanishes toward the treeline: he walks the perimeter. Your perimeter. All of it — beach line, water path, forage trail — nose down, unhurried, thorough as a nightwatchman, before galloping back to collapse into your fire's light.",
-                        "Tonight you follow, and at the treeline you find his work: every fence-gap rubbed with his scent, every approach marked, the whole map of your small kingdom re-signed, nightly, in the only ink the inland dark respects: <i>occupied. Defended. His.</i>",
-                        "He finds you watching and grins his whole pig grin, tail going, absurd and mighty. You walk the last of the rounds together, landlord and enforcer, and the night makes way.",
-                    }
-                    : new List<string>
+                Text = s =>
+                {
+                    if (s.Companion == "buri")
+                        return new List<string>
+                        {
+                            "On the fourteenth day you finally understand what Buri does at dusk when he vanishes toward the treeline: he walks the perimeter. Your perimeter. All of it — beach line, water path, forage trail — nose down, unhurried, thorough as a nightwatchman, before galloping back to collapse into your fire's light.",
+                            "Tonight you follow, and at the treeline you find his work: every fence-gap rubbed with his scent, every approach marked, the whole map of your small kingdom re-signed, nightly, in the only ink the inland dark respects: <i>occupied. Defended. His.</i>",
+                            "He finds you watching and grins his whole pig grin, tail going, absurd and mighty. You walk the last of the rounds together, landlord and enforcer, and the night makes way.",
+                        };
+                    if (s.Companion == "moa")
+                        return new List<string>
+                        {
+                            "On the fourteenth night a sound comes off the treeline — a real one, heavy, close, wrong — and before your hand finds the spear, before courage could be expected from anything that ought to have the size for it, two pounds of copper feathers has planted itself between you and the dark, wings mantled to twice her size, screaming defiance in a voice to strip paint.",
+                            "The sound retreats. Whatever it was weighed a hundred times what she does, and it retreated, from her, because retreat was simpler than whatever she was promising.",
+                            "She stands guard, quivering, magnificent, until you gather her in — heart hammering against your palm like a fast little engine — and she scolds you, at length, for the disorderly state of your defenses. You accept the review in full. Brave feather. Bravest on the island.",
+                        };
+                    return new List<string>
                     {
                         "On the fourteenth night the pack sings inland, the old ragged chorus, and you feel Kavi lift his head against your knee the way he does — and then, for the first time in your acquaintance, he answers.",
                         "He sings from beside your fire — long, rough, unpracticed, a voice with two springs of rust in it — and the inland chorus stumbles, recalibrates around the new bearing, and answers back. He sings his position. He sings it from <i>here</i>.",
                         "When it's done he looks at you, embarrassed as a dog can be, and thumps his tail once. You have just been declared, to the entire island, in the only language that ever mattered to him.",
-                    },
+                    };
+                },
             });
             script.Add(new StoryScene
             {
@@ -718,7 +730,9 @@ namespace Tidebound.Narrative
                         ? "Then her eyes find Kavi, sitting grave and grey at the fence line, and she nods once, dog to woman, woman to dog, two watchful professionals recognizing each other. \"The pariah,\" she says. \"The pack put him out two springs back. He chose better this time.\""
                         : s.Companion == "buri"
                             ? "Then her eyes find Buri, asleep against your leg, and she snorts. \"The tide brings me a castaway with a <i>pig</i>. Fatten it through monsoon and it'll winter you better than a smokehouse.\" You decide not to translate for Buri."
-                            : "She studies you a while, alone as you are, and something like approval crosses the old face. \"No pets, no partners, no nonsense. You'll either die quick or do well. I've seen both.\"");
+                            : s.Companion == "moa"
+                                ? "Then her eyes find Moa, riding your basket like copper cargo, and something happens to the old face that it clearly wasn't warned about — a softening, quickly arrested. \"…You keep fowl,\" she says, in an entirely different voice, and pours Moa a saucer of water like it's nothing at all."
+                                : "She studies you a while, alone as you are, and something like approval crosses the old face. \"No pets, no partners, no nonsense. You'll either die quick or do well. I've seen both.\"");
                     return t;
                 },
                 Choices = new List<StoryChoice>

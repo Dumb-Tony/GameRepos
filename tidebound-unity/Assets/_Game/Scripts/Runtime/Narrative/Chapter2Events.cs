@@ -520,7 +520,7 @@ namespace Tidebound.Narrative
             script.Add(new StoryScene
             {
                 Id = "ev2_heart",
-                Speaker = "Kavi",
+                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : "Kavi",
                 OnEnter = s =>
                 {
                     if (s.Is("HEART1_DONE")) return;
@@ -528,11 +528,28 @@ namespace Tidebound.Narrative
                     s.Bond(10);
                     s.Stat(Meter.Hope, 8);
                 },
-                Text = _ => new List<string>
+                Text = s =>
                 {
-                    "It happens on the fifteenth morning, without announcement: Kavi crosses the camp, lies down against your leg, and rolls — deliberately, watching your face — to bare the burned flank. The scar tissue is slick and hairless, older than your acquaintance, shaped like a long paw of flame.",
-                    "You rest your hand on it, light as you know how. He exhales — a long, unbuilding breath, years going out of it — and sleeps, there, under the hand on his worst place.",
-                    "Whatever cast him out and whatever burned him, he has decided you are not it.",
+                    if (s.Companion == "buri")
+                        return new List<string>
+                        {
+                            "On the fifteenth morning Buri is missing at breakfast — until you follow the sound of industrious ruin and find him at the treeline, digging like a machine, and beside the crater a mound of truffles the size of your two hands.",
+                            "He has been at it since first light. When you arrive he steps back from the mound and looks up at you, filthy, beaming, and it is unmistakably a <i>presentation</i>: for the crab you shared, for the rack he cost you, for every meal since. Restitution, pig-style, with interest.",
+                            "You eat one raw right there, and his tail helicopter is the happiest thing on the island.",
+                        };
+                    if (s.Companion == "moa")
+                        return new List<string>
+                        {
+                            "On the fifteenth morning you sit down by the fire and Moa, without ceremony, steps into your lap, turns twice, and folds herself down like a small copper cat. And sleeps. In daylight. In the open.",
+                            "You know what daylight sleep costs a prey animal — she has spent every hour of her life on watch, and she is spending this one <i>off duty, on you</i>, because somewhere in her fast small heart it has been settled that you watch well enough for two.",
+                            "You sit unmoving until your legs die of pins, and consider it the best lease you've ever signed.",
+                        };
+                    return new List<string>
+                    {
+                        "It happens on the fifteenth morning, without announcement: Kavi crosses the camp, lies down against your leg, and rolls — deliberately, watching your face — to bare the burned flank. The scar tissue is slick and hairless, older than your acquaintance, shaped like a long paw of flame.",
+                        "You rest your hand on it, light as you know how. He exhales — a long, unbuilding breath, years going out of it — and sleeps, there, under the hand on his worst place.",
+                        "Whatever cast him out and whatever burned him, he has decided you are not it.",
+                    };
                 },
             });
             script.Add(new StoryScene
@@ -544,9 +561,9 @@ namespace Tidebound.Narrative
                     s.SetFlag("HEART1_LOW");
                     s.Bond(3);
                 },
-                Text = _ => new List<string>
+                Text = s => new List<string>
                 {
-                    "On the fifteenth morning you catch the grey dog watching you from the old first distance — the day-three distance — and you feel the gap you haven't closed.",
+                    "On the fifteenth morning you catch " + (s.Companion == "buri" ? "the young pig" : s.Companion == "moa" ? "the copper hen" : "the grey dog") + " watching you from the old first distance — the day-three distance — and you feel the gap you haven't closed.",
                     "Trust, out here, is the most expensive thing you can build, and you've been spending your hours on walls and stores and smoke instead. Fair choices. Survivable choices. But the wild keeps honest books: you get exactly the bond you feed.",
                     "There is still time. There is not unlimited time.",
                 },

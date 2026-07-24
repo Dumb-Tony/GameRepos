@@ -64,7 +64,9 @@ namespace Tidebound.Narrative
                             ? "Kavi reads the pack you're loading and takes up position by the trailhead: coming. That was never going to be a discussion."
                             : s.Companion == "buri"
                                 ? "Buri reads the pack you're loading and plants himself at the trailhead like a boulder that has decided to be luggage: coming. That was never going to be a discussion."
-                                : "You bank the fire, square Coco on his shelf facing the mountain — someone should keep an eye on camp — and shoulder the pack alone.",
+                                : s.Companion == "moa"
+                                    ? "Moa inspects the pack you're loading, executes one full circuit of it, and takes up position on top: coming. That was never going to be a discussion."
+                                    : "You bank the fire, square Coco on his shelf facing the mountain — someone should keep an eye on camp — and shoulder the pack alone.",
                     };
                     if (s.Is("RYO_MET"))
                         t.Add("Ryo talks himself out of coming at his own boat's gunwale: \"Mountains,\" he says, with a sailor's full contempt for gradients, \"are just waves that gave up. Somebody has to mind the sea things. Come back with a good story.\" His handshake says the rest of it.");
@@ -115,7 +117,9 @@ namespace Tidebound.Narrative
                         ? "Kavi climbs the stair the way he entered your camp two months ago: committed and hating it. This is not his country — no cover, no scent-map, stone underfoot instead of honest ground — and he does it anyway, one flight below you or one above, triangulating the whole climb around the fixed point of your back."
                         : s.Companion == "buri"
                             ? "Buri takes the ten thousand stairs as a personal enemy and defeats them one by one, with commentary. By the top of the fourth flight he has opinions about the Kaari's attitude to ramps."
-                            : "You climb alone, and the stair does what enormous old things do to a person alone: it makes room for you. By the fortieth flight the rhythm of your boots on the spoon-worn stone is a kind of company in itself — yours, and everyone's who ever wore the stone into spoons.",
+                            : s.Companion == "moa"
+                                ? "Moa marches the stairs. All of them. Offered the pack-top perch she declines it with one affronted feather-shake and takes each tread on her own two feet, a small copper sergeant reviewing ten thousand parade grounds, muttering at the state of the weeds between the stones."
+                                : "You climb alone, and the stair does what enormous old things do to a person alone: it makes room for you. By the fortieth flight the rhythm of your boots on the spoon-worn stone is a kind of company in itself — yours, and everyone's who ever wore the stone into spoons.",
                     "You camp the first night on a terrace lip under the washed stars, the stair vanishing up into the dark above like an argument the mountain hasn't finished making.",
                 },
                 Next = "ch6_temple",
@@ -143,7 +147,9 @@ namespace Tidebound.Narrative
                         ? "Kavi will not enter the nave. He stops at the threshold stone, sits — the deliberate, formal sit he does at boundaries — and holds the door the whole time you're inside, facing out. Whatever this place is, his manners for it are older than training, older than packs: <i>you do not walk on graves. You watch over the ones who must.</i>"
                         : s.Companion == "buri"
                             ? "Buri stops dead at the nave's mouth, nose working the air with a thoroughness you know from boundary-stones and storm-mornings — and then he does the thing that makes your breath catch: he kneels. Forelegs folding, great head lowering, the way pigs fold to rest but slower, aimed, at the water. You stopped laughing at the old carved travel-charm weeks ago. His people have been coming here longer than yours."
-                            : "You do not touch the water. Not yet. Some doors you knock on from a respectful distance first.",
+                            : s.Companion == "moa"
+                                ? "The nave's acoustics take the sea-boom of the pool and roll it around the stone like weather — storm-sound, everywhere, constant. Moa flattens once, feathers slicked… and then, deliberately, in the little sergeant's march she does when she has decided something is HERS to patrol, she walks the whole rim of the sounding nave at your side without breaking. Brave feather. All the way to the top of the world."
+                                : "You do not touch the water. Not yet. Some doors you knock on from a respectful distance first.",
                 },
                 Choices = new List<StoryChoice>
                 {
@@ -196,7 +202,9 @@ namespace Tidebound.Narrative
                         ? "Kavi knows first — a full minute first: he stops mid-stride, drops his head below his shoulders, and braces all four feet against ground that hasn't moved yet. Then the birds go up, every wing on the mountainside at once—"
                         : s.Companion == "buri"
                             ? "Buri knows first — a full minute first: he plants himself broadside across the trail ahead of you, an immovable roadblock with his snout to the stone, reading the mountain through his feet. Then the birds go up, every wing at once—"
-                            : "The birds know first: every wing on the mountainside goes up at once, a rattling sheet of them against the blue—",
+                            : s.Companion == "moa"
+                                ? "Moa knows first — a full minute first: she goes rigid on your pack, issues one flat mechanical note you have never heard from her, and every bird on the mountainside goes up at once like thrown grain—"
+                                : "The birds know first: every wing on the mountainside goes up at once, a rattling sheet of them against the blue—",
                     "Then the ground shrugs. Not violently — a long, muscular roll, like something enormous turning over in shallow sleep — but it goes ON, seven, eight, nine seconds, while the stair's ancient stones grate and settle and a slab of cliff lets go somewhere across the valley with a boom like the E-wing door.",
                     "Then stillness. Then, distinctly, twenty minutes later: again, smaller. And in the evening: again.",
                     "A ladder of tremors, climbing." + (s.Is("WOUND_SEEN")
@@ -251,7 +259,9 @@ namespace Tidebound.Narrative
                             ? "The night on bedrock is long, and Kavi stands the whole of it — not sleeping, not pacing, just standing at the camp's uphill edge with his back to the fire, a grey wall between you and the mountain's bad mood. Twice the ground murmurs. Twice, without turning, he leans his weight back against your legs: <i>still here. Still held.</i>"
                             : s.Companion == "buri"
                                 ? "Buri arranges himself uphill of your bedroll on the bare stone — windbreak, avalanche-break, two hundred pounds of deliberate placement — and sleeps in shifts you can hear change. When the ground murmurs after midnight he answers it: one low note through the stone under you, less a sound than a fact. The mountain has opinions. So does he."
-                                : "The night on bedrock is the loneliest of the climb: no treeline, no surf, just you, a small fire guttering in thin air, and a mountain turning over in its sleep. Twice the ground murmurs and you sit up alone in the enormous dark — and find, both times, that what steadies you is the list itself: the fires built, the tolls paid, the hundred days of proof that you are harder to shake than ground.",
+                                : s.Companion == "moa"
+                                    ? "Moa stands the bedrock night on your chest, facing uphill, a half-pound sentry against a volcano. It should be funny. Somewhere past midnight, when the ground murmurs and her feet grip and she does not so much as flinch, it stops being funny and becomes the bravest thing you have ever slept beneath."
+                                    : "The night on bedrock is the loneliest of the climb: no treeline, no surf, just you, a small fire guttering in thin air, and a mountain turning over in its sleep. Twice the ground murmurs and you sit up alone in the enormous dark — and find, both times, that what steadies you is the list itself: the fires built, the tolls paid, the hundred days of proof that you are harder to shake than ground.",
                         "The broken crown takes the last morning: a scramble up ash-slopes and rope-worn chimneys to the rim itself — and then the world ends, and starts over.",
                         "The caldera opens under you like a secret the size of a valley: two miles across, ringed in shattered crown-rock — and <i>green</i>. Not jungle-green: <i>garden</i>-green. Terraces, orchards, roofs of woven living trees, threads of smoke rising straight in the sheltered air, water gleaming in channels that run — you follow them with your eye and your breath goes — in spirals. A town. A living town, in the wound of the mountain, invisible to every chart, every plane, every year of the world since the seventeenth century.",
                         "The Inner Green. They went in. <i>They stayed in.</i>",
@@ -268,7 +278,9 @@ namespace Tidebound.Narrative
                                 ? " And last, longest: \"…and the grey dog, who chose you, and stayed. The island speaks through its lives, castaway. That one's testimony outweighs the rest of this list.\""
                                 : s.Companion == "buri"
                                     ? " And last, longest: \"…and the young tusker, who chose you, and stayed. The island speaks through its lives, castaway. That one's testimony outweighs the rest of this list.\""
-                                    : ""));
+                                    : s.Companion == "moa"
+                                        ? " And last, longest: \"…and the small brave hen, who chose you, and stayed. The island speaks through its lives, castaway. That one's testimony outweighs the rest of this list.\""
+                                        : ""));
                         t.Add("He lowers the staff. Behind him, Naia is not breathing. \"Come down,\" Tekau says simply, and turns. \"Guests eat first. It is a rule older than the mountain's temper.\"");
                         t.Add("You walk down into the Inner Green as the first outsider in three hundred and something years, and the town watches you pass with eyes like held questions — and children, at the edges, whose curiosity has already escaped custody entirely.");
                     }

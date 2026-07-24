@@ -139,11 +139,47 @@ namespace Tidebound
             },
         };
 
+        // ---- scenes-chapter2.js TIER_LINE.moa, verbatim ----------------------
+        static readonly string[][] MoaVignettes =
+        {
+            new[]
+            {
+                "Moa observes camp from the fringe, wound like a spring.",
+                "Moa has established a forward post on the big driftwood log — close enough to study you, far enough to disavow the whole arrangement if questioned.",
+                "A junglefowl skirmish erupted at the tree line this morning and Moa returned from it with one feather askew and the unmistakable air of a won argument.",
+            },
+            new[]
+            {
+                "Moa dust-bathes by the fire ring and scolds the wind.",
+                "Moa has begun reporting to you — a low running commentary as she patrols, delivered whether or not you're listening. You are being briefed. Attendance is assumed.",
+                "Moa found the shiny tin lid you lost. She stood by it, announcing, until you came. She does not fetch. She <i>locates</i>. Fetching is for dogs.",
+            },
+            new[]
+            {
+                "Moa sleeps on the driftwood by your knee, facing the dark.",
+                "A hawk's shadow crossed camp at noon and Moa hit full alarm — wings out, voice like a whistle drill — putting the entire beach on notice. The hawk moved on. She logged it as a rout.",
+                "Moa inspects your work over your shoulder now, head cocked, one bright eye at a time. When she mutters approval, you notice you sit straighter. Her methods work.",
+            },
+            new[]
+            {
+                "Moa walks the camp perimeter at dusk like a tiny sergeant.",
+                "Moa has instituted a curfew. You don't know its exact terms, but when you're out past it she comes and gets you — marching ahead of you back to camp, muttering about castaways who wander.",
+                "Moa stood her watch through the whole grey afternoon on the highest stone, feathers doubled against the wind, relieving herself of duty only when you banked the fire. Somewhere, an army misses her.",
+            },
+            new[]
+            {
+                "Moa has decided you are her flock, and guards you accordingly.",
+                "You woke before dawn to Moa on your chest, fast asleep, facing the door. At some point in the night the last perimeter contracted to this: you, personally, held.",
+                "Moa's morning report has changed tone lately — shorter, softer, delivered from your knee instead of the log. The sergeant, off duty. Just a small copper hen who chose her person.",
+            },
+        };
+
         static readonly Dictionary<string, string[][]> VignettesByCompanion =
             new Dictionary<string, string[][]>
             {
                 ["kavi"] = KaviVignettes,
                 ["buri"] = BuriVignettes,
+                ["moa"] = MoaVignettes,
             };
 
         public static IReadOnlyList<string> VignettesFor(TrustTier tier) => KaviVignettes[(int)tier];
