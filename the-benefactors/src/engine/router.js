@@ -5,6 +5,7 @@ const VALID_ROUTES = new Set([
   "location",
   "map",
   "laptop",
+  "board",
   "settings",
 ]);
 

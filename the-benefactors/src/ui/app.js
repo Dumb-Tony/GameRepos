@@ -1,6 +1,7 @@
 import {
   EVIDENCE,
   DIALOGUES,
+  DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
 } from "../content/game-content.js";
@@ -15,6 +16,13 @@ import {
   getDialogueNode,
   startDialogue,
 } from "../systems/dialogue/dialogue-engine.js";
+import {
+  connectEvidence,
+  evaluateBoardDeductions,
+  moveEvidence,
+  pinEvidence,
+  removeConnection,
+} from "../systems/evidence-board/evidence-board.js";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -42,6 +50,9 @@ export class GameApp {
     this.activeOfficeNote = null;
     this.activeLocationNote = null;
     this.inventoryOpen = false;
+    this.selectedBoardCard = null;
+    this.boardConnectionType = "confirmed";
+    this.boardWasDragged = false;
   }
 
   start() {
@@ -52,7 +63,7 @@ export class GameApp {
 
   render(route) {
     if (
-      ["home", "location", "map", "laptop"].includes(route) &&
+      ["home", "location", "map", "laptop", "board"].includes(route) &&
       this.store.getState().progress.currentScreen !== route
     ) {
       this.store.update((draft) => {
@@ -68,6 +79,7 @@ export class GameApp {
       location: () => this.renderLocation(),
       map: () => this.renderMap(),
       laptop: () => this.renderLaptop(),
+      board: () => this.renderBoard(),
       settings: () => this.renderSettings(),
     };
 
@@ -237,6 +249,7 @@ export class GameApp {
             <strong>${playerName}</strong>
           </div>
           <div class="toolbar-actions">
+            <button class="tool-button" data-action="board">Evidence board</button>
             <button class="tool-button" data-action="map">City map</button>
             <button class="tool-button" data-action="inventory">Inventory</button>
             <button class="tool-button" data-action="save">Save</button>
@@ -265,6 +278,7 @@ export class GameApp {
 
     this.bindActions({
       map: () => this.router.navigate("map"),
+      board: () => this.router.navigate("board"),
       inventory: () => {
         this.inventoryOpen = !this.inventoryOpen;
         this.renderHome();
@@ -560,6 +574,250 @@ export class GameApp {
     });
   }
 
+  renderBoard() {
+    const state = this.store.getState();
+    const pinned = state.evidence.pinned
+      .map((id) => EVIDENCE[id])
+      .filter(Boolean);
+    const unpinned = state.evidence.collected
+      .filter((id) => !state.evidence.pinned.includes(id))
+      .map((id) => EVIDENCE[id])
+      .filter(Boolean);
+
+    this.root.innerHTML = `
+      <main id="game-main" class="screen game-screen board-screen">
+        ${this.renderGameHeader(GAME_CONTENT.chapter, "Evidence board")}
+        <section class="board-workspace">
+          <div class="corkboard" id="evidence-corkboard" aria-label="Interactive evidence board">
+            <svg class="yarn-layer" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              ${state.board.connections
+                .map((connection) => {
+                  const a = state.board.cards[connection.a];
+                  const b = state.board.cards[connection.b];
+                  if (!a || !b) return "";
+                  return `<line class="yarn yarn-${connection.type}" x1="${a.x + 7}" y1="${a.y + 10}" x2="${b.x + 7}" y2="${b.y + 10}" />`;
+                })
+                .join("")}
+            </svg>
+            <div class="board-case-label">
+              <span>ACTIVE CASE 01</span>
+              <strong>VALE / MUNICIPAL ACCESSIBILITY FUND</strong>
+            </div>
+            ${
+              pinned.length
+                ? pinned
+                    .map((item) => {
+                      const position = state.board.cards[item.id] || { x: 10, y: 10 };
+                      const selected = this.selectedBoardCard === item.id;
+                      return `
+                        <button
+                          class="evidence-card ${selected ? "is-selected" : ""}"
+                          style="left:${position.x}%;top:${position.y}%"
+                          data-board-card="${item.id}"
+                          aria-pressed="${selected}"
+                        >
+                          <span class="evidence-pin" aria-hidden="true"></span>
+                          <span class="evidence-category">${escapeHtml(item.category)}</span>
+                          <strong>${escapeHtml(item.title)}</strong>
+                          <small>${escapeHtml(item.summary)}</small>
+                        </button>
+                      `;
+                    })
+                    .join("")
+                : `
+                  <div class="empty-board">
+                    <strong>The board is waiting.</strong>
+                    <span>Open the anonymous email and add its attachments to the case file.</span>
+                  </div>
+                `
+            }
+          </div>
+          <aside class="board-sidebar">
+            <p class="kicker">Casework</p>
+            <h1 tabindex="-1">Connections</h1>
+            <p class="board-help">
+              Pin evidence, choose a yarn meaning, then select two cards. Drag cards or use
+              the arrow keys to arrange the case.
+            </p>
+            <div class="relationship-picker" role="group" aria-label="Yarn relationship">
+              ${[
+                ["confirmed", "Red", "Confirmed connection"],
+                ["financial", "Blue", "Financial relationship"],
+                ["suspicion", "Yellow", "Suspicion"],
+                ["contradiction", "White", "Contradiction"],
+              ]
+                .map(
+                  ([type, color, label]) => `
+                    <button
+                      class="relationship relationship-${type} ${this.boardConnectionType === type ? "is-active" : ""}"
+                      data-relationship="${type}"
+                      title="${label}"
+                    ><i aria-hidden="true"></i><span>${color}</span></button>
+                  `,
+                )
+                .join("")}
+            </div>
+            <section class="evidence-tray">
+              <p class="kicker">Evidence tray · ${unpinned.length}</p>
+              ${
+                unpinned.length
+                  ? unpinned
+                      .map(
+                        (item) => `
+                          <button class="tray-item" data-pin-evidence="${item.id}">
+                            <span>＋</span>
+                            <strong>${escapeHtml(item.title)}</strong>
+                          </button>
+                        `,
+                      )
+                      .join("")
+                  : "<p class=\"tray-empty\">No unpinned evidence.</p>"
+              }
+            </section>
+            <section class="connection-list">
+              <p class="kicker">Yarn · ${state.board.connections.length}</p>
+              ${
+                state.board.connections.length
+                  ? state.board.connections
+                      .map(
+                        (connection, index) => `
+                          <div class="connection-row">
+                            <span>${escapeHtml(EVIDENCE[connection.a]?.title || connection.a)} ↔ ${escapeHtml(EVIDENCE[connection.b]?.title || connection.b)}</span>
+                            <button data-remove-connection="${index}" aria-label="Remove connection">×</button>
+                          </div>
+                        `,
+                      )
+                      .join("")
+                  : "<p class=\"tray-empty\">Select two cards to connect them.</p>"
+              }
+            </section>
+            <section class="deduction-list">
+              <p class="kicker">Deductions · ${state.completedDeductions.length}</p>
+              ${
+                state.completedDeductions.length
+                  ? state.completedDeductions
+                      .map(
+                        (id) => `
+                          <article>
+                            <strong>${escapeHtml(DEDUCTIONS[id]?.title || id)}</strong>
+                            <p>${escapeHtml(DEDUCTIONS[id]?.journalText || "")}</p>
+                          </article>
+                        `,
+                      )
+                      .join("")
+                  : "<p class=\"tray-empty\">No theory is proven yet.</p>"
+              }
+            </section>
+          </aside>
+        </section>
+        <footer class="game-toolbar">
+          <div><span class="toolbar-label">Home office</span><strong>Evidence board</strong></div>
+          <div class="toolbar-actions">
+            <button class="tool-button" data-action="home">Step back</button>
+            <button class="tool-button" data-action="map">City map</button>
+            <button class="tool-button" data-action="save">Save</button>
+          </div>
+        </footer>
+        ${this.renderToast()}
+      </main>
+    `;
+
+    this.root.querySelectorAll("[data-pin-evidence]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const next = pinEvidence(this.store.getState(), button.dataset.pinEvidence);
+        this.store.replace(next, "pin-evidence");
+        this.saves.save(this.store.getState(), "pin-evidence");
+        this.renderBoard();
+      });
+    });
+
+    this.root.querySelectorAll("[data-relationship]").forEach((button) => {
+      button.addEventListener("click", () => {
+        this.boardConnectionType = button.dataset.relationship;
+        this.renderBoard();
+      });
+    });
+
+    this.root.querySelectorAll("[data-board-card]").forEach((card) => {
+      card.addEventListener("click", () => {
+        if (this.boardWasDragged) {
+          this.boardWasDragged = false;
+          return;
+        }
+        const id = card.dataset.boardCard;
+        if (!this.selectedBoardCard) {
+          this.selectedBoardCard = id;
+          this.renderBoard();
+          return;
+        }
+        if (this.selectedBoardCard === id) {
+          this.selectedBoardCard = null;
+          this.renderBoard();
+          return;
+        }
+
+        let next = connectEvidence(
+          this.store.getState(),
+          this.selectedBoardCard,
+          id,
+          this.boardConnectionType,
+        );
+        const result = evaluateBoardDeductions(next, DEDUCTIONS);
+        next = result.state;
+        this.store.replace(next, "connect-evidence");
+        this.saves.save(this.store.getState(), "connect-evidence");
+        this.selectedBoardCard = null;
+        this.notice = result.newlyCompleted.length
+          ? `Deduction: ${result.newlyCompleted[0].title}`
+          : "Evidence connected.";
+        this.renderBoard();
+      });
+
+      card.addEventListener("keydown", (event) => {
+        const direction = {
+          ArrowLeft: [-2, 0],
+          ArrowRight: [2, 0],
+          ArrowUp: [0, -2],
+          ArrowDown: [0, 2],
+        }[event.key];
+        if (!direction) return;
+        event.preventDefault();
+        const current = this.store.getState().board.cards[card.dataset.boardCard];
+        const next = moveEvidence(this.store.getState(), card.dataset.boardCard, {
+          x: current.x + direction[0],
+          y: current.y + direction[1],
+        });
+        this.store.replace(next, "move-evidence");
+        this.saves.save(this.store.getState(), "move-evidence");
+        this.renderBoard();
+        this.root.querySelector(`[data-board-card="${card.dataset.boardCard}"]`)?.focus();
+      });
+    });
+
+    this.bindBoardDrag();
+
+    this.root.querySelectorAll("[data-remove-connection]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const connection =
+          this.store.getState().board.connections[Number(button.dataset.removeConnection)];
+        const next = removeConnection(
+          this.store.getState(),
+          connection.a,
+          connection.b,
+        );
+        this.store.replace(next, "remove-connection");
+        this.saves.save(this.store.getState(), "remove-connection");
+        this.renderBoard();
+      });
+    });
+
+    this.bindActions({
+      home: () => this.router.navigate("home"),
+      map: () => this.router.navigate("map"),
+      save: () => this.manualSave(),
+    });
+  }
+
   renderSettings() {
     const state = this.store.getState();
     const settings = state.settings;
@@ -766,6 +1024,55 @@ export class GameApp {
         this.store.replace(next, `dialogue-choice-${choice.id}`);
         this.saves.save(this.store.getState(), `dialogue-choice-${choice.id}`);
         this.renderLocation();
+      });
+    });
+  }
+
+  bindBoardDrag() {
+    const board = this.root.querySelector("#evidence-corkboard");
+    if (!board) return;
+
+    this.root.querySelectorAll("[data-board-card]").forEach((card) => {
+      let start = null;
+
+      card.addEventListener("pointerdown", (event) => {
+        if (event.button !== 0) return;
+        const position = this.store.getState().board.cards[card.dataset.boardCard];
+        start = {
+          pointerX: event.clientX,
+          pointerY: event.clientY,
+          cardX: position.x,
+          cardY: position.y,
+        };
+        card.setPointerCapture(event.pointerId);
+      });
+
+      card.addEventListener("pointermove", (event) => {
+        if (!start) return;
+        const rect = board.getBoundingClientRect();
+        const dx = ((event.clientX - start.pointerX) / rect.width) * 100;
+        const dy = ((event.clientY - start.pointerY) / rect.height) * 100;
+        if (Math.abs(dx) + Math.abs(dy) < 0.6) return;
+        this.boardWasDragged = true;
+        card.style.left = `${Math.max(0, Math.min(86, start.cardX + dx))}%`;
+        card.style.top = `${Math.max(0, Math.min(78, start.cardY + dy))}%`;
+      });
+
+      card.addEventListener("pointerup", (event) => {
+        if (!start) return;
+        const rect = board.getBoundingClientRect();
+        const dx = ((event.clientX - start.pointerX) / rect.width) * 100;
+        const dy = ((event.clientY - start.pointerY) / rect.height) * 100;
+        if (this.boardWasDragged) {
+          const next = moveEvidence(this.store.getState(), card.dataset.boardCard, {
+            x: start.cardX + dx,
+            y: start.cardY + dy,
+          });
+          this.store.replace(next, "drag-evidence");
+          this.saves.save(this.store.getState(), "drag-evidence");
+          this.renderBoard();
+        }
+        start = null;
       });
     });
   }

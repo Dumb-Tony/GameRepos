@@ -1,4 +1,10 @@
-export function validateGameContent({ content, evidence, inventory, dialogues = {} }) {
+export function validateGameContent({
+  content,
+  evidence,
+  inventory,
+  dialogues = {},
+  deductions = {},
+}) {
   const errors = [];
   const locationIds = new Set(Object.keys(content.locations));
   const evidenceIds = new Set(Object.keys(evidence));
@@ -81,6 +87,30 @@ export function validateGameContent({ content, evidence, inventory, dialogues = 
         if (choice.evidenceId && !evidenceIds.has(choice.evidenceId)) {
           errors.push(
             `Dialogue "${dialogueId}" choice "${choice.id}" references missing evidence "${choice.evidenceId}".`,
+          );
+        }
+      }
+    }
+  }
+
+  for (const [deductionId, deduction] of Object.entries(deductions)) {
+    if (deduction.id !== deductionId) {
+      errors.push(
+        `Deduction key "${deductionId}" does not match id "${deduction.id}".`,
+      );
+    }
+    for (const evidenceId of deduction.requiredEvidence || []) {
+      if (!evidenceIds.has(evidenceId)) {
+        errors.push(
+          `Deduction "${deductionId}" references missing evidence "${evidenceId}".`,
+        );
+      }
+    }
+    for (const connection of deduction.requiredConnections || []) {
+      for (const evidenceId of [connection.a, connection.b]) {
+        if (!evidenceIds.has(evidenceId)) {
+          errors.push(
+            `Deduction "${deductionId}" connection references missing evidence "${evidenceId}".`,
           );
         }
       }

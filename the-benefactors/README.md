@@ -36,7 +36,15 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Lionel Price records-room conversation
 - June Bell witness conversation
 
-The evidence board and the rest of the playable prologue are built in later milestones.
+**Milestone 3 — Evidence board (started)**
+
+- Persistent evidence cards and positions
+- Mouse dragging and keyboard card movement
+- Red, blue, yellow, and white yarn relationships
+- Data-defined deduction recipes
+- Two initial deductions tied to the invoice, permit, and witness statement
+
+The full theory sequence and the rest of the playable prologue are built in later milestones.
 
 ## Run locally
 

@@ -183,6 +183,43 @@ export const DIALOGUES = Object.freeze({
   },
 });
 
+export const DEDUCTIONS = Object.freeze({
+  northstar_payment: {
+    id: "northstar_payment",
+    title: "The payment and permit describe the same job",
+    journalText:
+      "The city permit and Northstar’s invoice point to the same west-wing project—but Northstar’s existence is still unverified.",
+    requiredEvidence: ["invoice_northstar", "permit_summary"],
+    requiredConnections: [
+      {
+        a: "invoice_northstar",
+        b: "permit_summary",
+        type: "financial",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "connectedInvoiceToPermit", value: true },
+    ],
+  },
+  witness_contradiction: {
+    id: "witness_contradiction",
+    title: "The declared construction never happened",
+    journalText:
+      "June saw equipment delivered, but no west wing was built. The money purchased something hidden at the property.",
+    requiredEvidence: ["permit_summary", "june_statement"],
+    requiredConnections: [
+      {
+        a: "permit_summary",
+        b: "june_statement",
+        type: "contradiction",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "suspectsHiddenConstruction", value: true },
+    ],
+  },
+});
+
 export const GAME_CONTENT = Object.freeze({
   title: "The Benefactors",
   subtitle: "Every good lie leaves paperwork.",
@@ -361,6 +398,7 @@ export const GAME_CONTENT = Object.freeze({
       className: "hotspot-board",
       title: "Nothing connected. Yet.",
       text: "A clean corkboard is an optimistic thing. Soon it will hold names, receipts, photographs, and decisions you cannot take back.",
+      route: "board",
     },
     {
       id: "city-map",
