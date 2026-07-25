@@ -1,6 +1,12 @@
-import { GAME_CONTENT } from "../content/game-content.js";
+import {
+  EVIDENCE,
+  GAME_CONTENT,
+  INVENTORY_ITEMS,
+} from "../content/game-content.js";
+import { evaluateCondition } from "../engine/conditions.js";
 import { applyEffects } from "../engine/events.js";
 import { createInitialState } from "../engine/game-state.js";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -26,6 +32,8 @@ export class GameApp {
     this.notice = "";
     this.returnRoute = "title";
     this.activeOfficeNote = null;
+    this.activeLocationNote = null;
+    this.inventoryOpen = false;
   }
 
   start() {
@@ -35,11 +43,23 @@ export class GameApp {
   }
 
   render(route) {
+    if (
+      ["home", "location", "map", "laptop"].includes(route) &&
+      this.store.getState().progress.currentScreen !== route
+    ) {
+      this.store.update((draft) => {
+        draft.progress.previousScreen = draft.progress.currentScreen;
+        draft.progress.currentScreen = route;
+      }, "screen-change");
+    }
+
     const renderers = {
       title: () => this.renderTitle(),
       setup: () => this.renderSetup(),
       home: () => this.renderHome(),
       location: () => this.renderLocation(),
+      map: () => this.renderMap(),
+      laptop: () => this.renderLaptop(),
       settings: () => this.renderSettings(),
     };
 
@@ -209,27 +229,38 @@ export class GameApp {
             <strong>${playerName}</strong>
           </div>
           <div class="toolbar-actions">
-            <button class="tool-button" data-action="location">Visit the Ledger</button>
+            <button class="tool-button" data-action="map">City map</button>
+            <button class="tool-button" data-action="inventory">Inventory</button>
             <button class="tool-button" data-action="save">Save</button>
             <button class="tool-button" data-action="settings">Settings</button>
             <button class="tool-button" data-action="title">Main menu</button>
           </div>
         </footer>
+        ${this.renderInventory(state)}
         ${this.renderToast()}
       </main>
     `;
 
     this.root.querySelectorAll("[data-hotspot]").forEach((button) => {
       button.addEventListener("click", () => {
-        this.activeOfficeNote = GAME_CONTENT.officeHotspots.find(
+        const hotspot = GAME_CONTENT.officeHotspots.find(
           (item) => item.id === button.dataset.hotspot,
         );
+        if (hotspot.route) {
+          this.router.navigate(hotspot.route);
+          return;
+        }
+        this.activeOfficeNote = hotspot;
         this.renderHome();
       });
     });
 
     this.bindActions({
-      location: () => this.visitLocation("ledger_newsroom"),
+      map: () => this.router.navigate("map"),
+      inventory: () => {
+        this.inventoryOpen = !this.inventoryOpen;
+        this.renderHome();
+      },
       save: () => this.manualSave(),
       settings: () => {
         this.returnRoute = "home";
@@ -244,46 +275,80 @@ export class GameApp {
     const location =
       GAME_CONTENT.locations[state.progress.currentLocation] ||
       GAME_CONTENT.locations.ledger_newsroom;
+    const note = this.activeLocationNote;
+    const actionAvailable =
+      note?.effects && evaluateCondition(note.actionWhen, state);
 
     this.root.innerHTML = `
       <main id="game-main" class="screen game-screen location-screen">
         ${this.renderGameHeader(GAME_CONTENT.chapter, location.name)}
         <section class="location-stage">
-          <div class="newsroom-scene" aria-hidden="true">
-            <span class="ceiling-light light-one"></span>
-            <span class="ceiling-light light-two"></span>
-            <span class="news-window"></span>
-            <span class="news-desk desk-one"></span>
-            <span class="news-desk desk-two"></span>
-            <span class="editor-silhouette"></span>
-            <span class="deadline-clock">9:32</span>
-          </div>
+          ${renderExplorationScene(location, state)}
           <article class="location-copy">
             <p class="kicker">${escapeHtml(location.eyebrow)}</p>
             <h1 tabindex="-1">${escapeHtml(location.name)}</h1>
             <p>${escapeHtml(location.description)}</p>
-            <div class="placeholder-dialogue">
-              <span class="speaker">Mara Venn</span>
-              <p>“Go home, Rowan. Tomorrow I’ll have something wonderfully boring for you.”</p>
-            </div>
-            <p class="milestone-note">
-              Exploration, dialogue, and the anonymous email arrive in Milestones 1–2.
-            </p>
-            <button class="button button-primary" data-action="home">Return home</button>
+            ${
+              note
+                ? `
+                  <div class="scene-inspection">
+                    <span class="speaker">Observation</span>
+                    <h2>${escapeHtml(note.title)}</h2>
+                    <p>${escapeHtml(note.resultText || note.text)}</p>
+                    ${
+                      actionAvailable
+                        ? `<button class="button button-secondary" data-action="hotspot-action">${escapeHtml(note.actionLabel)}</button>`
+                        : ""
+                    }
+                  </div>
+                `
+                : `
+                  <div class="placeholder-dialogue">
+                    <span class="speaker">Notebook</span>
+                    <p>Select something in the scene to examine it.</p>
+                  </div>
+                `
+            }
+            <button class="button button-primary" data-action="map">Open city map</button>
           </article>
         </section>
         <footer class="game-toolbar">
           <div><span class="toolbar-label">Location</span><strong>${escapeHtml(location.name)}</strong></div>
           <div class="toolbar-actions">
+            <button class="tool-button" data-action="inventory">Inventory</button>
+            <button class="tool-button" data-action="home">Return home</button>
             <button class="tool-button" data-action="save">Save</button>
             <button class="tool-button" data-action="settings">Settings</button>
           </div>
         </footer>
+        ${this.renderInventory(state)}
         ${this.renderToast()}
       </main>
     `;
 
+    this.root.querySelectorAll("[data-scene-hotspot]").forEach((button) => {
+      button.addEventListener("click", () => {
+        this.activeLocationNote = location.hotspots.find(
+          (hotspot) => hotspot.id === button.dataset.sceneHotspot,
+        );
+        this.renderLocation();
+      });
+    });
+
     this.bindActions({
+      "hotspot-action": () => {
+        const next = applyEffects(this.store.getState(), note.effects);
+        this.store.replace(next, `hotspot-${note.id}`);
+        this.saves.save(this.store.getState(), `hotspot-${note.id}`);
+        this.activeLocationNote = { ...note, effects: null };
+        this.notice = "New evidence added to the case file.";
+        this.renderLocation();
+      },
+      map: () => this.router.navigate("map"),
+      inventory: () => {
+        this.inventoryOpen = !this.inventoryOpen;
+        this.renderLocation();
+      },
       home: () => {
         this.store.update((draft) => {
           draft.progress.currentLocation = "home_office";
@@ -296,6 +361,176 @@ export class GameApp {
       settings: () => {
         this.returnRoute = "location";
         this.router.navigate("settings");
+      },
+    });
+  }
+
+  renderMap() {
+    const state = this.store.getState();
+    const unlocked = new Set(state.progress.unlockedLocations);
+    const locations = Object.values(GAME_CONTENT.locations).filter(
+      (location) => location.id !== "home_office",
+    );
+
+    this.root.innerHTML = `
+      <main id="game-main" class="screen game-screen map-screen">
+        ${this.renderGameHeader(GAME_CONTENT.chapter, "City map")}
+        <section class="map-stage">
+          <div class="map-paper" aria-label="Map of Greyhaven">
+            <span class="river river-one" aria-hidden="true"></span>
+            <span class="river river-two" aria-hidden="true"></span>
+            <span class="map-grid" aria-hidden="true"></span>
+            <span class="map-title">GREYHAVEN</span>
+            ${locations
+              .map((location) => {
+                const isUnlocked = unlocked.has(location.id);
+                return `
+                  <button
+                    class="map-pin ${isUnlocked ? "is-unlocked" : "is-locked"}"
+                    style="left:${location.mapX}%;top:${location.mapY}%"
+                    data-location="${location.id}"
+                    ${isUnlocked ? "" : "disabled"}
+                    aria-label="${isUnlocked ? `Travel to ${location.name}` : "Locked location"}"
+                  >
+                    <i aria-hidden="true"></i>
+                    <span>${isUnlocked ? escapeHtml(location.name) : "Unknown"}</span>
+                  </button>
+                `;
+              })
+              .join("")}
+          </div>
+          <aside class="map-brief">
+            <p class="kicker">Choose a lead</p>
+            <h1 tabindex="-1">Greyhaven</h1>
+            <p>
+              Locations appear when the case gives you a reason to visit. Read the anonymous
+              email on your laptop to open the first two leads.
+            </p>
+            <div class="lead-count">
+              <strong>${unlocked.size - 1}</strong>
+              <span>active destinations</span>
+            </div>
+            <button class="button button-secondary" data-action="home">Return home</button>
+          </aside>
+        </section>
+        <footer class="game-toolbar">
+          <div><span class="toolbar-label">Case map</span><strong>Greyhaven</strong></div>
+          <div class="toolbar-actions">
+            <button class="tool-button" data-action="inventory">Inventory</button>
+            <button class="tool-button" data-action="save">Save</button>
+            <button class="tool-button" data-action="settings">Settings</button>
+          </div>
+        </footer>
+        ${this.renderInventory(state)}
+        ${this.renderToast()}
+      </main>
+    `;
+
+    this.root.querySelectorAll("[data-location]:not(:disabled)").forEach((button) => {
+      button.addEventListener("click", () => this.visitLocation(button.dataset.location));
+    });
+    this.bindActions({
+      home: () => this.router.navigate("home"),
+      inventory: () => {
+        this.inventoryOpen = !this.inventoryOpen;
+        this.renderMap();
+      },
+      save: () => this.manualSave(),
+      settings: () => {
+        this.returnRoute = "map";
+        this.router.navigate("settings");
+      },
+    });
+  }
+
+  renderLaptop() {
+    const state = this.store.getState();
+    const opened = state.flags.openedAnonymousEmail;
+    const downloaded = state.flags.downloadedAttachments;
+
+    this.root.innerHTML = `
+      <main id="game-main" class="screen laptop-screen">
+        <section class="laptop-shell">
+          <header class="mail-header">
+            <button class="back-button" data-action="home">← Leave laptop</button>
+            <strong>GREYMAIL</strong>
+            <span>Secure connection: questionable</span>
+          </header>
+          <div class="mail-layout">
+            <aside class="mail-list">
+              <p class="kicker">Inbox · 1 unread</p>
+              <button class="mail-item ${opened ? "" : "is-unread"}" data-action="open-email">
+                <strong>(no sender)</strong>
+                <span>Vale stole from the city.</span>
+                <small>9:41 PM</small>
+              </button>
+            </aside>
+            <article class="mail-message">
+              ${
+                opened
+                  ? `
+                    <header>
+                      <p class="kicker">No subject</p>
+                      <h1 tabindex="-1">Vale stole from the city.</h1>
+                      <dl>
+                        <div><dt>From</dt><dd>undisclosed</dd></div>
+                        <div><dt>To</dt><dd>${escapeHtml(state.player.firstName.toLowerCase())}@greyhavenledger.test</dd></div>
+                      </dl>
+                    </header>
+                    <div class="email-body">
+                      <p>Mayor Vale diverted accessibility funds to build a private west wing.</p>
+                      <p>The city paid Northstar Construction. Northstar does not exist.</p>
+                      <p>Ask why the west wing must be ready before the <mark>Meridian guests</mark> arrive.</p>
+                      <p class="email-signoff">Start with the invoice.</p>
+                    </div>
+                    <div class="attachments">
+                      <button class="attachment" data-action="download" ${downloaded ? "disabled" : ""}>
+                        <span class="attachment-icon">PDF</span>
+                        <span><strong>northstar-invoice.pdf</strong><small>184 KB</small></span>
+                      </button>
+                      <button class="attachment" data-action="download" ${downloaded ? "disabled" : ""}>
+                        <span class="attachment-icon">EML</span>
+                        <span><strong>meridian-thread.eml</strong><small>12 KB</small></span>
+                      </button>
+                    </div>
+                    ${downloaded ? `<p class="download-confirmation">Attachments added to your case file. City Hall and the Vale residence are now on the map.</p>` : ""}
+                  `
+                  : `
+                    <div class="empty-mail">
+                      <span>✉</span>
+                      <p>Select the unread message.</p>
+                    </div>
+                  `
+              }
+            </article>
+          </div>
+        </section>
+      </main>
+    `;
+
+    this.bindActions({
+      home: () => this.router.navigate("home"),
+      "open-email": () => {
+        if (!opened) {
+          const next = applyEffects(this.store.getState(), [
+            { type: "setFlag", key: "openedAnonymousEmail", value: true },
+          ]);
+          this.store.replace(next, "open-anonymous-email");
+          this.saves.save(this.store.getState(), "open-anonymous-email");
+        }
+        this.renderLaptop();
+      },
+      download: () => {
+        const next = applyEffects(this.store.getState(), [
+          { type: "setFlag", key: "downloadedAttachments", value: true },
+          { type: "collectEvidence", id: "email_meridian" },
+          { type: "collectEvidence", id: "invoice_northstar" },
+          { type: "unlockLocation", id: "city_hall" },
+          { type: "unlockLocation", id: "mayor_street" },
+        ]);
+        this.store.replace(next, "download-leak");
+        this.saves.save(this.store.getState(), "download-leak");
+        this.renderLaptop();
       },
     });
   }
@@ -391,6 +626,51 @@ export class GameApp {
     `;
   }
 
+  renderInventory(state) {
+    if (!this.inventoryOpen) return "";
+    const collectedEvidence = state.evidence.collected
+      .map((id) => EVIDENCE[id])
+      .filter(Boolean);
+
+    return `
+      <aside class="inventory-drawer" aria-label="Inventory">
+        <div class="drawer-heading">
+          <div><p class="kicker">Carried items</p><h2>Inventory</h2></div>
+          <button class="drawer-close" data-action="inventory" aria-label="Close inventory">×</button>
+        </div>
+        <div class="inventory-grid">
+          ${state.inventory
+            .map((id) => INVENTORY_ITEMS[id])
+            .filter(Boolean)
+            .map(
+              (item) => `
+                <article class="inventory-item">
+                  <span>${item.icon}</span>
+                  <strong>${escapeHtml(item.name)}</strong>
+                </article>
+              `,
+            )
+            .join("")}
+        </div>
+        <div class="evidence-pocket">
+          <p class="kicker">Case file · ${collectedEvidence.length}</p>
+          ${
+            collectedEvidence.length
+              ? collectedEvidence
+                  .map(
+                    (item) => `
+                      <article><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.summary)}</p></article>
+                    `,
+                  )
+                  .join("")
+              : "<p>No evidence collected yet.</p>"
+          }
+        </div>
+      </aside>
+      <div class="drawer-scrim" aria-hidden="true"></div>
+    `;
+  }
+
   renderToast() {
     return this.notice
       ? `<div class="toast" role="status">${escapeHtml(this.notice)}</div>`
@@ -399,7 +679,9 @@ export class GameApp {
 
   bindActions(actions) {
     Object.entries(actions).forEach(([name, handler]) => {
-      this.root.querySelector(`[data-action="${name}"]`)?.addEventListener("click", handler);
+      this.root
+        .querySelectorAll(`[data-action="${name}"]`)
+        .forEach((element) => element.addEventListener("click", handler));
     });
   }
 
@@ -415,6 +697,8 @@ export class GameApp {
   }
 
   visitLocation(id) {
+    if (!this.store.getState().progress.unlockedLocations.includes(id)) return;
+    this.activeLocationNote = null;
     const next = applyEffects(this.store.getState(), [
       { type: "visitLocation", id },
       { type: "setFlag", key: "visitedNewsroom", value: true },
@@ -442,4 +726,3 @@ export class GameApp {
     document.documentElement.dataset.hotspotAssist = String(settings.hotspotAssist);
   }
 }
-

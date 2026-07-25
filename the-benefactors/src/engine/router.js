@@ -1,4 +1,12 @@
-const VALID_ROUTES = new Set(["title", "setup", "home", "location", "settings"]);
+const VALID_ROUTES = new Set([
+  "title",
+  "setup",
+  "home",
+  "location",
+  "map",
+  "laptop",
+  "settings",
+]);
 
 export class ScreenRouter {
   #listener = null;
@@ -41,4 +49,3 @@ export class ScreenRouter {
     this.#listener?.(this.current());
   }
 }
-

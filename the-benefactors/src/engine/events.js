@@ -31,6 +31,9 @@ export function applyEffects(currentState, effects = []) {
       case "completeDeduction":
         addUnique(state.completedDeductions, effect.id);
         break;
+      case "unlockLocation":
+        addUnique(state.progress.unlockedLocations, effect.id);
+        break;
       case "visitLocation":
         state.progress.currentLocation = effect.id;
         state.locationVisits[effect.id] = (state.locationVisits[effect.id] || 0) + 1;
@@ -42,4 +45,3 @@ export function applyEffects(currentState, effects = []) {
 
   return state;
 }
-

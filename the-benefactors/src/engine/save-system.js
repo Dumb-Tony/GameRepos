@@ -73,8 +73,17 @@ export class SaveSystem {
       ...fallback,
       ...candidate,
       version: GAME_STATE_VERSION,
+      meta: { ...fallback.meta, ...candidate.meta },
+      player: { ...fallback.player, ...candidate.player },
+      progress: { ...fallback.progress, ...candidate.progress },
+      flags: { ...fallback.flags, ...candidate.flags },
+      evidence: { ...fallback.evidence, ...candidate.evidence },
+      board: { ...fallback.board, ...candidate.board },
+      locationVisits: {
+        ...fallback.locationVisits,
+        ...candidate.locationVisits,
+      },
       settings: { ...DEFAULT_SETTINGS, ...candidate.settings },
     };
   }
 }
-

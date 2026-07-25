@@ -44,12 +44,14 @@ test("applies declarative effects without mutating source state", () => {
     { type: "setFlag", key: "openedAnonymousEmail", value: true },
     { type: "collectEvidence", id: "invoice_northstar" },
     { type: "collectEvidence", id: "invoice_northstar" },
+    { type: "unlockLocation", id: "city_hall" },
+    { type: "unlockLocation", id: "city_hall" },
     { type: "visitLocation", id: "ledger_newsroom" },
   ]);
 
   assert.equal(source.flags.openedAnonymousEmail, false);
   assert.equal(next.flags.openedAnonymousEmail, true);
   assert.deepEqual(next.evidence.collected, ["invoice_northstar"]);
+  assert.equal(next.progress.unlockedLocations.filter((id) => id === "city_hall").length, 1);
   assert.equal(next.locationVisits.ledger_newsroom, 1);
 });
-

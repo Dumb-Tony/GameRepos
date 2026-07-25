@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 1;
+export const GAME_STATE_VERSION = 2;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -35,10 +35,13 @@ export function createInitialState(player = {}, settings = {}) {
       currentLocation: "home_office",
       currentScreen: "home",
       previousScreen: "title",
+      unlockedLocations: ["home_office", "ledger_newsroom"],
     },
     flags: {
       openedAnonymousEmail: false,
+      downloadedAttachments: false,
       visitedNewsroom: false,
+      permitAcquired: false,
       mayorMissing: false,
     },
     inventory: ["press_credentials", "smartphone", "recorder", "notebook"],
@@ -59,6 +62,10 @@ export function createInitialState(player = {}, settings = {}) {
     locationVisits: {
       home_office: 0,
       ledger_newsroom: 0,
+      city_hall: 0,
+      mayor_street: 0,
+      mayor_study: 0,
+      hidden_room: 0,
     },
     settings: {
       ...DEFAULT_SETTINGS,
@@ -128,4 +135,3 @@ export class GameStore {
     this.#listeners.forEach((listener) => listener(snapshot, reason));
   }
 }
-

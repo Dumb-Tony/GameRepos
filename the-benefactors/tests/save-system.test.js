@@ -55,3 +55,21 @@ test("deletes an existing save", () => {
   assert.equal(saves.hasSave(), false);
 });
 
+test("migrates an older save with new progress defaults", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const legacy = createInitialState({ firstName: "Vale" });
+  legacy.version = 1;
+  delete legacy.progress.unlockedLocations;
+  delete legacy.flags.downloadedAttachments;
+  storage.setItem(SAVE_KEY, JSON.stringify(legacy));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, 2);
+  assert.deepEqual(migrated.progress.unlockedLocations, [
+    "home_office",
+    "ledger_newsroom",
+  ]);
+  assert.equal(migrated.flags.downloadedAttachments, false);
+});

@@ -18,7 +18,17 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Accessibility preferences
 - Automated state, condition, event, and save tests
 
-Exploration, dialogue, the evidence board, and playable prologue content are built in later milestones.
+**Milestone 1 — Exploration (in progress)**
+
+- Opening anonymous email and downloadable evidence
+- Data-driven scalable exploration scenes
+- Interactive scene hotspots
+- City map with story-gated destinations
+- Inventory and evidence pocket
+- Placeholder newsroom, city hall, and Vale residence
+- First permit search action
+
+Dialogue, the evidence board, and the rest of the playable prologue are built in later milestones.
 
 ## Run locally
 
@@ -63,4 +73,3 @@ Game progress is stored locally in the browser under a versioned key. Saves cont
 ## Scope rule
 
 Work only inside `the-benefactors/` unless the user explicitly requests a repository-level change.
-
