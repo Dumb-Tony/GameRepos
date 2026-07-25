@@ -278,6 +278,8 @@ namespace Tidebound.Narrative
                         t.Add("— Moa's station gift: a dead station's living garden — feral tomatoes and a cabinet of maybe-viable seed.");
                     else if (s.Is("COMP4_DONE") && s.Companion == "vela")
                         t.Add("— Vela's station gift: a road no ground-bound eye could see — the drill's road, running for the mountain.");
+                    else if (s.Is("COMP4_DONE") && s.Companion == "ipo")
+                        t.Add("— Ipo's station gift: a quartermaster's trove — fuses, tubes, the radio's odds improved and an ego beyond salvage.");
                     t.Add("— And Vane's Question: " + (s.Is("INCIDENT_FILES")
                         ? "you opened her drawer. The Incident has a shape now — the bore site, the throat, the nine silent hours, and her last instruction: <i>tend the skin.</i> Her map is in your kit."
                         : s.Is("FILES_BURNED")
@@ -436,7 +438,7 @@ namespace Tidebound.Narrative
             script.Add(new StoryScene
             {
                 Id = "ev4_companion",
-                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : "Kavi",
+                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : s.Companion == "ipo" ? "Ipo" : "Kavi",
                 OnEnter = s =>
                 {
                     if (s.Is("COMP4_DONE")) return;
@@ -446,9 +448,16 @@ namespace Tidebound.Narrative
                     else if (s.Companion == "buri") { s.SetFlag("TRAILER"); s.AddRoute(RouteAxis.Roots, 2); }
                     else if (s.Companion == "moa") { s.SetFlag("SEEDS"); s.AddRoute(RouteAxis.Roots, 2); }
                     else if (s.Companion == "vela") { s.SetFlag("DRILL_ROAD"); s.AddRoute(RouteAxis.Depth, 2); }
+                    else if (s.Companion == "ipo") { s.SetFlag("RADIO_PARTS_BONUS"); s.AddRoute(RouteAxis.Signal, 1); }
                 },
                 Text = s =>
                 {
+                    if (s.Companion == "ipo")
+                        return new List<string>
+                        {
+                            "You lose Ipo for two hours in the lab block and find him enthroned amid systematic devastation: every drawer opened, every latch defeated, and his plunder sorted — actually sorted — into piles by a taxonomy you slowly decode: shiny, edible-maybe, USEFUL. The useful pile stops your heart: fuses. Bulbs. A sealed multimeter. Vacuum tubes in their cartons, intact.",
+                            "He presents the collection with the modest gesture of a master unveiling a retrospective, then selects the finest vacuum tube and hands it to you personally. Somewhere along this coast he became your quartermaster. The radio's odds just improved, and he knows it, and he will be insufferable about it forever.",
+                        };
                     if (s.Companion == "vela")
                         return new List<string>
                         {

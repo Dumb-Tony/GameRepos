@@ -55,6 +55,8 @@ namespace Tidebound.Narrative
                         : s.Shelter >= 3
                             ? "Your fortified camp takes it the way a good hull takes a sea: groaning, flexing, shedding. You lose thatch, a windbreak, a night's sleep — and keep everything that bleeds. Every hour you ever spent bracing and lashing pays out tonight, with interest."
                             : "Your camp loses its argument with the sky in the first hour. After that it's endurance: you and everything living pressed into the lee of what holds, taking the night one gust at a time while your work disassembles around you in the dark.");
+                    if (s.Companion == "ipo")
+                        t.Add("Ipo spends it inside your shirt, a heartbeat against your sternum, silent all night. In the morning he emerges, checks the state of the world, and — visibly deciding the audience needs it — performs his coconut-opening impression in the wreckage until you laugh. Morale officer. Never off duty.");
                     if (s.Companion == "vela")
                         t.Add(s.Is("VELA_MANTLED")
                             ? "And Vela stays. The storm-wise one, the one with a hidden roost and a blind eye full of cyclone history and every reason to be gone — she plants herself on your food cache in the screaming dark, shaking, wings mantled over it like it's a nest, her whole broken-weather past held down by will alone, because the flock she has left is you and yours. In the morning she is soaked to the pin-feathers and furious and PRESENT, and you understand you have seen the whole of her heart, once, by storm-light."

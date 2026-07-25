@@ -389,6 +389,7 @@ namespace Tidebound.Narrative
                     s.SetFlag("GULLET1");
                     s.AddRoute(RouteAxis.Depth, 3);
                     s.Stat(Meter.Energy, -12);
+                    if (s.Companion == "ipo") s.Bond(8); // the fear-walk: his mathematics beat his terror
                 },
                 Text = s => new List<string>
                 {
@@ -396,7 +397,9 @@ namespace Tidebound.Narrative
                         + (s.Is("GULLET_MAP") ? "Vane's tide tables name to the minute" : "you've gambled out of three days of watching the grotto breathe")
                         + ": behind the waterfall, through the gap, down the throat of the island.",
                     "It is a drowned world that empties twice a day and resents it. Walls sea-smoothed a hundred feet above the sea; galleries that boom with the far surge like a held word; and everywhere, threading the black rock in veins and lenses — <i>heartglass</i>, dark and glassy, catching your lamp and returning it a half-beat late, so that you walk in a crowd of your own delayed reflections.",
-                    "The seven-beat pulse doesn't glow down here — it <i>sounds</i>: felt in the breastbone, in the water, in the rock under your palms, the island's voice heard at last from inside the instrument.",
+                    s.Companion == "ipo"
+                        ? "And Ipo — Ipo of the shrieking dark-terrors, Ipo who bolted from the temple shadows of every scary story you've told yourself about this — Ipo walks INTO it ahead of you. He carries the spare brand in both small hands, teeth chattering audibly, tail wrapped around your arm like a mooring line, and he does not bolt. You are limping on a reef-cut; someone had to lead; the mathematics of that reached him before his fear did. It is the bravest thing you have ever watched anyone do at knee height."
+                        : "The seven-beat pulse doesn't glow down here — it <i>sounds</i>: felt in the breastbone, in the water, in the rock under your palms, the island's voice heard at last from inside the instrument.",
                     "You go as deep as the lull allows and mark your high-water line like a debt, and climb out with the surge already talking behind you. Day one of the throat. It knows you were there.",
                 },
             });
@@ -728,6 +731,7 @@ namespace Tidebound.Narrative
             else if (s.Companion == "buri") guests.Add("Buri, at your side where the world belongs");
             else if (s.Companion == "moa") guests.Add("Moa, at your side where the world belongs");
             else if (s.Companion == "vela") guests.Add("Vela, on the ridgepole above the feast — attending, in her way, which is the highest compliment she pays");
+            else if (s.Companion == "ipo") guests.Add("Ipo, at your side where the world belongs");
             return guests.Count > 0 ? string.Join("; ", guests) : "everyone the season gathered";
         }
     }

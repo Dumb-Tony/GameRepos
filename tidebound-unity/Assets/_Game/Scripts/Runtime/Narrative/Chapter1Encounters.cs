@@ -623,6 +623,14 @@ namespace Tidebound.Narrative
                     },
                     new StoryChoice
                     {
+                        Label = "The macaque",
+                        Sub = "Mischievous, vain, brilliant, exhausting — and, quietly, the loneliest performer on the island.",
+                        When = s => s.Met.TryGetValue("ipo", out var m) && m,
+                        Do = s => { s.Companion = "ipo"; s.SetFlag("CLEARING_DONE"); },
+                        Go = "court_ipo",
+                    },
+                    new StoryChoice
+                    {
                         Label = "No one. You will do this alone.",
                         Sub = "No mouths to feed but yours. No one to lose but yourself. The hardest road, and wholly your own.",
                         Do = s => { s.SetFlag("CLEARING_DONE"); s.SetFlag("SOLO_ROUTE"); s.AddRoute(RouteAxis.Roots, 1); },
@@ -761,6 +769,53 @@ namespace Tidebound.Narrative
                         {
                             s.Warm("moa", 1);
                             s.Stat(Meter.Hunger, -2);
+                            s.Stat(Meter.Hope, 5);
+                            CompanionLogic.InitTrust(s);
+                        },
+                        Go = "ch2_open",
+                    },
+                },
+            });
+
+            script.Add(new StoryScene
+            {
+                Id = "court_ipo",
+                Speaker = "Ipo",
+                Text = s => new List<string>
+                {
+                    "You find him where you knew you would — the dead palm at the camp's edge, working his audience of nobody — and you do the one thing no creature on this island has done for him: you sit down in the front row.",
+                    "The effect is instantaneous and total. He runs his entire repertoire: the hanging-by-one-foot bit, the lighter (your lighter — flick, flame, flourish), a heartbreakingly accurate impression of you opening a coconut. You laugh until your ribs — still crash-sore — make you stop, and the sound of it does something visible to him, like sun on a plant.",
+                    (s.Interest.TryGetValue("ipo", out var w) && w >= 2
+                        ? "When the show ends he doesn't swagger off. He descends, sidles, and — with the fastidious ceremony of a maître d' — deposits the lighter in your open palm."
+                        : "When the show ends he studies you for a long, mercantile moment. Then he descends, and with visible internal struggle, places the lighter in your palm.")
+                    + " The most valuable thing he owns. The bit that killed, given away for the encore.",
+                    "Then he climbs your arm like furniture, settles his small weight on your shoulder, takes a fistful of your hair for security, and surveys the beach — <i>his</i> beach now, clearly; the whole act upgraded to a double bill.",
+                    "You are, you understand, no longer the audience. You're the act's other half.",
+                },
+                Choices = new List<StoryChoice>
+                {
+                    new StoryChoice
+                    {
+                        Label = "\"Ipo.\" It means gift where you learned it — and he'd hate a humble name.",
+                        Sub = "Star billing.",
+                        Do = s =>
+                        {
+                            s.AddItem("lighter");
+                            s.Warm("ipo", 2);
+                            s.Stat(Meter.Hope, 6);
+                            s.SetFlag("IPO_NAMED");
+                            CompanionLogic.InitTrust(s);
+                        },
+                        Go = "ch2_open",
+                    },
+                    new StoryChoice
+                    {
+                        Label = "Flick the lighter once, in salute, and pocket it.",
+                        Sub = "Between professionals.",
+                        Do = s =>
+                        {
+                            s.AddItem("lighter");
+                            s.Warm("ipo", 1);
                             s.Stat(Meter.Hope, 5);
                             CompanionLogic.InitTrust(s);
                         },

@@ -520,7 +520,7 @@ namespace Tidebound.Narrative
             script.Add(new StoryScene
             {
                 Id = "ev2_heart",
-                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : "Kavi",
+                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : s.Companion == "ipo" ? "Ipo" : "Kavi",
                 OnEnter = s =>
                 {
                     if (s.Is("HEART1_DONE")) return;
@@ -536,6 +536,13 @@ namespace Tidebound.Narrative
                             "On the fifteenth morning Buri is missing at breakfast — until you follow the sound of industrious ruin and find him at the treeline, digging like a machine, and beside the crater a mound of truffles the size of your two hands.",
                             "He has been at it since first light. When you arrive he steps back from the mound and looks up at you, filthy, beaming, and it is unmistakably a <i>presentation</i>: for the crab you shared, for the rack he cost you, for every meal since. Restitution, pig-style, with interest.",
                             "You eat one raw right there, and his tail helicopter is the happiest thing on the island.",
+                        };
+                    if (s.Companion == "ipo")
+                        return new List<string>
+                        {
+                            "On the fifteenth morning Ipo sits on your shoulder, takes your ear in one hand for security, and begins — with terrible tenderness and total concentration — to groom your hair. Parting, inspecting, smoothing. Finding you acceptable, strand by strand.",
+                            "Grooming, you dimly know, is not payment among his kind. It is <i>membership</i>. Somewhere between the crash and this morning, you were adopted, and the paperwork is being finished on your scalp.",
+                            "You sit very still, absurdly moved, while the smallest showman on the island tells you the one thing he'll never perform: <i>mine</i>.",
                         };
                     if (s.Companion == "vela")
                         return new List<string>
@@ -570,7 +577,7 @@ namespace Tidebound.Narrative
                 },
                 Text = s => new List<string>
                 {
-                    "On the fifteenth morning you catch " + (s.Companion == "buri" ? "the young pig" : s.Companion == "moa" ? "the copper hen" : s.Companion == "vela" ? "the sea eagle" : "the grey dog") + " watching you from the old first distance — the day-three distance — and you feel the gap you haven't closed.",
+                    "On the fifteenth morning you catch " + (s.Companion == "buri" ? "the young pig" : s.Companion == "moa" ? "the copper hen" : s.Companion == "vela" ? "the sea eagle" : s.Companion == "ipo" ? "the macaque" : "the grey dog") + " watching you from the old first distance — the day-three distance — and you feel the gap you haven't closed.",
                     "Trust, out here, is the most expensive thing you can build, and you've been spending your hours on walls and stores and smoke instead. Fair choices. Survivable choices. But the wild keeps honest books: you get exactly the bond you feed.",
                     "There is still time. There is not unlimited time.",
                 },

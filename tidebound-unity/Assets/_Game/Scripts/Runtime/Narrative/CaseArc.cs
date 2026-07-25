@@ -5,7 +5,7 @@ namespace Tidebound.Narrative
     /// <summary>
     /// THE COURIER'S CASE — the locked-thing arc, ported from
     /// scenes-extra.js: the contemplation scene, the three openings (Ipo's
-    /// audience — dormant until Ipo is recruitable, the engineer's drill,
+    /// audience — live since Phase 7 session 4, the engineer's drill,
     /// the smashing) and the contents that recolor the whole story: the
     /// gems, the dossier, the chart. V1 adaptations, noted inline: the
     /// scene is reachable from chapter 2 (the VN parks it in the chapter-3

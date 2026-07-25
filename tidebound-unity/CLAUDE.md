@@ -607,8 +607,44 @@ tidebound-unity/
       she outlives every actuarial table). 10 new tests (321 total,
       all green first run, synchronous runner). Scene rebuilt with
       VelaCompanion serialized.
-      Next companions: Ipo (canopy chassis) and Nine (tide-pool-bound
-      — found only by returning to the pools twice before Day 3).*
+      Session 4: IPO, end to end, on the CANOPY CHASSIS — IpoController
+      moves in dash-and-audit bursts (a scamper, a dead stop to
+      reassess, another scamper — MoveToward gates the base step on a
+      dash/pause clock), keeps to the palm canopy above camp while
+      Wary (PickRestSpot sends him aloft; GroundClamp climbs the last
+      stretch), and owns the ground after. The Clearing offers the
+      macaque (court_ipo verbatim: the front row, the whole
+      repertoire, and THE LIGHTER RETURNED — AddItem restores the
+      day-2 theft, the salute choice names nothing); IpoVignettes
+      five tiers verbatim (auditing your possessions → moved into
+      camp → shoulder parade → tribute with ceremony → grooming with
+      the gravity of a priest); IpoInteractable (share the fig ration
+      / take the front row — an audience is his actual currency /
+      sit for grooming at AllowsTouch: membership, not payment). His
+      voice threads everything: the grooming heart (adopted, the
+      paperwork finished on your scalp), Edda's shotgun verdict
+      ("stays outside the fence"), the HOARD heart2 that surrenders
+      the HALCYON E-WING KEY (IPO_KEY + depth 2 — the door's oldest
+      gate finally has its supplier; CaseArc's case_open_ipo went
+      live for free), the toll paid in the greatest performance of
+      his career (GRIN_DISTRACTED), the lab-block quartermaster trove
+      (RADIO_PARTS_BONUS + signal), the Gullet FEAR-WALK (he leads
+      into his own terror at knee height, bond +8), the cyclone spent
+      inside your shirt (morale officer, never off duty), the Hum
+      harmonized on the stairs, the museum-goer's temple, the
+      inside-the-jacket tremor, the bedrock fistful of your shirt,
+      Tekau's "laughing thief." Endings: TRICKSTER offered at trust
+      90+ (core unwritten in the VN — falls back per parity, fate
+      covered by companionCovered), ISLANDS_OWN accepts Keeper Ipo
+      (the seven beats LAUGH), epilogues (leaving: the highest palm
+      and the lighter back in your pack, paid in full; staying:
+      troop, treasury, audience — you, forever, front row). 11 new
+      tests (332 total, all green first run, synchronous runner).
+      Scene rebuilt with IpoCompanion serialized.
+      Next companion: Nine, the secret one — tide-pool-bound (found
+      only by returning to the pools twice before Day 3), the last
+      chassis: she never leaves water, and land crossings are escort
+      scenes with real stakes.*
 - [ ] Phase 6 — depth passes per act · world-side depth for chapters
       4–7 (station/temple/caldera as places, Naia's rig, monsoon
       world dressing) · NG+, polish

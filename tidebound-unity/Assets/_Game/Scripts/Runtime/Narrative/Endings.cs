@@ -237,6 +237,7 @@ namespace Tidebound.Narrative
             ["buri"] = "It sees devotion that never once stopped to ask what it would cost — a warm boulder that walked through a gore-line, a heart that audits the camps at night to be sure everyone is still where he left them. The seven beats pause. Recount. <i>Accept.</i> Keeper Buri does for the island what he did for your acre: everything, twice, with his whole chest — and the old treaties of the inland dark put roots down around him the way a forest roots around a spring.",
             ["moa"] = "It sees six ounces of copper courage that has never yielded a path in her life — the smallest keeper any mural will ever show, and the murals <i>will</i> show her; you live to watch the Kaari cut the first one. The seven beats pause. Recount. <i>Accept.</i> Keeper Moa stands her watch the way she stood every one of yours: entirely. In the years after, storms are observed — measured, Ryo insists, logged — to go <i>around</i>.",
             ["vela"] = "It sees an empress with one eye and a ledger where a heart should be — no. You have watched closer than that, all season. A ledger <i>as</i> a heart: every debt remembered, every payment honored, forgiveness at fair market rates and no defaults, not one, in thirty years of wind. The seven beats pause. Recount. <i>Accept.</i> Keeper Vela takes the whole sky for her parish, and the island's weather begins arriving, there is no other word for it, punctually.",
+            ["ipo"] = "It sees a thief who pays his debts, a tactician who abandons nothing, the only creature on this island who already operates a treasury. The seven beats pause — and then, you will swear this at any fire for the rest of your life, they <i>laugh</i>. Keeper Ipo audits his new estate within the week: the canopy roads, the fig tithes, the reef's ancient accounts, four centuries of covenant bookkeeping brought suddenly and gloriously up to date. The island has never been so well administered. It appears, if anything, delighted.",
         };
 
         static (string, string[]) BuildIslandsOwn(GameState s)
@@ -291,7 +292,7 @@ namespace Tidebound.Narrative
             string id = s.EndingId;
             if (id == null) return t;
             bool leaving = Leaving(id);
-            bool companionCovered = id == "ISLANDS_OWN" || id == "LAST_PACK" || id == "SOUNDER" || id == "WIND_TAKES";
+            bool companionCovered = id == "ISLANDS_OWN" || id == "LAST_PACK" || id == "SOUNDER" || id == "WIND_TAKES" || id == "TRICKSTER";
 
             if (id == "ISLANDS_OWN" && s.Is("EDDA_MET"))
                 t.Add("— Edda hears it before you finish saying it — she always hears it — and sets down the pestle and looks at you for a long, still moment. \"Forty years,\" she says at last, \"I wondered what that pool was holding the post open <i>for</i>. It was never waiting for a better human.\" A snort, at herself, at everything. \"It was waiting for you to introduce them.\" She takes tea up the mountain every new moon after. She is, every time, received.");
@@ -334,6 +335,13 @@ namespace Tidebound.Narrative
                 else if (!leaving)
                     t.Add("— Vela outlives every actuarial table for her kind, imperious to the last, and raises three more broods off Kestrel Cliffs with her fish-debts always settled at your rock. When she is gone the wind over the cliffs is never quite unoccupied — and the young eagle who takes her ledge, pale-eyed, knows your silhouette on sight.");
             }
+            else if (s.Companion == "ipo" && !companionCovered)
+            {
+                if (leaving && id != "SAIL_BLESSED" && id != "WHOLE_SKY")
+                    t.Add("— Ipo inspects the boat, the horizon, and you — and delivers his verdict by climbing to the highest palm and NOT following. His island, his kingdom, his troop to run at last. The lighter, you find later, is in your pack. Paid in full.");
+                else if (!leaving)
+                    t.Add("— Ipo achieves everything: the troop (his, in time, by a palace intrigue you witnessed and still don't understand), the treasury (moved to your rafters, an honor), and the audience — you, forever, front row. His grandchildren steal from you with your blessing. Mostly.");
+            }
             else if (s.Companion == null && id != "ALONE_UNBROKEN")
                 t.Add("— You did the whole of it alone — the solo route, the hardest road on the island — and the Ledger marks it in the old way: <i>Alone, unbroken.</i>");
             if (s.Is("EDDA_MET") && id != "HERMIT_HEIR" && id != "ISLANDS_OWN")
@@ -368,7 +376,7 @@ namespace Tidebound.Narrative
             if (!s.Is("CONTACT_MADE")) roads.Add("a radio's four-second window opened for no one");
             if (s.Companion != null) roads.Add("five other wild lives waited at a clearing that only ever chose one");
             string tier = s.Trust >= 100 ? "kindred" : s.Trust >= 75 ? "devoted" : s.Trust >= 50 ? "bonded" : s.Trust >= 25 ? "tolerant" : "wary";
-            string companionName = s.Companion == "kavi" ? "Kavi" : s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : s.Companion;
+            string companionName = s.Companion == "kavi" ? "Kavi" : s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : s.Companion == "ipo" ? "Ipo" : s.Companion;
             return new List<string>
             {
                 "<i>— THE LEDGER OPENS —</i>",

@@ -326,16 +326,24 @@ namespace Tidebound.Narrative
             script.Add(new StoryScene
             {
                 Id = "ev3_heart2",
-                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : "Kavi",
+                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : s.Companion == "ipo" ? "Ipo" : "Kavi",
                 OnEnter = s =>
                 {
                     if (s.Is("HEART2_DONE")) return;
                     s.SetFlag("HEART2_DONE");
                     s.Bond(10);
                     s.Stat(Meter.Hope, 8);
+                    if (s.Companion == "ipo") { s.SetFlag("IPO_KEY"); s.AddRoute(RouteAxis.Depth, 2); }
                 },
                 Text = s =>
                 {
+                    if (s.Companion == "ipo")
+                        return new List<string>
+                        {
+                            "On the fourteenth day Ipo takes your hand — actually takes it, both of his around one finger, pulling with intent — and leads you up through the canopy roads to a hollow in a strangler fig, and shows you the single most valuable thing he owns: <i>everything</i>.",
+                            "The hoard. Years of it: bottle glass sorted by color, a doll's porcelain hand, coins green with age, your long-mourned second-best fishhook (you let it pass), and — your breath stops — a flat steel key on a rotted lanyard, stamped with letters gone black with age: <i>HALCYON — E WING</i>.",
+                            "He watches your face as you take it in, vibrating with pride, and then makes the gesture you know: <i>take</i>. Anything. All of it. The whole treasury, opened to the audience of one.",
+                        };
                     if (s.Companion == "buri")
                         return new List<string>
                         {
@@ -368,7 +376,7 @@ namespace Tidebound.Narrative
             script.Add(new StoryScene
             {
                 Id = "ev3_heart2_low",
-                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : "Kavi",
+                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : s.Companion == "ipo" ? "Ipo" : "Kavi",
                 OnEnter = s =>
                 {
                     if (s.Is("HEART2_LOW")) return;
@@ -377,7 +385,7 @@ namespace Tidebound.Narrative
                 },
                 Text = s => new List<string>
                 {
-                    (s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : "Kavi") + " is still here. That's not nothing — out here, staying is the first vow and the hardest. But on the fourteenth morning you catch yourself narrating your plans to the fire instead of to them, and you feel the shape of the distance you've kept.",
+                    (s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : s.Companion == "ipo" ? "Ipo" : "Kavi") + " is still here. That's not nothing — out here, staying is the first vow and the hardest. But on the fourteenth morning you catch yourself narrating your plans to the fire instead of to them, and you feel the shape of the distance you've kept.",
                     "The wild keeps honest books. Walls, water, smoke, survival — all fair entries. But the bond is a crop like any other on this island: it grows exactly as much as you tend it, and the season does not wait.",
                 },
             });
@@ -465,6 +473,14 @@ namespace Tidebound.Narrative
                     },
                     new StoryChoice
                     {
+                        Label = "Ipo's diversion. The greatest performance of his career.",
+                        Sub = "A monkey, a mudbank, and professional-grade audacity.",
+                        When = s => s.Companion == "ipo" && s.Trust >= 50,
+                        Do = s => { s.SetFlag("GRIN_DISTRACTED"); s.SetFlag("EAST_OPEN"); s.Bond(5); },
+                        Go = "ch3_toll_ipo",
+                    },
+                    new StoryChoice
+                    {
                         Label = "Fight him for it.",
                         Sub = "Spear, fire, and the worst idea available. It might even work — but hurt or weakened, he will collect you like rent.",
                         Do = s =>
@@ -497,6 +513,10 @@ namespace Tidebound.Narrative
             AddToll(script, "ch3_toll_kavi",
                 "Kavi teaches you the crossing the way the wild taught him: <i>never once be prey</i>. You enter the ford side by side, slow as ceremony, loud as ownership — no darting, no freezing, no scent of flight — while he holds the water's edge with his eyes and a growl pitched to travel through mud and bone.",
                 "Old Grin surfaces at thirty feet and considers you both: the upright thing that isn't running, the grey thing that isn't backing down, the whole expensive, unprofitable prospect of it. Patience does arithmetic. Arithmetic says wait for cheaper. He sinks like a decision, and you walk — walk — up the eastern bank.");
+            AddToll(script, "ch3_toll_ipo",
+                "What Ipo does at the East Passage will be, you are certain, the standard against which you measure audacity for the rest of your life.",
+                "He crosses the canopy alone to the far bank, descends to the mud in full view, and <i>heckles</i> the largest predator on the island — hurling sticks, shrieking abuse, performing a strut so insolent it has structure — until Old Grin, in the nearest thing a crocodile has to exasperation, commits his whole terrible length up the far mudbank after him. Ipo ascends a root like smoke going up a chimney. You cross the emptied channel at a dead sprint.",
+                "He rejoins you east of the water, swaggering fit to dislocate something, and accepts his fee — the whole fig ration, prepaid — like a professional. Somewhere behind you, the landlord subsides into his channel, gypped for the first time in decades.");
             AddToll(script, "ch3_toll_buri",
                 "Buri crosses the ford the way a bulldozer crosses an objection. You go with him, hip against his shoulder, one fist in his bristles, a two-body convoy displacing water and doubt in equal measure.",
                 "Old Grin rises once, measures the proposition — two hundred pounds of tusked, furious calcium with a human attachment, all of it radiating expense — and declines the meal with the dignity of a king who was, of course, never hungry in the first place. Buri screams one entirely unnecessary victory scream at the settling water. You do not tell him it was unnecessary. It wasn't, quite.");
@@ -583,6 +603,8 @@ namespace Tidebound.Narrative
                             ? "dodged entirely — you crossed at the dawn window while the cold held him. The swamp respects homework."
                             : s.Is("GRIN_STANDOFF")
                                 ? "faced down, side by side with Kavi, at a walk. Never once prey."
+                                : s.Is("GRIN_DISTRACTED")
+                                ? "paid by Ipo, in the single greatest performance of his career. He will never let you forget it."
                                 : s.Is("GRIN_CONVOY")
                                     ? "declined — Buri made the meal too expensive. One unnecessary victory scream was screamed."
                                     : s.Is("GRIN_OVERWATCH")
@@ -767,7 +789,9 @@ namespace Tidebound.Narrative
                                 ? "Then her eyes find Moa, riding your basket like copper cargo, and something happens to the old face that it clearly wasn't warned about — a softening, quickly arrested. \"…You keep fowl,\" she says, in an entirely different voice, and pours Moa a saucer of water like it's nothing at all."
                                 : s.Companion == "vela"
                                     ? "Then a shadow crosses the grove — Vela, wheeling once overhead, checking — and Edda tracks her with genuine respect. \"The old sea eagle. Blind-eyed. She's buried two mates and raised nine broods off Kestrel Cliffs. If she's keeping accounts with you, mind you stay solvent.\""
-                                    : "She studies you a while, alone as you are, and something like approval crosses the old face. \"No pets, no partners, no nonsense. You'll either die quick or do well. I've seen both.\"");
+                                    : s.Companion == "ipo"
+                                        ? "Then her eyes find Ipo, who is halfway into her seed basket, and the temperature drops forty degrees. \"And <i>that</i>,\" she says, with feeling, \"stays outside the fence, or I shoot it and we both pretend I didn't enjoy it.\""
+                                        : "She studies you a while, alone as you are, and something like approval crosses the old face. \"No pets, no partners, no nonsense. You'll either die quick or do well. I've seen both.\"");
                     return t;
                 },
                 Choices = new List<StoryChoice>

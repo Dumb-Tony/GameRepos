@@ -62,6 +62,7 @@ namespace Tidebound.EditorTools
             BuildBuriCompanion(mats);
             BuildMoaCompanion(mats);
             BuildVelaCompanion(mats);
+            BuildIpoCompanion(mats);
             BuildRaftSite(mats);
             BuildPlayerCameraAndSystems(gameClockHost, director, encounterDirector);
 
@@ -1879,6 +1880,58 @@ namespace Tidebound.EditorTools
             interactable.interactRadius = 4f; // she keeps the extra distance; the rock is the meeting place
 
             model.SetActive(false); // the controller decides when she's real
+        }
+
+        /// <summary>Ipo the companion (distinct from the story-stage IpoRig):
+        /// the smallest showman on the island, shown once the Clearing chose
+        /// him. He scampers in dash-and-audit bursts, and while Wary keeps to
+        /// the canopy above camp, auditing your possessions from height.</summary>
+        static void BuildIpoCompanion(Mats mats)
+        {
+            var root = new GameObject("IpoCompanion");
+            float cx = 4f, cz = 20f; // the palm stand his encounter rig haunts
+            root.transform.position = new Vector3(cx, Height(cx, cz) + 3.2f, cz);
+
+            var model = new GameObject("Model");
+            model.transform.SetParent(root.transform, false);
+
+            LocalPrim(model.transform, PrimitiveType.Sphere, "Body",
+                new Vector3(0f, 0.24f, 0f), new Vector3(0.26f, 0.3f, 0.24f), mats.Wood);
+            LocalPrim(model.transform, PrimitiveType.Sphere, "Head",
+                new Vector3(0f, 0.5f, 0.06f), Vector3.one * 0.18f, mats.Wood);
+            LocalPrim(model.transform, PrimitiveType.Sphere, "Muzzle",
+                new Vector3(0f, 0.47f, 0.15f), Vector3.one * 0.1f, mats.Cushion);
+            LocalPrim(model.transform, PrimitiveType.Sphere, "EarL",
+                new Vector3(-0.09f, 0.55f, 0.04f), Vector3.one * 0.06f, mats.Cushion);
+            LocalPrim(model.transform, PrimitiveType.Sphere, "EarR",
+                new Vector3(0.09f, 0.55f, 0.04f), Vector3.one * 0.06f, mats.Cushion);
+            for (int limb = 0; limb < 4; limb++)
+                LocalPrim(model.transform, PrimitiveType.Cylinder, limb < 2 ? "Arm" : "Leg",
+                    new Vector3(limb % 2 == 0 ? -0.1f : 0.1f, limb < 2 ? 0.22f : 0.08f, limb < 2 ? 0.08f : -0.02f),
+                    new Vector3(0.035f, 0.11f, 0.035f), mats.Wood);
+            var tail = LocalPrim(model.transform, PrimitiveType.Cylinder, "Tail",
+                new Vector3(0f, 0.34f, -0.2f), new Vector3(0.03f, 0.18f, 0.03f), mats.Wood, new Vector3(-50f, 0f, 0f));
+            var wag = tail.AddComponent<TailWag>(); // the parade flag, hoisted at Warming+
+            // the lighter, forever somewhere about his person
+            LocalPrim(model.transform, PrimitiveType.Cube, "Lighter",
+                new Vector3(0.12f, 0.28f, 0.1f), new Vector3(0.04f, 0.06f, 0.03f), mats.Metal);
+
+            var controller = root.AddComponent<IpoController>();
+            controller.model = model;
+            controller.tailWag = wag;
+            controller.trotSpeed = 3.4f;
+            controller.runSpeed = 6.2f;
+            controller.turnDegreesPerSecond = 720f;
+            controller.bobAmplitude = 0.05f;
+            controller.bobFrequency = 7f;
+            controller.canopyPerchPoint = new Vector3(cx, 0f, cz);
+            controller.perchHeight = 3.2f;
+
+            var interactable = root.AddComponent<IpoInteractable>();
+            interactable.controller = controller;
+            interactable.interactRadius = 2.8f;
+
+            model.SetActive(false); // the controller decides when he's real
         }
 
         static GameObject LocalPrim(Transform parent, PrimitiveType type, string name,

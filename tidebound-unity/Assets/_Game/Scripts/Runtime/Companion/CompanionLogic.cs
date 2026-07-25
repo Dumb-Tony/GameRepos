@@ -209,6 +209,41 @@ namespace Tidebound
             },
         };
 
+        // ---- scenes-chapter2.js TIER_LINE.ipo, verbatim ----------------------
+        static readonly string[][] IpoVignettes =
+        {
+            new[]
+            {
+                "Ipo watches from the trees, auditing your possessions.",
+                "A fig lands at your feet, thrown from the canopy with insulting accuracy. Payment, or bait, or both. Ipo's ledger is complicated.",
+                "Your spoon has moved four feet since you last put it down. Nothing else touched. Somewhere above, Ipo's audit continues.",
+            },
+            new[]
+            {
+                "Ipo has moved into camp and rearranged it to his taste.",
+                "Ipo naps in your best shade with one arm over his eyes, radiating ownership. You rate a spot in the second-best shade, which he has graciously left vacant.",
+                "Ipo has sorted your shells by a system you don't understand. When you re-sort them, he sighs — audibly, theatrically — and does it back.",
+            },
+            new[]
+            {
+                "Ipo rides your shoulder like the whole island is a parade.",
+                "Ipo performs the morning's inventory from your shoulder, gripping your ear for balance and narrating everything in small emphatic sounds.",
+                "A gull came to case the camp earlier. Ipo saw it off with a fury so operatic the gull may write about it. He accepted applause afterward. It was expected, and deserved.",
+            },
+            new[]
+            {
+                "Ipo brings you things now — useful ones, mostly, and always with ceremony.",
+                "Ipo's tribute today, presented on your knee with both hands: a bottle cap, polished to a shine. His finest piece. You wear it on your hat cord. He checks, hourly, that it's still there.",
+                "Ipo has started grooming the camp itself — a leaf off the tarp, a beetle escorted from the bedding — small custodial acts he performs only when he thinks you're not watching.",
+            },
+            new[]
+            {
+                "Ipo grooms your hair each dusk with the gravity of a priest.",
+                "Ipo sleeps in the crook of your arm now, one fist knotted in your collar, and defends the position at dawn against nobody, on principle.",
+                "You caught Ipo showing your camp to a young troop cousin from the tree line — sweeping gestures, proprietary tone. Giving the tour. Of his estate. Which is you.",
+            },
+        };
+
         static readonly Dictionary<string, string[][]> VignettesByCompanion =
             new Dictionary<string, string[][]>
             {
@@ -216,6 +251,7 @@ namespace Tidebound
                 ["buri"] = BuriVignettes,
                 ["moa"] = MoaVignettes,
                 ["vela"] = VelaVignettes,
+                ["ipo"] = IpoVignettes,
             };
 
         public static IReadOnlyList<string> VignettesFor(TrustTier tier) => KaviVignettes[(int)tier];
