@@ -46,6 +46,62 @@ await mkdir(dist, { recursive: true });
 await cp(resolve(projectRoot, "src"), resolve(dist, "src"), { recursive: true });
 await cp(resolve(projectRoot, "index.html"), resolve(dist, "index.html"));
 await cp(resolve(projectRoot, "styles.css"), resolve(dist, "styles.css"));
+await cp(
+  resolve(projectRoot, ".openai"),
+  resolve(dist, ".openai"),
+  { recursive: true },
+);
+
+const deployedFiles = [
+  "index.html",
+  "styles.css",
+  ...requiredFiles.filter((file) => file.startsWith("src/")),
+];
+const assets = {};
+for (const file of deployedFiles) {
+  const route = file === "index.html" ? "/index.html" : `/${file.replaceAll("\\", "/")}`;
+  const body = await readFile(resolve(projectRoot, file), "utf8");
+  const contentType = file.endsWith(".html")
+    ? "text/html; charset=utf-8"
+    : file.endsWith(".css")
+      ? "text/css; charset=utf-8"
+      : "text/javascript; charset=utf-8";
+  assets[route] = { body, contentType };
+}
+
+const serverSource = `
+const ASSETS = ${JSON.stringify(assets)};
+
+export default {
+  async fetch(request) {
+    const url = new URL(request.url);
+    const path = url.pathname === "/" ? "/index.html" : url.pathname;
+    const asset = ASSETS[path];
+
+    if (!asset) {
+      return new Response("Not found", {
+        status: 404,
+        headers: { "content-type": "text/plain; charset=utf-8" },
+      });
+    }
+
+    return new Response(request.method === "HEAD" ? null : asset.body, {
+      status: 200,
+      headers: {
+        "content-type": asset.contentType,
+        "cache-control": path === "/index.html"
+          ? "no-cache"
+          : "public, max-age=300",
+        "x-content-type-options": "nosniff",
+        "referrer-policy": "same-origin",
+      },
+    });
+  },
+};
+`;
+
+await mkdir(resolve(dist, "server"), { recursive: true });
+await writeFile(resolve(dist, "server", "index.js"), serverSource);
 await writeFile(
   resolve(dist, "build.json"),
   JSON.stringify(
