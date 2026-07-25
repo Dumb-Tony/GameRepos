@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 2;
+export const GAME_STATE_VERSION = 3;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -58,6 +58,12 @@ export function createInitialState(player = {}, settings = {}) {
       offset: { x: 0, y: 0 },
     },
     characters: {},
+    dialogue: {
+      activeDialogueId: null,
+      activeNodeId: null,
+      visitedNodes: [],
+      completedDialogues: [],
+    },
     completedDeductions: [],
     locationVisits: {
       home_office: 0,

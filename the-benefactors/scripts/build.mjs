@@ -3,6 +3,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   EVIDENCE,
+  DIALOGUES,
   GAME_CONTENT,
   INVENTORY_ITEMS,
 } from "../src/content/game-content.js";
@@ -22,6 +23,7 @@ const requiredFiles = [
   "src/engine/router.js",
   "src/content/game-content.js",
   "src/systems/exploration/scene-renderer.js",
+  "src/systems/dialogue/dialogue-engine.js",
   "src/ui/app.js",
 ];
 
@@ -33,6 +35,7 @@ assertValidGameContent({
   content: GAME_CONTENT,
   evidence: EVIDENCE,
   inventory: INVENTORY_ITEMS,
+  dialogues: DIALOGUES,
 });
 
 await rm(dist, { recursive: true, force: true });

@@ -1,7 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createInitialState } from "../src/engine/game-state.js";
+import {
+  GAME_STATE_VERSION,
+  createInitialState,
+} from "../src/engine/game-state.js";
 import { SAVE_KEY, SaveSystem } from "../src/engine/save-system.js";
 
 class MemoryStorage {
@@ -62,14 +65,16 @@ test("migrates an older save with new progress defaults", () => {
   legacy.version = 1;
   delete legacy.progress.unlockedLocations;
   delete legacy.flags.downloadedAttachments;
+  delete legacy.dialogue;
   storage.setItem(SAVE_KEY, JSON.stringify(legacy));
 
   const migrated = saves.load();
 
-  assert.equal(migrated.version, 2);
+  assert.equal(migrated.version, GAME_STATE_VERSION);
   assert.deepEqual(migrated.progress.unlockedLocations, [
     "home_office",
     "ledger_newsroom",
   ]);
   assert.equal(migrated.flags.downloadedAttachments, false);
+  assert.deepEqual(migrated.dialogue.completedDialogues, []);
 });

@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 
 import {
   EVIDENCE,
+  DIALOGUES,
   GAME_CONTENT,
   INVENTORY_ITEMS,
 } from "../src/content/game-content.js";
@@ -14,6 +15,7 @@ test("authored game content has valid ids, references, and coordinates", () => {
       content: GAME_CONTENT,
       evidence: EVIDENCE,
       inventory: INVENTORY_ITEMS,
+      dialogues: DIALOGUES,
     }),
     [],
   );
@@ -30,6 +32,7 @@ test("content validation reports broken evidence references", () => {
     content,
     evidence: EVIDENCE,
     inventory: INVENTORY_ITEMS,
+    dialogues: DIALOGUES,
   });
 
   assert.equal(
@@ -37,4 +40,3 @@ test("content validation reports broken evidence references", () => {
     true,
   );
 });
-

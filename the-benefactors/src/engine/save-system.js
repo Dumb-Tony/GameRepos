@@ -79,6 +79,7 @@ export class SaveSystem {
       flags: { ...fallback.flags, ...candidate.flags },
       evidence: { ...fallback.evidence, ...candidate.evidence },
       board: { ...fallback.board, ...candidate.board },
+      dialogue: { ...fallback.dialogue, ...candidate.dialogue },
       locationVisits: {
         ...fallback.locationVisits,
         ...candidate.locationVisits,

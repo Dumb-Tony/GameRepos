@@ -1,4 +1,4 @@
-export function validateGameContent({ content, evidence, inventory }) {
+export function validateGameContent({ content, evidence, inventory, dialogues = {} }) {
   const errors = [];
   const locationIds = new Set(Object.keys(content.locations));
   const evidenceIds = new Set(Object.keys(evidence));
@@ -59,6 +59,34 @@ export function validateGameContent({ content, evidence, inventory }) {
   if (!evidenceIds.size) errors.push("At least one evidence definition is required.");
   if (!locationIds.has("home_office")) errors.push("Home office location is required.");
 
+  for (const [dialogueId, dialogue] of Object.entries(dialogues)) {
+    if (dialogue.id !== dialogueId) {
+      errors.push(`Dialogue key "${dialogueId}" does not match id "${dialogue.id}".`);
+    }
+    if (!dialogue.nodes[dialogue.start]) {
+      errors.push(`Dialogue "${dialogueId}" has missing start node "${dialogue.start}".`);
+    }
+    for (const [nodeId, node] of Object.entries(dialogue.nodes)) {
+      if (node.id !== nodeId) {
+        errors.push(
+          `Dialogue "${dialogueId}" node key "${nodeId}" does not match id "${node.id}".`,
+        );
+      }
+      for (const choice of node.choices || []) {
+        if (!choice.end && !dialogue.nodes[choice.next]) {
+          errors.push(
+            `Dialogue "${dialogueId}" choice "${choice.id}" points to missing node "${choice.next}".`,
+          );
+        }
+        if (choice.evidenceId && !evidenceIds.has(choice.evidenceId)) {
+          errors.push(
+            `Dialogue "${dialogueId}" choice "${choice.id}" references missing evidence "${choice.evidenceId}".`,
+          );
+        }
+      }
+    }
+  }
+
   return errors;
 }
 
@@ -68,4 +96,3 @@ export function assertValidGameContent(data) {
     throw new Error(`Game content validation failed:\n- ${errors.join("\n- ")}`);
   }
 }
-

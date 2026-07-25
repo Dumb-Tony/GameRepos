@@ -1,5 +1,6 @@
 import {
   EVIDENCE,
+  DIALOGUES,
   GAME_CONTENT,
   INVENTORY_ITEMS,
 } from "../content/game-content.js";
@@ -7,6 +8,13 @@ import { evaluateCondition } from "../engine/conditions.js";
 import { applyEffects } from "../engine/events.js";
 import { createInitialState } from "../engine/game-state.js";
 import { renderExplorationScene } from "../systems/exploration/scene-renderer.js";
+import {
+  advanceDialogue,
+  closeDialogue,
+  getAvailableChoices,
+  getDialogueNode,
+  startDialogue,
+} from "../systems/dialogue/dialogue-engine.js";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -277,7 +285,9 @@ export class GameApp {
       GAME_CONTENT.locations.ledger_newsroom;
     const note = this.activeLocationNote;
     const actionAvailable =
-      note?.effects && evaluateCondition(note.actionWhen, state);
+      note &&
+      (note.dialogueId ||
+        (note.effects && evaluateCondition(note.actionWhen, state)));
 
     this.root.innerHTML = `
       <main id="game-main" class="screen game-screen location-screen">
@@ -322,6 +332,7 @@ export class GameApp {
           </div>
         </footer>
         ${this.renderInventory(state)}
+        ${this.renderDialogue(state)}
         ${this.renderToast()}
       </main>
     `;
@@ -337,6 +348,19 @@ export class GameApp {
 
     this.bindActions({
       "hotspot-action": () => {
+        if (note.dialogueId) {
+          let next = startDialogue(this.store.getState(), DIALOGUES, note.dialogueId);
+          const openingNode = getDialogueNode(
+            DIALOGUES,
+            note.dialogueId,
+            next.dialogue.activeNodeId,
+          );
+          next = applyEffects(next, openingNode.onEnter || []);
+          this.store.replace(next, `dialogue-${note.dialogueId}`);
+          this.saves.save(this.store.getState(), `dialogue-${note.dialogueId}`);
+          this.renderLocation();
+          return;
+        }
         const next = applyEffects(this.store.getState(), note.effects);
         this.store.replace(next, `hotspot-${note.id}`);
         this.saves.save(this.store.getState(), `hotspot-${note.id}`);
@@ -363,6 +387,7 @@ export class GameApp {
         this.router.navigate("settings");
       },
     });
+    this.bindDialogueActions();
   }
 
   renderMap() {
@@ -669,6 +694,80 @@ export class GameApp {
       </aside>
       <div class="drawer-scrim" aria-hidden="true"></div>
     `;
+  }
+
+  renderDialogue(state) {
+    const dialogueId = state.dialogue.activeDialogueId;
+    if (!dialogueId) return "";
+
+    const dialogue = DIALOGUES[dialogueId];
+    const node = getDialogueNode(DIALOGUES, dialogueId, state.dialogue.activeNodeId);
+    const choices = getAvailableChoices(node, state);
+
+    return `
+      <div class="dialogue-scrim">
+        <section class="dialogue-panel" role="dialog" aria-modal="true" aria-labelledby="dialogue-speaker">
+          <button class="dialogue-close" data-action="close-dialogue" aria-label="End conversation">×</button>
+          <div class="character-portrait" aria-hidden="true">${escapeHtml(dialogue.portrait)}</div>
+          <div class="dialogue-content">
+            <p id="dialogue-speaker" class="speaker">${escapeHtml(node.speaker)}</p>
+            <blockquote>${escapeHtml(node.text)}</blockquote>
+            <div class="dialogue-choices">
+              ${choices
+                .map(
+                  (choice) => `
+                    <button class="dialogue-choice" data-dialogue-choice="${choice.id}">
+                      ${choice.evidenceId ? `<span class="evidence-choice">Evidence</span>` : ""}
+                      <span>${escapeHtml(choice.text)}</span>
+                    </button>
+                  `,
+                )
+                .join("")}
+            </div>
+          </div>
+        </section>
+      </div>
+    `;
+  }
+
+  bindDialogueActions() {
+    const state = this.store.getState();
+    const dialogueId = state.dialogue.activeDialogueId;
+    if (!dialogueId) return;
+
+    const node = getDialogueNode(DIALOGUES, dialogueId, state.dialogue.activeNodeId);
+    const choices = getAvailableChoices(node, state);
+
+    this.root.querySelector("[data-action='close-dialogue']")?.addEventListener("click", () => {
+      this.store.replace(closeDialogue(this.store.getState()), "close-dialogue");
+      this.saves.save(this.store.getState(), "close-dialogue");
+      this.renderLocation();
+    });
+
+    this.root.querySelectorAll("[data-dialogue-choice]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const choice = choices.find(
+          (candidate) => candidate.id === button.dataset.dialogueChoice,
+        );
+        if (!choice) return;
+
+        let next = applyEffects(this.store.getState(), choice.effects || []);
+        next = advanceDialogue(next, dialogueId, choice);
+
+        if (!choice.end) {
+          const nextNode = getDialogueNode(
+            DIALOGUES,
+            dialogueId,
+            next.dialogue.activeNodeId,
+          );
+          next = applyEffects(next, nextNode.onEnter || []);
+        }
+
+        this.store.replace(next, `dialogue-choice-${choice.id}`);
+        this.saves.save(this.store.getState(), `dialogue-choice-${choice.id}`);
+        this.renderLocation();
+      });
+    });
   }
 
   renderToast() {

@@ -28,7 +28,15 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Placeholder newsroom, city hall, and Vale residence
 - First permit search action
 
-Dialogue, the evidence board, and the rest of the playable prologue are built in later milestones.
+**Milestone 2 — Dialogue (started)**
+
+- Data-driven branching dialogue engine
+- Evidence-gated conversation choices
+- Persistent conversation effects
+- Lionel Price records-room conversation
+- June Bell witness conversation
+
+The evidence board and the rest of the playable prologue are built in later milestones.
 
 ## Run locally
 
@@ -63,6 +71,7 @@ The build is written to `dist/`. The source folder itself remains directly deplo
 - `src/engine/` — reusable state, saves, conditions, events, and routing
 - `src/content/` — authored game data
 - `src/ui/` — screen rendering and interaction binding
+- `src/systems/` — exploration and dialogue systems
 - `tests/` — engine and persistence tests
 - `docs/` — game design documentation
 

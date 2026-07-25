@@ -17,6 +17,18 @@ export const EVIDENCE = Object.freeze({
     category: "document",
     summary: "A public permit summary for an addition to Mayor Vale’s home.",
   },
+  permit_amendment_note: {
+    id: "permit_amendment_note",
+    title: "Permit amendment note",
+    category: "document",
+    summary: "An amendment authorized after midnight by someone identified as E. Marsh.",
+  },
+  june_statement: {
+    id: "june_statement",
+    title: "June Bell’s statement",
+    category: "recording",
+    summary: "Deliveries arrived at night, but no above-ground construction followed.",
+  },
 });
 
 export const INVENTORY_ITEMS = Object.freeze({
@@ -24,6 +36,151 @@ export const INVENTORY_ITEMS = Object.freeze({
   smartphone: { id: "smartphone", name: "Phone & camera", icon: "CAM" },
   recorder: { id: "recorder", name: "Audio recorder", icon: "REC" },
   notebook: { id: "notebook", name: "Reporter’s notebook", icon: "NOTE" },
+});
+
+export const DIALOGUES = Object.freeze({
+  lionel_records: {
+    id: "lionel_records",
+    character: "Lionel Price",
+    portrait: "LP",
+    start: "intro",
+    nodes: {
+      intro: {
+        id: "intro",
+        speaker: "Lionel Price",
+        text: "Everything available to the public is in the summary. If it is not in the summary, it is not available.",
+        choices: [
+          {
+            id: "ask-amendment",
+            text: "Who filed the amendment?",
+            next: "denial",
+          },
+          {
+            id: "show-invoice",
+            text: "Then explain this Northstar invoice.",
+            evidenceId: "invoice_northstar",
+            requires: { type: "hasEvidence", id: "invoice_northstar" },
+            next: "invoice",
+          },
+          { id: "leave", text: "That’s all for now.", end: true },
+        ],
+      },
+      denial: {
+        id: "denial",
+        speaker: "Lionel Price",
+        text: "There was no amendment. You are mistaking a system timestamp for a filing.",
+        choices: [
+          {
+            id: "show-permit",
+            text: "The public summary says ‘revision pending.’",
+            evidenceId: "permit_summary",
+            requires: { type: "hasEvidence", id: "permit_summary" },
+            effects: [
+              { type: "setFlag", key: "caughtLionelContradiction", value: true },
+            ],
+            next: "defensive",
+          },
+          { id: "ask-system", text: "Who can access the system after hours?", next: "system" },
+          { id: "leave", text: "I’ll come back with the paperwork.", end: true },
+        ],
+      },
+      invoice: {
+        id: "invoice",
+        speaker: "Lionel Price",
+        text: "Northstar is a registered vendor. Or it was when the payment cleared. Vendor status is Finance, not Records.",
+        choices: [
+          { id: "press", text: "You checked after I arrived, didn’t you?", next: "defensive" },
+          { id: "back", text: "Let’s start again.", next: "intro" },
+        ],
+      },
+      system: {
+        id: "system",
+        speaker: "Lionel Price",
+        text: "The mayor, the deputy clerk, Information Services, and anyone with an emergency authorization token.",
+        choices: [
+          { id: "ask-token", text: "Who used an emergency token?", next: "defensive" },
+          { id: "back", text: "Back up.", next: "denial" },
+        ],
+      },
+      defensive: {
+        id: "defensive",
+        speaker: "Lionel Price",
+        text: "I did not authorize it. The log says E. Marsh, 12:43 AM. That is all I know—and you did not hear it from me.",
+        onEnter: [
+          { type: "setFlag", key: "lionelNamedMarsh", value: true },
+          { type: "collectEvidence", id: "permit_amendment_note" },
+        ],
+        choices: [
+          { id: "protect", text: "I’ll keep your name out of it.", next: "protected" },
+          { id: "challenge", text: "You should have reported this.", next: "resentful" },
+        ],
+      },
+      protected: {
+        id: "protected",
+        speaker: "Lionel Price",
+        text: "Then write this down: the change came after the inspection, not before. That is not how permits work.",
+        choices: [{ id: "finish", text: "Thank you, Lionel.", end: true }],
+      },
+      resentful: {
+        id: "resentful",
+        speaker: "Lionel Price",
+        text: "To whom? The mayor? The deputy clerk? You still think the forms protect the people who file them.",
+        choices: [{ id: "finish", text: "I have what I need.", end: true }],
+      },
+    },
+  },
+  june_window: {
+    id: "june_window",
+    character: "June Bell",
+    portrait: "JB",
+    start: "intro",
+    nodes: {
+      intro: {
+        id: "intro",
+        speaker: "June Bell",
+        text: "If you’re selling something, I’m eighty years old and already own too much of everything.",
+        choices: [
+          { id: "press", text: "I’m with the Greyhaven Ledger.", next: "journalist" },
+          { id: "direct", text: "Did you see construction at Mayor Vale’s house?", next: "construction" },
+          { id: "leave", text: "Sorry to bother you.", end: true },
+        ],
+      },
+      journalist: {
+        id: "journalist",
+        speaker: "June Bell",
+        text: "A journalist? The last one who came here wanted a photograph of Evelyn planting tulips.",
+        choices: [
+          { id: "ask-delivery", text: "I’m interested in the nighttime deliveries.", next: "construction" },
+          { id: "leave", text: "I may come back.", end: true },
+        ],
+      },
+      construction: {
+        id: "construction",
+        speaker: "June Bell",
+        text: "Three trucks after midnight. Men carried equipment through the side gate. But nobody built a west wing. I would have noticed a room appearing.",
+        onEnter: [
+          { type: "setFlag", key: "juneSawDeliveries", value: true },
+          { type: "collectEvidence", id: "june_statement" },
+        ],
+        choices: [
+          { id: "ask-sound", text: "What did you hear?", next: "sound" },
+          { id: "ask-men", text: "Could you identify the workers?", next: "workers" },
+        ],
+      },
+      sound: {
+        id: "sound",
+        speaker: "June Bell",
+        text: "A low vibration. Not hammering—more like drilling, except it came up through the floorboards.",
+        choices: [{ id: "finish", text: "May I quote you?", end: true }],
+      },
+      workers: {
+        id: "workers",
+        speaker: "June Bell",
+        text: "No uniforms. One van had a compass-star logo. I sketched it because I did not trust my memory.",
+        choices: [{ id: "finish", text: "I’d like to see that sketch later.", end: true }],
+      },
+    },
+  },
 });
 
 export const GAME_CONTENT = Object.freeze({
@@ -110,13 +267,15 @@ export const GAME_CONTENT = Object.freeze({
         },
         {
           id: "clerk-window",
-          label: "Records counter",
+          label: "Lionel Price",
           x: 12,
           y: 27,
           width: 32,
           height: 38,
-          title: "Records counter",
-          text: "A brass plaque reads LIONEL PRICE. The chair behind it is empty—for now.",
+          title: "Lionel Price, city clerk",
+          text: "He has already decided which questions you are allowed to ask.",
+          actionLabel: "Question Lionel",
+          dialogueId: "lionel_records",
         },
         {
           id: "records-policy",
@@ -159,6 +318,8 @@ export const GAME_CONTENT = Object.freeze({
           height: 30,
           title: "Someone is watching",
           text: "The curtain moves. Whoever lives opposite the mayor has an excellent view.",
+          actionLabel: "Knock on the neighbor’s door",
+          dialogueId: "june_window",
         },
         {
           id: "delivery-marks",
@@ -233,4 +394,3 @@ export const GAME_CONTENT = Object.freeze({
     },
   ],
 });
-
