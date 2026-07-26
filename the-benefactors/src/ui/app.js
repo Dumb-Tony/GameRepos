@@ -55,6 +55,7 @@ export class GameApp {
     this.boardConnectionType = "confirmed";
     this.boardWasDragged = false;
     this.activeEvidenceId = null;
+    this.evidenceViewerActionsBound = false;
   }
 
   start() {
@@ -1080,19 +1081,22 @@ export class GameApp {
   }
 
   bindEvidenceViewerActions() {
-    this.root.querySelectorAll("[data-view-evidence]").forEach((button) => {
-      button.addEventListener("click", (event) => {
-        event.stopPropagation();
-        this.activeEvidenceId = button.dataset.viewEvidence;
-        this.render(this.router.current());
-      });
-    });
+    if (this.evidenceViewerActionsBound) return;
+    this.evidenceViewerActionsBound = true;
 
-    this.root.querySelectorAll("[data-close-evidence]").forEach((button) => {
-      button.addEventListener("click", () => {
+    this.root.addEventListener("click", (event) => {
+      const viewButton = event.target.closest?.("[data-view-evidence]");
+      if (viewButton) {
+        event.stopPropagation();
+        this.activeEvidenceId = viewButton.dataset.viewEvidence;
+        this.render(this.router.current());
+        return;
+      }
+
+      if (event.target.closest?.("[data-close-evidence]")) {
         this.activeEvidenceId = null;
         this.render(this.router.current());
-      });
+      }
     });
   }
 
