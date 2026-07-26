@@ -1295,6 +1295,7 @@ input[type="range"] {
 
 .authored-scene {
   position: relative;
+  min-width: 0;
   min-height: 540px;
   overflow: hidden;
   background-color: #252820;
@@ -1510,6 +1511,7 @@ input[type="range"] {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  min-width: 0;
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
@@ -1525,6 +1527,7 @@ input[type="range"] {
 .location-copy h1 {
   margin: 9px 0 14px;
   font: 600 clamp(2.8rem, 5vw, 4.8rem) / 0.85 Georgia, "Times New Roman", serif;
+  overflow-wrap: anywhere;
 }
 
 .location-copy > p {
@@ -3592,6 +3595,11 @@ input[type="range"] {
   .dialogue-panel {
     grid-template-columns: 112px minmax(0, 1fr);
     max-height: calc(100vh - 24px);
+  }
+
+  .location-copy h1 {
+    font-size: clamp(2.1rem, 9vw, 3.2rem);
+    line-height: 0.92;
   }
 
   .character-portrait {
