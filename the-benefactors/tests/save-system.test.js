@@ -77,4 +77,22 @@ test("migrates an older save with new progress defaults", () => {
   ]);
   assert.equal(migrated.flags.downloadedAttachments, false);
   assert.deepEqual(migrated.dialogue.completedDialogues, []);
+  assert.equal(migrated.progress.opening.tutorialChoice, "skip");
+  assert.equal(migrated.progress.opening.tutorialCompleted, true);
+  assert.equal(migrated.progress.opening.cutsceneCompleted, true);
+  assert.equal(migrated.flags.heardOpeningMessage, true);
+});
+
+test("normalizes a current-version save missing opening state", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const incomplete = createInitialState({ firstName: "Morgan" });
+  delete incomplete.progress.opening;
+  storage.setItem(SAVE_KEY, JSON.stringify(incomplete));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(migrated.progress.opening.tutorialCompleted, false);
+  assert.equal(migrated.progress.opening.cutsceneCompleted, false);
 });

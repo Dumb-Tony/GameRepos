@@ -670,8 +670,9 @@ export const GAME_CONTENT = Object.freeze({
       id: "answering-machine",
       label: "Answering machine",
       className: "hotspot-phone",
-      title: "No new messages",
-      text: "The red light is dark. Silence feels ordinary tonight.",
+      title: "1 new message",
+      text: "The red light blinks above a message from an unidentified caller.",
+      action: "play-opening-message",
     },
     {
       id: "window",

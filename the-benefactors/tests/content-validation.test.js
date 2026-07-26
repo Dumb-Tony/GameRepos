@@ -43,3 +43,23 @@ test("content validation reports broken evidence references", () => {
     true,
   );
 });
+
+test("content validation checks home-office routes", () => {
+  const content = structuredClone(GAME_CONTENT);
+  content.officeHotspots[0].route = "missing-screen";
+
+  const errors = validateGameContent({
+    content,
+    evidence: EVIDENCE,
+    inventory: INVENTORY_ITEMS,
+    dialogues: DIALOGUES,
+    deductions: DEDUCTIONS,
+  });
+
+  assert.equal(
+    errors.some((error) =>
+      error.includes('references missing route "missing-screen"'),
+    ),
+    true,
+  );
+});

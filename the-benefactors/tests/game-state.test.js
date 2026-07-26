@@ -17,6 +17,15 @@ test("creates a complete serializable initial state", () => {
 
   assert.equal(state.player.firstName, "Nell");
   assert.equal(state.progress.currentLocation, "home_office");
+  assert.equal(state.progress.currentScreen, "onboarding");
+  assert.deepEqual(state.progress.opening, {
+    tutorialChoice: null,
+    tutorialStep: 0,
+    tutorialCompleted: false,
+    cutsceneStep: 0,
+    cutsceneCompleted: false,
+  });
+  assert.equal(state.flags.heardOpeningMessage, false);
   assert.deepEqual(state.settings, DEFAULT_SETTINGS);
   assert.equal(isGameState(JSON.parse(JSON.stringify(state))), true);
 });
@@ -43,4 +52,3 @@ test("GameStore publishes immutable updates", () => {
   assert.equal(store.getState().flags.openedAnonymousEmail, true);
   assert.equal(receivedReason, "opened-email");
 });
-

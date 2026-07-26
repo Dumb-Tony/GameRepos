@@ -1,12 +1,12 @@
-import { createInitialState, GameStore } from "./engine/game-state.js";
-import { ScreenRouter } from "./engine/router.js";
-import { SaveSystem } from "./engine/save-system.js";
-import { GameApp } from "./ui/app.js?v=noir-20260726b";
+import { createInitialState, GameStore } from "./engine/game-state.js?v=onboarding-20260726b";
+import { ScreenRouter } from "./engine/router.js?v=onboarding-20260726b";
+import { SaveSystem } from "./engine/save-system.js?v=onboarding-20260726b";
+import { GameApp } from "./ui/app.js?v=onboarding-20260726b";
 
 const root = document.querySelector("#app");
 const saves = new SaveSystem();
 const settings = saves.loadSettings();
-const store = new GameStore(createInitialState({}, settings));
+const store = new GameStore(saves.load() || createInitialState({}, settings));
 const router = new ScreenRouter();
 const app = new GameApp({ root, store, saves, router });
 

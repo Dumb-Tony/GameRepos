@@ -3,7 +3,7 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js";
+} from "./game-state.js?v=onboarding-20260726b";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
@@ -68,14 +68,22 @@ export class SaveSystem {
       return candidate;
     }
 
+    const legacyVersion = Number(candidate.version) || 0;
     const fallback = createInitialState(candidate.player, candidate.settings);
-    return {
+    const migrated = {
       ...fallback,
       ...candidate,
       version: GAME_STATE_VERSION,
       meta: { ...fallback.meta, ...candidate.meta },
       player: { ...fallback.player, ...candidate.player },
-      progress: { ...fallback.progress, ...candidate.progress },
+      progress: {
+        ...fallback.progress,
+        ...candidate.progress,
+        opening: {
+          ...fallback.progress.opening,
+          ...candidate.progress?.opening,
+        },
+      },
       flags: { ...fallback.flags, ...candidate.flags },
       evidence: { ...fallback.evidence, ...candidate.evidence },
       board: { ...fallback.board, ...candidate.board },
@@ -86,5 +94,18 @@ export class SaveSystem {
       },
       settings: { ...DEFAULT_SETTINGS, ...candidate.settings },
     };
+
+    if (legacyVersion < 6) {
+      migrated.progress.opening = {
+        tutorialChoice: "skip",
+        tutorialStep: 0,
+        tutorialCompleted: true,
+        cutsceneStep: 0,
+        cutsceneCompleted: true,
+      };
+      migrated.flags.heardOpeningMessage = true;
+    }
+
+    return migrated;
   }
 }

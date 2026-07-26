@@ -4,27 +4,38 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=noir-20260726b";
-import { evaluateCondition } from "../engine/conditions.js";
-import { applyEffects } from "../engine/events.js";
-import { createInitialState } from "../engine/game-state.js";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=noir-20260726b";
+} from "../content/game-content.js?v=onboarding-20260726b";
+import {
+  CUTSCENE_BEATS,
+  OPENING_MESSAGE,
+  TUTORIAL_STEPS,
+  YARN_RELATIONSHIPS,
+} from "../content/onboarding-content.js?v=onboarding-20260726b";
+import { evaluateCondition } from "../engine/conditions.js?v=onboarding-20260726b";
+import { applyEffects } from "../engine/events.js?v=onboarding-20260726b";
+import { createInitialState } from "../engine/game-state.js?v=onboarding-20260726b";
+import {
+  getPlayerLanguage,
+  interpolatePlayerText,
+} from "../engine/player-language.js?v=onboarding-20260726b";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=onboarding-20260726b";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=onboarding-20260726b";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js";
+} from "../systems/dialogue/dialogue-engine.js?v=onboarding-20260726b";
 import {
   connectEvidence,
   evaluateBoardDeductions,
   moveEvidence,
   pinEvidence,
   removeConnection,
-} from "../systems/evidence-board/evidence-board.js";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js";
-import { TransientNotice } from "./transient-notice.js?v=noir-20260726b";
+} from "../systems/evidence-board/evidence-board.js?v=onboarding-20260726b";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=onboarding-20260726b";
+import { TransientNotice } from "./transient-notice.js?v=onboarding-20260726b";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -56,9 +67,12 @@ export class GameApp {
     this.activeOfficeNote = null;
     this.activeLocationNote = null;
     this.inventoryOpen = false;
-    this.selectedBoardCard = null;
+    this.selectedBoardCards = [];
     this.boardConnectionType = "confirmed";
     this.boardWasDragged = false;
+    this.tutorialHotspotFound = false;
+    this.tutorialBoardCards = [];
+    this.tutorialBoardConnected = false;
     this.activeEvidenceId = null;
     this.evidenceViewerActionsBound = false;
   }
@@ -70,8 +84,23 @@ export class GameApp {
   }
 
   render(route) {
+    const opening = this.store.getState().progress.opening;
     if (
-      ["home", "location", "map", "laptop", "board"].includes(route) &&
+      PERSISTENT_GAME_ROUTES.has(route) &&
+      !["onboarding", "tutorial", "cutscene"].includes(route) &&
+      !opening.cutsceneCompleted
+    ) {
+      const openingRoute = !opening.tutorialChoice
+        ? "onboarding"
+        : opening.tutorialChoice === "guided" && !opening.tutorialCompleted
+          ? "tutorial"
+          : "cutscene";
+      this.router.navigate(openingRoute, { replace: true });
+      return;
+    }
+
+    if (
+      PERSISTENT_GAME_ROUTES.has(route) &&
       this.store.getState().progress.currentScreen !== route
     ) {
       this.store.update((draft) => {
@@ -83,6 +112,9 @@ export class GameApp {
     const renderers = {
       title: () => this.renderTitle(),
       setup: () => this.renderSetup(),
+      onboarding: () => this.renderOnboarding(),
+      tutorial: () => this.renderTutorial(),
+      cutscene: () => this.renderCutscene(),
       home: () => this.renderHome(),
       location: () => this.renderLocation(),
       map: () => this.renderMap(),
@@ -203,8 +235,437 @@ export class GameApp {
         settings,
       );
       this.store.replace(state, "new-game");
+      this.resetEphemeralUi();
       this.saves.save(this.store.getState(), "new-game");
-      this.router.navigate("home");
+      this.router.navigate("onboarding");
+    });
+  }
+
+  renderOnboarding() {
+    const state = this.store.getState();
+    const opening = state.progress.opening;
+
+    if (opening.cutsceneCompleted) {
+      this.router.navigate("home", { replace: true });
+      return;
+    }
+    if (opening.tutorialChoice === "guided" && !opening.tutorialCompleted) {
+      this.router.navigate("tutorial", { replace: true });
+      return;
+    }
+    if (opening.tutorialCompleted) {
+      this.router.navigate("cutscene", { replace: true });
+      return;
+    }
+
+    this.root.innerHTML = `
+      <main id="game-main" class="screen onboarding-screen">
+        <img class="onboarding-backdrop" src="./assets/scenes/home-office.webp" alt="" draggable="false" />
+        <div class="onboarding-shade" aria-hidden="true"></div>
+        <section
+          class="onboarding-dialog"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="onboarding-title"
+        >
+          <p class="kicker">Before the first lead</p>
+          <h1 id="onboarding-title" tabindex="-1">Have you played The Benefactors before?</h1>
+          <p class="onboarding-lede">
+            A quick, optional walkthrough shows how to explore scenes, inspect evidence,
+            revisit leads, and connect clues with yarn.
+          </p>
+          <div class="onboarding-options">
+            <button class="onboarding-option is-recommended" data-action="start-tutorial">
+              <span class="option-tag">Recommended for a first case</span>
+              <strong>Play quick tutorial</strong>
+              <small>Learn the essentials in about a minute.</small>
+            </button>
+            <button class="onboarding-option" data-action="skip-tutorial">
+              <span class="option-tag">I know the ropes</span>
+              <strong>Skip tutorial</strong>
+              <small>Go straight to the opening story.</small>
+            </button>
+          </div>
+          <p class="onboarding-footnote">
+            You can still inspect every clue and revisit every location if you skip.
+          </p>
+        </section>
+      </main>
+    `;
+
+    this.bindActions({
+      "start-tutorial": () => {
+        this.tutorialHotspotFound = false;
+        this.tutorialBoardCards = [];
+        this.tutorialBoardConnected = false;
+        this.store.update((draft) => {
+          draft.progress.opening.tutorialChoice = "guided";
+          draft.progress.opening.tutorialStep = 0;
+          draft.progress.currentScreen = "tutorial";
+        }, "start-tutorial");
+        this.saves.save(this.store.getState(), "start-tutorial");
+        this.router.navigate("tutorial");
+      },
+      "skip-tutorial": () => {
+        this.store.update((draft) => {
+          draft.progress.opening.tutorialChoice = "skip";
+          draft.progress.opening.tutorialCompleted = true;
+          draft.progress.opening.cutsceneStep = 0;
+          draft.progress.currentScreen = "cutscene";
+        }, "skip-tutorial");
+        this.saves.save(this.store.getState(), "skip-tutorial");
+        this.router.navigate("cutscene");
+      },
+    });
+  }
+
+  renderTutorial() {
+    const state = this.store.getState();
+    const opening = state.progress.opening;
+
+    if (opening.cutsceneCompleted) {
+      this.router.navigate("home", { replace: true });
+      return;
+    }
+    if (!opening.tutorialChoice) {
+      this.router.navigate("onboarding", { replace: true });
+      return;
+    }
+    if (opening.tutorialCompleted || opening.tutorialChoice === "skip") {
+      this.router.navigate("cutscene", { replace: true });
+      return;
+    }
+
+    const stepIndex = Math.max(
+      0,
+      Math.min(TUTORIAL_STEPS.length - 1, opening.tutorialStep),
+    );
+    const step = TUTORIAL_STEPS[stepIndex];
+    const isLastStep = stepIndex === TUTORIAL_STEPS.length - 1;
+
+    this.root.innerHTML = `
+      <main id="game-main" class="screen tutorial-screen">
+        <header class="tutorial-header">
+          <div class="wordmark"><span>The</span> Benefactors</div>
+          <button class="button button-ghost" data-action="skip-active-tutorial">Skip tutorial</button>
+        </header>
+        <section class="tutorial-shell" aria-labelledby="tutorial-title">
+          <aside class="tutorial-progress" aria-label="Tutorial progress">
+            <p class="kicker">Reporter’s field guide</p>
+            <ol>
+              ${TUTORIAL_STEPS.map(
+                (item, index) => `
+                  <li class="${index === stepIndex ? "is-current" : ""} ${index < stepIndex ? "is-complete" : ""}">
+                    <span>${index < stepIndex ? "✓" : index + 1}</span>
+                    <strong>${escapeHtml(item.title)}</strong>
+                  </li>
+                `,
+              ).join("")}
+            </ol>
+          </aside>
+          <article class="tutorial-card">
+            <p class="kicker">Step ${stepIndex + 1} of ${TUTORIAL_STEPS.length}</p>
+            <h1 id="tutorial-title" tabindex="-1">${escapeHtml(step.title)}</h1>
+            <p class="tutorial-copy">${escapeHtml(step.text)}</p>
+            ${step.keyboardHint ? `<p class="tutorial-keyboard">${escapeHtml(step.keyboardHint)}</p>` : ""}
+            ${this.renderTutorialDemo(step)}
+            <footer class="tutorial-actions">
+              <button
+                class="button button-ghost"
+                data-action="tutorial-back"
+                ${stepIndex === 0 ? "disabled" : ""}
+              >Back</button>
+              <button class="button button-primary" data-action="tutorial-next">
+                ${isLastStep ? "Begin the story" : "Next"}
+              </button>
+            </footer>
+          </article>
+        </section>
+      </main>
+    `;
+
+    this.bindActions({
+      "skip-active-tutorial": () => this.finishTutorial("skip-active-tutorial"),
+      "tutorial-back": () => {
+        if (stepIndex === 0) return;
+        this.store.update((draft) => {
+          draft.progress.opening.tutorialStep = stepIndex - 1;
+        }, "tutorial-back");
+        this.saves.save(this.store.getState(), "tutorial-back");
+        this.renderTutorial();
+      },
+      "tutorial-next": () => {
+        if (isLastStep) {
+          this.finishTutorial("complete-tutorial");
+          return;
+        }
+        this.store.update((draft) => {
+          draft.progress.opening.tutorialStep = stepIndex + 1;
+        }, "tutorial-next");
+        this.saves.save(this.store.getState(), "tutorial-next");
+        this.renderTutorial();
+      },
+      "tutorial-hotspot": () => {
+        this.tutorialHotspotFound = true;
+        this.renderTutorial();
+        this.root.querySelector("[data-action='tutorial-hotspot']")?.focus();
+      },
+      "tutorial-view-evidence": () => {
+        this.activeEvidenceId = "invoice_northstar";
+        this.render("tutorial");
+      },
+      "tutorial-connect": () => {
+        if (this.tutorialBoardCards.length !== 2) return;
+        this.tutorialBoardConnected = true;
+        this.renderTutorial();
+        this.root.querySelector("[data-action='tutorial-connect']")?.focus();
+      },
+      "tutorial-clear": () => {
+        this.tutorialBoardCards = [];
+        this.tutorialBoardConnected = false;
+        this.renderTutorial();
+      },
+    });
+
+    this.root.querySelectorAll("[data-tutorial-board-card]").forEach((card) => {
+      card.addEventListener("click", () => {
+        const id = card.dataset.tutorialBoardCard;
+        const index = this.tutorialBoardCards.indexOf(id);
+        if (index >= 0) {
+          this.tutorialBoardCards.splice(index, 1);
+          this.tutorialBoardConnected = false;
+        } else if (this.tutorialBoardCards.length < 2) {
+          this.tutorialBoardCards.push(id);
+        }
+        this.renderTutorial();
+        this.root.querySelector(`[data-tutorial-board-card="${id}"]`)?.focus();
+      });
+    });
+  }
+
+  renderTutorialDemo(step) {
+    if (step.id === "point-and-click") {
+      return `
+        <section class="tutorial-demo tutorial-scene-demo" aria-label="Practice finding a hotspot">
+          <img src="./assets/scenes/home-office.webp" alt="" draggable="false" />
+          <button
+            class="tutorial-practice-hotspot ${this.tutorialHotspotFound ? "is-found" : ""}"
+            data-action="tutorial-hotspot"
+          >
+            <span aria-hidden="true"></span>
+            Answering machine
+          </button>
+          <p role="status" aria-live="polite">
+            ${
+              this.tutorialHotspotFound
+                ? "<strong>Observation found:</strong> The red message light is blinking."
+                : "Try it: select the highlighted object."
+            }
+          </p>
+        </section>
+      `;
+    }
+
+    if (step.id === "inspect-evidence") {
+      return `
+        <section class="tutorial-demo tutorial-evidence-demo">
+          <article>
+            <span class="practice-pin" aria-hidden="true"></span>
+            <p>Municipal accessibility fund</p>
+            <strong>Northstar invoice</strong>
+            <small>Names, dates, amounts, and fine print may become leads.</small>
+            <button class="evidence-view-button" data-action="tutorial-view-evidence">
+              View sample evidence
+            </button>
+          </article>
+          <p>Evidence is never consumed. Reopen it from the case file or the board at any time.</p>
+        </section>
+      `;
+    }
+
+    if (step.id === "revisit-scenes") {
+      return `
+        <section class="tutorial-demo tutorial-loop-demo" aria-label="The investigation loop">
+          <div><span>1</span><strong>Choose a lead</strong><small>Open the city map.</small></div>
+          <i aria-hidden="true">→</i>
+          <div><span>2</span><strong>Investigate</strong><small>Observe, question, collect.</small></div>
+          <i aria-hidden="true">→</i>
+          <div><span>3</span><strong>Return home</strong><small>Review the case and revisit leads.</small></div>
+        </section>
+      `;
+    }
+
+    const selectedA = this.tutorialBoardCards.includes("practice-invoice");
+    const selectedB = this.tutorialBoardCards.includes("practice-permit");
+    return `
+      <section class="tutorial-demo tutorial-board-demo">
+        <div class="tutorial-yarn-legend" aria-label="Yarn color meanings">
+          ${YARN_RELATIONSHIPS.map(
+            (relationship) => `
+              <div class="tutorial-yarn-key relationship-${relationship.id}">
+                <i aria-hidden="true"></i>
+                <span><strong>${escapeHtml(relationship.colorName)} · ${escapeHtml(relationship.label)}</strong><small>${escapeHtml(relationship.description)}</small></span>
+              </div>
+            `,
+          ).join("")}
+        </div>
+        <div class="tutorial-mini-board">
+          ${this.tutorialBoardConnected ? `<span class="tutorial-practice-yarn" aria-hidden="true"></span>` : ""}
+          <button
+            class="${selectedA ? "is-selected" : ""}"
+            data-tutorial-board-card="practice-invoice"
+            aria-pressed="${selectedA}"
+          ><span>${selectedA ? this.tutorialBoardCards.indexOf("practice-invoice") + 1 : ""}</span><strong>Invoice</strong><small>$184,600 paid</small></button>
+          <button
+            class="${selectedB ? "is-selected" : ""}"
+            data-tutorial-board-card="practice-permit"
+            aria-pressed="${selectedB}"
+          ><span>${selectedB ? this.tutorialBoardCards.indexOf("practice-permit") + 1 : ""}</span><strong>Permit</strong><small>Same west-wing job</small></button>
+        </div>
+        <div class="tutorial-board-controls">
+          <p><strong>Blue · Financial</strong><span>Double yarn for a money trail.</span></p>
+          <button
+            class="button button-primary"
+            data-action="tutorial-connect"
+            ${this.tutorialBoardCards.length === 2 ? "" : "disabled"}
+          >Tie practice yarn</button>
+          <button
+            class="button button-ghost"
+            data-action="tutorial-clear"
+            ${this.tutorialBoardCards.length ? "" : "disabled"}
+          >Clear</button>
+          <span role="status" aria-live="polite">
+            ${
+              this.tutorialBoardConnected
+                ? "Connected. In the real case, the right relationship can unlock a deduction."
+                : `${this.tutorialBoardCards.length} of 2 clues selected.`
+            }
+          </span>
+        </div>
+      </section>
+    `;
+  }
+
+  renderCutscene() {
+    const state = this.store.getState();
+    const opening = state.progress.opening;
+
+    if (opening.cutsceneCompleted) {
+      this.router.navigate("home", { replace: true });
+      return;
+    }
+    if (!opening.tutorialChoice) {
+      this.router.navigate("onboarding", { replace: true });
+      return;
+    }
+    if (opening.tutorialChoice === "guided" && !opening.tutorialCompleted) {
+      this.router.navigate("tutorial", { replace: true });
+      return;
+    }
+
+    const stepIndex = Math.max(
+      0,
+      Math.min(CUTSCENE_BEATS.length - 1, opening.cutsceneStep),
+    );
+    const beat = CUTSCENE_BEATS[stepIndex];
+    const isMessageBeat = beat.id === "anonymous-call";
+    const messagePlayed = state.flags.heardOpeningMessage;
+    const language = getPlayerLanguage(state.player);
+    const sceneImage =
+      beat.id === "press-deadline"
+        ? "./assets/scenes/newsroom.webp"
+        : "./assets/scenes/home-office.webp";
+    const personalizedText = interpolatePlayerText(beat.text, state.player);
+
+    this.root.innerHTML = `
+      <main id="game-main" class="screen cutscene-screen" data-cutscene-beat="${beat.id}">
+        <img class="cutscene-backdrop" src="${sceneImage}" alt="" draggable="false" />
+        <div class="cutscene-vignette" aria-hidden="true"></div>
+        <header class="cutscene-header">
+          <div class="wordmark"><span>The</span> Benefactors</div>
+          <button class="button button-ghost" data-action="skip-cutscene">Skip cutscene</button>
+        </header>
+        <section class="cutscene-card" aria-labelledby="cutscene-title">
+          <div class="cutscene-progress" aria-label="Opening scene progress">
+            ${CUTSCENE_BEATS.map(
+              (_item, index) => `<span class="${index <= stepIndex ? "is-active" : ""}"></span>`,
+            ).join("")}
+          </div>
+          <p class="kicker">${escapeHtml(beat.eyebrow || "Greyhaven · After midnight")}</p>
+          <h1 id="cutscene-title" tabindex="-1">
+            ${
+              beat.id === "press-deadline"
+                ? "One story left"
+                : beat.id === "past-due"
+                  ? escapeHtml(language.fullName)
+                  : beat.id === "answering-machine"
+                    ? "Last shot"
+                    : "Incoming message"
+            }
+          </h1>
+          ${
+            isMessageBeat
+              ? `
+                <div class="answering-machine-card ${messagePlayed ? "is-playing" : ""}">
+                  <div class="machine-display" aria-hidden="true">
+                    <span class="machine-light"></span>
+                    <strong>${messagePlayed ? "PLAY" : "1 NEW"}</strong>
+                    <small>${messagePlayed ? "00:19" : "--:--"}</small>
+                  </div>
+                  ${
+                    messagePlayed
+                      ? `
+                        <div class="message-transcript" aria-live="polite">
+                          <span class="speaker">${escapeHtml(beat.speaker)}</span>
+                          <blockquote>“${escapeHtml(personalizedText)}”</blockquote>
+                        </div>
+                      `
+                      : "<p>The caller blocked their number. The tape has not been played.</p>"
+                  }
+                </div>
+              `
+              : `
+                <p class="cutscene-copy">${escapeHtml(personalizedText)}</p>
+                ${beat.action ? `<p class="cutscene-action-prompt">${escapeHtml(beat.action)}</p>` : ""}
+              `
+          }
+          <footer class="cutscene-actions">
+            <span>${stepIndex + 1} / ${CUTSCENE_BEATS.length}</span>
+            ${
+              isMessageBeat
+                ? messagePlayed
+                  ? `<button class="button button-primary" data-action="finish-cutscene">Start the investigation</button>`
+                  : `<button class="button button-primary" data-action="play-opening-message">Play the message</button>`
+                : `<button class="button button-primary" data-action="advance-cutscene">${beat.id === "answering-machine" ? "Play the message" : "Continue"}</button>`
+            }
+          </footer>
+        </section>
+      </main>
+    `;
+
+    this.bindActions({
+      "advance-cutscene": () => {
+        this.store.update((draft) => {
+          draft.progress.opening.cutsceneStep = Math.min(
+            CUTSCENE_BEATS.length - 1,
+            stepIndex + 1,
+          );
+          if (beat.id === "answering-machine") {
+            draft.flags.heardOpeningMessage = true;
+          }
+        }, "advance-cutscene");
+        this.saves.save(this.store.getState(), "advance-cutscene");
+        this.renderCutscene();
+      },
+      "play-opening-message": () => {
+        this.store.update((draft) => {
+          draft.flags.heardOpeningMessage = true;
+        }, "play-opening-message");
+        this.saves.save(this.store.getState(), "play-opening-message");
+        this.renderCutscene();
+      },
+      "finish-cutscene": () => this.completeOpening("complete-cutscene"),
+      "skip-cutscene": () => this.completeOpening("skip-cutscene"),
     });
   }
 
@@ -216,7 +677,31 @@ export class GameApp {
           title: "Mayor Vale is missing",
           text: "Mara’s message says the police completed a welfare check. Vale’s study is briefly unsecured—and now marked on the city map.",
         }
-      : GAME_CONTENT.officeHotspots[0];
+      : !state.flags.openedAnonymousEmail
+        ? {
+            title: "The caller’s instruction",
+            text: "Check the laptop. Two anonymous files are waiting. Start with the invoice.",
+          }
+        : state.board.connections.length
+          ? {
+              title: "The board is taking shape",
+              text: `${state.board.connections.length} yarn connection${state.board.connections.length === 1 ? "" : "s"} now ${state.board.connections.length === 1 ? "traces" : "trace"} the case. New evidence may change what the old clues mean.`,
+            }
+          : GAME_CONTENT.officeHotspots[0];
+    const openingMessageText = interpolatePlayerText(OPENING_MESSAGE, state.player);
+    const officeHotspots = GAME_CONTENT.officeHotspots.map((hotspot) =>
+      hotspot.id === "answering-machine"
+        ? {
+            ...hotspot,
+            title: state.flags.heardOpeningMessage
+              ? "Archived anonymous message"
+              : hotspot.title,
+            text: state.flags.heardOpeningMessage
+              ? `“${openingMessageText}”`
+              : hotspot.text,
+          }
+        : hotspot,
+    );
     const note = this.activeOfficeNote || caseUpdate;
 
     this.root.innerHTML = `
@@ -251,10 +736,15 @@ export class GameApp {
               <span class="desk-paper"></span>
             </div>
             <div class="chair" aria-hidden="true"></div>
-            ${GAME_CONTENT.officeHotspots.map(
+            ${officeHotspots.map(
               (hotspot) => `
                 <button
-                  class="scene-hotspot ${hotspot.className}"
+                  class="scene-hotspot ${hotspot.className} ${
+                    hotspot.id === "answering-machine" &&
+                    !state.flags.heardOpeningMessage
+                      ? "has-message"
+                      : ""
+                  }"
                   data-hotspot="${hotspot.id}"
                   aria-label="Examine ${hotspot.label}"
                   title="${hotspot.label}"
@@ -289,11 +779,25 @@ export class GameApp {
 
     this.root.querySelectorAll("[data-hotspot]").forEach((button) => {
       button.addEventListener("click", () => {
-        const hotspot = GAME_CONTENT.officeHotspots.find(
+        const hotspot = officeHotspots.find(
           (item) => item.id === button.dataset.hotspot,
         );
         if (hotspot.route) {
           this.router.navigate(hotspot.route);
+          return;
+        }
+        if (hotspot.action === "play-opening-message") {
+          if (!this.store.getState().flags.heardOpeningMessage) {
+            this.store.update((draft) => {
+              draft.flags.heardOpeningMessage = true;
+            }, "play-opening-message");
+            this.saves.save(this.store.getState(), "play-opening-message");
+          }
+          this.activeOfficeNote = {
+            title: "Anonymous caller",
+            text: `“${openingMessageText}”`,
+          };
+          this.renderHome();
           return;
         }
         this.activeOfficeNote = hotspot;
@@ -414,6 +918,7 @@ export class GameApp {
         this.renderLocation();
       },
       home: () => {
+        this.activeOfficeNote = null;
         this.store.update((draft) => {
           draft.progress.currentLocation = "home_office";
           draft.progress.currentScreen = "home";
@@ -495,7 +1000,10 @@ export class GameApp {
       button.addEventListener("click", () => this.visitLocation(button.dataset.location));
     });
     this.bindActions({
-      home: () => this.router.navigate("home"),
+      home: () => {
+        this.activeOfficeNote = null;
+        this.router.navigate("home");
+      },
       inventory: () => {
         this.inventoryOpen = !this.inventoryOpen;
         this.renderMap();
@@ -574,7 +1082,10 @@ export class GameApp {
     `;
 
     this.bindActions({
-      home: () => this.router.navigate("home"),
+      home: () => {
+        this.activeOfficeNote = null;
+        this.router.navigate("home");
+      },
       "open-email": () => {
         if (!opened) {
           const next = applyEffects(this.store.getState(), [
@@ -609,11 +1120,104 @@ export class GameApp {
       .filter((id) => !state.evidence.pinned.includes(id))
       .map((id) => EVIDENCE[id])
       .filter(Boolean);
+    this.selectedBoardCards = this.selectedBoardCards.filter((id) =>
+      state.evidence.pinned.includes(id),
+    );
+    const selectedItems = this.selectedBoardCards.map((id) => EVIDENCE[id]);
+    const relationshipById = new Map(
+      YARN_RELATIONSHIPS.map((relationship) => [relationship.id, relationship]),
+    );
+    const activeRelationship =
+      relationshipById.get(this.boardConnectionType) || YARN_RELATIONSHIPS[0];
+    const selectedConnection =
+      this.selectedBoardCards.length === 2
+        ? state.board.connections.find(
+            (connection) =>
+              (connection.a === this.selectedBoardCards[0] &&
+                connection.b === this.selectedBoardCards[1]) ||
+              (connection.a === this.selectedBoardCards[1] &&
+                connection.b === this.selectedBoardCards[0]),
+          )
+        : null;
+    const connectionStatus =
+      pinned.length < 2
+        ? "Pin at least two clues to create a connection."
+        : this.selectedBoardCards.length === 0
+          ? "Select the first clue on the corkboard."
+          : this.selectedBoardCards.length === 1
+            ? "Clue 1 selected. Choose a different clue."
+            : selectedConnection
+              ? `These clues are already connected as ${relationshipById.get(selectedConnection.type)?.label || selectedConnection.type}. You can update the yarn meaning.`
+              : "Two clues selected. Ready to connect.";
+    const emptyBoardCopy = state.evidence.collected.length
+      ? "Your evidence is in the tray. Use “Pin to board” to start arranging the case."
+      : "Open the anonymous email and add its attachments to the case file.";
 
     this.root.innerHTML = `
       <main id="game-main" class="screen game-screen board-screen">
         ${this.renderGameHeader(GAME_CONTENT.chapter, "Evidence board")}
         <section class="board-workspace">
+          <section class="connection-builder" aria-labelledby="connection-builder-title">
+            <div class="connection-builder-heading">
+              <p class="kicker">Tie the case together</p>
+              <h1 id="connection-builder-title" tabindex="-1">Connect evidence</h1>
+              <p>Choose what the yarn means, select two pinned clues, then confirm the connection.</p>
+            </div>
+            <fieldset class="relationship-fieldset">
+              <legend>1. Choose a relationship</legend>
+              <div class="relationship-picker">
+                ${YARN_RELATIONSHIPS.map(
+                  (relationship) => `
+                    <label class="relationship relationship-${relationship.id} ${this.boardConnectionType === relationship.id ? "is-active" : ""}">
+                      <input
+                        type="radio"
+                        name="board-relationship"
+                        value="${relationship.id}"
+                        ${this.boardConnectionType === relationship.id ? "checked" : ""}
+                      />
+                      <span class="relationship-sample" aria-hidden="true"><i></i></span>
+                      <span class="relationship-copy">
+                        <strong>${escapeHtml(relationship.label)}</strong>
+                        <small>${escapeHtml(relationship.colorName)} · ${escapeHtml(relationship.patternLabel)}</small>
+                        <span>${escapeHtml(relationship.description)}</span>
+                      </span>
+                    </label>
+                  `,
+                ).join("")}
+              </div>
+            </fieldset>
+            <div class="connection-selection">
+              <p class="connection-step-label">2. Select two pinned clues</p>
+              <div class="connection-slots">
+                <div class="${selectedItems[0] ? "is-filled" : ""}">
+                  <span>Clue 1</span>
+                  <strong>${escapeHtml(selectedItems[0]?.title || "Not selected")}</strong>
+                </div>
+                <span aria-hidden="true">+</span>
+                <div class="${selectedItems[1] ? "is-filled" : ""}">
+                  <span>Clue 2</span>
+                  <strong>${escapeHtml(selectedItems[1]?.title || "Not selected")}</strong>
+                </div>
+              </div>
+              <p class="connection-status" role="status" aria-live="polite">${escapeHtml(connectionStatus)}</p>
+              <div class="connection-builder-actions">
+                <button
+                  class="button button-primary"
+                  data-action="connect-selected"
+                  ${this.selectedBoardCards.length === 2 ? "" : "disabled"}
+                >
+                  ${selectedConnection ? "Update connection" : "Connect evidence"}
+                </button>
+                <button
+                  class="button button-ghost"
+                  data-action="clear-board-selection"
+                  ${this.selectedBoardCards.length ? "" : "disabled"}
+                >
+                  Clear selection
+                </button>
+              </div>
+            </div>
+          </section>
           <div class="corkboard" id="evidence-corkboard" aria-label="Interactive evidence board">
             <svg class="yarn-layer" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
               ${state.board.connections
@@ -634,7 +1238,13 @@ export class GameApp {
                 ? pinned
                     .map((item) => {
                       const position = state.board.cards[item.id] || { x: 10, y: 10 };
-                      const selected = this.selectedBoardCard === item.id;
+                      const selectedIndex = this.selectedBoardCards.indexOf(item.id);
+                      const selected = selectedIndex >= 0;
+                      const selectionLabel = selected
+                        ? `Deselect clue ${selectedIndex + 1}: ${item.title}`
+                        : this.selectedBoardCards.length < 2
+                          ? `Select ${item.title} as clue ${this.selectedBoardCards.length + 1}`
+                          : `Two clues are already selected. Clear or connect them before selecting ${item.title}`;
                       return `
                         <article
                           class="evidence-card evidence-card--${item.artifact?.type || "document"} ${selected ? "is-selected" : ""}"
@@ -645,8 +1255,10 @@ export class GameApp {
                             class="evidence-card-main"
                             data-board-card="${item.id}"
                             aria-pressed="${selected}"
+                            aria-label="${escapeHtml(selectionLabel)}"
                           >
                             <span class="evidence-pin" aria-hidden="true"></span>
+                            ${selected ? `<span class="evidence-selection-number" aria-hidden="true">${selectedIndex + 1}</span>` : ""}
                             <span class="evidence-card-thumbnail" aria-hidden="true"></span>
                             <span class="evidence-category">${escapeHtml(item.category)}</span>
                             <strong>${escapeHtml(item.title)}</strong>
@@ -662,36 +1274,18 @@ export class GameApp {
                 : `
                   <div class="empty-board">
                     <strong>The board is waiting.</strong>
-                    <span>Open the anonymous email and add its attachments to the case file.</span>
+                    <span>${escapeHtml(emptyBoardCopy)}</span>
                   </div>
                 `
             }
           </div>
           <aside class="board-sidebar">
             <p class="kicker">Casework</p>
-            <h1 tabindex="-1">Connections</h1>
+            <h2>Case file</h2>
             <p class="board-help">
-              Pin evidence, choose a yarn meaning, then select two cards. Drag cards or use
-              the arrow keys to arrange the case.
+              Pin clues from the tray, then drag them—or use their arrow keys—to arrange the
+              investigation.
             </p>
-            <div class="relationship-picker" role="group" aria-label="Yarn relationship">
-              ${[
-                ["confirmed", "Red", "Confirmed connection"],
-                ["financial", "Blue", "Financial relationship"],
-                ["suspicion", "Yellow", "Suspicion"],
-                ["contradiction", "White", "Contradiction"],
-              ]
-                .map(
-                  ([type, color, label]) => `
-                    <button
-                      class="relationship relationship-${type} ${this.boardConnectionType === type ? "is-active" : ""}"
-                      data-relationship="${type}"
-                      title="${label}"
-                    ><i aria-hidden="true"></i><span>${color}</span></button>
-                  `,
-                )
-                .join("")}
-            </div>
             <section class="evidence-tray">
               <p class="kicker">Evidence tray · ${unpinned.length}</p>
               ${
@@ -699,9 +1293,13 @@ export class GameApp {
                   ? unpinned
                       .map(
                         (item) => `
-                          <button class="tray-item" data-pin-evidence="${item.id}">
+                          <button
+                            class="tray-item"
+                            data-pin-evidence="${item.id}"
+                            aria-label="Pin ${escapeHtml(item.title)} to the evidence board"
+                          >
                             <span>＋</span>
-                            <strong>${escapeHtml(item.title)}</strong>
+                            <span><small>Pin to board</small><strong>${escapeHtml(item.title)}</strong></span>
                           </button>
                         `,
                       )
@@ -716,14 +1314,20 @@ export class GameApp {
                   ? state.board.connections
                       .map(
                         (connection, index) => `
-                          <div class="connection-row">
-                            <span>${escapeHtml(EVIDENCE[connection.a]?.title || connection.a)} ↔ ${escapeHtml(EVIDENCE[connection.b]?.title || connection.b)}</span>
-                            <button data-remove-connection="${index}" aria-label="Remove connection">×</button>
+                          <div class="connection-row connection-row-${connection.type}">
+                            <span>
+                              <strong>${escapeHtml(relationshipById.get(connection.type)?.label || connection.type)}</strong>
+                              ${escapeHtml(EVIDENCE[connection.a]?.title || connection.a)} ↔ ${escapeHtml(EVIDENCE[connection.b]?.title || connection.b)}
+                            </span>
+                            <button
+                              data-remove-connection="${index}"
+                              aria-label="Remove ${escapeHtml(relationshipById.get(connection.type)?.label || connection.type)} between ${escapeHtml(EVIDENCE[connection.a]?.title || connection.a)} and ${escapeHtml(EVIDENCE[connection.b]?.title || connection.b)}"
+                            >×</button>
                           </div>
                         `,
                       )
                       .join("")
-                  : "<p class=\"tray-empty\">Select two cards to connect them.</p>"
+                  : "<p class=\"tray-empty\">No yarn tied yet.</p>"
               }
             </section>
             <section class="deduction-list">
@@ -766,10 +1370,13 @@ export class GameApp {
       });
     });
 
-    this.root.querySelectorAll("[data-relationship]").forEach((button) => {
-      button.addEventListener("click", () => {
-        this.boardConnectionType = button.dataset.relationship;
+    this.root.querySelectorAll("input[name='board-relationship']").forEach((input) => {
+      input.addEventListener("change", () => {
+        this.boardConnectionType = input.value;
         this.renderBoard();
+        this.root
+          .querySelector(`input[name="board-relationship"][value="${input.value}"]`)
+          ?.focus();
       });
     });
 
@@ -780,35 +1387,16 @@ export class GameApp {
           return;
         }
         const id = card.dataset.boardCard;
-        if (!this.selectedBoardCard) {
-          this.selectedBoardCard = id;
-          this.renderBoard();
-          return;
+        const selectedIndex = this.selectedBoardCards.indexOf(id);
+        if (selectedIndex >= 0) {
+          this.selectedBoardCards.splice(selectedIndex, 1);
+        } else if (this.selectedBoardCards.length < 2) {
+          this.selectedBoardCards.push(id);
+        } else {
+          this.notice.show("Two clues are already selected. Connect or clear them first.");
         }
-        if (this.selectedBoardCard === id) {
-          this.selectedBoardCard = null;
-          this.renderBoard();
-          return;
-        }
-
-        let next = connectEvidence(
-          this.store.getState(),
-          this.selectedBoardCard,
-          id,
-          this.boardConnectionType,
-        );
-        const result = evaluateBoardDeductions(next, DEDUCTIONS);
-        next = result.state;
-        this.store.replace(next, "connect-evidence");
-        this.saves.save(this.store.getState(), "connect-evidence");
-        this.selectedBoardCard = null;
-        this.notice.show(
-          result.newlyCompleted.length
-            ? result.newlyCompleted[0].notification ||
-                `Deduction: ${result.newlyCompleted[0].title}`
-            : "Evidence connected.",
-        );
         this.renderBoard();
+        this.root.querySelector(`[data-board-card="${id}"]`)?.focus();
       });
 
       card.addEventListener("keydown", (event) => {
@@ -834,6 +1422,46 @@ export class GameApp {
 
     this.bindBoardDrag();
 
+    this.bindActions({
+      "connect-selected": () => {
+        if (this.selectedBoardCards.length !== 2) return;
+        const [a, b] = this.selectedBoardCards;
+        const wasExisting = this.store
+          .getState()
+          .board.connections.some(
+            (connection) =>
+              (connection.a === a && connection.b === b) ||
+              (connection.a === b && connection.b === a),
+          );
+        let next = connectEvidence(
+          this.store.getState(),
+          a,
+          b,
+          this.boardConnectionType,
+        );
+        const result = evaluateBoardDeductions(next, DEDUCTIONS);
+        next = result.state;
+        this.store.replace(next, "connect-evidence");
+        this.saves.save(this.store.getState(), "connect-evidence");
+        const relationship =
+          relationshipById.get(this.boardConnectionType) || activeRelationship;
+        const connectionNotice = `${relationship.label} ${wasExisting ? "updated" : "connected"}: ${EVIDENCE[a]?.title || a} and ${EVIDENCE[b]?.title || b}.`;
+        this.selectedBoardCards = [];
+        this.notice.show(
+          result.newlyCompleted.length
+            ? result.newlyCompleted[0].notification ||
+                `Deduction: ${result.newlyCompleted[0].title}`
+            : connectionNotice,
+        );
+        this.renderBoard();
+      },
+      "clear-board-selection": () => {
+        this.selectedBoardCards = [];
+        this.renderBoard();
+        this.root.querySelector("[data-board-card]")?.focus();
+      },
+    });
+
     this.root.querySelectorAll("[data-remove-connection]").forEach((button) => {
       button.addEventListener("click", () => {
         const connection =
@@ -850,7 +1478,10 @@ export class GameApp {
     });
 
     this.bindActions({
-      home: () => this.router.navigate("home"),
+      home: () => {
+        this.activeOfficeNote = null;
+        this.router.navigate("home");
+      },
       map: () => this.router.navigate("map"),
       save: () => this.manualSave(),
     });
@@ -1211,6 +1842,7 @@ export class GameApp {
       this.renderTitle();
       return;
     }
+    this.resetEphemeralUi();
     this.store.replace(loaded, "continue");
     this.router.navigate(loaded.progress.currentScreen || "home");
   }
@@ -1220,7 +1852,9 @@ export class GameApp {
     this.activeLocationNote = null;
     const next = applyEffects(this.store.getState(), [
       { type: "visitLocation", id },
-      { type: "setFlag", key: "visitedNewsroom", value: true },
+      ...(id === "ledger_newsroom"
+        ? [{ type: "setFlag", key: "visitedNewsroom", value: true }]
+        : []),
       { type: "setPath", path: "progress.currentScreen", value: "location" },
     ]);
     this.store.replace(next, "travel");
@@ -1232,6 +1866,45 @@ export class GameApp {
     this.saves.save(this.store.getState(), "manual");
     this.notice.show("Case file saved.");
     this.render(this.router.current());
+  }
+
+  finishTutorial(reason) {
+    this.store.update((draft) => {
+      draft.progress.opening.tutorialCompleted = true;
+      draft.progress.opening.cutsceneStep = 0;
+      draft.progress.currentScreen = "cutscene";
+    }, reason);
+    this.saves.save(this.store.getState(), reason);
+    this.router.navigate("cutscene");
+  }
+
+  completeOpening(reason) {
+    this.store.update((draft) => {
+      draft.flags.heardOpeningMessage = true;
+      draft.progress.opening.cutsceneCompleted = true;
+      draft.progress.currentScreen = "home";
+      draft.progress.previousScreen = "cutscene";
+    }, reason);
+    this.saves.save(this.store.getState(), reason);
+    this.activeOfficeNote = {
+      title: "The caller’s instruction",
+      text: "Check the laptop. Two anonymous files are waiting. Start with the invoice.",
+    };
+    this.router.navigate("home");
+  }
+
+  resetEphemeralUi() {
+    this.notice.clear();
+    this.activeOfficeNote = null;
+    this.activeLocationNote = null;
+    this.inventoryOpen = false;
+    this.selectedBoardCards = [];
+    this.boardConnectionType = "confirmed";
+    this.boardWasDragged = false;
+    this.tutorialHotspotFound = false;
+    this.tutorialBoardCards = [];
+    this.tutorialBoardConnected = false;
+    this.activeEvidenceId = null;
   }
 
   applyPreferences(settings) {

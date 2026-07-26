@@ -68,6 +68,28 @@ test("does not complete a deduction with the wrong relationship", () => {
   assert.deepEqual(result.newlyCompleted, []);
 });
 
+test("updates an existing pair instead of creating duplicate yarn", () => {
+  let state = createInitialState();
+  state.evidence.collected.push("invoice_northstar", "permit_summary");
+  state = pinEvidence(state, "invoice_northstar");
+  state = pinEvidence(state, "permit_summary");
+  state = connectEvidence(
+    state,
+    "invoice_northstar",
+    "permit_summary",
+    "suspicion",
+  );
+  state = connectEvidence(
+    state,
+    "permit_summary",
+    "invoice_northstar",
+    "financial",
+  );
+
+  assert.equal(state.board.connections.length, 1);
+  assert.equal(state.board.connections[0].type, "financial");
+});
+
 test("missing-west-wing deduction unlocks Mayor Vale's study", () => {
   let state = createInitialState();
   state.evidence.collected.push(

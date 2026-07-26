@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 5;
+export const GAME_STATE_VERSION = 6;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -33,11 +33,19 @@ export function createInitialState(player = {}, settings = {}) {
       chapter: 1,
       officeState: 0,
       currentLocation: "home_office",
-      currentScreen: "home",
-      previousScreen: "title",
+      currentScreen: "onboarding",
+      previousScreen: "setup",
       unlockedLocations: ["home_office", "ledger_newsroom"],
+      opening: {
+        tutorialChoice: null,
+        tutorialStep: 0,
+        tutorialCompleted: false,
+        cutsceneStep: 0,
+        cutsceneCompleted: false,
+      },
     },
     flags: {
+      heardOpeningMessage: false,
       openedAnonymousEmail: false,
       downloadedAttachments: false,
       visitedNewsroom: false,
@@ -96,6 +104,10 @@ export function isGameState(value) {
       value.meta &&
       value.player &&
       value.progress &&
+      value.progress.opening &&
+      typeof value.progress.opening === "object" &&
+      typeof value.progress.opening.tutorialCompleted === "boolean" &&
+      typeof value.progress.opening.cutsceneCompleted === "boolean" &&
       value.flags &&
       value.evidence &&
       value.board &&

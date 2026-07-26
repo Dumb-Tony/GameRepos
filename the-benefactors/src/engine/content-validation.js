@@ -1,3 +1,5 @@
+import { VALID_ROUTES } from "./router.js";
+
 export function validateGameContent({
   content,
   evidence,
@@ -45,6 +47,32 @@ export function validateGameContent({
             `Hotspot "${hotspot.id}" references missing location "${effect.id}".`,
           );
         }
+      }
+    }
+  }
+
+  for (const hotspot of content.officeHotspots || []) {
+    if (hotspotIds.has(hotspot.id)) {
+      errors.push(`Duplicate hotspot id "${hotspot.id}".`);
+    }
+    hotspotIds.add(hotspot.id);
+
+    if (hotspot.route && !VALID_ROUTES.has(hotspot.route)) {
+      errors.push(
+        `Office hotspot "${hotspot.id}" references missing route "${hotspot.route}".`,
+      );
+    }
+
+    for (const effect of hotspot.effects || []) {
+      if (effect.type === "collectEvidence" && !evidenceIds.has(effect.id)) {
+        errors.push(
+          `Office hotspot "${hotspot.id}" references missing evidence "${effect.id}".`,
+        );
+      }
+      if (effect.type === "unlockLocation" && !locationIds.has(effect.id)) {
+        errors.push(
+          `Office hotspot "${hotspot.id}" references missing location "${effect.id}".`,
+        );
       }
     }
   }

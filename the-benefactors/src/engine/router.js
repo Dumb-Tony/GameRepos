@@ -1,12 +1,26 @@
-const VALID_ROUTES = new Set([
+export const VALID_ROUTES = new Set([
   "title",
   "setup",
+  "onboarding",
+  "tutorial",
+  "cutscene",
   "home",
   "location",
   "map",
   "laptop",
   "board",
   "settings",
+]);
+
+export const PERSISTENT_GAME_ROUTES = new Set([
+  "onboarding",
+  "tutorial",
+  "cutscene",
+  "home",
+  "location",
+  "map",
+  "laptop",
+  "board",
 ]);
 
 export class ScreenRouter {
