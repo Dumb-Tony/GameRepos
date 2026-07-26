@@ -66,6 +66,7 @@ namespace Tidebound.EditorTools
             BuildNineCompanion(mats);
             BuildStationCompound(mats);
             BuildMountainCountry(mats);
+            BuildNaia(mats);
             BuildRaftSite(mats);
             BuildPlayerCameraAndSystems(gameClockHost, director, encounterDirector);
 
@@ -2074,6 +2075,63 @@ namespace Tidebound.EditorTools
             door.stageDoor = stage;
             door.interactRadius = 3f;
         }
+
+        // ================= Naia, the watcher in the green =================
+        /// <summary>
+        /// Naia's rig and her whole arc of standing places: woven stuff the
+        /// color of the walls, a cold heartglass lamp, the bone knife she
+        /// puts away. Before contact NaiaPresence shows her only at the
+        /// treeline's edge, and only until you come too close; afterwards she
+        /// keeps the stair's foot for the ascent, and her own green after the
+        /// judging. She is never interactable — the story owns every word she
+        /// says, and the world only ever owes you the glimpse.
+        /// </summary>
+        static void BuildNaia(Mats mats)
+        {
+            var root = new GameObject("NaiaRig");
+            root.transform.position = new Vector3(30f, Height(30f, 120f), 120f);
+
+            var model = new GameObject("Model");
+            model.transform.SetParent(root.transform, false);
+
+            // dressed the color of the walls she steps out of
+            LocalPrim(model.transform, PrimitiveType.Capsule, "Body",
+                new Vector3(0f, 0.82f, 0f), new Vector3(0.38f, 0.8f, 0.38f), mats.JungleDark);
+            LocalPrim(model.transform, PrimitiveType.Sphere, "Head",
+                new Vector3(0f, 1.75f, 0f), Vector3.one * 0.28f, mats.Cushion);
+            var hair = LocalPrim(model.transform, PrimitiveType.Capsule, "Hair",
+                new Vector3(0f, 1.62f, -0.14f), new Vector3(0.26f, 0.3f, 0.24f), mats.DarkStone);
+            hair.transform.localRotation = Quaternion.Euler(14f, 0f, 0f);
+            // barefoot on wet stone that has been cutting your boots
+            for (int leg = 0; leg < 2; leg++)
+                LocalPrim(model.transform, PrimitiveType.Cylinder, "Leg",
+                    new Vector3(leg == 0 ? -0.12f : 0.12f, 0.3f, 0f),
+                    new Vector3(0.1f, 0.3f, 0.1f), mats.Cushion);
+            // the heartglass lamp, cold in one hand
+            var lamp = LocalPrim(model.transform, PrimitiveType.Sphere, "HeartglassLamp",
+                new Vector3(0.26f, 1.0f, 0.12f), Vector3.one * 0.16f,
+                Mat("HeartglassGlow", new Color(0.25f, 0.95f, 0.85f), 0.9f));
+            NoShadow(lamp);
+            // and the bone knife, loose — until it goes away
+            var knife = LocalPrim(model.transform, PrimitiveType.Cube, "BoneKnife",
+                new Vector3(-0.24f, 0.92f, 0.06f), new Vector3(0.04f, 0.26f, 0.02f), mats.Foam);
+            knife.transform.localRotation = Quaternion.Euler(22f, 0f, 8f);
+
+            var presence = root.AddComponent<NaiaPresence>();
+            presence.model = model;
+            // the treeline's edge, all along the fringe you work every day
+            presence.watchPosts = new[]
+            {
+                PostAt(18f, 96f), PostAt(-46f, 104f), PostAt(74f, 92f),
+                PostAt(-96f, 118f), PostAt(126f, 108f), PostAt(44f, 138f),
+            };
+            presence.mountainPost = PostAt(StairCenterX - 5f, 305f);
+            presence.calderaPost = PostAt(56f, 440f);
+
+            model.SetActive(false); // the watcher decides when she is there
+        }
+
+        static Vector3 PostAt(float x, float z) => new Vector3(x, Height(x, z), z);
 
         // ================= the mountain's country (chapter six) =================
         /// <summary>

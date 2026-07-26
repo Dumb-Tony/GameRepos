@@ -756,9 +756,29 @@ tidebound-unity/
       fallback — the bridge stayed with the other editor again).
       Scene rebuilt with TerraceOfSteps + TidewellTemple + Caldera
       serialized.
-      Remaining world-side: Naia's rig, permanent monsoon dressing
-      (rain outside cutscenes), the Gullet as a place; then NG+ and
-      depth passes.*
+      World-side session 3: NAIA'S RIG — and the watching, which is
+      the point of her. NaiaPresence gives the world her whole arc:
+      before contact she is the one NPC you are NOT allowed to reach
+      — she shows only at treeline posts along the fringe you work
+      every day, only once you have come inside noticeRange, holds
+      while you keep your distance, and is simply GONE the moment you
+      close to spookRange or stare past lingerSeconds, then stays
+      away for cooldownDays. Canon: weeks of small oddities resolving
+      into one person, sixty-six days of being watched before the
+      watcher has a face. After contact she stops hiding and keeps
+      her posts — the stair's foot while INNER_INVITED (she climbs
+      with you), her own green after the judging (INNER_GREEN or
+      INNER_PROBATION; RIM_ONLY leaves the caldera empty, because
+      you were never admitted). She is deliberately NOT interactable:
+      the story owns every word she says, and the world only ever
+      owes you the glimpse. The rig itself follows the Edda/Ryo
+      greybox pattern — woven stuff the color of the walls she steps
+      out of, barefoot, dark hair, the cold heartglass lamp, and the
+      bone knife that goes away. Gating lives in a pure NaiaPlace
+      helper. 6 new tests (360 total, all green via the CLI
+      fallback). Scene rebuilt with NaiaRig serialized.
+      Remaining world-side: permanent monsoon dressing (rain outside
+      cutscenes), the Gullet as a place; then NG+ and depth passes.*
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day
 loop, Kavi only, chapters 1–2, the Boar King, five endings.
