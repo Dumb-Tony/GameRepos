@@ -531,6 +531,9 @@ namespace Tidebound
             var s = GameState.NewGame();
             s.CurrentScene = "bay";
             s.Site = "beach";
+            // the island remembers: a stranger who has never seen this place
+            // wakes already humming with whatever a past life truly learned
+            LoopStore.DressNewRun(s);
             return s;
         }
 

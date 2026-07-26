@@ -822,7 +822,36 @@ tidebound-unity/
       you down it. 7 new tests (374 total, all green via the CLI
       fallback). Scene rebuilt with GulletMouth serialized.
       World-side is now complete for chapters 4–7 (station, mountain,
-      Naia, monsoon, Gullet). Remaining: NG+ and depth passes.*
+      Naia, monsoon, Gullet). Remaining: NG+ and depth passes.
+      NG+ session 1: DRIFTWOOD LOOPS, the cross-run spine (loops.js
+      ported). New DriftwoodLoops holds it all as pure logic —
+      KNOWLEDGE (six KNOW_* flags earned by what a life actually did:
+      the landlord met, the throat mapped or entered, Edda found,
+      Nine met at all, the Rosa's chart, the Sundering seen),
+      KEEPSAKES (the six heirlooms with their availability tests and
+      perks: rope/tin/chart/collar/seeds/lamp), Bank(data, state,
+      keepsakeId?) and ApplyNew(state, data). LoopStore is the thin
+      disk half: one JSON beside the save, DELIBERATELY not deleted
+      with a run — that is the point of it. Wiring: FreshState now
+      dresses every new run (NGPLUS + KNOW_* + the keepsake's perk),
+      and RunCardUI banks the life the moment the island renders its
+      verdict, writing LOOP_BANKED back through SaveNow so a re-read
+      can never double-count (I first put banking in LoadOrFresh and
+      caught exactly that bug: it stamps the guard on a state it then
+      throws away). Scenes ported verbatim: `loop_arrival` (WHAT
+      CARRIES — the crossing, one line per thing that rode free, the
+      near-empty version for a first loop, then into `falling`) and
+      `keepsake` (the choice at the edge of a life, options gated by
+      what the run earned, plus "let the sea have all of it").
+      11 new tests (385 total, all green via the CLI fallback).
+      DEFERRED to NG+ session 2: the Driftwood Loops title menu, the
+      four run modifiers (hard/silent/kind/chaos) and their teeth in
+      the clock, the Clearing and the event roll, the NG+-only grotto
+      journal (ev_loop → LOOP_KNOWN) and ending X3 THE LOOP, and the
+      UI hook that actually OFFERS the keepsake scene at run's end
+      (the scene exists and is tested; the run card still ends on
+      "press Enter"). Knowledge banking is live regardless — a life
+      that ends today already feeds the next one.*
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day
 loop, Kavi only, chapters 1–2, the Boar King, five endings.

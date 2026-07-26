@@ -104,6 +104,16 @@ namespace Tidebound
         void Show()
         {
             _shown = true;
+
+            // the loops take their toll first: this life is banked the moment
+            // the island renders its verdict, and the LOOP_BANKED guard goes
+            // back to the save so a re-read can never count it twice
+            if (!_gm.State.Is("LOOP_BANKED"))
+            {
+                LoopStore.BankRun(_gm.State);
+                _gm.SaveNow();
+            }
+
             foreach (Transform child in _column) Destroy(child.gameObject);
 
             var (title, body) = Endings.Resolve(_gm.State);

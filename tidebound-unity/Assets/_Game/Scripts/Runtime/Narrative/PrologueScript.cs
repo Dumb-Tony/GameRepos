@@ -242,6 +242,9 @@ namespace Tidebound.Narrative
                 NextLabel = "Begin the day",
             });
 
+            // WHAT CARRIES — the NG+ crossing that precedes the fall
+            LoopScenes.AddArrivalTo(script);
+
             return script;
         }
 

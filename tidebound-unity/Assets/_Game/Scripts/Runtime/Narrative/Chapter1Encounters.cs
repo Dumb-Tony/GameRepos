@@ -455,6 +455,7 @@ namespace Tidebound.Narrative
             Chapter5Events.AddTo(script); // The Long Rain: the crucible's three plans
             Chapter6Events.AddTo(script); // Ashes and Stairs: the mountain opens
             Chapter7Events.AddTo(script); // Convergence: the hundred days come due
+            LoopScenes.AddTo(script);     // Driftwood Loops: the crossing between lives
             return script;
         }
 
