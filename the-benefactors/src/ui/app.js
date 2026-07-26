@@ -4,11 +4,11 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=noir-20260726";
+} from "../content/game-content.js?v=noir-20260726b";
 import { evaluateCondition } from "../engine/conditions.js";
 import { applyEffects } from "../engine/events.js";
 import { createInitialState } from "../engine/game-state.js";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=noir-20260726";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=noir-20260726b";
 import {
   advanceDialogue,
   closeDialogue,
@@ -24,7 +24,7 @@ import {
   removeConnection,
 } from "../systems/evidence-board/evidence-board.js";
 import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js";
-import { TransientNotice } from "./transient-notice.js?v=noir-20260726";
+import { TransientNotice } from "./transient-notice.js?v=noir-20260726b";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },

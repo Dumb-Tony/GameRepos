@@ -565,9 +565,9 @@ export const GAME_CONTENT = Object.freeze({
         {
           id: "western-bookcase",
           label: "Western bookcase",
-          x: 67,
+          x: 82,
           y: 14,
-          width: 25,
+          width: 12,
           height: 59,
           title: "The western bookcase",
           text: "The shelves sit several inches forward of the wall shown on the original plan.",
