@@ -65,6 +65,7 @@ namespace Tidebound.EditorTools
             BuildIpoCompanion(mats);
             BuildNineCompanion(mats);
             BuildStationCompound(mats);
+            BuildMountainCountry(mats);
             BuildRaftSite(mats);
             BuildPlayerCameraAndSystems(gameClockHost, director, encounterDirector);
 
@@ -191,11 +192,56 @@ namespace Tidebound.EditorTools
                     h = Mathf.Lerp(h, StationPadHeight, Smooth01((34f - dPad) / 14f));
             }
 
+            // north: THE MOUNTAIN'S COUNTRY (chapter six's whole geography) —
+            // the ground leaves the grove's knee and climbs for the broken
+            // crown, by way of the Terrace of Steps and the temple's shoulder.
+            if (z > 300f)
+            {
+                h += 30f * Smooth01((z - 300f) / 80f); // the long flank
+
+                if (z < 408f)
+                {
+                    // the Terrace of Steps: a processional stair twenty people
+                    // wide, riding the flank in flight after flight — the treads
+                    // quantize so the climb reads as stone, not ramp
+                    float stair = Smooth01((z - 306f) / 10f) * Smooth01((372f - z) / 10f)
+                                  * Smooth01((13f - Mathf.Abs(x - StairCenterX)) / 4f);
+                    if (stair > 0f)
+                        h = Mathf.Lerp(h, Mathf.Round(h / 1.15f) * 1.15f, stair);
+
+                    // the temple's shoulder: cut level, and holding level still
+                    float dShelf = Mathf.Sqrt((x - 57f) * (x - 57f) + (z - 386f) * (z - 386f));
+                    if (dShelf < 30f)
+                        h = Mathf.Lerp(h, TempleShelfHeight, Smooth01((30f - dShelf) / 12f));
+                }
+                else
+                {
+                    // the broken crown, and the Inner Green sheltered in the
+                    // wound: a rim ring, an inner wall, and a town's floor
+                    float dRim = Mathf.Sqrt((x - 60f) * (x - 60f) + (z - 448f) * (z - 448f));
+                    if (dRim < 58f)
+                    {
+                        float profile = dRim > 36f
+                            ? Mathf.Lerp(CalderaRimHeight, TempleShelfHeight + 5f, Smooth01((dRim - 36f) / 22f))
+                            : dRim > 24f
+                                ? Mathf.Lerp(CalderaFloorHeight, CalderaRimHeight, Smooth01((dRim - 24f) / 12f))
+                                : CalderaFloorHeight;
+                        h = Mathf.Lerp(h, profile, Smooth01((58f - dRim) / 14f));
+                    }
+                }
+            }
+
             return h;
         }
 
         /// <summary>The compound pad's level grade (Height() and the builder agree on it).</summary>
         const float StationPadHeight = 13f;
+
+        // the mountain's fixed grades — Height() and the builders agree on these
+        const float StairCenterX = 55f;
+        const float TempleShelfHeight = 62f;
+        const float CalderaRimHeight = 84f;
+        const float CalderaFloorHeight = 54f;
 
         static float Smooth01(float t)
         {
@@ -231,8 +277,11 @@ namespace Tidebound.EditorTools
 
         static void BuildTerrain(Mats mats)
         {
-            const int nx = 121, nz = 134;
-            const float x0 = -140f, x1 = 220f, z0 = -60f, z1 = 340f;
+            // the grid runs from the sea to the broken crown: ~3m spacing,
+            // extended north in the mountain pass to carry the temple shelf
+            // and the caldera as real, walkable ground
+            const int nx = 121, nz = 191;
+            const float x0 = -140f, x1 = 220f, z0 = -60f, z1 = 510f;
 
             var verts = new Vector3[nx * nz];
             var uvs = new Vector2[nx * nz];
@@ -331,23 +380,26 @@ namespace Tidebound.EditorTools
         {
             var parent = new GameObject("DistantIsland");
 
-            // the massif: overlapping domes rising landward
+            // the massif: overlapping domes rising landward. They sit BEYOND
+            // the walkable crown now (the mountain you climb is real terrain
+            // from z≈300 north) — this is the country past it, still hazed.
             var domes = new (Vector3 pos, Vector3 scale)[]
             {
-                (new Vector3(-40f, 10f, 430f), new Vector3(260f, 90f, 200f)),
-                (new Vector3(90f, 5f, 490f), new Vector3(220f, 70f, 190f)),
-                (new Vector3(-140f, 0f, 500f), new Vector3(200f, 55f, 170f)),
-                (new Vector3(20f, 20f, 590f), new Vector3(300f, 150f, 240f)), // the mountain itself
-                (new Vector3(150f, 0f, 630f), new Vector3(180f, 60f, 160f)),
+                (new Vector3(-90f, 10f, 560f), new Vector3(260f, 90f, 200f)),
+                (new Vector3(170f, 5f, 590f), new Vector3(220f, 70f, 190f)),
+                (new Vector3(-190f, 0f, 620f), new Vector3(200f, 55f, 170f)),
+                (new Vector3(20f, 20f, 760f), new Vector3(300f, 150f, 240f)), // the far massif
+                (new Vector3(190f, 0f, 800f), new Vector3(180f, 60f, 160f)),
             };
             foreach (var (pos, scale) in domes)
                 NoShadow(Prim(PrimitiveType.Sphere, "Terrace", parent.transform, pos, scale, mats.Mountain, stripCollider: true));
 
-            // the broken crown: two rim stubs with the break between them
+            // the broken crown, read from the beach: two rim stubs with the
+            // break between them, standing over the real caldera's shoulder
             NoShadow(Prim(PrimitiveType.Cylinder, "CrownWest", parent.transform,
-                new Vector3(-8f, 105f, 585f), new Vector3(52f, 26f, 48f), mats.Mountain, stripCollider: true));
+                new Vector3(-30f, 96f, 520f), new Vector3(70f, 30f, 60f), mats.Mountain, stripCollider: true));
             NoShadow(Prim(PrimitiveType.Cylinder, "CrownEast", parent.transform,
-                new Vector3(58f, 96f, 598f), new Vector3(40f, 20f, 38f), mats.Mountain, stripCollider: true));
+                new Vector3(150f, 88f, 528f), new Vector3(60f, 24f, 52f), mats.Mountain, stripCollider: true));
 
             parent.isStatic = true;
         }
@@ -646,10 +698,13 @@ namespace Tidebound.EditorTools
             Wall(parent.transform, "SeaWallBay", new Vector3(-15f, 4f, -12f), new Vector3(250f, 12f, 1f));
             Wall(parent.transform, "SeaWallPools", new Vector3(170f, 4f, -28f), new Vector3(120f, 12f, 1f));
             Wall(parent.transform, "SeaWallJoin", new Vector3(110f, 4f, -20f), new Vector3(1f, 12f, 18f));
-            // the deep interior's edge — the mountain's country starts here
-            Wall(parent.transform, "InteriorWall", new Vector3(40f, 14f, 315f), new Vector3(500f, 24f, 1f));
-            Wall(parent.transform, "WestWall", new Vector3(-125f, 10f, 130f), new Vector3(1f, 28f, 560f));
-            Wall(parent.transform, "EastWall", new Vector3(212f, 10f, 130f), new Vector3(1f, 28f, 560f));
+            // the far side of the crown — the world ends past the caldera
+            Wall(parent.transform, "CrownWall", new Vector3(40f, 90f, 505f), new Vector3(500f, 60f, 1f));
+            // the mountain pass narrows: nothing goes around the stair
+            Wall(parent.transform, "PassWestWall", new Vector3(-40f, 40f, 400f), new Vector3(1f, 80f, 220f));
+            Wall(parent.transform, "PassEastWall", new Vector3(160f, 40f, 400f), new Vector3(1f, 80f, 220f));
+            Wall(parent.transform, "WestWall", new Vector3(-125f, 10f, 190f), new Vector3(1f, 28f, 680f));
+            Wall(parent.transform, "EastWall", new Vector3(212f, 10f, 190f), new Vector3(1f, 28f, 680f));
         }
 
         static void Wall(Transform parent, string name, Vector3 pos, Vector3 size)
@@ -2018,6 +2073,226 @@ namespace Tidebound.EditorTools
             door.ewingDayGate = ewing;
             door.stageDoor = stage;
             door.interactRadius = 3f;
+        }
+
+        // ================= the mountain's country (chapter six) =================
+        /// <summary>
+        /// The Terrace of Steps, the Tidewell Temple, and the caldera with the
+        /// Inner Green in it — chapter six's geography, walkable. The stair's
+        /// foot carries the ascent trailhead; the temple and the rim carry
+        /// lore stones that only read once you have stood in them.
+        /// </summary>
+        static void BuildMountainCountry(Mats mats)
+        {
+            BuildTerraceOfSteps(mats);
+            BuildTidewellTemple(mats);
+            BuildCaldera(mats);
+        }
+
+        /// <summary>The processional stair: dry-laid retaining walls riding the
+        /// flank flight after flight, with a whole civilization's terraced
+        /// agriculture asleep under the green on both sides.</summary>
+        static void BuildTerraceOfSteps(Mats mats)
+        {
+            var parent = new GameObject("TerraceOfSteps");
+
+            // the stair's foot: a marked landing where the climb begins
+            float footZ = 308f, footY = Height(StairCenterX, footZ);
+            var trailhead = new GameObject("MountainTrailhead");
+            trailhead.transform.SetParent(parent.transform, true);
+            trailhead.transform.position = new Vector3(StairCenterX, footY, footZ);
+            for (int i = 0; i < 3; i++)
+                Prim(PrimitiveType.Cube, "FootCairn", trailhead.transform,
+                    new Vector3(StairCenterX - 9f, footY + 0.25f + i * 0.32f, footZ),
+                    new Vector3(0.8f - i * 0.15f, 0.32f, 0.7f - i * 0.12f), mats.Rock);
+            trailhead.AddComponent<MountainTrailhead>().interactRadius = 4f;
+
+            // the flanking walls, stepping up with the treads
+            for (float z = 308f; z < 372f; z += 4f)
+            {
+                float y = Height(StairCenterX, z);
+                foreach (float side in new[] { -13f, 13f })
+                    Prim(PrimitiveType.Cube, "StairWall", parent.transform,
+                        new Vector3(StairCenterX + side, y + 0.55f, z), new Vector3(1.2f, 1.1f, 4f), mats.Rock);
+                // the spoon-worn center of the tread, lighter where feet went
+                NoShadow(Prim(PrimitiveType.Cube, "WornTread", parent.transform,
+                    new Vector3(StairCenterX, y + 0.03f, z), new Vector3(5f, 0.06f, 3.4f), mats.DarkStone,
+                    stripCollider: true));
+            }
+
+            // the terraced fields, stepping away on both sides to the edge of sight
+            for (int t = 0; t < 14; t++)
+            {
+                float z = 312f + t * 4.5f;
+                foreach (float side in new[] { -1f, 1f })
+                {
+                    float x = StairCenterX + side * (20f + (t % 3) * 9f);
+                    float y = Height(x, z);
+                    var wall = Prim(PrimitiveType.Cube, "TerraceWall", parent.transform,
+                        new Vector3(x, y + 0.4f, z), new Vector3(14f, 0.8f, 1f), mats.Rock);
+                    wall.transform.rotation = Quaternion.Euler(0f, Rnd(-4f, 4f), 0f);
+                    NoShadow(Prim(PrimitiveType.Cube, "TerraceGreen", parent.transform,
+                        new Vector3(x, y + 0.12f, z + 2.4f), new Vector3(13f, 0.2f, 3.6f), mats.Leaf,
+                        stripCollider: true));
+                }
+            }
+
+            parent.isStatic = true;
+        }
+
+        /// <summary>The Tidewell: a nave of standing stone open to the sky, its
+        /// lower end filled by black water that breathes seven beats — the
+        /// island's heart on an altar, eight hundred feet above the sea.</summary>
+        static void BuildTidewellTemple(Mats mats)
+        {
+            var parent = new GameObject("TidewellTemple");
+            const float cx = 57f, cz = 386f;
+            float y = TempleShelfHeight;
+
+            // the nave: a ring of standing stones, one of them broken tallest
+            for (int i = 0; i < 16; i++)
+            {
+                float a = i / 16f * Mathf.PI * 2f;
+                float sx = cx + Mathf.Cos(a) * 15f, sz = cz + Mathf.Sin(a) * 11f;
+                float h = i == 4 ? 5.2f : Rnd(2.6f, 3.6f); // #4 is Vela's broken pillar
+                var stone = Prim(PrimitiveType.Cube, i == 4 ? "BrokenPillar" : "NaveStone", parent.transform,
+                    new Vector3(sx, y + h * 0.5f, sz), new Vector3(1.1f, h, 0.9f), mats.Rock);
+                stone.transform.rotation = Quaternion.Euler(Rnd(-3f, 3f), a * Mathf.Rad2Deg, Rnd(-3f, 3f));
+            }
+
+            // the threshold stone at the nave's mouth — where Kavi sits, facing out
+            Prim(PrimitiveType.Cube, "ThresholdStone", parent.transform,
+                new Vector3(cx, y + 0.18f, cz - 12.5f), new Vector3(6f, 0.36f, 1.6f), mats.DarkStone);
+
+            // THE POOL: black, utterly clear, and plumbed to the sea through
+            // the whole body of the mountain. It breathes; the disc rides it.
+            var basin = Prim(PrimitiveType.Cylinder, "PoolBasin", parent.transform,
+                new Vector3(cx, y - 0.35f, cz + 5f), new Vector3(9f, 0.4f, 9f), mats.DarkStone);
+            var water = Prim(PrimitiveType.Cylinder, "TidewellWater", parent.transform,
+                new Vector3(cx, y - 0.12f, cz + 5f), new Vector3(8.4f, 0.08f, 8.4f),
+                Mat("HeartglassGlow", new Color(0.25f, 0.95f, 0.85f), 0.9f), stripCollider: true);
+            NoShadow(water);
+            water.AddComponent<TidewellPulse>();
+
+            // the carved rim: the spiral, in every size, past weathering
+            for (int s = 0; s < 3; s++)
+            {
+                float ax = cx - 6f + s * 6f, az = cz + 11.5f;
+                var slab = Prim(PrimitiveType.Cube, "MuralSlab", parent.transform,
+                    new Vector3(ax, y + 1.6f, az), new Vector3(5.2f, 3.2f, 0.5f), mats.Rock);
+                slab.transform.rotation = Quaternion.Euler(0f, Rnd(-3f, 3f), 0f);
+                // an Archimedean spiral cut into the face
+                for (int k = 0; k < 26; k++)
+                {
+                    float th = k * 0.55f;
+                    float r = 0.08f + th * 0.115f;
+                    if (r > 1.9f) break;
+                    NoShadow(Prim(PrimitiveType.Cube, "SpiralCut", parent.transform,
+                        new Vector3(ax + Mathf.Cos(th) * r, y + 1.7f + Mathf.Sin(th) * r, az - 0.3f),
+                        new Vector3(0.14f, 0.14f, 0.06f), mats.DarkStone, stripCollider: true));
+                }
+            }
+
+            // offering niches along the inner wall
+            for (int n = 0; n < 5; n++)
+                Prim(PrimitiveType.Cube, "OfferingNiche", parent.transform,
+                    new Vector3(cx - 8f + n * 4f, y + 0.55f, cz - 8.5f),
+                    new Vector3(0.8f, 1.1f, 0.5f), mats.DarkStone);
+
+            // the murals read as lore once you have stood in the nave
+            var murals = new GameObject("TidewellMurals");
+            murals.transform.SetParent(parent.transform, true);
+            murals.transform.position = new Vector3(cx, y + 1f, cz + 10f);
+            var lore = murals.AddComponent<LoreStone>();
+            lore.displayName = "The mural wall";
+            lore.optionLabel = "Follow the procession";
+            lore.optionSub = "Boats, fields, the mountain breaking, the survivors walking into stone.";
+            lore.flag = "TIDEWELL_MURALS";
+            lore.prose = "Generation after generation at this pool, and always one figure alone at the water's edge in a marked hood: a keeper. The covenant, kept in unbroken sequence — right up to a final panel where the hooded figure stands facing OUT of the wall, hand extended. At you. The way every mural tradition ends when it hasn't ended.";
+            lore.depthRoute = 2;
+            lore.interactRadius = 3.4f;
+
+            parent.isStatic = true;
+        }
+
+        /// <summary>The broken crown from the inside: the rim path, and two
+        /// miles of garden-green in the wound of the mountain — terraces,
+        /// woven roofs, straight threads of smoke, and water running in
+        /// spirals through a town no chart has ever held.</summary>
+        static void BuildCaldera(Mats mats)
+        {
+            var parent = new GameObject("Caldera");
+            const float cx = 60f, cz = 448f;
+
+            // the rim path: stones set along the lip, and the viewpoint
+            for (int i = 0; i < 22; i++)
+            {
+                float a = i / 22f * Mathf.PI * 2f;
+                float sx = cx + Mathf.Cos(a) * 36f, sz = cz + Mathf.Sin(a) * 36f;
+                Prim(PrimitiveType.Cube, "RimStone", parent.transform,
+                    new Vector3(sx, Height(sx, sz) + 0.35f, sz), new Vector3(1.1f, 0.7f, 1.1f), mats.Rock);
+            }
+            var lookout = new GameObject("RimLookout");
+            lookout.transform.SetParent(parent.transform, true);
+            float lz = cz - 36f;
+            lookout.transform.position = new Vector3(cx, Height(cx, lz) + 1f, lz);
+            var view = lookout.AddComponent<LoreStone>();
+            view.displayName = "The rim path";
+            view.optionLabel = "Look down into the wound";
+            view.optionSub = "Two miles across, ringed in shattered crown-rock — and green.";
+            view.flag = "CALDERA_SEEN";
+            view.prose = "Not jungle-green: GARDEN-green. Terraces, orchards, roofs of woven living trees, threads of smoke rising straight in the sheltered air, water gleaming in channels that run — you follow them with your eye and your breath goes — in spirals. A living town, in the wound of the mountain, invisible to every chart and every year of the world since the seventeenth century. They went in. They stayed in.";
+            view.depthRoute = 3;
+            view.interactRadius = 4f;
+
+            // the Inner Green: terraces stepping down to the town's floor
+            for (int ring = 0; ring < 3; ring++)
+            {
+                float r = 21f - ring * 6f;
+                for (int i = 0; i < 18; i++)
+                {
+                    float a = i / 18f * Mathf.PI * 2f;
+                    float sx = cx + Mathf.Cos(a) * r, sz = cz + Mathf.Sin(a) * r;
+                    float sy = Height(sx, sz);
+                    var bed = Prim(PrimitiveType.Cube, "InnerTerrace", parent.transform,
+                        new Vector3(sx, sy + 0.2f, sz), new Vector3(4.6f, 0.4f, 2.6f), mats.JungleDark);
+                    bed.transform.rotation = Quaternion.Euler(0f, -a * Mathf.Rad2Deg, 0f);
+                    NoShadow(Prim(PrimitiveType.Sphere, "InnerCrop", parent.transform,
+                        new Vector3(sx, sy + 0.5f, sz), new Vector3(1.4f, 0.5f, 1.2f), mats.Leaf,
+                        stripCollider: true));
+                }
+            }
+
+            // the roofs of woven living trees, and the smoke going straight up
+            for (int hut = 0; hut < 11; hut++)
+            {
+                float a = hut / 11f * Mathf.PI * 2f + 0.3f;
+                float r = Rnd(5f, 15f);
+                float sx = cx + Mathf.Cos(a) * r, sz = cz + Mathf.Sin(a) * r;
+                float sy = Height(sx, sz);
+                Prim(PrimitiveType.Cube, "InnerHut", parent.transform,
+                    new Vector3(sx, sy + 1.1f, sz), new Vector3(3.4f, 2.2f, 3f), mats.Wood);
+                NoShadow(Prim(PrimitiveType.Sphere, "WovenRoof", parent.transform,
+                    new Vector3(sx, sy + 2.5f, sz), new Vector3(4.4f, 1.4f, 4f), mats.Leaf, stripCollider: true));
+                if (hut % 3 == 0)
+                    NoShadow(Prim(PrimitiveType.Cylinder, "SmokeThread", parent.transform,
+                        new Vector3(sx, sy + 5.5f, sz), new Vector3(0.16f, 2.6f, 0.16f), mats.Cloud,
+                        stripCollider: true));
+            }
+
+            // the water channels, running in spirals through the whole town
+            for (int k = 0; k < 40; k++)
+            {
+                float th = k * 0.42f;
+                float r = 2f + th * 0.8f;
+                if (r > 19f) break;
+                float sx = cx + Mathf.Cos(th) * r, sz = cz + Mathf.Sin(th) * r;
+                NoShadow(Prim(PrimitiveType.Cube, "SpiralChannel", parent.transform,
+                    new Vector3(sx, Height(sx, sz) + 0.1f, sz), new Vector3(1.1f, 0.16f, 1.1f),
+                    mats.Fresh, stripCollider: true));
+            }
+
+            parent.isStatic = true;
         }
 
         /// <summary>Ipo the companion (distinct from the story-stage IpoRig):

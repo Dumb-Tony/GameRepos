@@ -721,9 +721,43 @@ tidebound-unity/
       parity + tests). 5 new tests (348 total, all green via the CLI
       fallback — the bridge stayed with the other editor all
       session). Scene rebuilt with StationHalcyon serialized.
-      Remaining world-side: the temple + caldera as places (the
-      ten-thousand-stair terrace, the Tidewell nave, the Inner
-      Green), Naia's rig, permanent monsoon dressing; then NG+ and
+      World-side session 2: THE MOUNTAIN'S COUNTRY. The terrain grid
+      grew north (z1 340 → 510, nz 134 → 191, same ~3m spacing) and
+      Height() now carries chapter six's whole geography as real
+      walkable ground: the long flank climbing from z=300, the
+      TERRACE OF STEPS as a quantized processional stair (treads
+      round to 1.15m so the climb reads as stone, not ramp — a
+      corridor 26m wide centered on x=55, z 306→372), the TEMPLE
+      SHELF cut level at y=62 (center (57,386), r30), and past
+      z=408 the BROKEN CROWN: a rim ring at y=84 (r36 around
+      (60,448)), an inner wall, and the Inner Green's floor at y=54.
+      Builders: BuildTerraceOfSteps (flanking dry-laid walls stepping
+      with the treads, spoon-worn tread centers, terraced fields to
+      the edge of sight, and the ascent trailhead at the stair's
+      foot), BuildTidewellTemple (a 16-stone nave with one broken
+      pillar tallest — Vela's perch; the threshold stone Kavi sits
+      on facing out; the pool as basin + glowing disc driven by new
+      TidewellPulse, which rides SevenBeat.Evaluate so the temple
+      breathes the LAGOON'S OWN rhythm — same water, same heart;
+      three mural slabs with Archimedean spirals cut into their
+      faces; offering niches; a LoreStone for the procession that
+      ends facing OUT of the wall), and BuildCaldera (rim path
+      stones, the rim LoreStone viewpoint, three rings of inner
+      terraces, eleven woven-roof huts with smoke going straight up
+      in the sheltered air, and the water channels running in
+      spirals through the town). New MountainTrailhead plays ch6_open
+      from the stair's foot, gated by a pure MountainPlace helper
+      (CH5_DONE && !CH6_DONE && alive) so you can walk the ascent on
+      your own feet; the story chain is otherwise untouched. Bounds
+      rebuilt for the new country (CrownWall past the caldera, a
+      narrowed pass, longer side walls) and the distant-island
+      silhouette pushed back beyond the real crown so the beach view
+      still reads. 6 new tests (354 total, all green via the CLI
+      fallback — the bridge stayed with the other editor again).
+      Scene rebuilt with TerraceOfSteps + TidewellTemple + Caldera
+      serialized.
+      Remaining world-side: Naia's rig, permanent monsoon dressing
+      (rain outside cutscenes), the Gullet as a place; then NG+ and
       depth passes.*
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day
