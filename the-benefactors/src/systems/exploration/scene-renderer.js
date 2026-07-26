@@ -10,7 +10,12 @@ export function renderExplorationScene(location, state) {
   const hotspots = getVisibleHotspots(location, state);
 
   return `
-    <div class="authored-scene ${location.sceneClass || ""}" aria-label="${location.name}">
+    <div class="authored-scene ${location.sceneClass || ""} ${location.sceneArt ? "has-illustration" : ""}" aria-label="${location.name}">
+      ${
+        location.sceneArt
+          ? `<img class="scene-backdrop" src="${location.sceneArt}" alt="" draggable="false" />`
+          : ""
+      }
       <div class="scene-atmosphere" aria-hidden="true"></div>
       <div class="scene-set-dressing" aria-hidden="true"></div>
       ${hotspots
@@ -28,4 +33,3 @@ export function renderExplorationScene(location, state) {
     </div>
   `;
 }
-

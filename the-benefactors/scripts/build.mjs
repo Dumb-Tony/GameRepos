@@ -12,6 +12,17 @@ import { assertValidGameContent } from "../src/engine/content-validation.js";
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const dist = resolve(projectRoot, "dist");
+const imageAssetFiles = [
+  "assets/scenes/home-office.webp",
+  "assets/scenes/newsroom.webp",
+  "assets/scenes/city-hall.webp",
+  "assets/scenes/vale-street.webp",
+  "assets/scenes/vale-study.webp",
+  "assets/scenes/hidden-room.webp",
+  "assets/scenes/lionel-price.webp",
+  "assets/scenes/june-bell.webp",
+  "assets/social/benefactors-social.webp",
+];
 const requiredFiles = [
   "index.html",
   "styles.css",
@@ -28,6 +39,8 @@ const requiredFiles = [
   "src/systems/evidence-board/evidence-board.js",
   "src/systems/evidence/evidence-renderer.js",
   "src/ui/app.js",
+  "src/ui/transient-notice.js",
+  ...imageAssetFiles,
 ];
 
 for (const file of requiredFiles) {
@@ -47,6 +60,7 @@ await mkdir(dist, { recursive: true });
 await cp(resolve(projectRoot, "src"), resolve(dist, "src"), { recursive: true });
 await cp(resolve(projectRoot, "index.html"), resolve(dist, "index.html"));
 await cp(resolve(projectRoot, "styles.css"), resolve(dist, "styles.css"));
+await cp(resolve(projectRoot, "assets"), resolve(dist, "assets"), { recursive: true });
 await cp(
   resolve(projectRoot, ".openai"),
   resolve(dist, ".openai"),
@@ -56,18 +70,26 @@ await cp(
 const deployedFiles = [
   "index.html",
   "styles.css",
+  ...imageAssetFiles,
   ...requiredFiles.filter((file) => file.startsWith("src/")),
 ];
 const assets = {};
 for (const file of deployedFiles) {
   const route = file === "index.html" ? "/index.html" : `/${file.replaceAll("\\", "/")}`;
-  const body = await readFile(resolve(projectRoot, file), "utf8");
+  const binary = file.endsWith(".webp");
+  const source = await readFile(resolve(projectRoot, file), binary ? undefined : "utf8");
   const contentType = file.endsWith(".html")
     ? "text/html; charset=utf-8"
     : file.endsWith(".css")
       ? "text/css; charset=utf-8"
+      : file.endsWith(".webp")
+        ? "image/webp"
       : "text/javascript; charset=utf-8";
-  assets[route] = { body, contentType };
+  assets[route] = {
+    body: binary ? source.toString("base64") : source,
+    contentType,
+    encoding: binary ? "base64" : "utf8",
+  };
 }
 
 const serverSource = `
@@ -86,7 +108,11 @@ export default {
       });
     }
 
-    return new Response(request.method === "HEAD" ? null : asset.body, {
+    const body = asset.encoding === "base64"
+      ? Uint8Array.from(atob(asset.body), (character) => character.charCodeAt(0))
+      : asset.body;
+
+    return new Response(request.method === "HEAD" ? null : body, {
       status: 200,
       headers: {
         "content-type": asset.contentType,

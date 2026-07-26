@@ -24,6 +24,7 @@ import {
   removeConnection,
 } from "../systems/evidence-board/evidence-board.js";
 import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js";
+import { TransientNotice } from "./transient-notice.js";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -46,7 +47,11 @@ export class GameApp {
     this.store = store;
     this.saves = saves;
     this.router = router;
-    this.notice = "";
+    this.notice = new TransientNotice({
+      onExpire: () => {
+        this.root.querySelector(".toast")?.remove();
+      },
+    });
     this.returnRoute = "title";
     this.activeOfficeNote = null;
     this.activeLocationNote = null;
@@ -217,7 +222,13 @@ export class GameApp {
       <main id="game-main" class="screen game-screen office-screen">
         ${this.renderGameHeader(GAME_CONTENT.chapter, "Home office")}
         <section class="scene-frame" aria-label="Home office">
-          <div class="office-room office-state-${state.progress.officeState}">
+          <div class="office-room office-state-${state.progress.officeState} has-illustration">
+            <img
+              class="scene-backdrop office-backdrop"
+              src="./assets/scenes/home-office.webp"
+              alt=""
+              draggable="false"
+            />
             <div class="office-wall" aria-hidden="true"></div>
             <div class="window-view" aria-hidden="true">
               <span class="building building-one"></span>
@@ -376,6 +387,7 @@ export class GameApp {
     this.bindActions({
       "hotspot-action": () => {
         if (note.dialogueId) {
+          this.notice.clear();
           let next = startDialogue(this.store.getState(), DIALOGUES, note.dialogueId);
           const openingNode = getDialogueNode(
             DIALOGUES,
@@ -392,7 +404,7 @@ export class GameApp {
         this.store.replace(next, `hotspot-${note.id}`);
         this.saves.save(this.store.getState(), `hotspot-${note.id}`);
         this.activeLocationNote = { ...note, effects: null };
-        this.notice = "New evidence added to the case file.";
+        this.notice.show("New evidence added to the case file.");
         this.renderLocation();
       },
       map: () => this.router.navigate("map"),
@@ -624,7 +636,7 @@ export class GameApp {
                       const selected = this.selectedBoardCard === item.id;
                       return `
                         <article
-                          class="evidence-card ${selected ? "is-selected" : ""}"
+                          class="evidence-card evidence-card--${item.artifact?.type || "document"} ${selected ? "is-selected" : ""}"
                           style="left:${position.x}%;top:${position.y}%"
                           data-evidence-card-shell="${item.id}"
                         >
@@ -634,6 +646,7 @@ export class GameApp {
                             aria-pressed="${selected}"
                           >
                             <span class="evidence-pin" aria-hidden="true"></span>
+                            <span class="evidence-card-thumbnail" aria-hidden="true"></span>
                             <span class="evidence-category">${escapeHtml(item.category)}</span>
                             <strong>${escapeHtml(item.title)}</strong>
                             <small>${escapeHtml(item.summary)}</small>
@@ -788,10 +801,12 @@ export class GameApp {
         this.store.replace(next, "connect-evidence");
         this.saves.save(this.store.getState(), "connect-evidence");
         this.selectedBoardCard = null;
-        this.notice = result.newlyCompleted.length
-          ? result.newlyCompleted[0].notification ||
-            `Deduction: ${result.newlyCompleted[0].title}`
-          : "Evidence connected.";
+        this.notice.show(
+          result.newlyCompleted.length
+            ? result.newlyCompleted[0].notification ||
+                `Deduction: ${result.newlyCompleted[0].title}`
+            : "Evidence connected.",
+        );
         this.renderBoard();
       });
 
@@ -992,7 +1007,14 @@ export class GameApp {
       <div class="dialogue-scrim">
         <section class="dialogue-panel" role="dialog" aria-modal="true" aria-labelledby="dialogue-speaker">
           <button class="dialogue-close" data-action="close-dialogue" aria-label="End conversation">×</button>
-          <div class="character-portrait" aria-hidden="true">${escapeHtml(dialogue.portrait)}</div>
+          <div class="character-portrait" aria-hidden="true">
+            ${
+              dialogue.portraitAsset
+                ? `<img src="${dialogue.portraitAsset}" alt="" draggable="false" onerror="this.hidden=true" />`
+                : ""
+            }
+            <span>${escapeHtml(dialogue.portrait)}</span>
+          </div>
           <div class="dialogue-content">
             <p id="dialogue-speaker" class="speaker">${escapeHtml(node.speaker)}</p>
             <blockquote>${escapeHtml(node.text)}</blockquote>
@@ -1156,8 +1178,19 @@ export class GameApp {
   }
 
   renderToast() {
-    return this.notice
-      ? `<div class="toast" role="status">${escapeHtml(this.notice)}</div>`
+    if (this.store.getState().dialogue.activeDialogueId || this.activeEvidenceId) {
+      return "";
+    }
+    return this.notice.value
+      ? `
+        <div class="toast" role="status" aria-live="polite">
+          <span aria-hidden="true">+</span>
+          <div>
+            <small>Case file updated</small>
+            <strong>${escapeHtml(this.notice.value)}</strong>
+          </div>
+        </div>
+      `
       : "";
   }
 
@@ -1172,7 +1205,7 @@ export class GameApp {
   continueGame() {
     const loaded = this.saves.load();
     if (!loaded) {
-      this.notice = "No readable save was found.";
+      this.notice.show("No readable save was found.");
       this.renderTitle();
       return;
     }
@@ -1195,12 +1228,8 @@ export class GameApp {
 
   manualSave() {
     this.saves.save(this.store.getState(), "manual");
-    this.notice = "Case file saved.";
+    this.notice.show("Case file saved.");
     this.render(this.router.current());
-    window.setTimeout(() => {
-      this.notice = "";
-      if (this.router.current() !== "title") this.render(this.router.current());
-    }, 1800);
   }
 
   applyPreferences(settings) {

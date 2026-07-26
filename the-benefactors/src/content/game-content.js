@@ -160,6 +160,7 @@ export const DIALOGUES = Object.freeze({
     id: "lionel_records",
     character: "Lionel Price",
     portrait: "LP",
+    portraitAsset: "./assets/scenes/lionel-price.webp",
     start: "intro",
     nodes: {
       intro: {
@@ -250,6 +251,7 @@ export const DIALOGUES = Object.freeze({
     id: "june_window",
     character: "June Bell",
     portrait: "JB",
+    portraitAsset: "./assets/scenes/june-bell.webp",
     start: "intro",
     nodes: {
       intro: {
@@ -368,6 +370,7 @@ export const GAME_CONTENT = Object.freeze({
       description:
         "The night desk glows beneath tired fluorescent lights. Mara is waiting with an assignment that should be simple.",
       sceneClass: "scene-newsroom",
+      sceneArt: "./assets/scenes/newsroom.webp",
       hotspots: [
         {
           id: "mara-desk",
@@ -410,14 +413,15 @@ export const GAME_CONTENT = Object.freeze({
       description:
         "Marble, fluorescent light, and the institutional confidence that no one reads the forms.",
       sceneClass: "scene-city-hall",
+      sceneArt: "./assets/scenes/city-hall.webp",
       hotspots: [
         {
           id: "records-terminal",
           label: "Public records terminal",
-          x: 57,
-          y: 36,
+          x: 78,
+          y: 35,
           width: 20,
-          height: 30,
+          height: 43,
           title: "Public records terminal",
           text: "The permit database is old enough to vote.",
           actionLabel: "Search Vale permits",
@@ -444,10 +448,10 @@ export const GAME_CONTENT = Object.freeze({
         {
           id: "records-policy",
           label: "Records policy",
-          x: 40,
-          y: 11,
-          width: 12,
-          height: 20,
+          x: 43,
+          y: 16,
+          width: 19,
+          height: 35,
           title: "Public records policy",
           text: "Requests for amendments require Form 17-C. Someone has underlined “amendments” in blue ink.",
         },
@@ -462,6 +466,7 @@ export const GAME_CONTENT = Object.freeze({
       description:
         "A respectable brick house on a quiet street. Nothing resembling a new west wing is visible from here.",
       sceneClass: "scene-mayor-street",
+      sceneArt: "./assets/scenes/vale-street.webp",
       hotspots: [
         {
           id: "vale-house",
@@ -519,14 +524,15 @@ export const GAME_CONTENT = Object.freeze({
       description:
         "Police completed a hurried welfare check and left. Mayor Vale is missing. Her study looks orderly in the way a room does after someone has searched it.",
       sceneClass: "scene-study",
+      sceneArt: "./assets/scenes/vale-study.webp",
       hotspots: [
         {
           id: "crooked-photograph",
           label: "Crooked photograph",
-          x: 18,
-          y: 16,
-          width: 16,
-          height: 24,
+          x: 3,
+          y: 8,
+          width: 27,
+          height: 44,
           title: "A deliberately crooked photograph",
           text: "The frame is crooked, but the dust shadow behind it is perfectly straight.",
           actionLabel: "Look behind the frame",
@@ -541,10 +547,10 @@ export const GAME_CONTENT = Object.freeze({
         {
           id: "dictation-recorder",
           label: "Dictation recorder",
-          x: 56,
-          y: 59,
-          width: 14,
-          height: 14,
+          x: 43,
+          y: 62,
+          width: 18,
+          height: 19,
           title: "A damaged dictation recorder",
           text: "The casing is cracked. Three fragments remain on its internal memory.",
           actionLabel: "Add it to the case file",
@@ -600,34 +606,35 @@ export const GAME_CONTENT = Object.freeze({
       description:
         "A steel stair descends into a communications room that does not appear on any city plan.",
       sceneClass: "scene-hidden-room",
+      sceneArt: "./assets/scenes/hidden-room.webp",
       hotspots: [
         {
           id: "dark-monitors",
           label: "Dark monitors",
-          x: 18,
-          y: 17,
+          x: 8,
+          y: 10,
           width: 34,
-          height: 35,
+          height: 46,
           title: "A wall of dark monitors",
           text: "Six displays, an encrypted terminal, and fresh fingerprints wiped in a hurry.",
         },
         {
           id: "guest-list-printer",
           label: "Printer tray",
-          x: 62,
-          y: 53,
-          width: 19,
-          height: 18,
+          x: 76,
+          y: 48,
+          width: 23,
+          height: 39,
           title: "One page remains",
           text: "The printer tray holds the torn header of a guest list: MERIDIAN / GREYHAVEN SESSION.",
         },
         {
           id: "cable-conduit",
           label: "Cable conduit",
-          x: 5,
-          y: 62,
-          width: 29,
-          height: 22,
+          x: 0,
+          y: 55,
+          width: 39,
+          height: 34,
           title: "Fresh cable conduit",
           text: "The conduit runs toward the street, not the house. This room was connected to something outside.",
         },
