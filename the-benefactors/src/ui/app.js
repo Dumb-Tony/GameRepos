@@ -1133,6 +1133,7 @@ export class GameApp {
       card.addEventListener("pointerdown", (event) => {
         if (event.button !== 0) return;
         if (event.target.closest("[data-view-evidence]")) return;
+        this.boardWasDragged = false;
         const evidenceId = card.dataset.evidenceCardShell;
         const position = this.store.getState().board.cards[evidenceId];
         start = {
