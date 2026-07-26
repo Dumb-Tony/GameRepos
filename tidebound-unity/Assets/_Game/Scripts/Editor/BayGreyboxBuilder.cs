@@ -66,6 +66,7 @@ namespace Tidebound.EditorTools
             BuildNineCompanion(mats);
             BuildStationCompound(mats);
             BuildMountainCountry(mats);
+            BuildGulletMouth(mats);
             BuildNaia(mats);
             BuildRaftSite(mats);
             BuildPlayerCameraAndSystems(gameClockHost, director, encounterDirector);
@@ -2074,6 +2075,74 @@ namespace Tidebound.EditorTools
             door.ewingDayGate = ewing;
             door.stageDoor = stage;
             door.interactRadius = 3f;
+        }
+
+        // ================= the Gullet's mouth =================
+        /// <summary>
+        /// Upstream, where the Silverthread comes out of the mountain's
+        /// shadow: the falls, and behind them the gap the island breathes
+        /// through. The throat itself stays the story's (chapter five walks
+        /// you down it) — the world's job is the door, the tide that owns
+        /// it, and the first galleries' heartglass answering a half-beat
+        /// late. Chalk marks accumulate where the descents left them.
+        /// </summary>
+        static void BuildGulletMouth(Mats mats)
+        {
+            var parent = new GameObject("GulletMouth");
+            float gz = 332f;
+            float gx = RiverX(gz);
+            float gy = Height(gx, gz);
+
+            // the cliff the river comes over, and the falls themselves
+            var headwall = Prim(PrimitiveType.Cube, "GrottoHeadwall", parent.transform,
+                new Vector3(gx, gy + 4f, gz + 7f), new Vector3(22f, 9f, 4f), mats.DarkStone);
+            headwall.transform.rotation = Quaternion.Euler(0f, 4f, 0f);
+            for (int f = 0; f < 3; f++)
+                NoShadow(Prim(PrimitiveType.Cube, "Waterfall", parent.transform,
+                    new Vector3(gx - 1.4f + f * 1.4f, gy + 4.2f, gz + 4.9f),
+                    new Vector3(1.5f, 8.4f, 0.5f), mats.Fresh, stripCollider: true));
+            // the plunge pool it lands in, and the mist over it
+            NoShadow(Prim(PrimitiveType.Cylinder, "PlungePool", parent.transform,
+                new Vector3(gx, gy + 0.16f, gz + 2.4f), new Vector3(9f, 0.14f, 9f), mats.Fresh,
+                stripCollider: true));
+            for (int m = 0; m < 4; m++)
+                NoShadow(Prim(PrimitiveType.Sphere, "Mist", parent.transform,
+                    new Vector3(gx + Rnd(-2.5f, 2.5f), gy + 1.2f + Rnd(0f, 1.2f), gz + 3.2f + Rnd(-1f, 1f)),
+                    new Vector3(Rnd(2f, 3.4f), Rnd(1f, 1.6f), Rnd(2f, 3.4f)), mats.Cloud, stripCollider: true));
+
+            // THE GAP: the dark behind the falling water
+            Prim(PrimitiveType.Cube, "GapMouth", parent.transform,
+                new Vector3(gx, gy + 1.5f, gz + 6.2f), new Vector3(3.2f, 3f, 1.2f), mats.Slick);
+            // the first gallery's throat, sloping away out of the light
+            var throat = Prim(PrimitiveType.Cylinder, "ThroatShaft", parent.transform,
+                new Vector3(gx, gy + 0.4f, gz + 8.6f), new Vector3(2.6f, 2.4f, 2.6f), mats.Slick);
+            throat.transform.rotation = Quaternion.Euler(24f, 0f, 0f);
+
+            // heartglass in the black rock, answering a half-beat late
+            for (int v = 0; v < 7; v++)
+            {
+                float vx = gx + Rnd(-4.5f, 4.5f);
+                float vy = gy + Rnd(0.8f, 5.2f);
+                var vein = NoShadow(Prim(PrimitiveType.Cube, "HeartglassVein", parent.transform,
+                    new Vector3(vx, vy, gz + 5.4f), new Vector3(Rnd(0.2f, 0.5f), Rnd(0.5f, 1.6f), 0.18f),
+                    Mat("HeartglassGlow", new Color(0.25f, 0.95f, 0.85f), 0.9f), stripCollider: true));
+                vein.transform.rotation = Quaternion.Euler(0f, 0f, Rnd(-40f, 40f));
+                vein.AddComponent<HeartglassVein>();
+            }
+
+            // the chalk high-water marks, left like debts
+            for (int c = 0; c < 4; c++)
+                NoShadow(Prim(PrimitiveType.Cube, "ChalkMark", parent.transform,
+                    new Vector3(gx - 1.6f + c * 1.1f, gy + 1.1f + c * 0.16f, gz + 5.5f),
+                    new Vector3(0.28f, 0.06f, 0.1f), mats.Foam, stripCollider: true));
+
+            // the door the tide owns
+            var mouth = new GameObject("GulletDoor");
+            mouth.transform.SetParent(parent.transform, true);
+            mouth.transform.position = new Vector3(gx, gy + 0.6f, gz + 3.4f);
+            mouth.AddComponent<GulletMouth>().interactRadius = 4.2f;
+
+            parent.isStatic = true;
         }
 
         // ================= Naia, the watcher in the green =================

@@ -798,8 +798,31 @@ tidebound-unity/
       untouched (the ev_squall stage still owns its scene). 7 new
       tests (367 total, all green via the CLI fallback). Scene
       rebuilt with MonsoonWeather + WorldRain serialized.
-      Remaining world-side: the Gullet as a place; then NG+ and depth
-      passes.*
+      World-side session 5: THE GULLET'S MOUTH — and the only door in
+      the game the TIDE owns. BuildGulletMouth raises the head of the
+      Silverthread (headwall, falls, plunge pool, mist) and the gap
+      behind the falling water, with the throat shaft sloping away
+      out of the light, chalk high-water marks left like debts, and
+      heartglass veins in the black rock. New HeartglassVein rides
+      SevenBeat with a HALF-BEAT PHASE LAG — the stone gives your
+      lamp back late, which is the detail the whole descent turns on
+      ("a crowd of your own delayed reflections"); each vein also
+      starts on its own random phase so a gallery never blinks in
+      unison. Access is pure tide, in a new Gullet helper: SLACK
+      WATER (Dawn/Dusk) opens the gap for the shallow galleries on
+      any day, the season's THREE GREAT LULLS (days 56/60/66 —
+      exactly the Descent's own scheduled descents) open the deep
+      road, and the surge refuses the rest of the time. GulletMouth
+      offers "read the water" always (a diegetic tide check whose
+      prose changes with GULLET_MAP — Vane's tables turn a reading
+      into a measurement to the minute) and "step through the gap"
+      only at slack, costing a segment and paying Depth. The three
+      descents themselves stay the STORY's (ev5_way1-3 → ev5_deep1-3
+      on the calendar): the world holds the door, chapter five walks
+      you down it. 7 new tests (374 total, all green via the CLI
+      fallback). Scene rebuilt with GulletMouth serialized.
+      World-side is now complete for chapters 4–7 (station, mountain,
+      Naia, monsoon, Gullet). Remaining: NG+ and depth passes.*
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day
 loop, Kavi only, chapters 1–2, the Boar King, five endings.
