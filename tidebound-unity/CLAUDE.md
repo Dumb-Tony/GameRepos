@@ -693,9 +693,38 @@ tidebound-unity/
       and copy the rebuilt scene back. ALWAYS probe
       Application.productName via RunCommand before trusting the
       bridge when two editors are open.*
-- [ ] Phase 6 — depth passes per act · world-side depth for chapters
+- [~] Phase 6 — depth passes per act · world-side depth for chapters
       4–7 (station/temple/caldera as places, Naia's rig, monsoon
-      world dressing) · NG+, polish
+      world dressing) · NG+, polish. *World-side session 1: STATION
+      HALCYON AS A WALKABLE PLACE. Height() grows the compound pad —
+      ground the Halcyon crews leveled fifty years ago, holding its
+      13m grade in the far-east interior (center (180, 212), r34,
+      above the trailhead's east bank) — and BuildStationCompound
+      raises the whole hub on it: the leaning mast with crossarm and
+      guys (the tallest human thing on the island, finally an
+      OBJECT), radio room at its foot, mess hall, Vane's lab block,
+      generator shed, the E WING in dark stone with its steel door,
+      the cable-spool yard, and the dressing the companion beats
+      already narrate (water tower, Moa's greenhouse ruin with its
+      shard-field, Buri's grown-over stores trailer, Nine's cistern
+      channel running for the sea, the rusted HALCYON sign, road
+      posts up from the trailhead cairn). Every hub room is now a
+      WALK-UP DOOR: new StationDoor interactable plays the room's
+      scene in place via VisitEdda (same daylight cost), with the
+      hub's exact gating held in a pure StationPlace helper —
+      STATION_OPENED silences all doors until ch4, stripped rooms
+      retire their doors, the E wing sulks until tomorrow after a
+      defeat (EwingTry == Day), and the radio room offers staging
+      only when the whole parts list is finished. The trailhead
+      expedition remains the fast route; walking the road is the
+      slow true one. The "station" hub scene is untouched (VisitEdda
+      parity + tests). 5 new tests (348 total, all green via the CLI
+      fallback — the bridge stayed with the other editor all
+      session). Scene rebuilt with StationHalcyon serialized.
+      Remaining world-side: the temple + caldera as places (the
+      ten-thousand-stair terrace, the Tidewell nave, the Inner
+      Green), Naia's rig, permanent monsoon dressing; then NG+ and
+      depth passes.*
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day
 loop, Kavi only, chapters 1–2, the Boar King, five endings.

@@ -64,6 +64,7 @@ namespace Tidebound.EditorTools
             BuildVelaCompanion(mats);
             BuildIpoCompanion(mats);
             BuildNineCompanion(mats);
+            BuildStationCompound(mats);
             BuildRaftSite(mats);
             BuildPlayerCameraAndSystems(gameClockHost, director, encounterDirector);
 
@@ -182,8 +183,19 @@ namespace Tidebound.EditorTools
                 h += rise;
             }
 
+            // far east: Station Halcyon's compound pad — ground the Halcyon
+            // crews leveled fifty years ago, still holding its grade
+            {
+                float dPad = Mathf.Sqrt((x - 180f) * (x - 180f) + (z - 212f) * (z - 212f));
+                if (dPad < 34f)
+                    h = Mathf.Lerp(h, StationPadHeight, Smooth01((34f - dPad) / 14f));
+            }
+
             return h;
         }
+
+        /// <summary>The compound pad's level grade (Height() and the builder agree on it).</summary>
+        const float StationPadHeight = 13f;
 
         static float Smooth01(float t)
         {
@@ -1881,6 +1893,131 @@ namespace Tidebound.EditorTools
             interactable.interactRadius = 4f; // she keeps the extra distance; the rock is the meeting place
 
             model.SetActive(false); // the controller decides when she's real
+        }
+
+        /// <summary>Station Halcyon as a walkable place: the compound pad in
+        /// the far-east interior, one greybox building per hub room, each
+        /// with a walk-up StationDoor that plays the room's scene in place.
+        /// The trailhead expedition remains the fast route; this is the slow
+        /// true one. Doors stay silent until chapter 4 opens the east.</summary>
+        static void BuildStationCompound(Mats mats)
+        {
+            var root = new GameObject("StationHalcyon");
+            float py = StationPadHeight;
+
+            // ---- the mast: tallest human thing on the island, leaning ----
+            var mast = new GameObject("Mast");
+            mast.transform.SetParent(root.transform, true);
+            var mastPole = Prim(PrimitiveType.Cylinder, "MastPole", mast.transform,
+                new Vector3(180f, py + 9f, 226f), new Vector3(0.35f, 9f, 0.35f), mats.Copper);
+            mastPole.transform.rotation = Quaternion.Euler(0f, 0f, 4f); // the lean the whole map reads
+            Prim(PrimitiveType.Cube, "Crossarm", mast.transform,
+                new Vector3(180.6f, py + 16.5f, 226f), new Vector3(2.4f, 0.12f, 0.12f), mats.Metal);
+            for (int g = 0; g < 3; g++)
+            {
+                var guy = Prim(PrimitiveType.Cylinder, "GuyWire", mast.transform,
+                    new Vector3(180f + Mathf.Cos(g * 2.1f) * 4f, py + 6f, 226f + Mathf.Sin(g * 2.1f) * 4f),
+                    new Vector3(0.03f, 7f, 0.03f), mats.Metal, stripCollider: true);
+                guy.transform.rotation = Quaternion.Euler(Mathf.Sin(g * 2.1f) * -30f, 0f, Mathf.Cos(g * 2.1f) * 30f);
+            }
+
+            // ---- the buildings, one per hub room ----
+            AddStationBuilding(root.transform, mats, "RadioRoom", new Vector3(175f, py, 222f), new Vector3(5f, 2.6f, 4f),
+                "The radio room", "Survey the room", "The mast is standing. What's at the bottom of it?",
+                "station_radio", "RADIO_SURVEYED", ewing: false, stage: true);
+            AddStationBuilding(root.transform, mats, "MessHall", new Vector3(168f, py, 205f), new Vector3(8f, 3f, 5f),
+                "The mess hall", "Go in", "The interrupted breakfast. And fifty-year-old stores, some of which are immortal.",
+                "station_mess", "STATION_MESS", ewing: false, stage: false);
+            AddStationBuilding(root.transform, mats, "LabBlock", new Vector3(190f, py, 206f), new Vector3(7f, 3f, 5f),
+                "Dr. Vane's office", "Go in", "The lead researcher's room. Her journals are still on the desk.",
+                "station_vane", "VANE_J3", ewing: false, stage: false);
+            AddStationBuilding(root.transform, mats, "GeneratorShed", new Vector3(172f, py, 214f), new Vector3(3.2f, 2.2f, 3.2f),
+                "The generator shed", "Work the drain taps", "If anything still holds fuel, it's here.",
+                "station_fuel", "FUEL", ewing: false, stage: false);
+
+            // the E wing gets steel, and its own daily-defeat door
+            var ewing = Prim(PrimitiveType.Cube, "EWing", root.transform,
+                new Vector3(192f, py + 1.7f, 216f), new Vector3(6f, 3.4f, 8f), mats.DarkStone);
+            var ewingDoor = Prim(PrimitiveType.Cube, "EWingDoor", root.transform,
+                new Vector3(188.9f, py + 1.1f, 216f), new Vector3(0.2f, 2.2f, 1.4f), mats.Metal);
+            var ed = ewingDoor.AddComponent<StationDoor>();
+            ed.doorName = "The E wing";
+            ed.optionLabel = "The heavy door";
+            ed.optionSub = "Sealed, steel, and not asking to be opened.";
+            ed.sceneId = "station_ewing";
+            ed.doneFlag = "E_WING_OPEN";
+            ed.ewingDayGate = true;
+            ed.interactRadius = 3f;
+
+            // the yard: cable spools worth sweeping
+            var spool = Prim(PrimitiveType.Cylinder, "CableSpool", root.transform,
+                new Vector3(181f, py + 0.45f, 210f), new Vector3(0.9f, 0.45f, 0.9f), mats.Wood);
+            spool.transform.rotation = Quaternion.Euler(90f, 20f, 0f);
+            var yard = spool.AddComponent<StationDoor>();
+            yard.doorName = "The compound yard";
+            yard.optionLabel = "Salvage sweep for cable";
+            yard.optionSub = "The compound is veined with wire. Most is powder. Some isn't.";
+            yard.sceneId = "station_wire";
+            yard.doneFlag = "WIRE";
+            yard.interactRadius = 3.2f;
+
+            // ---- dressing the companions' beats already narrate ----
+            Prim(PrimitiveType.Cylinder, "WaterTowerTank", root.transform,
+                new Vector3(186f, py + 4.6f, 220f), new Vector3(1.4f, 1.1f, 1.4f), mats.Metal);
+            for (int leg = 0; leg < 3; leg++)
+                Prim(PrimitiveType.Cylinder, "WaterTowerLeg", root.transform,
+                    new Vector3(186f + Mathf.Cos(leg * 2.1f) * 1f, py + 1.75f, 220f + Mathf.Sin(leg * 2.1f) * 1f),
+                    new Vector3(0.08f, 1.75f, 0.08f), mats.Metal);
+            // the greenhouse ruin (Moa's inheritance)
+            var ghFrame = Prim(PrimitiveType.Cube, "GreenhouseFrame", root.transform,
+                new Vector3(196f, py + 1f, 209f), new Vector3(4f, 2f, 3f), mats.Metal);
+            ghFrame.transform.rotation = Quaternion.Euler(0f, 8f, 3f);
+            Prim(PrimitiveType.Cube, "GreenhouseShards", root.transform,
+                new Vector3(196f, py + 0.06f, 209f), new Vector3(4.6f, 0.1f, 3.6f), mats.Foam, stripCollider: true);
+            // the grown-over stores trailer (Buri's excavation)
+            var trailer = Prim(PrimitiveType.Cube, "StoresTrailerMound", root.transform,
+                new Vector3(163f, py + 0.55f, 208f), new Vector3(2.6f, 1.1f, 1.6f), mats.Driftwood);
+            trailer.transform.rotation = Quaternion.Euler(0f, -12f, 0f);
+            // the cistern channel running for the sea (Nine's throat)
+            for (int seg = 0; seg < 4; seg++)
+                Prim(PrimitiveType.Cube, "CisternChannel", root.transform,
+                    new Vector3(176f, Height(176f, 199f - seg * 4f) + 0.12f, 199f - seg * 4f),
+                    new Vector3(1.2f, 0.35f, 4.2f), mats.DarkStone);
+            // HALCYON: the sign at the yard's mouth, letters gone to rust
+            var sign = Prim(PrimitiveType.Cube, "HalcyonSign", root.transform,
+                new Vector3(180f, py + 1.5f, 198f), new Vector3(3.2f, 0.8f, 0.15f), mats.Copper);
+            sign.transform.rotation = Quaternion.Euler(0f, 0f, -2f);
+
+            // ---- the swallowed service road: posts from the trailhead ----
+            var roadPts = new[]
+            {
+                new Vector3(212f, 0f, 174f), new Vector3(205f, 0f, 184f),
+                new Vector3(196f, 0f, 192f), new Vector3(187f, 0f, 196f),
+            };
+            foreach (var p in roadPts)
+            {
+                var post = Prim(PrimitiveType.Cylinder, "RoadPost", root.transform,
+                    new Vector3(p.x, Height(p.x, p.z) + 0.5f, p.z), new Vector3(0.09f, 0.55f, 0.09f), mats.Driftwood);
+                post.transform.rotation = Quaternion.Euler(Rnd(-8f, 8f), 0f, Rnd(-8f, 8f));
+            }
+        }
+
+        static void AddStationBuilding(Transform parent, Mats mats, string name, Vector3 at, Vector3 size,
+            string doorName, string label, string sub, string sceneId, string doneFlag, bool ewing, bool stage)
+        {
+            var body = Prim(PrimitiveType.Cube, name, parent,
+                new Vector3(at.x, at.y + size.y * 0.5f, at.z), size, mats.Rock);
+            var doorSlab = Prim(PrimitiveType.Cube, name + "Door", parent,
+                new Vector3(at.x, at.y + 0.9f, at.z - size.z * 0.5f - 0.08f), new Vector3(1.1f, 1.8f, 0.15f), mats.Wood);
+            var door = doorSlab.AddComponent<StationDoor>();
+            door.doorName = doorName;
+            door.optionLabel = label;
+            door.optionSub = sub;
+            door.sceneId = sceneId;
+            door.doneFlag = doneFlag;
+            door.ewingDayGate = ewing;
+            door.stageDoor = stage;
+            door.interactRadius = 3f;
         }
 
         /// <summary>Ipo the companion (distinct from the story-stage IpoRig):
