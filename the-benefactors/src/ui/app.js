@@ -117,7 +117,7 @@ export class GameApp {
             </button>
             <button class="button button-ghost" data-action="settings">Settings</button>
           </div>
-          <p class="build-mark">Milestone 0 · Foundation build</p>
+          <p class="build-mark">Prologue · Development build</p>
         </section>
       </main>
     `;

@@ -54,6 +54,11 @@ input:focus-visible {
   outline-offset: 3px;
 }
 
+h1:focus,
+h2:focus {
+  outline: none;
+}
+
 .skip-link {
   position: fixed;
   z-index: 999;
