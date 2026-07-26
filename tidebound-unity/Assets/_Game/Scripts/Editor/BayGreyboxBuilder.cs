@@ -2515,6 +2515,32 @@ namespace Tidebound.EditorTools
                 director.underwaterRig.GetComponent<UnderwaterDrift>().sun = cycle;
             if (encounterDirector != null) encounterDirector.sun = cycle;
 
+            // ---- THE LONG RAIN: the season's own weather, over the whole map ----
+            var weatherGo = new GameObject("MonsoonWeather");
+            var rainGo = new GameObject("WorldRain");
+            rainGo.transform.SetParent(weatherGo.transform, false);
+            var wps = rainGo.AddComponent<ParticleSystem>();
+            var wmain = wps.main;
+            wmain.startLifetime = 1.6f;
+            wmain.startSpeed = 0f;
+            wmain.gravityModifier = 3.8f;
+            wmain.startSize = 0.05f;
+            wmain.maxParticles = 4000;
+            wmain.simulationSpace = ParticleSystemSimulationSpace.World;
+            var wemission = wps.emission;
+            wemission.rateOverTime = 0f; // the weather sets this from the season
+            var wshape = wps.shape;
+            wshape.shapeType = ParticleSystemShapeType.Box;
+            wshape.scale = new Vector3(70f, 1f, 70f);
+            var wpsr = rainGo.GetComponent<ParticleSystemRenderer>();
+            wpsr.renderMode = ParticleSystemRenderMode.Stretch;
+            wpsr.velocityScale = 0.1f;
+            wpsr.sharedMaterial = ParticleMat("RainDrop", new Color(0.72f, 0.8f, 0.9f, 0.55f));
+            var weather = weatherGo.AddComponent<MonsoonWeather>();
+            weather.rain = wps;
+            weather.sun = cycle;
+            rainGo.SetActive(false); // dry until the season says otherwise
+
             // ---- player ----
             float px = 0f, pz = 6f;
             var player = new GameObject("Player") { layer = 2 }; // Ignore Raycast: camera sees past it

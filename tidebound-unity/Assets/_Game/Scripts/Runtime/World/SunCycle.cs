@@ -31,6 +31,10 @@ namespace Tidebound
         /// <summary>Stage overrides (underwater, etc.) set this to take the wheel.</summary>
         [HideInInspector] public bool suppressed;
 
+        /// <summary>How much sky the weather is taking, 0..1. The monsoon
+        /// presses the sun down and greys everything it lights.</summary>
+        [HideInInspector] public float overcast;
+
         Light _sun;
 
         void Awake()
@@ -64,12 +68,20 @@ namespace Tidebound
                 : Mathf.Lerp(duskAzimuth, dawnAzimuth + 360f, (t - 0.75f) / 0.25f);
             transform.rotation = Quaternion.Euler(elevation, azimuth, 0f);
 
+            float weather = Mathf.Clamp01(overcast);
             _sun.color = lightColor.Evaluate(t);
-            _sun.intensity = intensityOverDay.Evaluate(t);
+            _sun.intensity = intensityOverDay.Evaluate(t) * (1f - weather);
             // below the horizon the sun must not light the ground from beneath
             if (elevation < 0f) _sun.intensity = Mathf.Min(_sun.intensity, 0.02f);
 
             var ambient = ambientColor.Evaluate(t);
+            if (weather > 0f)
+            {
+                // the sky closes: colour drains toward wet slate, and the day
+                // loses a little of itself along with it
+                float grey = ambient.grayscale * 0.82f;
+                ambient = Color.Lerp(ambient, new Color(grey, grey, grey * 1.06f), weather);
+            }
             RenderSettings.ambientLight = ambient;
             if (driveFog) RenderSettings.fogColor = ambient;
         }

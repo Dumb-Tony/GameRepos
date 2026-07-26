@@ -777,8 +777,29 @@ tidebound-unity/
       bone knife that goes away. Gating lives in a pure NaiaPlace
       helper. 6 new tests (360 total, all green via the CLI
       fallback). Scene rebuilt with NaiaRig serialized.
-      Remaining world-side: permanent monsoon dressing (rain outside
-      cutscenes), the Gullet as a place; then NG+ and depth passes.*
+      World-side session 4: THE LONG RAIN, OUTSIDE THE CUTSCENES.
+      Chapter five is a season you live in now, not a slideshow you
+      read: new pure Monsoon helper holds the whole arc as a curve
+      (day 51–52 the first fronts leaning on the horizon at 0.18, day
+      53 the rains commit at 0.5, building to the CYCLONE NIGHT on
+      day 58 at full 1.0 — nothing else in the game reaches it — then
+      0.85 through the drowning middle to day 66, tapering 0.75 → 0.4
+      across 67–70, and on the seventy-first morning the drumming
+      STOPS: hard 0 forever after, which is exactly ch6_open's
+      "silence, the ceiling lifted"). MonsoonWeather rides a
+      world-scale rain volume above the player wherever they walk
+      (70×70 box, up to 2600 drops/sec scaled by the curve,
+      cross-fading over seconds so weather never pops), closes the
+      fog from 0.0035 to 0.02, and presses the sky down through a new
+      SunCycle.overcast hook — the sun loses up to 72% of its
+      intensity and the ambient/fog colour drains toward wet slate,
+      so the monsoon greys everything the day lights instead of just
+      adding particles. The encounter squall's own RainRig is
+      untouched (the ev_squall stage still owns its scene). 7 new
+      tests (367 total, all green via the CLI fallback). Scene
+      rebuilt with MonsoonWeather + WorldRain serialized.
+      Remaining world-side: the Gullet as a place; then NG+ and depth
+      passes.*
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day
 loop, Kavi only, chapters 1–2, the Boar King, five endings.
