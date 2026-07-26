@@ -23,6 +23,7 @@ import {
   pinEvidence,
   removeConnection,
 } from "../systems/evidence-board/evidence-board.js";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -53,6 +54,7 @@ export class GameApp {
     this.selectedBoardCard = null;
     this.boardConnectionType = "confirmed";
     this.boardWasDragged = false;
+    this.activeEvidenceId = null;
   }
 
   start() {
@@ -84,6 +86,10 @@ export class GameApp {
     };
 
     (renderers[route] || renderers.title)();
+    if (this.activeEvidenceId) {
+      this.root.insertAdjacentHTML("beforeend", this.renderEvidenceViewer());
+    }
+    this.bindEvidenceViewerActions();
     this.root.querySelector("h1, h2, [data-autofocus]")?.focus?.();
   }
 
@@ -198,13 +204,19 @@ export class GameApp {
   renderHome() {
     const state = this.store.getState();
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
-    const note = this.activeOfficeNote || GAME_CONTENT.officeHotspots[0];
+    const caseUpdate = state.flags.mayorMissing
+      ? {
+          title: "Mayor Vale is missing",
+          text: "Mara’s message says the police completed a welfare check. Vale’s study is briefly unsecured—and now marked on the city map.",
+        }
+      : GAME_CONTENT.officeHotspots[0];
+    const note = this.activeOfficeNote || caseUpdate;
 
     this.root.innerHTML = `
       <main id="game-main" class="screen game-screen office-screen">
         ${this.renderGameHeader(GAME_CONTENT.chapter, "Home office")}
         <section class="scene-frame" aria-label="Home office">
-          <div class="office-room">
+          <div class="office-room office-state-${state.progress.officeState}">
             <div class="office-wall" aria-hidden="true"></div>
             <div class="window-view" aria-hidden="true">
               <span class="building building-one"></span>
@@ -610,17 +622,25 @@ export class GameApp {
                       const position = state.board.cards[item.id] || { x: 10, y: 10 };
                       const selected = this.selectedBoardCard === item.id;
                       return `
-                        <button
+                        <article
                           class="evidence-card ${selected ? "is-selected" : ""}"
                           style="left:${position.x}%;top:${position.y}%"
-                          data-board-card="${item.id}"
-                          aria-pressed="${selected}"
+                          data-evidence-card-shell="${item.id}"
                         >
-                          <span class="evidence-pin" aria-hidden="true"></span>
-                          <span class="evidence-category">${escapeHtml(item.category)}</span>
-                          <strong>${escapeHtml(item.title)}</strong>
-                          <small>${escapeHtml(item.summary)}</small>
-                        </button>
+                          <button
+                            class="evidence-card-main"
+                            data-board-card="${item.id}"
+                            aria-pressed="${selected}"
+                          >
+                            <span class="evidence-pin" aria-hidden="true"></span>
+                            <span class="evidence-category">${escapeHtml(item.category)}</span>
+                            <strong>${escapeHtml(item.title)}</strong>
+                            <small>${escapeHtml(item.summary)}</small>
+                          </button>
+                          <button class="evidence-view-button" data-view-evidence="${item.id}">
+                            View evidence
+                          </button>
+                        </article>
                       `;
                     })
                     .join("")
@@ -768,7 +788,8 @@ export class GameApp {
         this.saves.save(this.store.getState(), "connect-evidence");
         this.selectedBoardCard = null;
         this.notice = result.newlyCompleted.length
-          ? `Deduction: ${result.newlyCompleted[0].title}`
+          ? result.newlyCompleted[0].notification ||
+            `Deduction: ${result.newlyCompleted[0].title}`
           : "Evidence connected.";
         this.renderBoard();
       });
@@ -942,7 +963,11 @@ export class GameApp {
               ? collectedEvidence
                   .map(
                     (item) => `
-                      <article><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.summary)}</p></article>
+                      <button class="evidence-pocket-item" data-view-evidence="${item.id}">
+                        <strong>${escapeHtml(item.title)}</strong>
+                        <p>${escapeHtml(item.summary)}</p>
+                        <span>View →</span>
+                      </button>
                     `,
                   )
                   .join("")
@@ -1028,16 +1053,61 @@ export class GameApp {
     });
   }
 
+  renderEvidenceViewer() {
+    const evidence = EVIDENCE[this.activeEvidenceId];
+    if (!evidence) return "";
+
+    return `
+      <div class="evidence-viewer-scrim">
+        <section class="evidence-viewer" role="dialog" aria-modal="true" aria-labelledby="evidence-viewer-title">
+          <header class="evidence-viewer-header">
+            <div>
+              <p class="kicker">${escapeHtml(evidence.category)}</p>
+              <h1 id="evidence-viewer-title">${escapeHtml(evidence.title)}</h1>
+            </div>
+            <button data-close-evidence aria-label="Close evidence viewer">×</button>
+          </header>
+          <div class="evidence-artifact-stage">
+            ${renderEvidenceArtifact(evidence)}
+          </div>
+          <footer>
+            <p>${escapeHtml(evidence.summary)}</p>
+            <button class="button button-secondary" data-close-evidence>Return to investigation</button>
+          </footer>
+        </section>
+      </div>
+    `;
+  }
+
+  bindEvidenceViewerActions() {
+    this.root.querySelectorAll("[data-view-evidence]").forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.stopPropagation();
+        this.activeEvidenceId = button.dataset.viewEvidence;
+        this.render(this.router.current());
+      });
+    });
+
+    this.root.querySelectorAll("[data-close-evidence]").forEach((button) => {
+      button.addEventListener("click", () => {
+        this.activeEvidenceId = null;
+        this.render(this.router.current());
+      });
+    });
+  }
+
   bindBoardDrag() {
     const board = this.root.querySelector("#evidence-corkboard");
     if (!board) return;
 
-    this.root.querySelectorAll("[data-board-card]").forEach((card) => {
+    this.root.querySelectorAll("[data-evidence-card-shell]").forEach((card) => {
       let start = null;
 
       card.addEventListener("pointerdown", (event) => {
         if (event.button !== 0) return;
-        const position = this.store.getState().board.cards[card.dataset.boardCard];
+        if (event.target.closest("[data-view-evidence]")) return;
+        const evidenceId = card.dataset.evidenceCardShell;
+        const position = this.store.getState().board.cards[evidenceId];
         start = {
           pointerX: event.clientX,
           pointerY: event.clientY,
@@ -1064,10 +1134,14 @@ export class GameApp {
         const dx = ((event.clientX - start.pointerX) / rect.width) * 100;
         const dy = ((event.clientY - start.pointerY) / rect.height) * 100;
         if (this.boardWasDragged) {
-          const next = moveEvidence(this.store.getState(), card.dataset.boardCard, {
+          const next = moveEvidence(
+            this.store.getState(),
+            card.dataset.evidenceCardShell,
+            {
             x: start.cardX + dx,
             y: start.cardY + dy,
-          });
+            },
+          );
           this.store.replace(next, "drag-evidence");
           this.saves.save(this.store.getState(), "drag-evidence");
           this.renderBoard();

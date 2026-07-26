@@ -44,7 +44,19 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Data-defined deduction recipes
 - Two initial deductions tied to the invoice, permit, and witness statement
 
-The full theory sequence and the rest of the playable prologue are built in later milestones.
+**Prologue content now playable**
+
+- Photograph the missing west wing
+- Record June Bell's account of the nighttime deliveries
+- Prove the declared construction did not happen
+- Trigger Mayor Vale's disappearance
+- Unlock and search the mayor's study
+- Find the original floorplan and damaged recorder
+- Reveal the concealed stairway to the communications room
+- Open every collected item as a full evidence artifact
+- Inspect the invoice, email, permit, photograph, transcript, floorplan, and recorder
+
+The recording reconstruction and complete end-of-prologue sequence are still in development.
 
 ## Run locally
 

@@ -55,3 +55,35 @@ test("opening leak unlocks leads and city hall yields permit evidence", () => {
   assert.equal(restored.evidence.collected.includes("permit_summary"), true);
 });
 
+test("study clues reveal the concealed stairway", () => {
+  let state = createInitialState();
+  state.flags.mayorMissing = true;
+  state.progress.unlockedLocations.push("mayor_study");
+  const study = GAME_CONTENT.locations.mayor_study;
+  const frame = study.hotspots.find(
+    (hotspot) => hotspot.id === "crooked-photograph",
+  );
+  const recorder = study.hotspots.find(
+    (hotspot) => hotspot.id === "dictation-recorder",
+  );
+  const bookcase = study.hotspots.find(
+    (hotspot) => hotspot.id === "western-bookcase",
+  );
+
+  state = applyEffects(state, frame.effects);
+  state = applyEffects(state, recorder.effects);
+  state = applyEffects(state, bookcase.effects);
+
+  assert.equal(state.flags.foundStudyFloorplan, true);
+  assert.equal(state.flags.foundValeRecording, true);
+  assert.equal(state.flags.foundWallCavity, true);
+  assert.equal(state.evidence.collected.includes("study_floorplan"), true);
+  assert.equal(
+    state.evidence.collected.includes("vale_damaged_recording"),
+    true,
+  );
+  assert.equal(
+    state.progress.unlockedLocations.includes("hidden_room"),
+    true,
+  );
+});

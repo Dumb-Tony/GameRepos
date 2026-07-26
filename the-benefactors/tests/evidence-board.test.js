@@ -59,3 +59,40 @@ test("does not complete a deduction with the wrong relationship", () => {
   assert.deepEqual(result.newlyCompleted, []);
 });
 
+test("missing-west-wing deduction unlocks Mayor Vale's study", () => {
+  let state = createInitialState();
+  state.evidence.collected.push(
+    "permit_summary",
+    "june_statement",
+    "photo_west_wall",
+  );
+  state = pinEvidence(state, "permit_summary");
+  state = pinEvidence(state, "june_statement");
+  state = pinEvidence(state, "photo_west_wall");
+  state = connectEvidence(
+    state,
+    "permit_summary",
+    "june_statement",
+    "contradiction",
+  );
+  state = connectEvidence(
+    state,
+    "permit_summary",
+    "photo_west_wall",
+    "contradiction",
+  );
+
+  const result = evaluateBoardDeductions(state, DEDUCTIONS);
+
+  assert.equal(
+    result.newlyCompleted.some(
+      (deduction) => deduction.id === "witness_contradiction",
+    ),
+    true,
+  );
+  assert.equal(result.state.flags.mayorMissing, true);
+  assert.equal(
+    result.state.progress.unlockedLocations.includes("mayor_study"),
+    true,
+  );
+});

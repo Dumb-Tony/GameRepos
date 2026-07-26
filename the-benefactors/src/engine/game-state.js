@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 4;
+export const GAME_STATE_VERSION = 5;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -43,6 +43,10 @@ export function createInitialState(player = {}, settings = {}) {
       visitedNewsroom: false,
       permitAcquired: false,
       mayorMissing: false,
+      photographedWestWall: false,
+      foundStudyFloorplan: false,
+      foundValeRecording: false,
+      foundWallCavity: false,
     },
     inventory: ["press_credentials", "smartphone", "recorder", "notebook"],
     evidence: {

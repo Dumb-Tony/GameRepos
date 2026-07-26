@@ -59,6 +59,9 @@ export function validateGameContent({
     if (item.id !== evidenceId) {
       errors.push(`Evidence key "${evidenceId}" does not match id "${item.id}".`);
     }
+    if (!item.artifact?.type) {
+      errors.push(`Evidence "${evidenceId}" has no viewable artifact.`);
+    }
   }
 
   if (!inventoryIds.size) errors.push("At least one inventory tool is required.");

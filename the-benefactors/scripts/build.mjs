@@ -26,6 +26,7 @@ const requiredFiles = [
   "src/systems/exploration/scene-renderer.js",
   "src/systems/dialogue/dialogue-engine.js",
   "src/systems/evidence-board/evidence-board.js",
+  "src/systems/evidence/evidence-renderer.js",
   "src/ui/app.js",
 ];
 
