@@ -1,7 +1,7 @@
-import { createInitialState, GameStore } from "./engine/game-state.js?v=onboarding-20260726b";
-import { ScreenRouter } from "./engine/router.js?v=onboarding-20260726b";
-import { SaveSystem } from "./engine/save-system.js?v=onboarding-20260726b";
-import { GameApp } from "./ui/app.js?v=onboarding-20260726b";
+import { createInitialState, GameStore } from "./engine/game-state.js?v=prologue-20260726a";
+import { ScreenRouter } from "./engine/router.js?v=prologue-20260726a";
+import { SaveSystem } from "./engine/save-system.js?v=prologue-20260726a";
+import { GameApp } from "./ui/app.js?v=prologue-20260726c";
 
 const root = document.querySelector("#app");
 const saves = new SaveSystem();

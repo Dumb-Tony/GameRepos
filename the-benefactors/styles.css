@@ -2548,6 +2548,8 @@ input[type="range"] {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   width: min(1100px, 100%);
+  max-width: calc(100vw - 48px);
+  min-width: 0;
   height: min(900px, calc(100vh - 48px));
   overflow: hidden;
   border: 1px solid rgba(224, 214, 190, 0.24);
@@ -2595,6 +2597,7 @@ input[type="range"] {
 
 .evidence-artifact-stage {
   display: grid;
+  min-width: 0;
   min-height: 0;
   overflow: auto;
   place-items: center;
@@ -2922,6 +2925,20 @@ input[type="range"] {
   background:
     linear-gradient(0deg, #333b31 0 23%, transparent 24%),
     linear-gradient(#7d8d89, #b0a187 65%);
+}
+
+.photo-image.has-evidence-image {
+  height: auto;
+  aspect-ratio: 4 / 3;
+  background: #24241f;
+}
+
+.photo-image.has-evidence-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.74) contrast(1.05);
 }
 
 .photo-house {
@@ -4863,5 +4880,979 @@ input[type="range"] {
   .evidence-viewer > footer {
     align-items: stretch;
     flex-direction: column;
+  }
+}
+
+/* Milestone 4 — reconstruction puzzles and prologue ending */
+
+.case-breakthrough {
+  display: grid;
+  gap: 9px;
+  margin: 18px 0;
+  border: 1px solid rgba(190, 157, 98, 0.4);
+  border-left: 5px double var(--rust-light);
+  padding: 15px;
+  background:
+    radial-gradient(circle at 100% 0, rgba(190, 157, 98, 0.1), transparent 45%),
+    rgba(126, 49, 40, 0.08);
+}
+
+.case-breakthrough h3,
+.case-breakthrough p {
+  margin: 0;
+}
+
+.case-breakthrough h3 {
+  font: 600 1.25rem/1.1 Georgia, "Times New Roman", serif;
+}
+
+.case-breakthrough > p:not(.kicker) {
+  color: var(--ink-dim);
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+
+.case-breakthrough .button {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 3px;
+}
+
+.puzzle-screen {
+  display: block;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 18px clamp(16px, 3vw, 42px);
+  background:
+    radial-gradient(circle at 72% 4%, rgba(95, 119, 103, 0.13), transparent 34%),
+    repeating-linear-gradient(
+      102deg,
+      transparent 0 5px,
+      rgba(232, 222, 196, 0.012) 6px,
+      transparent 7px 16px
+    ),
+    #080b0a;
+}
+
+.puzzle-shell {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  width: min(1500px, 100%);
+  min-height: 0;
+  margin: 16px auto;
+  overflow: visible;
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(125deg, rgba(255, 255, 255, 0.025), transparent 38%),
+    #101412;
+  box-shadow:
+    inset 0 0 80px rgba(0, 0, 0, 0.2),
+    0 26px 75px rgba(0, 0, 0, 0.42);
+}
+
+.puzzle-heading {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 18px;
+  border-bottom: 1px solid var(--line);
+  padding: 20px clamp(20px, 3vw, 38px);
+  background:
+    linear-gradient(90deg, rgba(190, 157, 98, 0.08), transparent 48%),
+    rgba(9, 13, 11, 0.9);
+}
+
+.puzzle-heading h1 {
+  max-width: 900px;
+  margin: 4px 0 6px;
+  font: 600 clamp(2rem, 4vw, 3.7rem) / 0.95 Georgia, "Times New Roman", serif;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.puzzle-heading p {
+  max-width: 760px;
+  margin: 0;
+  color: var(--ink-dim);
+  line-height: 1.55;
+}
+
+.case-chip {
+  align-self: start;
+  border: 1px solid rgba(190, 157, 98, 0.42);
+  padding: 7px 10px;
+  color: var(--gold);
+  background: rgba(190, 157, 98, 0.07);
+  font: 700 0.6rem/1.2 "IBM Plex Mono", "Courier New", monospace;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.puzzle-screen button,
+.puzzle-screen [role="button"],
+.puzzle-screen summary,
+.prologue-ending-screen button,
+.prologue-ending-screen [role="button"] {
+  min-height: 44px;
+}
+
+/* Floorplan alignment */
+
+.alignment-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(300px, 0.65fr);
+  min-height: 0;
+}
+
+.alignment-stage {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 560px;
+  overflow: hidden;
+  place-items: center;
+  padding: clamp(24px, 5vw, 64px);
+  background:
+    linear-gradient(0deg, rgba(3, 5, 4, 0.72), transparent 52%),
+    radial-gradient(ellipse at 48% 42%, rgba(196, 161, 94, 0.11), transparent 38%),
+    repeating-linear-gradient(90deg, #3c3027 0 3px, #44362b 4px 92px);
+  box-shadow: inset 0 0 90px rgba(0, 0, 0, 0.48);
+}
+
+.study-elevation {
+  position: relative;
+  width: min(920px, 100%);
+  margin: 0;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border: 12px solid #241b15;
+  background:
+    linear-gradient(90deg, transparent 63%, rgba(24, 16, 12, 0.68) 63% 92%, transparent 92%),
+    repeating-linear-gradient(0deg, transparent 0 12%, rgba(177, 138, 84, 0.28) 12.5% 14%, transparent 14.5% 24%) 75% 18% / 18% 57% no-repeat,
+    linear-gradient(90deg, transparent 13%, rgba(183, 153, 101, 0.58) 13% 28%, transparent 28%) 0 17% / 100% 24% no-repeat,
+    linear-gradient(90deg, transparent 24%, #302018 24% 69%, transparent 69%) 0 73% / 100% 17% no-repeat,
+    #49372b;
+  box-shadow:
+    0 24px 55px rgba(0, 0, 0, 0.54),
+    inset 0 0 55px rgba(0, 0, 0, 0.34);
+}
+
+.study-elevation::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 55% 70%, rgba(231, 183, 88, 0.12), transparent 28%),
+    linear-gradient(90deg, rgba(3, 5, 4, 0.24), transparent 28% 76%, rgba(3, 5, 4, 0.36)),
+    linear-gradient(0deg, rgba(3, 5, 4, 0.5), transparent 38%);
+}
+
+.study-elevation > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.plan-sheet {
+  --plan-rotation: 0deg;
+  position: absolute;
+  z-index: 3;
+  width: min(68%, 620px);
+  aspect-ratio: 4 / 3;
+  transform: rotate(var(--plan-rotation));
+  transform-origin: center;
+  border: 1px solid rgba(49, 43, 32, 0.7);
+  padding: clamp(14px, 2vw, 26px);
+  color: #28251e;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 23px, rgba(56, 67, 65, 0.09) 24px),
+    repeating-linear-gradient(90deg, transparent 0 23px, rgba(56, 67, 65, 0.07) 24px),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.5), transparent 32%),
+    #d7cbaa;
+  box-shadow:
+    0 18px 38px rgba(0, 0, 0, 0.5),
+    inset 0 0 30px rgba(85, 68, 40, 0.1);
+  transition:
+    transform 220ms ease,
+    box-shadow 180ms ease;
+}
+
+.plan-sheet::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 3px double rgba(53, 48, 38, 0.58);
+  pointer-events: none;
+}
+
+.plan-sheet[data-rotation="1"],
+.plan-sheet[data-rotation="90"],
+.plan-sheet[data-rotation="90deg"] {
+  --plan-rotation: 90deg;
+}
+
+.plan-sheet[data-rotation="2"],
+.plan-sheet[data-rotation="180"],
+.plan-sheet[data-rotation="180deg"] {
+  --plan-rotation: 180deg;
+}
+
+.plan-sheet[data-rotation="3"],
+.plan-sheet[data-rotation="270"],
+.plan-sheet[data-rotation="270deg"] {
+  --plan-rotation: 270deg;
+}
+
+.plan-sheet[aria-current="true"],
+.plan-sheet.is-aligned {
+  box-shadow:
+    0 0 0 4px var(--focus),
+    0 18px 38px rgba(0, 0, 0, 0.5);
+}
+
+.plan-room {
+  position: absolute;
+  display: grid;
+  min-width: 44px;
+  min-height: 32px;
+  place-items: center;
+  border: 1px solid rgba(60, 55, 44, 0.68);
+  padding: 4px;
+  color: #383329;
+  background: rgba(235, 224, 190, 0.26);
+  font: 700 clamp(0.45rem, 0.8vw, 0.64rem) / 1.2 "IBM Plex Mono", "Courier New", monospace;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.plan-room[aria-current="true"],
+.plan-room.is-target {
+  border: 3px dashed #7f3229;
+  background: rgba(127, 50, 41, 0.12);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+}
+
+.alignment-controls {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  align-content: start;
+  gap: 18px;
+  overflow-y: auto;
+  border-left: 1px solid var(--line);
+  padding: clamp(24px, 3vw, 38px);
+  background:
+    repeating-linear-gradient(0deg, transparent 0 30px, rgba(232, 222, 196, 0.015) 31px),
+    #0e1210;
+}
+
+.alignment-controls > fieldset {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(44px, 1fr));
+  gap: 8px;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+.alignment-controls legend {
+  grid-column: 1 / -1;
+  margin-bottom: 8px;
+  color: var(--gold);
+  font: 600 0.62rem "IBM Plex Mono", "Courier New", monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.puzzle-status,
+.recording-status {
+  min-height: 52px;
+  border-left: 3px solid var(--gold);
+  padding: 11px 14px;
+  color: var(--ink-dim);
+  background: rgba(190, 157, 98, 0.06);
+  line-height: 1.5;
+}
+
+.puzzle-status:empty,
+.recording-status:empty {
+  display: none;
+}
+
+.puzzle-status[data-state="success"],
+.recording-status[data-state="success"],
+.puzzle-status.is-success,
+.recording-status.is-success {
+  border-left-style: double;
+  border-left-width: 6px;
+  color: var(--ink);
+  background: rgba(117, 143, 124, 0.11);
+}
+
+.puzzle-status[data-state="error"],
+.recording-status[data-state="error"],
+.puzzle-status.is-error,
+.recording-status.is-error {
+  border-left-color: var(--rust-light);
+  border-left-style: dashed;
+  color: var(--ink);
+  background: rgba(165, 66, 47, 0.09);
+}
+
+.puzzle-hints {
+  display: grid;
+  gap: 7px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.puzzle-hints details {
+  border-bottom: 1px solid var(--line);
+}
+
+.puzzle-hints summary {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: var(--gold);
+  font: 600 0.68rem "IBM Plex Mono", "Courier New", monospace;
+}
+
+.puzzle-hints details > :not(summary) {
+  color: var(--ink-dim);
+  line-height: 1.55;
+}
+
+/* Damaged-recording reconstruction */
+
+.recording-workspace {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.68fr) minmax(0, 1.32fr);
+  min-height: 0;
+  background: #0b0f0d;
+}
+
+.recording-console {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  align-content: start;
+  gap: 18px;
+  overflow-y: auto;
+  border-right: 1px solid var(--line);
+  padding: clamp(24px, 3vw, 40px);
+  background:
+    radial-gradient(circle at 50% 8%, rgba(93, 146, 116, 0.11), transparent 34%),
+    repeating-linear-gradient(0deg, transparent 0 28px, rgba(114, 170, 137, 0.018) 29px),
+    #111713;
+  box-shadow: inset -18px 0 45px rgba(0, 0, 0, 0.2);
+}
+
+.recording-console .waveform {
+  min-width: 0;
+  margin: 0;
+  border-color: rgba(121, 171, 147, 0.28);
+  box-shadow: inset 0 0 26px rgba(63, 126, 94, 0.08);
+}
+
+.recording-console h2,
+.recording-transcript h2 {
+  margin: 0;
+  font: 600 clamp(1.3rem, 2.3vw, 2rem) Georgia, "Times New Roman", serif;
+}
+
+.recording-timeline {
+  min-width: 0;
+  overflow-y: auto;
+  padding: clamp(22px, 3vw, 38px);
+  background:
+    linear-gradient(0deg, rgba(4, 6, 5, 0.5), transparent 42%),
+    repeating-linear-gradient(90deg, #242823 0 2px, #20241f 3px 72px);
+}
+
+ol.recording-timeline,
+.recording-timeline > ol {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  align-items: stretch;
+  gap: clamp(12px, 2vw, 22px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.recording-fragment {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 300px;
+  grid-template-rows: auto auto minmax(80px, 1fr) auto;
+  align-content: start;
+  gap: 12px;
+  border: 1px solid rgba(224, 214, 190, 0.2);
+  border-top: 3px solid #506e5c;
+  padding: 20px 18px 16px;
+  color: #d6ddd8;
+  background:
+    radial-gradient(circle at 50% 0, rgba(108, 163, 131, 0.09), transparent 32%),
+    repeating-linear-gradient(0deg, transparent 0 25px, rgba(220, 230, 220, 0.018) 26px),
+    #171c19;
+  box-shadow:
+    0 16px 28px rgba(0, 0, 0, 0.36),
+    inset 0 0 24px rgba(0, 0, 0, 0.18);
+}
+
+.recording-fragment::before {
+  content: attr(data-position);
+  position: absolute;
+  top: 8px;
+  right: 9px;
+  display: grid;
+  min-width: 28px;
+  min-height: 28px;
+  place-items: center;
+  border: 1px solid rgba(190, 157, 98, 0.48);
+  border-radius: 50%;
+  color: var(--gold);
+  font: 700 0.65rem "IBM Plex Mono", "Courier New", monospace;
+}
+
+.recording-fragment h2,
+.recording-fragment h3 {
+  margin: 0;
+  padding-right: 34px;
+  font: 600 1.12rem/1.2 Georgia, "Times New Roman", serif;
+}
+
+.recording-fragment blockquote,
+.recording-fragment .fragment-copy {
+  margin: 0;
+  color: var(--ink-dim);
+  font: italic 0.86rem/1.62 Georgia, "Times New Roman", serif;
+}
+
+.recording-fragment[aria-current="true"],
+.recording-fragment[aria-selected="true"],
+.recording-fragment.is-selected,
+.recording-fragment.is-playing {
+  border-style: double;
+  border-width: 3px;
+  border-top-width: 5px;
+  border-color: var(--focus);
+  box-shadow:
+    0 0 0 2px rgba(240, 187, 97, 0.18),
+    0 18px 34px rgba(0, 0, 0, 0.48);
+}
+
+.audio-marker {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 9px;
+  border: 1px dashed rgba(108, 163, 131, 0.42);
+  padding: 8px 10px;
+  color: #a9c9b5;
+  background: rgba(108, 163, 131, 0.055);
+  font: 600 0.62rem/1.35 "IBM Plex Mono", "Courier New", monospace;
+}
+
+.audio-marker::before {
+  content: "◉";
+  flex: 0 0 auto;
+  color: var(--rust-light);
+  font-size: 0.8rem;
+}
+
+.recording-fragment-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+  gap: 7px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+
+.recording-fragment-controls button {
+  min-width: 0;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  padding: 8px;
+  color: var(--ink-dim);
+  background: rgba(255, 255, 255, 0.025);
+  cursor: pointer;
+}
+
+.recording-fragment-controls button:hover,
+.recording-fragment-controls button:focus-visible {
+  border-color: var(--gold);
+  color: var(--ink);
+  background: rgba(190, 157, 98, 0.08);
+}
+
+.recording-fragment-controls button:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+
+.recording-status {
+  grid-column: 1 / -1;
+  margin-top: 18px;
+}
+
+.recording-transcript {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 13px;
+  margin-top: 18px;
+  border: 1px solid rgba(224, 214, 190, 0.22);
+  border-left: 4px double var(--rust-light);
+  padding: clamp(20px, 3vw, 34px);
+  color: #d8dfda;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 29px, rgba(108, 163, 131, 0.025) 30px),
+    #121815;
+  box-shadow: 0 20px 42px rgba(0, 0, 0, 0.35);
+}
+
+.recording-transcript[hidden] {
+  display: none;
+}
+
+.recording-transcript blockquote {
+  max-width: 880px;
+  margin: 0;
+  color: var(--ink);
+  font: 500 clamp(1rem, 1.8vw, 1.25rem) / 1.7 Georgia, "Times New Roman", serif;
+}
+
+.recording-transcript .speaker {
+  color: var(--gold);
+}
+
+/* End-of-prologue sequence */
+
+.prologue-ending-screen {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  place-items: center;
+  padding: 92px clamp(20px, 7vw, 100px) 44px;
+  background:
+    radial-gradient(circle at 72% 35%, rgba(75, 96, 84, 0.2), transparent 38%),
+    linear-gradient(90deg, #050706, #101612 58%, #050706);
+}
+
+.prologue-ending-screen::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  opacity: 0.25;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(103deg, transparent 0 11px, rgba(223, 232, 226, 0.08) 12px, transparent 13px 30px),
+    linear-gradient(0deg, rgba(2, 3, 3, 0.78), transparent 54%);
+}
+
+.prologue-ending-screen > img,
+.prologue-ending-screen > picture,
+.prologue-ending-screen > picture > img {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.68) brightness(0.52);
+}
+
+.ending-card,
+.end-prologue-card {
+  position: relative;
+  z-index: 2;
+  width: min(720px, 100%);
+  margin-right: 0;
+  border: 1px solid rgba(224, 214, 190, 0.18);
+  border-left: 3px solid var(--rust);
+  padding: clamp(26px, 4vw, 48px);
+  background:
+    radial-gradient(circle at 100% 0, rgba(190, 157, 98, 0.08), transparent 35%),
+    repeating-linear-gradient(0deg, transparent 0 30px, rgba(232, 222, 196, 0.016) 31px),
+    rgba(8, 11, 10, 0.94);
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.64);
+}
+
+.ending-card h1,
+.end-prologue-card h1 {
+  margin: 8px 0 16px;
+  font: 600 clamp(2.6rem, 6vw, 5rem) / 0.9 Georgia, "Times New Roman", serif;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+.ending-card > p,
+.end-prologue-card > p {
+  color: var(--ink-dim);
+  font: italic 1rem/1.72 Georgia, "Times New Roman", serif;
+}
+
+.ending-card > footer,
+.end-prologue-card > footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 26px;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+}
+
+.ending-progress {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(28px, 1fr);
+  gap: 6px;
+  margin: 0 0 24px;
+  padding: 0;
+  list-style: none;
+}
+
+.ending-progress > * {
+  min-height: 3px;
+  overflow: hidden;
+  color: transparent;
+  background: rgba(224, 214, 190, 0.18);
+}
+
+.ending-progress > .is-active,
+.ending-progress > [aria-current="step"],
+.ending-progress > [aria-current="true"] {
+  border-top: 3px double var(--rust-light);
+  background: var(--rust-light);
+}
+
+.ending-photo {
+  position: relative;
+  width: min(540px, 100%);
+  margin: 20px auto;
+  transform: rotate(-1deg);
+  padding: 14px 14px 28px;
+  color: #2e281f;
+  background: #ded3b7;
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.55);
+}
+
+.ending-photo img {
+  display: block;
+  width: 100%;
+  max-height: min(46vh, 430px);
+  object-fit: cover;
+  filter: saturate(0.7) contrast(1.08);
+}
+
+.ending-photo figcaption,
+.ending-photo > p {
+  margin: 12px 5px 0;
+  color: #3b3327;
+  font: 700 0.62rem/1.45 "IBM Plex Mono", "Courier New", monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ending-address {
+  width: fit-content;
+  max-width: 100%;
+  margin: 18px 0;
+  transform: rotate(-0.5deg);
+  border: 1px solid rgba(61, 46, 28, 0.4);
+  border-left: 5px solid #80372d;
+  padding: 13px 18px;
+  color: #30281e;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 20px, rgba(68, 53, 33, 0.08) 21px),
+    #d9cba7;
+  font: 700 0.78rem/1.45 "IBM Plex Mono", "Courier New", monospace;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.34);
+}
+
+.end-prologue-card {
+  margin-right: 0;
+  border-right: 1px solid rgba(224, 214, 190, 0.18);
+  border-left-color: var(--gold);
+  text-align: center;
+}
+
+.end-prologue-card::before,
+.end-prologue-card::after {
+  content: "";
+  display: block;
+  width: min(260px, 70%);
+  height: 2px;
+  margin: 0 auto 26px;
+  background: linear-gradient(90deg, transparent, var(--rust-light), transparent);
+}
+
+.end-prologue-card::after {
+  margin: 26px auto 0;
+}
+
+.end-prologue-card > footer {
+  justify-content: center;
+}
+
+/* Milestone 4 responsive layouts */
+
+@media (max-width: 980px) {
+  .puzzle-screen {
+    overflow-y: auto;
+  }
+
+  .puzzle-shell {
+    overflow: visible;
+  }
+
+  .alignment-workspace,
+  .recording-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .alignment-stage {
+    min-height: 480px;
+  }
+
+  .alignment-controls {
+    overflow: visible;
+    border-top: 1px solid var(--line);
+    border-left: 0;
+  }
+
+  .recording-console {
+    overflow: visible;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    box-shadow: inset 0 -18px 45px rgba(0, 0, 0, 0.2);
+  }
+
+  ol.recording-timeline,
+  .recording-timeline > ol {
+    grid-template-columns: repeat(3, minmax(160px, 1fr));
+  }
+
+  .ending-card,
+  .end-prologue-card {
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .puzzle-screen {
+    display: block;
+    overflow-y: auto;
+    padding: 10px 12px 20px;
+  }
+
+  .puzzle-shell {
+    display: block;
+    margin: 12px auto 0;
+  }
+
+  .puzzle-heading {
+    grid-template-columns: 1fr;
+    align-items: start;
+    padding: 20px 17px;
+  }
+
+  .puzzle-heading h1 {
+    font-size: clamp(2rem, 10vw, 3rem);
+  }
+
+  .alignment-stage {
+    min-height: 420px;
+    padding: 18px 12px;
+  }
+
+  .study-elevation {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-width: 7px;
+  }
+
+  .plan-sheet {
+    width: 76%;
+    padding: 12px;
+  }
+
+  .plan-room {
+    font-size: 0.42rem;
+  }
+
+  .alignment-controls,
+  .recording-console,
+  .recording-timeline {
+    padding: 20px 14px;
+  }
+
+  .alignment-controls > fieldset {
+    grid-template-columns: repeat(2, minmax(44px, 1fr));
+  }
+
+  ol.recording-timeline,
+  .recording-timeline > ol {
+    grid-template-columns: 1fr;
+  }
+
+  .recording-fragment {
+    min-height: 0;
+  }
+
+  .recording-fragment-controls {
+    grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  }
+
+  .recording-transcript {
+    margin-top: 14px;
+    padding: 20px 16px;
+  }
+
+  .prologue-ending-screen {
+    display: block;
+    overflow-y: auto;
+    padding: 82px 12px 24px;
+  }
+
+  .ending-card,
+  .end-prologue-card {
+    width: 100%;
+    padding: 26px 19px;
+  }
+
+  .ending-card h1,
+  .end-prologue-card h1 {
+    font-size: clamp(2.5rem, 14vw, 4.2rem);
+  }
+
+  .ending-card > footer,
+  .end-prologue-card > footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .ending-card > footer .button,
+  .end-prologue-card > footer .button {
+    width: 100%;
+  }
+
+  .ending-photo {
+    transform: none;
+    padding: 10px 10px 22px;
+  }
+
+  .ending-address {
+    width: 100%;
+    transform: none;
+  }
+}
+
+/* Milestone 4 accessibility states */
+
+[data-high-contrast="true"] .puzzle-shell,
+[data-high-contrast="true"] .puzzle-heading,
+[data-high-contrast="true"] .alignment-controls,
+[data-high-contrast="true"] .recording-console,
+[data-high-contrast="true"] .recording-fragment,
+[data-high-contrast="true"] .recording-transcript,
+[data-high-contrast="true"] .ending-card,
+[data-high-contrast="true"] .end-prologue-card {
+  border-color: currentColor;
+  box-shadow: none;
+}
+
+[data-high-contrast="true"] .plan-sheet {
+  color: #000;
+  background: #fff;
+}
+
+[data-high-contrast="true"] .plan-room {
+  border-color: currentColor;
+  color: #000;
+  background: #fff;
+}
+
+[data-high-contrast="true"] .recording-fragment[aria-current="true"],
+[data-high-contrast="true"] .recording-fragment[aria-selected="true"],
+[data-high-contrast="true"] .recording-fragment.is-selected,
+[data-high-contrast="true"] .recording-fragment.is-playing,
+[data-high-contrast="true"] .plan-sheet[aria-current="true"],
+[data-high-contrast="true"] .plan-sheet.is-aligned {
+  outline: 4px double var(--focus);
+  outline-offset: 3px;
+}
+
+[data-reduced-motion="true"] .plan-sheet {
+  transition: none !important;
+}
+
+[data-reduced-motion="true"] .ending-photo {
+  transition: none !important;
+}
+
+@media (forced-colors: active) {
+  .puzzle-shell,
+  .puzzle-heading,
+  .alignment-stage,
+  .alignment-controls,
+  .recording-console,
+  .recording-timeline,
+  .recording-fragment,
+  .recording-transcript,
+  .ending-card,
+  .end-prologue-card,
+  .ending-photo,
+  .ending-address {
+    border-color: CanvasText;
+    color: CanvasText;
+    background: Canvas;
+    box-shadow: none;
+  }
+
+  .plan-sheet,
+  .plan-room {
+    border-color: CanvasText;
+    color: CanvasText;
+    background: Canvas;
+  }
+
+  .recording-fragment[aria-current="true"],
+  .recording-fragment[aria-selected="true"],
+  .recording-fragment.is-selected,
+  .recording-fragment.is-playing,
+  .plan-sheet[aria-current="true"],
+  .plan-sheet.is-aligned {
+    outline: 4px double Highlight;
+    outline-offset: 3px;
+  }
+
+  .audio-marker,
+  .puzzle-status,
+  .recording-status {
+    border-color: CanvasText;
+    color: CanvasText;
+    background: Canvas;
+  }
+
+  .ending-progress > .is-active,
+  .ending-progress > [aria-current="step"],
+  .ending-progress > [aria-current="true"] {
+    border-color: Highlight;
+    background: Highlight;
   }
 }

@@ -81,6 +81,9 @@ test("migrates an older save with new progress defaults", () => {
   assert.equal(migrated.progress.opening.tutorialCompleted, true);
   assert.equal(migrated.progress.opening.cutsceneCompleted, true);
   assert.equal(migrated.flags.heardOpeningMessage, true);
+  assert.equal(migrated.progress.prologueEndingStep, 0);
+  assert.equal(migrated.progress.prologueComplete, false);
+  assert.equal(migrated.puzzles.study_plan_alignment.completed, false);
 });
 
 test("normalizes a current-version save missing opening state", () => {
@@ -95,4 +98,29 @@ test("normalizes a current-version save missing opening state", () => {
   assert.equal(migrated.version, GAME_STATE_VERSION);
   assert.equal(migrated.progress.opening.tutorialCompleted, false);
   assert.equal(migrated.progress.opening.cutsceneCompleted, false);
+  assert.deepEqual(migrated.puzzles.vale_recording_reconstruction.order, [
+    "vale_recording_rain",
+    "vale_recording_clock",
+    "vale_recording_freight",
+  ]);
+});
+
+test("migrates an unlocked legacy stairway without replaying alignment", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const legacy = createInitialState();
+  legacy.version = 6;
+  legacy.flags.foundWallCavity = true;
+  legacy.progress.unlockedLocations.push("hidden_room");
+  delete legacy.puzzles;
+  storage.setItem(SAVE_KEY, JSON.stringify(legacy));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.puzzles.study_plan_alignment.completed, true);
+  assert.equal(migrated.puzzles.study_plan_alignment.rotation, 270);
+  assert.equal(
+    migrated.progress.unlockedLocations.includes("hidden_room"),
+    true,
+  );
 });

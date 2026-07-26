@@ -127,3 +127,45 @@ test("missing-west-wing deduction unlocks Mayor Vale's study", () => {
     true,
   );
 });
+
+test("final distress-signal deduction waits for its prerequisite deduction", () => {
+  let state = createInitialState();
+  state.evidence.collected.push(
+    "invoice_northstar",
+    "photo_west_wall",
+    "email_meridian",
+    "vale_reconstructed_message",
+  );
+  for (const evidenceId of state.evidence.collected) {
+    state = pinEvidence(state, evidenceId);
+  }
+  state = connectEvidence(
+    state,
+    "invoice_northstar",
+    "photo_west_wall",
+    "contradiction",
+  );
+  state = connectEvidence(
+    state,
+    "email_meridian",
+    "vale_reconstructed_message",
+    "confirmed",
+  );
+
+  const blocked = evaluateBoardDeductions(state, DEDUCTIONS);
+  assert.equal(
+    blocked.newlyCompleted.some(
+      (deduction) => deduction.id === "vale_distress_signal",
+    ),
+    false,
+  );
+
+  state.completedDeductions.push("witness_contradiction");
+  const completed = evaluateBoardDeductions(state, DEDUCTIONS);
+  assert.equal(
+    completed.newlyCompleted.some(
+      (deduction) => deduction.id === "vale_distress_signal",
+    ),
+    true,
+  );
+});

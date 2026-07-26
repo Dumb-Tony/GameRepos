@@ -8,6 +8,11 @@ import {
   GAME_CONTENT,
   INVENTORY_ITEMS,
 } from "../src/content/game-content.js";
+import {
+  PROLOGUE_ENDING_BEATS,
+  RECORDING_PUZZLE,
+  STUDY_ALIGNMENT_PUZZLE,
+} from "../src/content/prologue-content.js";
 import { assertValidGameContent } from "../src/engine/content-validation.js";
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -22,6 +27,7 @@ const imageAssetFiles = [
   "assets/scenes/lionel-price.webp",
   "assets/scenes/june-bell.webp",
   "assets/social/benefactors-social.webp",
+  "assets/evidence/gala-photograph.webp",
 ];
 const requiredFiles = [
   "index.html",
@@ -36,10 +42,13 @@ const requiredFiles = [
   "src/engine/router.js",
   "src/content/game-content.js",
   "src/content/onboarding-content.js",
+  "src/content/prologue-content.js",
   "src/systems/exploration/scene-renderer.js",
   "src/systems/dialogue/dialogue-engine.js",
   "src/systems/evidence-board/evidence-board.js",
   "src/systems/evidence/evidence-renderer.js",
+  "src/systems/puzzles/plan-alignment.js",
+  "src/systems/puzzles/recording-reconstruction.js",
   "src/ui/app.js",
   "src/ui/transient-notice.js",
   ...imageAssetFiles,
@@ -55,6 +64,9 @@ assertValidGameContent({
   inventory: INVENTORY_ITEMS,
   dialogues: DIALOGUES,
   deductions: DEDUCTIONS,
+  studyAlignment: STUDY_ALIGNMENT_PUZZLE,
+  recordingPuzzle: RECORDING_PUZZLE,
+  endingBeats: PROLOGUE_ENDING_BEATS,
 });
 
 await rm(dist, { recursive: true, force: true });
@@ -136,7 +148,7 @@ await writeFile(
   JSON.stringify(
     {
       name: "The Benefactors",
-      milestone: 0,
+      milestone: 4,
       builtAt: new Date().toISOString(),
     },
     null,

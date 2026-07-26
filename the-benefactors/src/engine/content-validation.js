@@ -6,6 +6,9 @@ export function validateGameContent({
   inventory,
   dialogues = {},
   deductions = {},
+  studyAlignment = null,
+  recordingPuzzle = null,
+  endingBeats = [],
 }) {
   const errors = [];
   const locationIds = new Set(Object.keys(content.locations));
@@ -47,6 +50,12 @@ export function validateGameContent({
             `Hotspot "${hotspot.id}" references missing location "${effect.id}".`,
           );
         }
+      }
+
+      if (hotspot.route && !VALID_ROUTES.has(hotspot.route)) {
+        errors.push(
+          `Hotspot "${hotspot.id}" references missing route "${hotspot.route}".`,
+        );
       }
     }
   }
@@ -144,6 +153,86 @@ export function validateGameContent({
             `Deduction "${deductionId}" connection references missing evidence "${evidenceId}".`,
           );
         }
+      }
+    }
+    for (const prerequisiteId of deduction.requiredDeductions || []) {
+      if (!deductions[prerequisiteId]) {
+        errors.push(
+          `Deduction "${deductionId}" references missing prerequisite deduction "${prerequisiteId}".`,
+        );
+      }
+    }
+  }
+
+  if (studyAlignment) {
+    if (!evidenceIds.has(studyAlignment.requiredEvidenceId)) {
+      errors.push(
+        `Study alignment references missing evidence "${studyAlignment.requiredEvidenceId}".`,
+      );
+    }
+    if (
+      ![0, 90, 180, 270].includes(studyAlignment.initialRotation) ||
+      ![0, 90, 180, 270].includes(studyAlignment.solutionRotation)
+    ) {
+      errors.push("Study alignment uses an invalid rotation.");
+    }
+    if (studyAlignment.hints?.length !== 3) {
+      errors.push("Study alignment must define exactly three hints.");
+    }
+  }
+
+  if (recordingPuzzle) {
+    if (!evidenceIds.has(recordingPuzzle.requiredEvidenceId)) {
+      errors.push(
+        `Recording puzzle references missing evidence "${recordingPuzzle.requiredEvidenceId}".`,
+      );
+    }
+    const fragmentIds = recordingPuzzle.fragments?.map((fragment) => fragment.id) || [];
+    const uniqueFragmentIds = new Set(fragmentIds);
+    if (fragmentIds.length !== uniqueFragmentIds.size) {
+      errors.push("Recording puzzle has duplicate fragment ids.");
+    }
+    for (const [label, order] of [
+      ["initial", recordingPuzzle.initialOrder],
+      ["solution", recordingPuzzle.correctOrder],
+    ]) {
+      if (
+        !Array.isArray(order) ||
+        order.length !== fragmentIds.length ||
+        new Set(order).size !== fragmentIds.length ||
+        order.some((id) => !uniqueFragmentIds.has(id))
+      ) {
+        errors.push(`Recording puzzle has an invalid ${label} order.`);
+      }
+    }
+    if (recordingPuzzle.hints?.length !== 3) {
+      errors.push("Recording puzzle must define exactly three hints.");
+    }
+    for (const effect of recordingPuzzle.completionEffects || []) {
+      if (effect.type === "collectEvidence" && !evidenceIds.has(effect.id)) {
+        errors.push(
+          `Recording puzzle references missing reward evidence "${effect.id}".`,
+        );
+      }
+    }
+  }
+
+  const endingBeatIds = new Set();
+  for (const beat of endingBeats) {
+    if (endingBeatIds.has(beat.id)) {
+      errors.push(`Duplicate prologue ending beat id "${beat.id}".`);
+    }
+    endingBeatIds.add(beat.id);
+    if (beat.evidenceId && !evidenceIds.has(beat.evidenceId)) {
+      errors.push(
+        `Prologue ending beat "${beat.id}" references missing evidence "${beat.evidenceId}".`,
+      );
+    }
+    for (const effect of beat.completionEffects || []) {
+      if (effect.type === "collectEvidence" && !evidenceIds.has(effect.id)) {
+        errors.push(
+          `Prologue ending beat "${beat.id}" references missing reward evidence "${effect.id}".`,
+        );
       }
     }
   }

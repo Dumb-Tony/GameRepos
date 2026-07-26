@@ -28,6 +28,13 @@ test("opening screens are valid persistent routes", () => {
   }
 });
 
+test("Milestone 4 puzzle and ending screens are persistent routes", () => {
+  for (const route of ["alignment", "recording", "prologue-ending"]) {
+    assert.equal(VALID_ROUTES.has(route), true);
+    assert.equal(PERSISTENT_GAME_ROUTES.has(route), true);
+  }
+});
+
 test("router accepts opening screens and falls back from unknown routes", () => {
   const windowObject = new FakeWindow();
   const router = new ScreenRouter(windowObject);

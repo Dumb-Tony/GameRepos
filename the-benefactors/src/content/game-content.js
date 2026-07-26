@@ -133,17 +133,90 @@ export const EVIDENCE = Object.freeze({
     id: "vale_damaged_recording",
     title: "Mayor Vale’s damaged recorder",
     category: "recording",
-    summary: "Three corrupted audio fragments reference something beneath the west wing.",
+    summary: "Three recovered fragments have lost their timestamps.",
     artifact: {
       type: "recording",
       heading: "E. VALE — DICTATION RECORDER",
       duration: "00:47 recovered",
       fragments: [
-        "…if someone found the invoice, then the irregularity worked…",
-        "…not a west wing. Beneath it. Meridian arrives Thursday…",
-        "…do not trust the guest list. The names are the invitation, not the—",
+        "Fragment A — timestamp unreadable",
+        "Fragment B — timestamp unreadable",
+        "Fragment C — timestamp unreadable",
       ],
-      background: ["clock chime", "freight train", "rain"],
+      background: ["three ambient markers detected", "sequence unavailable"],
+    },
+  },
+  vale_reconstructed_message: {
+    id: "vale_reconstructed_message",
+    title: "Vale’s reconstructed message",
+    category: "recording",
+    summary:
+      "Vale made the irregular invoice conspicuous and named Meridian as the reason.",
+    artifact: {
+      type: "recording",
+      heading: "E. VALE — RECOVERED MESSAGE",
+      duration: "00:47 continuous",
+      fragments: [
+        "If someone found the invoice, then the irregularity worked. I needed the payment to look wrong.",
+        "Not a west wing. Beneath it. Meridian arrives Thursday.",
+        "Do not trust the guest list. The names are the invitation, not the guests. Follow Northstar. If I am gone, I did not run.",
+      ],
+      background: ["midnight chime", "freight train", "steady rain"],
+    },
+  },
+  meridian_guest_list_header: {
+    id: "meridian_guest_list_header",
+    title: "Meridian guest-list header",
+    category: "document",
+    summary:
+      "A torn printout confirms a Meridian session beneath the Vale residence.",
+    artifact: {
+      type: "memo",
+      heading: "MERIDIAN / GREYHAVEN SESSION",
+      body: [
+        "THURSDAY · 21:00",
+        "HOST SITE: VALE / ROOM B",
+        "ATTENDEES: [PAGE TORN]",
+        "PRINT QUEUE SOURCE: TERMINAL 06",
+        "RECOVERY STATUS: HEADER ONLY",
+      ],
+      handwritten: "Only the header survived in the printer tray.",
+    },
+  },
+  northstar_address: {
+    id: "northstar_address",
+    title: "Northstar registered address",
+    category: "location",
+    summary: "1400 Harrow Street, Suite 410 — the next lead in Greyhaven.",
+    artifact: {
+      type: "memo",
+      heading: "NEXT LEAD — NORTHSTAR CONSTRUCTION",
+      body: [
+        "1400 HARROW STREET · SUITE 410",
+        "The address appears on Northstar invoice NS-8841.",
+        "Vale’s reconstructed message says to follow Northstar.",
+      ],
+      handwritten: "Find out who collects the mail.",
+    },
+  },
+  meridian_gala_photograph: {
+    id: "meridian_gala_photograph",
+    title: "Circled gala photograph",
+    category: "photograph",
+    summary:
+      "A Brighter Horizon gala photograph delivered anonymously, with one face circled.",
+    artifact: {
+      type: "photo",
+      image: "./assets/evidence/gala-photograph.webp",
+      alt:
+        "A formal humanitarian gala group photograph. A watchful man at the right edge is circled in dark red.",
+      caption: "BRIGHTER HORIZON WINTER BENEFIT · PRESS PHOTOGRAPH",
+      annotations: [
+        "CASSIAN ROOK — founder, centered beneath the donor wall",
+        "MAYOR EVELYN VALE — identified near the edge of the original print",
+        "UNKNOWN MAN — circled after the photograph was printed",
+        "Reverse: 1400 HARROW STREET",
+      ],
     },
   },
 });
@@ -345,6 +418,38 @@ export const DEDUCTIONS = Object.freeze({
       { type: "setFlag", key: "mayorMissing", value: true },
       { type: "setPath", path: "progress.officeState", value: 1 },
       { type: "unlockLocation", id: "mayor_study" },
+    ],
+  },
+  vale_distress_signal: {
+    id: "vale_distress_signal",
+    title: "The irregularity was Vale’s distress signal",
+    journalText:
+      "The false renovation was not a private luxury. Vale made the payment conspicuous so someone outside Meridian would find the room and follow Northstar.",
+    notification:
+      "Vale meant the invoice to be found. Three knocks sound at the door.",
+    requiredDeductions: ["witness_contradiction"],
+    requiredEvidence: [
+      "invoice_northstar",
+      "photo_west_wall",
+      "email_meridian",
+      "vale_reconstructed_message",
+    ],
+    requiredConnections: [
+      {
+        a: "invoice_northstar",
+        b: "photo_west_wall",
+        type: "contradiction",
+      },
+      {
+        a: "email_meridian",
+        b: "vale_reconstructed_message",
+        type: "confirmed",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "confirmedMeridianLead", value: true },
+      { type: "setFlag", key: "prologueEndingReady", value: true },
+      { type: "setPath", path: "progress.officeState", value: 2 },
     ],
   },
 });
@@ -560,7 +665,7 @@ export const GAME_CONTENT = Object.freeze({
             { type: "collectEvidence", id: "vale_damaged_recording" },
           ],
           resultText:
-            "The recorder contains a clock chime, a passing freight train, rainfall—and Mayor Vale’s voice beneath the distortion.",
+            "Three voice fragments survive, but their timestamps are gone. A proper recovery console may be able to rebuild the sequence.",
         },
         {
           id: "western-bookcase",
@@ -578,12 +683,7 @@ export const GAME_CONTENT = Object.freeze({
               { not: { type: "flag", key: "foundWallCavity" } },
             ],
           },
-          effects: [
-            { type: "setFlag", key: "foundWallCavity", value: true },
-            { type: "unlockLocation", id: "hidden_room" },
-          ],
-          resultText:
-            "The plan reveals a false section. Pressing the carved compass rose releases the bookcase with a heavy mechanical click.",
+          route: "alignment",
         },
         {
           id: "missing-book",
@@ -602,7 +702,7 @@ export const GAME_CONTENT = Object.freeze({
       name: "Hidden Communications Room",
       eyebrow: "Beneath the Vale Residence",
       mapX: 82,
-      mapY: 51,
+      mapY: 68,
       description:
         "A steel stair descends into a communications room that does not appear on any city plan.",
       sceneClass: "scene-hidden-room",
@@ -615,8 +715,12 @@ export const GAME_CONTENT = Object.freeze({
           y: 10,
           width: 34,
           height: 46,
-          title: "A wall of dark monitors",
-          text: "Six displays, an encrypted terminal, and fresh fingerprints wiped in a hurry.",
+          title: "Audio recovery console",
+          text:
+            "One monitor wakes when Vale’s recorder is connected. Its queue holds three voice fragments with no timestamps.",
+          actionLabel: "Reconstruct the recording",
+          actionWhen: { type: "hasEvidence", id: "vale_damaged_recording" },
+          route: "recording",
         },
         {
           id: "guest-list-printer",
@@ -627,6 +731,15 @@ export const GAME_CONTENT = Object.freeze({
           height: 39,
           title: "One page remains",
           text: "The printer tray holds the torn header of a guest list: MERIDIAN / GREYHAVEN SESSION.",
+          actionLabel: "Take the torn page",
+          actionWhen: {
+            not: { type: "hasEvidence", id: "meridian_guest_list_header" },
+          },
+          effects: [
+            { type: "collectEvidence", id: "meridian_guest_list_header" },
+          ],
+          resultText:
+            "The surviving header names a Thursday Meridian session at VALE / ROOM B. The attendee list has been torn away.",
         },
         {
           id: "cable-conduit",

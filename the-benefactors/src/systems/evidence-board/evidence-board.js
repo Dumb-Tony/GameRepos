@@ -79,6 +79,9 @@ export function evaluateBoardDeductions(state, deductions) {
     const hasEvidence = deduction.requiredEvidence.every((id) =>
       next.evidence.collected.includes(id),
     );
+    const hasPrerequisiteDeductions = (deduction.requiredDeductions || []).every(
+      (id) => next.completedDeductions.includes(id),
+    );
     const hasConnections = deduction.requiredConnections.every((required) =>
       next.board.connections.some(
         (connection) =>
@@ -88,7 +91,7 @@ export function evaluateBoardDeductions(state, deductions) {
       ),
     );
 
-    if (hasEvidence && hasConnections) {
+    if (hasEvidence && hasPrerequisiteDeductions && hasConnections) {
       next = applyEffects(next, [
         { type: "completeDeduction", id: deduction.id },
         ...(deduction.effects || []),

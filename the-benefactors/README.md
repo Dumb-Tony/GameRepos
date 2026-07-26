@@ -6,7 +6,7 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 
 ## Current status
 
-**Milestone 0 — Foundation**
+**Milestone 0 — Foundation (complete)**
 
 - Static HTML5 application shell
 - Hash-based screen routing
@@ -14,21 +14,21 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Data-driven conditions and effects
 - Versioned local save system
 - Player identity setup
-- Placeholder title, home office, newsroom, and settings screens
+- Title, home office, newsroom, and settings screens
 - Accessibility preferences
 - Automated state, condition, event, and save tests
 
-**Milestone 1 — Exploration (in progress)**
+**Milestone 1 — Exploration (complete)**
 
 - Opening anonymous email and downloadable evidence
 - Data-driven scalable exploration scenes
 - Interactive scene hotspots
 - City map with story-gated destinations
 - Inventory and evidence pocket
-- Placeholder newsroom, city hall, and Vale residence
+- Newsroom, city hall, Vale residence, mayor's study, and hidden room
 - First permit search action
 
-**Milestone 2 — Dialogue (started)**
+**Milestone 2 — Dialogue (complete)**
 
 - Data-driven branching dialogue engine
 - Evidence-gated conversation choices
@@ -36,13 +36,26 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Lionel Price records-room conversation
 - June Bell witness conversation
 
-**Milestone 3 — Evidence board (started)**
+**Milestone 3 — Evidence board (complete)**
 
 - Persistent evidence cards and positions
 - Mouse dragging and keyboard card movement
-- Red, blue, yellow, and white yarn relationships
+- Six explained yarn relationships with distinct colors and line patterns
 - Data-defined deduction recipes
-- Two initial deductions tied to the invoice, permit, and witness statement
+- Two deductions that advance and complete the prologue
+
+**Milestone 4 — Complete prologue vertical slice**
+
+- Player name and pronoun setup
+- Optional first-time-player tutorial
+- Personalized opening cutscene
+- Floorplan alignment puzzle with progressive hints
+- Recording reconstruction puzzle with accessible captions and progressive hints
+- Persistent puzzle and ending progress
+- Final evidence-board breakthrough
+- Seven-scene end-of-prologue sequence
+- Full-sized, viewable evidence artifacts, including the circled gala photograph
+- New Northstar lead at 1400 Harrow Street
 
 **Prologue content now playable**
 
@@ -52,11 +65,12 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Trigger Mayor Vale's disappearance
 - Unlock and search the mayor's study
 - Find the original floorplan and damaged recorder
-- Reveal the concealed stairway to the communications room
+- Align the floorplan to reveal the concealed stairway
+- Reconstruct Mayor Vale's damaged message
+- Prove the invoice was a deliberate distress signal
+- Follow the anonymous delivery through the complete prologue ending
 - Open every collected item as a full evidence artifact
-- Inspect the invoice, email, permit, photograph, transcript, floorplan, and recorder
-
-The recording reconstruction and complete end-of-prologue sequence are still in development.
+- Inspect the invoice, email, permit, photographs, transcripts, floorplan, recorder, and new leads
 
 ## Run locally
 

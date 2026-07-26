@@ -4,38 +4,53 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=onboarding-20260726b";
+} from "../content/game-content.js?v=prologue-20260726c";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=onboarding-20260726b";
-import { evaluateCondition } from "../engine/conditions.js?v=onboarding-20260726b";
-import { applyEffects } from "../engine/events.js?v=onboarding-20260726b";
-import { createInitialState } from "../engine/game-state.js?v=onboarding-20260726b";
+} from "../content/onboarding-content.js?v=prologue-20260726a";
+import {
+  PROLOGUE_ENDING_BEATS,
+  RECORDING_PUZZLE,
+  STUDY_ALIGNMENT_PUZZLE,
+} from "../content/prologue-content.js?v=prologue-20260726c";
+import { evaluateCondition } from "../engine/conditions.js?v=prologue-20260726a";
+import { applyEffects } from "../engine/events.js?v=prologue-20260726a";
+import { createInitialState } from "../engine/game-state.js?v=prologue-20260726a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=onboarding-20260726b";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=onboarding-20260726b";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=onboarding-20260726b";
+} from "../engine/player-language.js?v=prologue-20260726a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=prologue-20260726a";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=prologue-20260726a";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=onboarding-20260726b";
+} from "../systems/dialogue/dialogue-engine.js?v=prologue-20260726a";
 import {
   connectEvidence,
   evaluateBoardDeductions,
   moveEvidence,
   pinEvidence,
   removeConnection,
-} from "../systems/evidence-board/evidence-board.js?v=onboarding-20260726b";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=onboarding-20260726b";
-import { TransientNotice } from "./transient-notice.js?v=onboarding-20260726b";
+} from "../systems/evidence-board/evidence-board.js?v=prologue-20260726a";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=prologue-20260726a";
+import {
+  evaluateStudyAlignment,
+  revealPuzzleHint,
+  rotateStudyPlan,
+} from "../systems/puzzles/plan-alignment.js?v=prologue-20260726a";
+import {
+  evaluateRecordingSequence,
+  moveRecordingFragment,
+  revealRecordingHint,
+} from "../systems/puzzles/recording-reconstruction.js?v=prologue-20260726a";
+import { TransientNotice } from "./transient-notice.js?v=prologue-20260726a";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -74,6 +89,8 @@ export class GameApp {
     this.tutorialBoardCards = [];
     this.tutorialBoardConnected = false;
     this.activeEvidenceId = null;
+    this.puzzleAnnouncement = "";
+    this.activeRecordingFragmentId = null;
     this.evidenceViewerActionsBound = false;
   }
 
@@ -120,6 +137,9 @@ export class GameApp {
       map: () => this.renderMap(),
       laptop: () => this.renderLaptop(),
       board: () => this.renderBoard(),
+      alignment: () => this.renderStudyAlignment(),
+      recording: () => this.renderRecordingPuzzle(),
+      "prologue-ending": () => this.renderPrologueEnding(),
       settings: () => this.renderSettings(),
     };
 
@@ -155,7 +175,7 @@ export class GameApp {
             </button>
             <button class="button button-ghost" data-action="settings">Settings</button>
           </div>
-          <p class="build-mark">Prologue · Development build</p>
+          <p class="build-mark">Prologue · Playable vertical slice</p>
         </section>
         ${this.renderToast()}
       </main>
@@ -672,22 +692,40 @@ export class GameApp {
   renderHome() {
     const state = this.store.getState();
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
-    const caseUpdate = state.flags.mayorMissing
+    const caseUpdate = state.progress.prologueComplete
       ? {
-          title: "Mayor Vale is missing",
-          text: "Mara’s message says the police completed a welfare check. Vale’s study is briefly unsecured—and now marked on the city map.",
+          title: "The next address",
+          text:
+            "The gala photograph and Northstar’s Harrow Street address wait on the board. The renovation story is over. The larger one has begun.",
         }
-      : !state.flags.openedAnonymousEmail
+      : state.flags.prologueEndingReady
         ? {
-            title: "The caller’s instruction",
-            text: "Check the laptop. Two anonymous files are waiting. Start with the invoice.",
+            title: "Three knocks at the door",
+            text:
+              "The final connection is proven. Someone outside knows you followed Vale’s trail. Open the evidence board when you are ready to answer.",
           }
-        : state.board.connections.length
+        : state.flags.recordingReconstructed
           ? {
-              title: "The board is taking shape",
-              text: `${state.board.connections.length} yarn connection${state.board.connections.length === 1 ? "" : "s"} now ${state.board.connections.length === 1 ? "traces" : "trace"} the case. New evidence may change what the old clues mean.`,
+              title: "Vale left a trail",
+              text:
+                "The restored message belongs on the board beside the invoice, the missing addition, and the anonymous email.",
             }
-          : GAME_CONTENT.officeHotspots[0];
+          : state.flags.mayorMissing
+            ? {
+                title: "Mayor Vale is missing",
+                text: "Mara’s message says the police completed a welfare check. Vale’s study is briefly unsecured—and now marked on the city map.",
+              }
+            : !state.flags.openedAnonymousEmail
+              ? {
+                  title: "The caller’s instruction",
+                  text: "Check the laptop. Two anonymous files are waiting. Start with the invoice.",
+                }
+              : state.board.connections.length
+                ? {
+                    title: "The board is taking shape",
+                    text: `${state.board.connections.length} yarn connection${state.board.connections.length === 1 ? "" : "s"} now ${state.board.connections.length === 1 ? "traces" : "trace"} the case. New evidence may change what the old clues mean.`,
+                  }
+                : GAME_CONTENT.officeHotspots[0];
     const openingMessageText = interpolatePlayerText(OPENING_MESSAGE, state.player);
     const officeHotspots = GAME_CONTENT.officeHotspots.map((hotspot) =>
       hotspot.id === "answering-machine"
@@ -829,8 +867,8 @@ export class GameApp {
     const note = this.activeLocationNote;
     const actionAvailable =
       note &&
-      (note.dialogueId ||
-        (note.effects && evaluateCondition(note.actionWhen, state)));
+      evaluateCondition(note.actionWhen, state) &&
+      (note.dialogueId || note.route || note.effects);
 
     this.root.innerHTML = `
       <main id="game-main" class="screen game-screen location-screen">
@@ -847,7 +885,9 @@ export class GameApp {
                   <div class="scene-inspection">
                     <span class="speaker">Observation</span>
                     <h2>${escapeHtml(note.title)}</h2>
-                    <p>${escapeHtml(note.resultText || note.text)}</p>
+                    <p>${escapeHtml(
+                      note.resultShown ? note.resultText || note.text : note.text,
+                    )}</p>
                     ${
                       actionAvailable
                         ? `<button class="button button-secondary" data-action="hotspot-action">${escapeHtml(note.actionLabel)}</button>`
@@ -891,6 +931,16 @@ export class GameApp {
 
     this.bindActions({
       "hotspot-action": () => {
+        if (note.route) {
+          this.puzzleAnnouncement = "";
+          this.store.update((draft) => {
+            draft.progress.previousScreen = "location";
+            draft.progress.currentScreen = note.route;
+          }, `open-${note.route}`);
+          this.saves.save(this.store.getState(), `open-${note.route}`);
+          this.router.navigate(note.route);
+          return;
+        }
         if (note.dialogueId) {
           this.notice.clear();
           let next = startDialogue(this.store.getState(), DIALOGUES, note.dialogueId);
@@ -908,7 +958,7 @@ export class GameApp {
         const next = applyEffects(this.store.getState(), note.effects);
         this.store.replace(next, `hotspot-${note.id}`);
         this.saves.save(this.store.getState(), `hotspot-${note.id}`);
-        this.activeLocationNote = { ...note, effects: null };
+        this.activeLocationNote = { ...note, effects: null, resultShown: true };
         this.notice.show("New evidence added to the case file.");
         this.renderLocation();
       },
@@ -933,6 +983,594 @@ export class GameApp {
       },
     });
     this.bindDialogueActions();
+  }
+
+  renderStudyAlignment() {
+    const state = this.store.getState();
+    if (!state.evidence.collected.includes(STUDY_ALIGNMENT_PUZZLE.requiredEvidenceId)) {
+      this.store.update((draft) => {
+        draft.progress.currentScreen = "location";
+        draft.progress.currentLocation = "mayor_study";
+      }, "alignment-missing-evidence");
+      this.router.navigate("location", { replace: true });
+      return;
+    }
+
+    const puzzle = state.puzzles[STUDY_ALIGNMENT_PUZZLE.id];
+    const revealedHints = STUDY_ALIGNMENT_PUZZLE.hints.slice(
+      0,
+      puzzle.hintsRevealed,
+    );
+    const incorrectCopy =
+      "The doorway lines cross the shelving. The orientation is still wrong.";
+    const status = puzzle.completed
+      ? STUDY_ALIGNMENT_PUZZLE.successCopy
+      : this.puzzleAnnouncement ||
+        `The plan is rotated ${puzzle.rotation} degrees. Compare the doorway, compass rose, and western bookcase.`;
+    const statusState = puzzle.completed
+      ? "success"
+      : this.puzzleAnnouncement === incorrectCopy
+        ? "error"
+        : "neutral";
+
+    this.root.innerHTML = `
+      <main id="game-main" class="screen game-screen puzzle-screen alignment-screen">
+        ${this.renderGameHeader(GAME_CONTENT.chapter, "Mayor Vale’s study")}
+        <section class="puzzle-shell" aria-labelledby="alignment-title">
+          <header class="puzzle-heading">
+            <div>
+              <p class="kicker">${escapeHtml(STUDY_ALIGNMENT_PUZZLE.kicker)}</p>
+              <h1 id="alignment-title" tabindex="-1">${escapeHtml(STUDY_ALIGNMENT_PUZZLE.title)}</h1>
+              <p>${escapeHtml(STUDY_ALIGNMENT_PUZZLE.objective)}</p>
+            </div>
+            <span class="case-chip">${puzzle.completed ? "PASSAGE FOUND" : "DOCUMENT PUZZLE"}</span>
+          </header>
+          <div class="alignment-workspace">
+            <div class="alignment-stage">
+              <figure class="study-elevation">
+                <img src="./assets/scenes/vale-study.webp" alt="" draggable="false" />
+                <div
+                  class="plan-sheet ${puzzle.completed ? "is-aligned" : ""}"
+                  data-rotation="${puzzle.rotation}"
+                  aria-hidden="true"
+                >
+                  <span class="plan-room" style="left:11%;top:16%;width:34%;height:29%">Study</span>
+                  <span class="plan-room" style="left:48%;top:16%;width:38%;height:20%">Hall</span>
+                  <span class="plan-room" style="left:48%;top:39%;width:38%;height:33%">Parlor</span>
+                  <span class="plan-room" style="left:11%;top:49%;width:18%;height:32%">Service stair</span>
+                  <span
+                    class="plan-room is-target"
+                    style="left:31%;top:49%;width:14%;height:32%"
+                    ${puzzle.completed ? 'aria-current="true"' : ""}
+                  >Western void</span>
+                </div>
+                <figcaption class="sr-only">
+                  Original floorplan rotated ${puzzle.rotation} degrees over Vale’s study.
+                  It marks the study, hall, parlor, service stair, and a western void.
+                </figcaption>
+              </figure>
+            </div>
+            <aside class="alignment-controls">
+              <fieldset ${puzzle.completed ? "disabled" : ""}>
+                <legend>Rotate the survey copy</legend>
+                <button class="button button-secondary" data-action="rotate-plan-left" aria-label="Rotate plan counterclockwise">
+                  ↶ Left
+                </button>
+                <button class="button button-secondary" data-action="rotate-plan-right" aria-label="Rotate plan clockwise">
+                  Right ↷
+                </button>
+              </fieldset>
+              <div
+                class="puzzle-status"
+                data-state="${statusState}"
+                role="status"
+                aria-live="polite"
+              >${escapeHtml(status)}</div>
+              <div class="puzzle-hints">
+                <p class="kicker">Reporter’s notebook</p>
+                ${
+                  revealedHints.length
+                    ? revealedHints
+                        .map(
+                          (hint) => `
+                            <details open>
+                              <summary>Hint ${hint.level}</summary>
+                              <p>${escapeHtml(hint.text)}</p>
+                            </details>
+                          `,
+                        )
+                        .join("")
+                    : "<p>No hints opened. The notebook never judges.</p>"
+                }
+                <button
+                  class="button button-ghost"
+                  data-action="alignment-hint"
+                  ${puzzle.completed || puzzle.hintsRevealed >= STUDY_ALIGNMENT_PUZZLE.hints.length ? "disabled" : ""}
+                >
+                  ${puzzle.hintsRevealed ? "Reveal next hint" : "Open a hint"}
+                </button>
+              </div>
+              ${
+                puzzle.completed
+                  ? `
+                    <button class="button button-primary" data-action="descend-hidden-room">
+                      Descend into the hidden room
+                    </button>
+                  `
+                  : `
+                    <button class="button button-primary" data-action="check-alignment">
+                      Check alignment
+                    </button>
+                  `
+              }
+              <button class="button button-ghost" data-action="return-study">Return to the study</button>
+            </aside>
+          </div>
+        </section>
+      </main>
+    `;
+
+    const rotate = (direction, actionName) => {
+      const current = this.store.getState();
+      const nextPuzzle = rotateStudyPlan(
+        current.puzzles[STUDY_ALIGNMENT_PUZZLE.id],
+        direction,
+      );
+      current.puzzles[STUDY_ALIGNMENT_PUZZLE.id] = nextPuzzle;
+      this.store.replace(current, "rotate-study-plan");
+      this.saves.save(this.store.getState(), "rotate-study-plan");
+      this.puzzleAnnouncement = `Plan rotated to ${nextPuzzle.rotation} degrees.`;
+      this.renderStudyAlignment();
+      this.root.querySelector(`[data-action="${actionName}"]`)?.focus();
+    };
+
+    this.bindActions({
+      "rotate-plan-left": () => rotate("counterclockwise", "rotate-plan-left"),
+      "rotate-plan-right": () => rotate("clockwise", "rotate-plan-right"),
+      "alignment-hint": () => {
+        const current = this.store.getState();
+        current.puzzles[STUDY_ALIGNMENT_PUZZLE.id] = revealPuzzleHint(
+          current.puzzles[STUDY_ALIGNMENT_PUZZLE.id],
+          STUDY_ALIGNMENT_PUZZLE.hints.length,
+        );
+        this.store.replace(current, "alignment-hint");
+        this.saves.save(this.store.getState(), "alignment-hint");
+        this.puzzleAnnouncement = `Notebook hint ${current.puzzles[STUDY_ALIGNMENT_PUZZLE.id].hintsRevealed} opened.`;
+        this.renderStudyAlignment();
+        this.root.querySelector("[data-action='alignment-hint']")?.focus();
+      },
+      "check-alignment": () => {
+        let current = this.store.getState();
+        const before = current.puzzles[STUDY_ALIGNMENT_PUZZLE.id];
+        const evaluated = evaluateStudyAlignment(
+          before,
+          STUDY_ALIGNMENT_PUZZLE.solutionRotation,
+        );
+        current.puzzles[STUDY_ALIGNMENT_PUZZLE.id] = evaluated;
+        if (evaluated.completed && !before.completed) {
+          current = applyEffects(
+            current,
+            STUDY_ALIGNMENT_PUZZLE.completionEffects,
+          );
+        }
+        this.store.replace(current, "check-study-alignment");
+        this.saves.save(this.store.getState(), "check-study-alignment");
+        this.puzzleAnnouncement = evaluated.completed
+          ? STUDY_ALIGNMENT_PUZZLE.successCopy
+          : incorrectCopy;
+        this.renderStudyAlignment();
+        this.root
+          .querySelector(
+            evaluated.completed
+              ? "[data-action='descend-hidden-room']"
+              : "[data-action='check-alignment']",
+          )
+          ?.focus();
+      },
+      "descend-hidden-room": () => this.visitLocation("hidden_room"),
+      "return-study": () => {
+        this.store.update((draft) => {
+          draft.progress.currentLocation = "mayor_study";
+          draft.progress.currentScreen = "location";
+        }, "return-study");
+        this.saves.save(this.store.getState(), "return-study");
+        this.router.navigate("location");
+      },
+    });
+  }
+
+  renderRecordingPuzzle() {
+    const state = this.store.getState();
+    if (!state.evidence.collected.includes(RECORDING_PUZZLE.requiredEvidenceId)) {
+      this.store.update((draft) => {
+        draft.progress.currentScreen = "location";
+        draft.progress.currentLocation = "hidden_room";
+      }, "recording-missing-evidence");
+      this.router.navigate("location", { replace: true });
+      return;
+    }
+
+    const puzzle = state.puzzles[RECORDING_PUZZLE.id];
+    const fragmentById = new Map(
+      RECORDING_PUZZLE.fragments.map((fragment) => [fragment.id, fragment]),
+    );
+    const revealedHints = RECORDING_PUZZLE.hints.slice(
+      0,
+      puzzle.hintsRevealed,
+    );
+    const status = puzzle.completed
+      ? RECORDING_PUZZLE.successCopy
+      : this.puzzleAnnouncement ||
+        "The recovery deck is ready. Arrange all three fragments, then test the sequence.";
+    const statusState = puzzle.completed
+      ? "success"
+      : this.puzzleAnnouncement === RECORDING_PUZZLE.incorrectCopy
+        ? "error"
+        : "neutral";
+
+    this.root.innerHTML = `
+      <main id="game-main" class="screen game-screen puzzle-screen recording-screen">
+        ${this.renderGameHeader(GAME_CONTENT.chapter, "Hidden communications room")}
+        <section class="puzzle-shell" aria-labelledby="recording-title">
+          <header class="puzzle-heading">
+            <div>
+              <p class="kicker">${escapeHtml(RECORDING_PUZZLE.kicker)}</p>
+              <h1 id="recording-title" tabindex="-1">${escapeHtml(RECORDING_PUZZLE.title)}</h1>
+              <p>${escapeHtml(RECORDING_PUZZLE.instruction)}</p>
+            </div>
+            <span class="case-chip">${puzzle.completed ? "AUDIO RESTORED" : "3 FRAGMENTS"}</span>
+          </header>
+          <div class="recording-workspace">
+            <aside class="recording-console">
+              <div>
+                <p class="speaker">Recovery deck</p>
+                <h2>Environmental continuity</h2>
+              </div>
+              <div class="waveform" aria-hidden="true">
+                ${Array.from(
+                  { length: 48 },
+                  (_value, index) =>
+                    `<i style="height:${18 + ((index * 23) % 58)}%"></i>`,
+                ).join("")}
+              </div>
+              <p>
+                The words are damaged at each cut. The background sounds are intact and
+                fully captioned.
+              </p>
+              <div class="puzzle-hints">
+                <p class="kicker">Reporter’s notebook</p>
+                ${
+                  revealedHints.length
+                    ? revealedHints
+                        .map(
+                          (hint) => `
+                            <details open>
+                              <summary>Hint ${hint.level}</summary>
+                              <p>${escapeHtml(hint.text)}</p>
+                            </details>
+                          `,
+                        )
+                        .join("")
+                    : "<p>No hints opened. Read the room around Vale’s voice.</p>"
+                }
+                <button
+                  class="button button-ghost"
+                  data-action="recording-hint"
+                  ${puzzle.completed || puzzle.hintsRevealed >= RECORDING_PUZZLE.hints.length ? "disabled" : ""}
+                >
+                  ${puzzle.hintsRevealed ? "Reveal next hint" : "Open a hint"}
+                </button>
+              </div>
+              <button
+                class="button button-primary"
+                data-action="test-recording"
+                ${puzzle.completed ? "disabled" : ""}
+              >
+                Test reconstruction
+              </button>
+              <button class="button button-ghost" data-action="return-hidden-room">
+                Return to the hidden room
+              </button>
+            </aside>
+            <section class="recording-timeline" aria-label="Recording reconstruction timeline">
+              <ol aria-label="Reconstruction order">
+                ${puzzle.order
+                  .map((fragmentId, index) => {
+                    const fragment = fragmentById.get(fragmentId);
+                    if (!fragment) return "";
+                    const isPlaying = this.activeRecordingFragmentId === fragment.id;
+                    return `
+                      <li
+                        class="recording-fragment ${isPlaying ? "is-playing" : ""}"
+                        data-recording-fragment="${fragment.id}"
+                        data-position="${index + 1}"
+                        tabindex="-1"
+                        ${isPlaying ? 'aria-current="true"' : ""}
+                      >
+                        <p class="kicker">Position ${index + 1} of ${puzzle.order.length}</p>
+                        <h3>${escapeHtml(fragment.label)}</h3>
+                        <p class="audio-marker">${escapeHtml(fragment.caption)}</p>
+                        <blockquote
+                          id="fragment-transcript-${fragment.id}"
+                          class="fragment-copy"
+                          ${isPlaying ? "" : "hidden"}
+                        >“${escapeHtml(fragment.transcript)}”</blockquote>
+                        <div class="recording-fragment-controls">
+                          <button
+                            data-preview-fragment="${fragment.id}"
+                            aria-expanded="${isPlaying}"
+                            aria-controls="fragment-transcript-${fragment.id}"
+                          >${isPlaying ? "Hide" : "Preview"} transcript</button>
+                          <button
+                            data-move-fragment="${fragment.id}"
+                            data-direction="left"
+                            ${puzzle.completed || index === 0 ? "disabled" : ""}
+                          >Move earlier</button>
+                          <button
+                            data-move-fragment="${fragment.id}"
+                            data-direction="right"
+                            ${puzzle.completed || index === puzzle.order.length - 1 ? "disabled" : ""}
+                          >Move later</button>
+                        </div>
+                      </li>
+                    `;
+                  })
+                  .join("")}
+              </ol>
+              <div
+                class="recording-status"
+                data-state="${statusState}"
+                role="status"
+                aria-live="polite"
+              >${escapeHtml(status)}</div>
+              <article
+                class="recording-transcript"
+                ${puzzle.completed ? "" : "hidden"}
+                aria-labelledby="recovered-message-title"
+              >
+                <p class="speaker">Recovered recording · Evelyn Vale</p>
+                <h2 id="recovered-message-title" tabindex="-1">Forty-seven continuous seconds</h2>
+                <blockquote>“${escapeHtml(RECORDING_PUZZLE.recoveredTranscript)}”</blockquote>
+                <button class="button button-primary" data-action="take-recording-home">
+                  Take the restored message home
+                </button>
+              </article>
+            </section>
+          </div>
+        </section>
+      </main>
+    `;
+
+    this.root.querySelectorAll("[data-preview-fragment]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const fragmentId = button.dataset.previewFragment;
+        const fragment = fragmentById.get(fragmentId);
+        this.activeRecordingFragmentId =
+          this.activeRecordingFragmentId === fragmentId ? null : fragmentId;
+        this.puzzleAnnouncement = this.activeRecordingFragmentId
+          ? `${fragment.label} transcript opened. ${fragment.transcript}`
+          : `${fragment.label} transcript hidden.`;
+        this.renderRecordingPuzzle();
+        this.root
+          .querySelector(`[data-preview-fragment="${fragmentId}"]`)
+          ?.focus();
+      });
+    });
+
+    this.root.querySelectorAll("[data-move-fragment]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const current = this.store.getState();
+        const fragmentId = button.dataset.moveFragment;
+        const fragment = fragmentById.get(fragmentId);
+        const direction = button.dataset.direction;
+        const nextPuzzle = moveRecordingFragment(
+          current.puzzles[RECORDING_PUZZLE.id],
+          fragmentId,
+          direction,
+        );
+        current.puzzles[RECORDING_PUZZLE.id] = nextPuzzle;
+        this.store.replace(current, "move-recording-fragment");
+        this.saves.save(this.store.getState(), "move-recording-fragment");
+        const position = nextPuzzle.order.indexOf(fragmentId) + 1;
+        this.puzzleAnnouncement = `${fragment.label} moved to position ${position} of ${nextPuzzle.order.length}.`;
+        this.renderRecordingPuzzle();
+        const preferredControl = this.root.querySelector(
+          `[data-move-fragment="${fragmentId}"][data-direction="${direction}"]:not(:disabled)`,
+        );
+        const fallbackControl = this.root.querySelector(
+          `[data-move-fragment="${fragmentId}"]:not(:disabled)`,
+        );
+        (preferredControl || fallbackControl)?.focus();
+      });
+    });
+
+    this.bindActions({
+      "recording-hint": () => {
+        const current = this.store.getState();
+        current.puzzles[RECORDING_PUZZLE.id] = revealRecordingHint(
+          current.puzzles[RECORDING_PUZZLE.id],
+          RECORDING_PUZZLE.hints.length,
+        );
+        this.store.replace(current, "recording-hint");
+        this.saves.save(this.store.getState(), "recording-hint");
+        this.puzzleAnnouncement = `Notebook hint ${current.puzzles[RECORDING_PUZZLE.id].hintsRevealed} opened.`;
+        this.renderRecordingPuzzle();
+        this.root.querySelector("[data-action='recording-hint']")?.focus();
+      },
+      "test-recording": () => {
+        let current = this.store.getState();
+        const before = current.puzzles[RECORDING_PUZZLE.id];
+        const evaluated = evaluateRecordingSequence(
+          before,
+          RECORDING_PUZZLE.correctOrder,
+        );
+        current.puzzles[RECORDING_PUZZLE.id] = evaluated;
+        if (evaluated.completed && !before.completed) {
+          current = applyEffects(current, RECORDING_PUZZLE.completionEffects);
+        }
+        this.store.replace(current, "test-recording");
+        this.saves.save(this.store.getState(), "test-recording");
+        this.activeRecordingFragmentId = null;
+        this.puzzleAnnouncement = evaluated.completed
+          ? RECORDING_PUZZLE.successCopy
+          : RECORDING_PUZZLE.incorrectCopy;
+        this.renderRecordingPuzzle();
+        this.root
+          .querySelector(
+            evaluated.completed
+              ? "#recovered-message-title"
+              : "[data-action='test-recording']",
+          )
+          ?.focus();
+      },
+      "take-recording-home": () => {
+        this.store.update((draft) => {
+          draft.progress.currentLocation = "home_office";
+          draft.progress.previousScreen = "recording";
+          draft.progress.currentScreen = "home";
+        }, "recording-return-home");
+        this.saves.save(this.store.getState(), "recording-return-home");
+        this.activeOfficeNote = {
+          title: "Vale left a trail",
+          text:
+            "The restored message belongs on the board beside the invoice, the missing addition, and the anonymous email.",
+        };
+        this.puzzleAnnouncement = "";
+        this.router.navigate("home");
+      },
+      "return-hidden-room": () => {
+        this.store.update((draft) => {
+          draft.progress.currentLocation = "hidden_room";
+          draft.progress.currentScreen = "location";
+        }, "return-hidden-room");
+        this.saves.save(this.store.getState(), "return-hidden-room");
+        this.router.navigate("location");
+      },
+    });
+  }
+
+  renderPrologueEnding() {
+    const state = this.store.getState();
+    if (!state.flags.prologueEndingReady && !state.progress.prologueComplete) {
+      this.store.update((draft) => {
+        draft.progress.currentScreen = "board";
+      }, "ending-not-ready");
+      this.router.navigate("board", { replace: true });
+      return;
+    }
+
+    const step = Math.max(
+      0,
+      Math.min(state.progress.prologueEndingStep, PROLOGUE_ENDING_BEATS.length - 1),
+    );
+    const beat = PROLOGUE_ENDING_BEATS[step];
+    const isEnd = beat.type === "end";
+    const nextLabel =
+      beat.actionLabel ||
+      (beat.type === "evidence"
+        ? "Turn the photograph over"
+        : beat.type === "lead"
+          ? "Finish the prologue"
+          : "Continue");
+
+    const specialContent =
+      beat.type === "evidence"
+        ? `
+          <figure class="ending-photo">
+            <img
+              src="./assets/evidence/gala-photograph.webp"
+              alt="A formal humanitarian gala group photograph. A watchful man at the right edge is circled in dark red."
+            />
+            <figcaption>${escapeHtml(beat.caption)}</figcaption>
+          </figure>
+        `
+        : beat.type === "lead"
+          ? `<p class="ending-address">${escapeHtml(beat.label)}</p>`
+          : "";
+
+    this.root.innerHTML = `
+      <main id="game-main" class="screen prologue-ending-screen">
+        <img src="./assets/scenes/home-office.webp" alt="" />
+        <article class="${isEnd ? "end-prologue-card" : "ending-card"}">
+          <ol
+            class="ending-progress"
+            aria-label="Prologue ending progress: scene ${step + 1} of ${PROLOGUE_ENDING_BEATS.length}"
+          >
+            ${PROLOGUE_ENDING_BEATS.map(
+              (_item, index) =>
+                `<li ${index === step ? 'aria-current="step"' : ""}>Scene ${index + 1}</li>`,
+            ).join("")}
+          </ol>
+          <p class="kicker">${isEnd ? "Case file 01" : "Home office · After midnight"}</p>
+          <h1 tabindex="-1">${escapeHtml(beat.title || "The trail continues")}</h1>
+          ${beat.text ? `<p>${escapeHtml(beat.text)}</p>` : ""}
+          ${beat.subtitle ? `<p class="speaker">${escapeHtml(beat.subtitle)}</p>` : ""}
+          ${specialContent}
+          ${beat.footer ? `<p>${escapeHtml(beat.footer)}</p>` : ""}
+          <footer>
+            ${
+              isEnd
+                ? `
+                  <button class="button button-primary" data-action="review-case-file">Review case file</button>
+                  <button class="button button-secondary" data-action="ending-title">Return to title</button>
+                `
+                : `
+                  <button class="button button-ghost" data-action="skip-prologue-ending">Skip to ending</button>
+                  <button class="button button-primary" data-action="advance-prologue-ending">${escapeHtml(nextLabel)}</button>
+                `
+            }
+          </footer>
+        </article>
+      </main>
+    `;
+
+    this.bindActions({
+      "advance-prologue-ending": () => this.advancePrologueEnding(),
+      "skip-prologue-ending": () => {
+        let next = this.store.getState();
+        for (const endingBeat of PROLOGUE_ENDING_BEATS) {
+          next = applyEffects(next, endingBeat.completionEffects || []);
+        }
+        next.progress.prologueEndingStep = PROLOGUE_ENDING_BEATS.length - 1;
+        next.progress.currentScreen = "prologue-ending";
+        this.store.replace(next, "skip-prologue-ending");
+        this.saves.save(this.store.getState(), "skip-prologue-ending");
+        this.renderPrologueEnding();
+        this.root.querySelector("h1")?.focus();
+      },
+      "review-case-file": () => {
+        this.store.update((draft) => {
+          draft.progress.currentLocation = "home_office";
+          draft.progress.currentScreen = "board";
+        }, "review-prologue-case");
+        this.saves.save(this.store.getState(), "review-prologue-case");
+        this.router.navigate("board");
+      },
+      "ending-title": () => {
+        this.store.update((draft) => {
+          draft.progress.currentLocation = "home_office";
+          draft.progress.currentScreen = "home";
+        }, "prologue-return-title");
+        this.saves.save(this.store.getState(), "prologue-return-title");
+        this.router.navigate("title");
+      },
+    });
+  }
+
+  advancePrologueEnding() {
+    const current = this.store.getState();
+    const nextStep = Math.min(
+      current.progress.prologueEndingStep + 1,
+      PROLOGUE_ENDING_BEATS.length - 1,
+    );
+    const nextBeat = PROLOGUE_ENDING_BEATS[nextStep];
+    let next = applyEffects(current, nextBeat.completionEffects || []);
+    next.progress.prologueEndingStep = nextStep;
+    next.progress.currentScreen = "prologue-ending";
+    this.store.replace(next, `prologue-ending-${nextBeat.id}`);
+    this.saves.save(this.store.getState(), `prologue-ending-${nextBeat.id}`);
+    this.renderPrologueEnding();
+    this.root.querySelector("h1")?.focus();
   }
 
   renderMap() {
@@ -1286,6 +1924,20 @@ export class GameApp {
               Pin clues from the tray, then drag them—or use their arrow keys—to arrange the
               investigation.
             </p>
+            ${
+              state.flags.prologueEndingReady && !state.progress.prologueComplete
+                ? `
+                  <section class="case-breakthrough" aria-labelledby="breakthrough-title">
+                    <p class="kicker">Case breakthrough</p>
+                    <h3 id="breakthrough-title">Three knocks at the door</h3>
+                    <p>Vale made the invoice conspicuous on purpose. Someone knows you followed her trail.</p>
+                    <button class="button button-primary" data-action="begin-prologue-ending">
+                      Answer the knock
+                    </button>
+                  </section>
+                `
+                : ""
+            }
             <section class="evidence-tray">
               <p class="kicker">Evidence tray · ${unpinned.length}</p>
               ${
@@ -1423,6 +2075,15 @@ export class GameApp {
     this.bindBoardDrag();
 
     this.bindActions({
+      "begin-prologue-ending": () => {
+        this.store.update((draft) => {
+          draft.progress.currentLocation = "home_office";
+          draft.progress.previousScreen = "board";
+          draft.progress.currentScreen = "prologue-ending";
+        }, "begin-prologue-ending");
+        this.saves.save(this.store.getState(), "begin-prologue-ending");
+        this.router.navigate("prologue-ending");
+      },
       "connect-selected": () => {
         if (this.selectedBoardCards.length !== 2) return;
         const [a, b] = this.selectedBoardCards;
@@ -1905,6 +2566,8 @@ export class GameApp {
     this.tutorialBoardCards = [];
     this.tutorialBoardConnected = false;
     this.activeEvidenceId = null;
+    this.puzzleAnnouncement = "";
+    this.activeRecordingFragmentId = null;
   }
 
   applyPreferences(settings) {

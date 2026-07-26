@@ -9,6 +9,9 @@ export const VALID_ROUTES = new Set([
   "map",
   "laptop",
   "board",
+  "alignment",
+  "recording",
+  "prologue-ending",
   "settings",
 ]);
 
@@ -21,6 +24,9 @@ export const PERSISTENT_GAME_ROUTES = new Set([
   "map",
   "laptop",
   "board",
+  "alignment",
+  "recording",
+  "prologue-ending",
 ]);
 
 export class ScreenRouter {

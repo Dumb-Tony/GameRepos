@@ -3,7 +3,7 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js?v=onboarding-20260726b";
+} from "./game-state.js?v=prologue-20260726a";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
@@ -88,6 +88,18 @@ export class SaveSystem {
       evidence: { ...fallback.evidence, ...candidate.evidence },
       board: { ...fallback.board, ...candidate.board },
       dialogue: { ...fallback.dialogue, ...candidate.dialogue },
+      puzzles: {
+        ...fallback.puzzles,
+        ...candidate.puzzles,
+        study_plan_alignment: {
+          ...fallback.puzzles.study_plan_alignment,
+          ...candidate.puzzles?.study_plan_alignment,
+        },
+        vale_recording_reconstruction: {
+          ...fallback.puzzles.vale_recording_reconstruction,
+          ...candidate.puzzles?.vale_recording_reconstruction,
+        },
+      },
       locationVisits: {
         ...fallback.locationVisits,
         ...candidate.locationVisits,
@@ -104,6 +116,14 @@ export class SaveSystem {
         cutsceneCompleted: true,
       };
       migrated.flags.heardOpeningMessage = true;
+    }
+
+    if (legacyVersion < 7 && migrated.flags.foundWallCavity) {
+      migrated.puzzles.study_plan_alignment = {
+        ...migrated.puzzles.study_plan_alignment,
+        rotation: 270,
+        completed: true,
+      };
     }
 
     return migrated;

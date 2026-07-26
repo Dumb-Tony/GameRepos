@@ -131,13 +131,26 @@ function renderTranscript(artifact) {
 }
 
 function renderPhoto(artifact) {
-  return `
-    <article class="artifact artifact-photo">
-      <div class="photo-image" aria-label="Photograph of the west side of Mayor Vale's brick house">
+  const image = artifact.image
+    ? `<img src="${escapeHtml(artifact.image)}" alt="${escapeHtml(artifact.alt || artifact.caption)}" />`
+    : `
         <span class="photo-house"></span>
         <span class="photo-roof"></span>
         <span class="photo-gate"></span>
         <span class="photo-marks"></span>
+      `;
+
+  return `
+    <article class="artifact artifact-photo">
+      <div class="photo-image ${artifact.image ? "has-evidence-image" : ""}" ${
+        artifact.image
+          ? ""
+          : `role="img" aria-label="${escapeHtml(
+              artifact.alt ||
+                "Photograph of the west side of Mayor Vale's brick house",
+            )}"`
+      }>
+        ${image}
       </div>
       <p class="photo-caption">${escapeHtml(artifact.caption)}</p>
       <ol>
@@ -193,4 +206,3 @@ export function renderEvidenceArtifact(evidence) {
 
   return (renderers[artifact.type] || renderers.memo)(artifact);
 }
-

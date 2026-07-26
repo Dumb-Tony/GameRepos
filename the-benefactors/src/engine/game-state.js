@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 6;
+export const GAME_STATE_VERSION = 7;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -43,6 +43,8 @@ export function createInitialState(player = {}, settings = {}) {
         cutsceneStep: 0,
         cutsceneCompleted: false,
       },
+      prologueEndingStep: 0,
+      prologueComplete: false,
     },
     flags: {
       heardOpeningMessage: false,
@@ -55,6 +57,12 @@ export function createInitialState(player = {}, settings = {}) {
       foundStudyFloorplan: false,
       foundValeRecording: false,
       foundWallCavity: false,
+      recordingReconstructed: false,
+      heardValeRecording: false,
+      confirmedMeridianLead: false,
+      prologueEndingReady: false,
+      receivedGalaPhotograph: false,
+      northstarAddressIdentified: false,
     },
     inventory: ["press_credentials", "smartphone", "recorder", "notebook"],
     evidence: {
@@ -75,6 +83,24 @@ export function createInitialState(player = {}, settings = {}) {
       activeNodeId: null,
       visitedNodes: [],
       completedDialogues: [],
+    },
+    puzzles: {
+      study_plan_alignment: {
+        rotation: 90,
+        attempts: 0,
+        hintsRevealed: 0,
+        completed: false,
+      },
+      vale_recording_reconstruction: {
+        order: [
+          "vale_recording_rain",
+          "vale_recording_clock",
+          "vale_recording_freight",
+        ],
+        attempts: 0,
+        hintsRevealed: 0,
+        completed: false,
+      },
     },
     completedDeductions: [],
     locationVisits: {
@@ -108,9 +134,14 @@ export function isGameState(value) {
       typeof value.progress.opening === "object" &&
       typeof value.progress.opening.tutorialCompleted === "boolean" &&
       typeof value.progress.opening.cutsceneCompleted === "boolean" &&
+      Number.isInteger(value.progress.prologueEndingStep) &&
+      typeof value.progress.prologueComplete === "boolean" &&
       value.flags &&
       value.evidence &&
       value.board &&
+      value.puzzles &&
+      value.puzzles.study_plan_alignment &&
+      value.puzzles.vale_recording_reconstruction &&
       value.settings,
   );
 }

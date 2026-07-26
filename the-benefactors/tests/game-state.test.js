@@ -26,6 +26,19 @@ test("creates a complete serializable initial state", () => {
     cutsceneCompleted: false,
   });
   assert.equal(state.flags.heardOpeningMessage, false);
+  assert.equal(state.progress.prologueEndingStep, 0);
+  assert.equal(state.progress.prologueComplete, false);
+  assert.deepEqual(state.puzzles.study_plan_alignment, {
+    rotation: 90,
+    attempts: 0,
+    hintsRevealed: 0,
+    completed: false,
+  });
+  assert.deepEqual(state.puzzles.vale_recording_reconstruction.order, [
+    "vale_recording_rain",
+    "vale_recording_clock",
+    "vale_recording_freight",
+  ]);
   assert.deepEqual(state.settings, DEFAULT_SETTINGS);
   assert.equal(isGameState(JSON.parse(JSON.stringify(state))), true);
 });
