@@ -1511,6 +1511,7 @@ input[type="range"] {
   flex-direction: column;
   justify-content: flex-start;
   min-height: 0;
+  overflow-x: hidden;
   overflow-y: auto;
   border-left: 1px solid var(--line);
   padding: clamp(28px, 5vw, 68px);
