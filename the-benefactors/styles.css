@@ -1227,31 +1227,31 @@ input[type="range"] {
 }
 
 .hotspot-map {
-  top: 8%;
-  left: 46%;
-  width: 20%;
-  height: 32%;
+  top: 57%;
+  left: 0;
+  width: 24%;
+  height: 35%;
 }
 
 .hotspot-laptop {
-  right: 31%;
-  bottom: 27%;
-  width: 23%;
-  height: 27%;
+  top: 55%;
+  left: 39%;
+  width: 19%;
+  height: 22%;
 }
 
 .hotspot-phone {
-  right: 16%;
-  bottom: 27%;
-  width: 10%;
-  height: 17%;
+  top: 55%;
+  left: 61%;
+  width: 16%;
+  height: 21%;
 }
 
 .hotspot-window {
-  top: 6%;
-  right: 6%;
-  width: 23%;
-  height: 51%;
+  top: 5%;
+  left: 59%;
+  width: 31%;
+  height: 54%;
 }
 
 .observation-card {
@@ -3298,6 +3298,18 @@ input[type="range"] {
     radial-gradient(circle at 24% 50%, #171916 0 7px, #8d8269 8px 10px, transparent 11px),
     radial-gradient(circle at 76% 50%, #171916 0 7px, #8d8269 8px 10px, transparent 11px),
     linear-gradient(165deg, #55544a, #242722);
+}
+
+.evidence-card--floorplan .evidence-view-button,
+.evidence-card--recording .evidence-view-button {
+  border-color: rgba(241, 234, 215, 0.34);
+  color: #f1ead7;
+  background: rgba(7, 12, 12, 0.22);
+}
+
+.evidence-card--floorplan .evidence-view-button:hover,
+.evidence-card--recording .evidence-view-button:hover {
+  background: rgba(7, 12, 12, 0.42);
 }
 
 .evidence-card--email .evidence-card-thumbnail {

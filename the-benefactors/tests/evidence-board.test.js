@@ -21,6 +21,15 @@ test("pins and moves collected evidence without mutating source", () => {
   assert.deepEqual(moved.board.cards.invoice_northstar, { x: 40, y: 44 });
 });
 
+test("keeps taller evidence cards within the corkboard", () => {
+  const source = createInitialState();
+  source.evidence.collected.push("invoice_northstar");
+  const pinned = pinEvidence(source, "invoice_northstar");
+  const moved = moveEvidence(pinned, "invoice_northstar", { x: 100, y: 100 });
+
+  assert.deepEqual(moved.board.cards.invoice_northstar, { x: 82, y: 66 });
+});
+
 test("completes a data-defined deduction from the correct yarn connection", () => {
   let state = createInitialState();
   state.evidence.collected.push("invoice_northstar", "permit_summary");

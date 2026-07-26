@@ -125,6 +125,7 @@ export class GameApp {
           </div>
           <p class="build-mark">Prologue · Development build</p>
         </section>
+        ${this.renderToast()}
       </main>
     `;
 
@@ -1150,8 +1151,8 @@ export class GameApp {
         const dy = ((event.clientY - start.pointerY) / rect.height) * 100;
         if (Math.abs(dx) + Math.abs(dy) < 0.6) return;
         this.boardWasDragged = true;
-        card.style.left = `${Math.max(0, Math.min(86, start.cardX + dx))}%`;
-        card.style.top = `${Math.max(0, Math.min(78, start.cardY + dy))}%`;
+        card.style.left = `${Math.max(0, Math.min(82, start.cardX + dx))}%`;
+        card.style.top = `${Math.max(0, Math.min(66, start.cardY + dy))}%`;
       });
 
       card.addEventListener("pointerup", (event) => {

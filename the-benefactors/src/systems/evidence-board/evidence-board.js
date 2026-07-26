@@ -30,8 +30,8 @@ export function moveEvidence(state, evidenceId, position) {
   if (!state.evidence.pinned.includes(evidenceId)) return state;
   const next = structuredClone(state);
   next.board.cards[evidenceId] = {
-    x: clamp(position.x, 0, 86),
-    y: clamp(position.y, 0, 78),
+    x: clamp(position.x, 0, 82),
+    y: clamp(position.y, 0, 66),
   };
   return next;
 }
@@ -103,4 +103,3 @@ export function evaluateBoardDeductions(state, deductions) {
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
-
