@@ -70,7 +70,9 @@ namespace Tidebound.Narrative
                                         ? "Vela reads the pack you're loading from the ridgepole, lifts off, and takes one wide, deliberate circle over the trailhead: coming — above, ahead, on her own wind. That was never going to be a discussion."
                                         : s.Companion == "ipo"
                                             ? "Ipo inspects the pack you're loading, adds three items of his own (a shell, the bottle cap, a stolen strip of dried fish), and assumes his post on your shoulder: coming. That was never going to be a discussion."
-                                            : "You bank the fire, square Coco on his shelf facing the mountain — someone should keep an eye on camp — and shoulder the pack alone.",
+                                            : s.Companion == "nine"
+                                                ? "Nine cannot come — you both knew it before you knew you were going — and so before the trail you walk down to the tideline to tell her. She takes your wrist a long moment, reading the mountain off your pulse, and then lets go: permitted. The water folds shut over her like a door being politely closed."
+                                                : "You bank the fire, square Coco on his shelf facing the mountain — someone should keep an eye on camp — and shoulder the pack alone.",
                     };
                     if (s.Is("RYO_MET"))
                         t.Add("Ryo talks himself out of coming at his own boat's gunwale: \"Mountains,\" he says, with a sailor's full contempt for gradients, \"are just waves that gave up. Somebody has to mind the sea things. Come back with a good story.\" His handshake says the rest of it.");
@@ -125,7 +127,9 @@ namespace Tidebound.Narrative
                                 ? "Moa marches the stairs. All of them. Offered the pack-top perch she declines it with one affronted feather-shake and takes each tread on her own two feet, a small copper sergeant reviewing ten thousand parade grounds, muttering at the state of the weeds between the stones."
                                 : s.Companion == "vela"
                                     ? "Vela rides the mountain's standing wind alongside the stair, level with you, then above — and for once she doesn't range. She keeps station. Escort formation, the whole climb."
-                                    : s.Companion == "ipo"
+                                    : s.Companion == "nine"
+                                        ? "Nine cannot climb this with you, and the goodbye at the tideline this morning had a weight you both pretended not to feel — one arm around your ankle, one long look, then the water folding shut over her like a door being politely closed. Every stream the stair crosses, you find yourself checking the pools. You know it's absurd. You check them anyway."
+                                        : s.Companion == "ipo"
                                         ? "Ipo rides your shoulder up the first three flights like a rajah surveying new taxes — then the height of the place gets into him, and he goes quiet, small hand knotted in your collar. Somewhere past the sixth flight he starts, very softly, doing the thing you've never heard from him: humming. It takes you a hundred steps to place the tune. It's the Hum. He's harmonizing."
                                         : "You climb alone, and the stair does what enormous old things do to a person alone: it makes room for you. By the fortieth flight the rhythm of your boots on the spoon-worn stone is a kind of company in itself — yours, and everyone's who ever wore the stone into spoons.",
                     "You camp the first night on a terrace lip under the washed stars, the stair vanishing up into the dark above like an argument the mountain hasn't finished making.",
@@ -159,7 +163,9 @@ namespace Tidebound.Narrative
                                 ? "The nave's acoustics take the sea-boom of the pool and roll it around the stone like weather — storm-sound, everywhere, constant. Moa flattens once, feathers slicked… and then, deliberately, in the little sergeant's march she does when she has decided something is HERS to patrol, she walks the whole rim of the sounding nave at your side without breaking. Brave feather. All the way to the top of the world."
                                 : s.Companion == "vela"
                                     ? "Vela lands on the nave's highest broken pillar — and does not preen, does not survey her domain, does not do any Vela thing at all. She watches the breathing pool with her one good eye, utterly still, for as long as you stay. The oldest thing you know, paying court to something older."
-                                    : s.Companion == "ipo"
+                                    : s.Companion == "nine"
+                                        ? "And Nine — Nine you gave the shore weeks ago is HERE, in the Tidewell pool, rising against the black water with her mantle running its seven-beat light: she has come up through the inside of the mountain, through channels no map holds, to be at this pool when you reached it. However far you travel on this island, you understand at last, you have never once traveled away from her."
+                                        : s.Companion == "ipo"
                                         ? "Ipo, who has stolen from every sanctified thing on this island up to and including Edda's seed store, walks into the nave and takes nothing. He inspects the offering-niches, the carved rim, the mural paint — hands behind his back, actually behind his back, a museum-goer's posture you didn't know was in him. At the pool's edge he crouches and watches one full seven-beat cycle. Then he looks up at you and, very quietly, holds out his hand for yours."
                                         : "You do not touch the water. Not yet. Some doors you knock on from a respectful distance first.",
                 },
@@ -304,7 +310,9 @@ namespace Tidebound.Narrative
                                             ? " And last, longest: \"…and the old blind-eyed queen of the cliffs, who chose you, and stayed. The island speaks through its lives, castaway. That one's testimony outweighs the rest of this list.\""
                                             : s.Companion == "ipo"
                                                 ? " And last, longest: \"…and the laughing thief, who chose you, and stayed. The island speaks through its lives, castaway. That one's testimony outweighs the rest of this list.\""
-                                                : ""));
+                                                : s.Companion == "nine"
+                                                    ? " And last, longest: \"…and the nine-armed daughter of the tide, who chose you, and stayed. The island speaks through its lives, castaway. That one's testimony outweighs the rest of this list.\""
+                                                    : ""));
                         t.Add("He lowers the staff. Behind him, Naia is not breathing. \"Come down,\" Tekau says simply, and turns. \"Guests eat first. It is a rule older than the mountain's temper.\"");
                         t.Add("You walk down into the Inner Green as the first outsider in three hundred and something years, and the town watches you pass with eyes like held questions — and children, at the edges, whose curiosity has already escaped custody entirely.");
                     }

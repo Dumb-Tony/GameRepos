@@ -641,10 +641,58 @@ tidebound-unity/
       troop, treasury, audience — you, forever, front row). 11 new
       tests (332 total, all green first run, synchronous runner).
       Scene rebuilt with IpoCompanion serialized.
-      Next companion: Nine, the secret one — tide-pool-bound (found
-      only by returning to the pools twice before Day 3), the last
-      chassis: she never leaves water, and land crossings are escort
-      scenes with real stakes.*
+      Session 5: NINE, end to end — THE COMPANION ROSTER IS COMPLETE
+      (all six of the Clearing's candidates courtable, plus the solo
+      road). The TIDE-BOUND CHASSIS is the last one: NineController
+      clamps every target she is ever given into the shallows band
+      along the tideline (z ∈ [shoreZMin, shoreZMax]) — she paces
+      you up the shore in the wave-wash and simply STOPS at the line
+      where her world ends when you walk inland (absence is a
+      designed cost, now literal in the sim); Wary keeps her at the
+      gallery pool on the eastern shelf; she pours rather than
+      strides (no bob — a slow surface sway, riding the water over
+      depth and sitting in the pools over shelf rock). The discovery
+      gate was already live (TidePoolVisits == 2 → NineIsDue);
+      court_nine ported verbatim (the crab, the arm-tip light as a
+      thought, the spiral traced in the sand — answering in her
+      language names nothing); NineVignettes five tiers verbatim
+      (one eye out, noting → trading at market rate → reading your
+      pulse like a letter → the puzzle school → your button in her
+      gallery); NineInteractable (bring a live crab / watch, and be
+      watched — affection, for her, IS attention / offer your wrist
+      at AllowsTouch). Her voice threads everything: the Mimic heart
+      (the kelp copying your fire-tending coax), Edda putting down
+      her cup ("Sixty years I have waited for one of them to pick a
+      person"), the ev3 pulse where she watches YOU and not the
+      lagoon, the SHIP_PHOTO heart2 (the courier's photograph raised
+      from the fuselage — hope, with a bearing on it), the
+      Silverthread that was always her front door, the toll never
+      owed (GRIN_MAPPED — the back door of his kingdom), the
+      VANE_FILM canister from the station's drowned throat, the lit
+      Gullet where she keeps time with the island (bond +5), the
+      cyclone spiral in the storm's rearranged sand, the tideline
+      goodbye before the mountain and the pools you check anyway,
+      the impossible reunion IN the Tidewell pool, Tekau's
+      "nine-armed daughter of the tide." Endings: THREE_SPRINGS
+      offered at trust 75+ (core unwritten in the VN — falls back
+      per parity), NINES_GARDEN ported whole at trust 50+ (the
+      presidential pool), ISLANDS_OWN accepts Keeper Nine (the
+      covenant keeps what keeps it — mortality lifting off your
+      friend like weather), epilogues (leaving: she follows the hull
+      to the reef gate and the light of her goes down; staying:
+      three springs come due, and the island sends what it sends no
+      one). companionCovered brought to full VN parity (+
+      THREE_SPRINGS, NINES_GARDEN, ROOSTER_DAWN). 11 new tests (343
+      total). Scene rebuilt with NineCompanion serialized.
+      FIELD NOTE — the MCP bridge mid-session attached itself to the
+      OTHER open Unity editor (the GPT-side project, 1-connection
+      plan limit, sticky pipe): verification switched to the CLI
+      fallback — copy Assets/Packages/ProjectSettings to scratch,
+      batchmode -runTests there (the open editor holds the real
+      project's lock), -executeMethod the scene builder in the copy,
+      and copy the rebuilt scene back. ALWAYS probe
+      Application.productName via RunCommand before trusting the
+      bridge when two editors are open.*
 - [ ] Phase 6 — depth passes per act · world-side depth for chapters
       4–7 (station/temple/caldera as places, Naia's rig, monsoon
       world dressing) · NG+, polish

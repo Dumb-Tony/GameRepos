@@ -280,6 +280,8 @@ namespace Tidebound.Narrative
                         t.Add("— Vela's station gift: a road no ground-bound eye could see — the drill's road, running for the mountain.");
                     else if (s.Is("COMP4_DONE") && s.Companion == "ipo")
                         t.Add("— Ipo's station gift: a quartermaster's trove — fuses, tubes, the radio's odds improved and an ego beyond salvage.");
+                    else if (s.Is("COMP4_DONE") && s.Companion == "nine")
+                        t.Add("— Nine's station gift: a film canister from a drowned throat, hidden by Vane herself outside her own files. \"Only if—\"");
                     t.Add("— And Vane's Question: " + (s.Is("INCIDENT_FILES")
                         ? "you opened her drawer. The Incident has a shape now — the bore site, the throat, the nine silent hours, and her last instruction: <i>tend the skin.</i> Her map is in your kit."
                         : s.Is("FILES_BURNED")
@@ -438,7 +440,7 @@ namespace Tidebound.Narrative
             script.Add(new StoryScene
             {
                 Id = "ev4_companion",
-                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : s.Companion == "ipo" ? "Ipo" : "Kavi",
+                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : s.Companion == "ipo" ? "Ipo" : s.Companion == "nine" ? "Nine" : "Kavi",
                 OnEnter = s =>
                 {
                     if (s.Is("COMP4_DONE")) return;
@@ -449,9 +451,17 @@ namespace Tidebound.Narrative
                     else if (s.Companion == "moa") { s.SetFlag("SEEDS"); s.AddRoute(RouteAxis.Roots, 2); }
                     else if (s.Companion == "vela") { s.SetFlag("DRILL_ROAD"); s.AddRoute(RouteAxis.Depth, 2); }
                     else if (s.Companion == "ipo") { s.SetFlag("RADIO_PARTS_BONUS"); s.AddRoute(RouteAxis.Signal, 1); }
+                    else if (s.Companion == "nine") { s.SetFlag("VANE_FILM"); s.AddRoute(RouteAxis.Depth, 2); }
                 },
                 Text = s =>
                 {
+                    if (s.Companion == "nine")
+                        return new List<string>
+                        {
+                            "You take the shore way home and find Nine waiting at the station's old cistern channel — insistently, the arm-wave she uses when you are being slow about something. The channel, you finally attend, runs from the sea under the compound: the station's water intake, a drowned concrete throat no person could enter.",
+                            "She enters it. Three minutes — you count, ancient fear rising — then four. Then she flows back out of the dark with her arms full and lays it on the concrete lip: a sealed steel film canister, military-gasketed, dry inside as the day it was hidden. Hidden — because taped to it, gone to brown lace, are the remains of instructions, and one legible fragment in a hand you now know at sight: <i>\"…not the committee. Only if—\"</i>",
+                            "Only if. Only if what? Only if <i>who</i>? Somewhere below the station, Dr. Ilsa Vane kept a copy of something outside her own files, in a place only the sea could reach. And the sea just handed it to you.",
+                        };
                     if (s.Companion == "ipo")
                         return new List<string>
                         {

@@ -63,6 +63,7 @@ namespace Tidebound.EditorTools
             BuildMoaCompanion(mats);
             BuildVelaCompanion(mats);
             BuildIpoCompanion(mats);
+            BuildNineCompanion(mats);
             BuildRaftSite(mats);
             BuildPlayerCameraAndSystems(gameClockHost, director, encounterDirector);
 
@@ -1932,6 +1933,54 @@ namespace Tidebound.EditorTools
             interactable.interactRadius = 2.8f;
 
             model.SetActive(false); // the controller decides when he's real
+        }
+
+        /// <summary>Nine the companion (distinct from the story-stage NineRig,
+        /// which plays a rock): the tide pools' oldest question, shown once
+        /// the Clearing chose her. She never leaves the shallows band — the
+        /// controller clamps her whole world to the tideline.</summary>
+        static void BuildNineCompanion(Mats mats)
+        {
+            var root = new GameObject("NineCompanion");
+            root.transform.position = new Vector3(180f, 0.1f, 1f); // the shallows off her gallery
+
+            var model = new GameObject("Model");
+            model.transform.SetParent(root.transform, false);
+
+            // the russet mantle, and the golden slotted eye
+            LocalPrim(model.transform, PrimitiveType.Sphere, "Mantle",
+                new Vector3(0f, 0.2f, -0.06f), new Vector3(0.42f, 0.34f, 0.5f), mats.Copper);
+            LocalPrim(model.transform, PrimitiveType.Sphere, "EyeL",
+                new Vector3(-0.12f, 0.34f, 0.14f), Vector3.one * 0.08f, mats.Fruit);
+            LocalPrim(model.transform, PrimitiveType.Sphere, "EyeR",
+                new Vector3(0.12f, 0.34f, 0.14f), Vector3.one * 0.08f, mats.Fruit);
+            for (int arm = 0; arm < 8; arm++)
+            {
+                var a = LocalPrim(model.transform, PrimitiveType.Cylinder, "Arm",
+                    Quaternion.Euler(0f, arm * 45f + 22f, 0f) * new Vector3(0.3f, 0.06f, 0f),
+                    new Vector3(0.05f, 0.24f, 0.05f), mats.Copper);
+                a.transform.localRotation = Quaternion.Euler(80f, arm * 45f + 22f, 0f);
+            }
+            // one arm raised to trace the spiral; the wag reads as the tracing
+            var spiralArm = LocalPrim(model.transform, PrimitiveType.Cylinder, "SpiralArm",
+                new Vector3(0f, 0.34f, 0.3f), new Vector3(0.04f, 0.2f, 0.04f), mats.Copper, new Vector3(-60f, 0f, 0f));
+            var wag = spiralArm.AddComponent<TailWag>();
+
+            var controller = root.AddComponent<NineController>();
+            controller.model = model;
+            controller.tailWag = wag;
+            controller.trotSpeed = 2.6f;
+            controller.runSpeed = 5.5f;
+            controller.turnDegreesPerSecond = 300f;
+            controller.bobAmplitude = 0f; // she does not stride; she pours
+            controller.bobFrequency = 0f;
+            controller.galleryPoolPoint = new Vector3(186f, 0f, 2f);
+
+            var interactable = root.AddComponent<NineInteractable>();
+            interactable.controller = controller;
+            interactable.interactRadius = 3.5f; // met at the pool's edge, from dry footing
+
+            model.SetActive(false); // the controller decides when she's real
         }
 
         static GameObject LocalPrim(Transform parent, PrimitiveType type, string name,

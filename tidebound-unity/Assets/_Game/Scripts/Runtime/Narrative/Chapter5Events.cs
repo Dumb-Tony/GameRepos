@@ -390,6 +390,7 @@ namespace Tidebound.Narrative
                     s.AddRoute(RouteAxis.Depth, 3);
                     s.Stat(Meter.Energy, -12);
                     if (s.Companion == "ipo") s.Bond(8); // the fear-walk: his mathematics beat his terror
+                    if (s.Companion == "nine") s.Bond(5); // she threads in from the reef side, lit
                 },
                 Text = s => new List<string>
                 {
@@ -399,7 +400,9 @@ namespace Tidebound.Narrative
                     "It is a drowned world that empties twice a day and resents it. Walls sea-smoothed a hundred feet above the sea; galleries that boom with the far surge like a held word; and everywhere, threading the black rock in veins and lenses — <i>heartglass</i>, dark and glassy, catching your lamp and returning it a half-beat late, so that you walk in a crowd of your own delayed reflections.",
                     s.Companion == "ipo"
                         ? "And Ipo — Ipo of the shrieking dark-terrors, Ipo who bolted from the temple shadows of every scary story you've told yourself about this — Ipo walks INTO it ahead of you. He carries the spare brand in both small hands, teeth chattering audibly, tail wrapped around your arm like a mooring line, and he does not bolt. You are limping on a reef-cut; someone had to lead; the mathematics of that reached him before his fear did. It is the bravest thing you have ever watched anyone do at knee height."
-                        : "The seven-beat pulse doesn't glow down here — it <i>sounds</i>: felt in the breastbone, in the water, in the rock under your palms, the island's voice heard at last from inside the instrument.",
+                        : s.Companion == "nine"
+                            ? "You expected to enter alone — and then, in the first sea-pool inside the throat, a shape rises against your lamp: Nine. She has come in from the reef side, through channels only she could thread, and she is <i>lit</i> — faintly, unmistakably, her mantle running slow waves of the same seven-beat glow as the walls. In here, she doesn't reflect the island's pulse. She keeps time with it."
+                            : "The seven-beat pulse doesn't glow down here — it <i>sounds</i>: felt in the breastbone, in the water, in the rock under your palms, the island's voice heard at last from inside the instrument.",
                     "You go as deep as the lull allows and mark your high-water line like a debt, and climb out with the surge already talking behind you. Day one of the throat. It knows you were there.",
                 },
             });
@@ -732,6 +735,7 @@ namespace Tidebound.Narrative
             else if (s.Companion == "moa") guests.Add("Moa, at your side where the world belongs");
             else if (s.Companion == "vela") guests.Add("Vela, on the ridgepole above the feast — attending, in her way, which is the highest compliment she pays");
             else if (s.Companion == "ipo") guests.Add("Ipo, at your side where the world belongs");
+            else if (s.Companion == "nine") guests.Add("Nine, attending from the surf-wash at the table's seaward foot — the tide brought her as close as the world allows, which tonight is close enough");
             return guests.Count > 0 ? string.Join("; ", guests) : "everyone the season gathered";
         }
     }

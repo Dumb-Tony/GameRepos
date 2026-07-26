@@ -244,6 +244,41 @@ namespace Tidebound
             },
         };
 
+        // ---- scenes-chapter2.js TIER_LINE.nine, verbatim ---------------------
+        static readonly string[][] NineVignettes =
+        {
+            new[]
+            {
+                "Nine surfaces at the tideline when you pass, one eye out, noting.",
+                "There is a new shell on the flat rock at the tideline — placed, not washed. When you pick it up, the water twenty feet out swirls once — Nine, satisfied.",
+                "You have started narrating your shore walks without meaning to. Somewhere under the glitter, Nine, you are fairly sure, is taking minutes.",
+            },
+            new[]
+            {
+                "Nine waits at the pool's edge when you come down to the shore.",
+                "Nine has begun trading. Today: your dropped fishhook, recovered from four feet of water, exchanged at the pool's edge for one crab, market rate, no haggling.",
+                "The tide pools have been rearranged again overnight — but this time the sorted shells spell out a rough spiral pointing at YOUR camp. Filed. Catalogued. Claimed, possibly, by Nine.",
+            },
+            new[]
+            {
+                "Nine touches your hand when you reach into the water now.",
+                "Nine held your wrist a long moment today — reading your pulse the way you'd read a letter — then let go and slid back down into the dark, taking the news of you with her.",
+                "You cut your palm on coral and rinsed it in the shallows, and Nine came up out of nowhere and hovered her arms around the hurt without touching it — the reef's own triage, gentle and grave.",
+            },
+            new[]
+            {
+                "Nine solves things for you — knots, latches, shells — unasked.",
+                "The knot you couldn't manage last night is retied this morning. Correctly. Underwater, presumably, by touch alone, by Nine, who has eight separate opinions about your rope-work.",
+                "Nine has started leaving you puzzles: today a stone jar, lid screwed tight, one hermit crab inside, alive. You open it, release the crab, and leave the jar. By dusk: new crab. It's school, you realize. You're enrolled.",
+            },
+            new[]
+            {
+                "Nine watches you the way you watch the horizon: like it matters.",
+                "At slack tide Nine floated in the shallows while you waded, one arm around your ankle — not holding you back, not pulling. Just keeping. The way you'd rest a hand on a shoulder.",
+                "The gallery in the third pool has a new centerpiece: your lost button, the one from the wreck, recovered from wherever the sea filed it — mounted on the highest stone, facing your camp. You are in Nine's collection now.",
+            },
+        };
+
         static readonly Dictionary<string, string[][]> VignettesByCompanion =
             new Dictionary<string, string[][]>
             {
@@ -252,6 +287,7 @@ namespace Tidebound
                 ["moa"] = MoaVignettes,
                 ["vela"] = VelaVignettes,
                 ["ipo"] = IpoVignettes,
+                ["nine"] = NineVignettes,
             };
 
         public static IReadOnlyList<string> VignettesFor(TrustTier tier) => KaviVignettes[(int)tier];

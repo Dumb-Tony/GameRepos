@@ -315,7 +315,9 @@ namespace Tidebound.Narrative
                         ? "Kavi is sitting bolt upright beside you, ears full forward — at the water. Not the treeline. The <i>water</i>."
                         : s.Companion == "moa"
                             ? "Moa is awake in her box, utterly silent, feathers slicked flat — and facing the lagoon, which she has never once considered worth her professional attention before."
-                            : "Nothing else stirs. The reef breathes. The palms tick. Whatever counted that pause, it wasn't counting for your benefit.",
+                            : s.Companion == "nine"
+                                ? "And down at the tideline, half out of the water in the returning glow, Nine is watching — not the lagoon. <i>You.</i> As if the interesting question isn't what the island just did, but whether you finally noticed."
+                                : "Nothing else stirs. The reef breathes. The palms tick. Whatever counted that pause, it wasn't counting for your benefit.",
                 },
             });
         }
@@ -326,7 +328,7 @@ namespace Tidebound.Narrative
             script.Add(new StoryScene
             {
                 Id = "ev3_heart2",
-                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : s.Companion == "ipo" ? "Ipo" : "Kavi",
+                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : s.Companion == "ipo" ? "Ipo" : s.Companion == "nine" ? "Nine" : "Kavi",
                 OnEnter = s =>
                 {
                     if (s.Is("HEART2_DONE")) return;
@@ -334,9 +336,17 @@ namespace Tidebound.Narrative
                     s.Bond(10);
                     s.Stat(Meter.Hope, 8);
                     if (s.Companion == "ipo") { s.SetFlag("IPO_KEY"); s.AddRoute(RouteAxis.Depth, 2); }
+                    if (s.Companion == "nine") { s.SetFlag("SHIP_PHOTO"); s.AddRoute(RouteAxis.Depth, 2); s.AddRoute(RouteAxis.Signal, 1); }
                 },
                 Text = s =>
                 {
+                    if (s.Companion == "nine")
+                        return new List<string>
+                        {
+                            "On the fourteenth low tide Nine leads you out — deliberately, surfacing and waiting, surfacing and waiting — along the reef line to the drop-off where the sunk fuselage lies blue and quiet in three fathoms, and she goes down into it, into the drowned dark you cannot follow, and is gone a long two minutes.",
+                            "She comes back up with her arms full and lays it on the coral shelf between you like a verdict: the courier's photograph" + (s.Has("photo") ? " — its twin; the copy he kept" : "") + ", bleached but legible: a shoreline. A broken-crowned mountain. <i>This island</i> — photographed from the deck of a departing ship, dated in fountain pen, decades before your crash.",
+                            "Someone left this place, once, the ordinary way, and lived to file the picture. Nine holds the proof flat under one arm against the current, and watches you with her slotted golden eye, and you would swear on the wreck below that she knows exactly what she has just given you: <i>hope, with a bearing on it</i>.",
+                        };
                     if (s.Companion == "ipo")
                         return new List<string>
                         {
@@ -376,7 +386,7 @@ namespace Tidebound.Narrative
             script.Add(new StoryScene
             {
                 Id = "ev3_heart2_low",
-                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : s.Companion == "ipo" ? "Ipo" : "Kavi",
+                SpeakerDynamic = s => s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : s.Companion == "ipo" ? "Ipo" : s.Companion == "nine" ? "Nine" : "Kavi",
                 OnEnter = s =>
                 {
                     if (s.Is("HEART2_LOW")) return;
@@ -385,7 +395,7 @@ namespace Tidebound.Narrative
                 },
                 Text = s => new List<string>
                 {
-                    (s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : s.Companion == "ipo" ? "Ipo" : "Kavi") + " is still here. That's not nothing — out here, staying is the first vow and the hardest. But on the fourteenth morning you catch yourself narrating your plans to the fire instead of to them, and you feel the shape of the distance you've kept.",
+                    (s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : s.Companion == "ipo" ? "Ipo" : s.Companion == "nine" ? "Nine" : "Kavi") + " is still here. That's not nothing — out here, staying is the first vow and the hardest. But on the fourteenth morning you catch yourself narrating your plans to the fire instead of to them, and you feel the shape of the distance you've kept.",
                     "The wild keeps honest books. Walls, water, smoke, survival — all fair entries. But the bond is a crop like any other on this island: it grows exactly as much as you tend it, and the season does not wait.",
                 },
             });
@@ -481,6 +491,14 @@ namespace Tidebound.Narrative
                     },
                     new StoryChoice
                     {
+                        Label = "Nine's chart. She's already mapped his kingdom from below.",
+                        Sub = "Cross where the water says he never goes.",
+                        When = s => s.Companion == "nine" && s.Trust >= 50,
+                        Do = s => { s.SetFlag("GRIN_MAPPED"); s.SetFlag("EAST_OPEN"); s.Bond(4); s.AddRoute(RouteAxis.Depth, 1); },
+                        Go = "ch3_toll_nine",
+                    },
+                    new StoryChoice
+                    {
                         Label = "Fight him for it.",
                         Sub = "Spear, fire, and the worst idea available. It might even work — but hurt or weakened, he will collect you like rent.",
                         Do = s =>
@@ -513,6 +531,9 @@ namespace Tidebound.Narrative
             AddToll(script, "ch3_toll_kavi",
                 "Kavi teaches you the crossing the way the wild taught him: <i>never once be prey</i>. You enter the ford side by side, slow as ceremony, loud as ownership — no darting, no freezing, no scent of flight — while he holds the water's edge with his eyes and a growl pitched to travel through mud and bone.",
                 "Old Grin surfaces at thirty feet and considers you both: the upright thing that isn't running, the grey thing that isn't backing down, the whole expensive, unprofitable prospect of it. Patience does arithmetic. Arithmetic says wait for cheaper. He sinks like a decision, and you walk — walk — up the eastern bank.");
+            AddToll(script, "ch3_toll_nine",
+                "Nine's chart is drawn in patience: three nights of her moving through the drowned kingdom below while you slept, and this morning, in the wet sand, the result — channels, depths, and one line, traced twice, through backwaters where the water runs too thin and root-choked for six meters of anything.",
+                "You cross the East Passage without ever entering his country at all — waist-deep in nursery channels among mudskippers and fiddler crabs, guided turn by turn by a russet arm surfacing ahead of you like a ferryman's lamp. From the last pool she watches you climb the eastern bank, and the slotted eye holds something you'd call, in anyone else, professional satisfaction.");
             AddToll(script, "ch3_toll_ipo",
                 "What Ipo does at the East Passage will be, you are certain, the standard against which you measure audacity for the rest of your life.",
                 "He crosses the canopy alone to the far bank, descends to the mud in full view, and <i>heckles</i> the largest predator on the island — hurling sticks, shrieking abuse, performing a strut so insolent it has structure — until Old Grin, in the nearest thing a crocodile has to exasperation, commits his whole terrible length up the far mudbank after him. Ipo ascends a root like smoke going up a chimney. You cross the emptied channel at a dead sprint.",
@@ -603,6 +624,8 @@ namespace Tidebound.Narrative
                             ? "dodged entirely — you crossed at the dawn window while the cold held him. The swamp respects homework."
                             : s.Is("GRIN_STANDOFF")
                                 ? "faced down, side by side with Kavi, at a walk. Never once prey."
+                                : s.Is("GRIN_MAPPED")
+                                ? "never owed — Nine walked you through the back door of his kingdom."
                                 : s.Is("GRIN_DISTRACTED")
                                 ? "paid by Ipo, in the single greatest performance of his career. He will never let you forget it."
                                 : s.Is("GRIN_CONVOY")
@@ -649,11 +672,13 @@ namespace Tidebound.Narrative
                     s.Stat(Meter.Hope, 8);
                     s.AddRoute(RouteAxis.Roots, 1);
                 },
-                Text = _ => new List<string>
+                Text = s => new List<string>
                 {
                     "You hear it before you see it — a sound your body identifies faster than your mind, older than either: <i>running water</i>. Real, cold, moving water.",
                     "The Silverthread comes down out of the mountain's shadow through a green ravine, wide as a road, clear as glass over amber stones. Fish hang in the current like held breath. The banks are cut clay, grey and thick. Upstream, the water sounds bigger — falls, somewhere up in the folded country.",
-                    "You drink like a horse, laugh at nothing, and drink again. The daily arithmetic of coconuts and rain-catch — the tax your every plan has paid since Day 1 — just fell over dead.",
+                    s.Companion == "nine"
+                        ? "Fresh water is not Nine's country and she isn't here — but you find her mark anyway: at the river mouth where salt meets sweet, arranged on a flat stone above the tideline, a neat pile of freshwater mussel shells. Pointed upstream. She has known about this river the whole time, and has apparently been waiting, with some exasperation, for you to find the front door."
+                        : "You drink like a horse, laugh at nothing, and drink again. The daily arithmetic of coconuts and rain-catch — the tax your every plan has paid since Day 1 — just fell over dead.",
                     "The island has an artery, and now you hold it.",
                 },
             });
@@ -791,7 +816,9 @@ namespace Tidebound.Narrative
                                     ? "Then a shadow crosses the grove — Vela, wheeling once overhead, checking — and Edda tracks her with genuine respect. \"The old sea eagle. Blind-eyed. She's buried two mates and raised nine broods off Kestrel Cliffs. If she's keeping accounts with you, mind you stay solvent.\""
                                     : s.Companion == "ipo"
                                         ? "Then her eyes find Ipo, who is halfway into her seed basket, and the temperature drops forty degrees. \"And <i>that</i>,\" she says, with feeling, \"stays outside the fence, or I shoot it and we both pretend I didn't enjoy it.\""
-                                        : "She studies you a while, alone as you are, and something like approval crosses the old face. \"No pets, no partners, no nonsense. You'll either die quick or do well. I've seen both.\"");
+                                        : s.Companion == "nine"
+                                            ? "Then you mention — carefully, testing — what lives in your tide pools and works your reef, and Edda Voss puts down her cup. \"Sixty years,\" she says slowly, \"I have waited for one of them to pick a person. Describe her. Slowly. Leave nothing out.\""
+                                            : "She studies you a while, alone as you are, and something like approval crosses the old face. \"No pets, no partners, no nonsense. You'll either die quick or do well. I've seen both.\"");
                     return t;
                 },
                 Choices = new List<StoryChoice>

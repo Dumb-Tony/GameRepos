@@ -196,6 +196,12 @@ namespace Tidebound.Narrative
                     "So you walk to the cliffs at first light and you do the thing that a hundred days of debts and fish and stubborn one-eyed grace have earned you both: you open your hand. She stands on your wrist a long moment — heavier than she looks; she was always heavier than she looks — and then the wind comes up the cliff face like a door opening, and she goes into it, and does not circle, because circling is for birds with doubts.",
                     "What you were to each other survives what you couldn't keep; that is the whole lesson of her, learned at last. The ledge stays hers — nothing on the island dares it for three winters. And on a spring morning years on, a young eagle with a pale eye and a familiar contempt for gravity lands on your fence post, inspects your holdings like an auditor, and accepts — gravely, imperiously, exactly the way you were taught — one fish. The account, whoever now holds it, remains open.",
                 }),
+                ["NINES_GARDEN"] = ("NINE'S GARDEN", new[]
+                {
+                    "You rebuild at the tideline because that is where the treaty line runs: half your world drowned, all of it strange, none of it lonely. The new camp stands with its feet in the pools — a platform, a walkway, a fire that has learned to live with spray — and your nearest neighbor, landlord, and closest friend occupies the presidential pool at the center of everything, one golden eye keeping your hours.",
+                    "Life on her terms turns out to mean: gifts on the doorstep whose meanings you decode over years (the good shells are thanks; the crab claws are invoices; the sea-glass, you understand eventually, is <i>art</i>). It means being shown things — the nursery reefs, the current-doors, the drowned garden she tends below the third pool that no scientist will ever publish — at her pace, in her seasons, as you prove ready. It means learning to think tide-wise and moon-wise until your old land-clock rusts out of you entirely.",
+                    "The reef learns you the way the pack learned the fire-keeper: as a fixed strangeness that belongs. Octopuses who have never met you surface to watch you work, because watching you is, locally, a tradition now. You keep the garden. The garden, in its eight-armed, thousand-minded, salt-and-moonlight way, keeps you. Nobody anywhere has your life. That was the trade, and you'd make it again every tide.",
+                }),
                 ["WHAT_REMAINS"] = ("WHAT REMAINS", new[]
                 {
                     "You stay because of the afternoon you almost didn't get to. That's the whole ledger of it: once, in the middle of these hundred days, the island reached out and nearly took the one warm life it had lent you — and then, for reasons you nursed into being with boiled water and your two hands and every hour you had, it didn't. The scar is right there. You can rest your hand on it. You do, more than you'd admit.",
@@ -238,6 +244,7 @@ namespace Tidebound.Narrative
             ["moa"] = "It sees six ounces of copper courage that has never yielded a path in her life — the smallest keeper any mural will ever show, and the murals <i>will</i> show her; you live to watch the Kaari cut the first one. The seven beats pause. Recount. <i>Accept.</i> Keeper Moa stands her watch the way she stood every one of yours: entirely. In the years after, storms are observed — measured, Ryo insists, logged — to go <i>around</i>.",
             ["vela"] = "It sees an empress with one eye and a ledger where a heart should be — no. You have watched closer than that, all season. A ledger <i>as</i> a heart: every debt remembered, every payment honored, forgiveness at fair market rates and no defaults, not one, in thirty years of wind. The seven beats pause. Recount. <i>Accept.</i> Keeper Vela takes the whole sky for her parish, and the island's weather begins arriving, there is no other word for it, punctually.",
             ["ipo"] = "It sees a thief who pays his debts, a tactician who abandons nothing, the only creature on this island who already operates a treasury. The seven beats pause — and then, you will swear this at any fire for the rest of your life, they <i>laugh</i>. Keeper Ipo audits his new estate within the week: the canopy roads, the fig tithes, the reef's ancient accounts, four centuries of covenant bookkeeping brought suddenly and gloriously up to date. The island has never been so well administered. It appears, if anything, delighted.",
+            ["nine"] = "It sees what it has been waiting for since the boats: the water's own attention. Three hearts, nine answers, a gallery of sorted shells curated for absolutely no one — attention as love, which was the covenant's whole ask, all along, in every mural. The seven beats pause. Recount. <i>Accept</i> — and here is the island's receipt, the one you never dared price out loud: the covenant keeps what keeps it. Her three springs become the pool's count now, not hers. Keeper Nine has all the time the door has. You stood there and watched mortality lift off your friend like weather.",
         };
 
         static (string, string[]) BuildIslandsOwn(GameState s)
@@ -292,7 +299,8 @@ namespace Tidebound.Narrative
             string id = s.EndingId;
             if (id == null) return t;
             bool leaving = Leaving(id);
-            bool companionCovered = id == "ISLANDS_OWN" || id == "LAST_PACK" || id == "SOUNDER" || id == "WIND_TAKES" || id == "TRICKSTER";
+            bool companionCovered = id == "ISLANDS_OWN" || id == "LAST_PACK" || id == "SOUNDER" || id == "WIND_TAKES"
+                || id == "TRICKSTER" || id == "THREE_SPRINGS" || id == "NINES_GARDEN" || id == "ROOSTER_DAWN";
 
             if (id == "ISLANDS_OWN" && s.Is("EDDA_MET"))
                 t.Add("— Edda hears it before you finish saying it — she always hears it — and sets down the pestle and looks at you for a long, still moment. \"Forty years,\" she says at last, \"I wondered what that pool was holding the post open <i>for</i>. It was never waiting for a better human.\" A snort, at herself, at everything. \"It was waiting for you to introduce them.\" She takes tea up the mountain every new moon after. She is, every time, received.");
@@ -342,6 +350,13 @@ namespace Tidebound.Narrative
                 else if (!leaving)
                     t.Add("— Ipo achieves everything: the troop (his, in time, by a palace intrigue you witnessed and still don't understand), the treasury (moved to your rafters, an honor), and the audience — you, forever, front row. His grandchildren steal from you with your blessing. Mostly.");
             }
+            else if (s.Companion == "nine" && !companionCovered)
+            {
+                if (leaving && id != "SAIL_BLESSED" && id != "WHOLE_SKY")
+                    t.Add("— Nine follows the hull out — you see her in the bow-wave glow, keeping pace, one long arm breaking the surface once in that unmistakable spiral — to the reef gate, and no further. Her whole world ends at that line. Yours, she has always known, never did. The last you see is the light of her, going down.");
+                else if (!leaving)
+                    t.Add("— Nine's three springs come due, as they were always coming. She grows slow the last season; she shows you the den, and the clutch, and stays your hand from the useless things with one long patient arm — and the island, which repays its debts, sends you at the end what it sends no one: her hatchlings hunting your tide pools, and one among them, in time, who rises to watch you with a slotted golden eye, and traces, unmistakably, a spiral.");
+            }
             else if (s.Companion == null && id != "ALONE_UNBROKEN")
                 t.Add("— You did the whole of it alone — the solo route, the hardest road on the island — and the Ledger marks it in the old way: <i>Alone, unbroken.</i>");
             if (s.Is("EDDA_MET") && id != "HERMIT_HEIR" && id != "ISLANDS_OWN")
@@ -376,7 +391,7 @@ namespace Tidebound.Narrative
             if (!s.Is("CONTACT_MADE")) roads.Add("a radio's four-second window opened for no one");
             if (s.Companion != null) roads.Add("five other wild lives waited at a clearing that only ever chose one");
             string tier = s.Trust >= 100 ? "kindred" : s.Trust >= 75 ? "devoted" : s.Trust >= 50 ? "bonded" : s.Trust >= 25 ? "tolerant" : "wary";
-            string companionName = s.Companion == "kavi" ? "Kavi" : s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : s.Companion == "ipo" ? "Ipo" : s.Companion;
+            string companionName = s.Companion == "kavi" ? "Kavi" : s.Companion == "buri" ? "Buri" : s.Companion == "moa" ? "Moa" : s.Companion == "vela" ? "Vela" : s.Companion == "ipo" ? "Ipo" : s.Companion == "nine" ? "Nine" : s.Companion;
             return new List<string>
             {
                 "<i>— THE LEDGER OPENS —</i>",

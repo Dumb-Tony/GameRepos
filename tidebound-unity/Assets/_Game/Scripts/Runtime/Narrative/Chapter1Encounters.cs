@@ -631,6 +631,14 @@ namespace Tidebound.Narrative
                     },
                     new StoryChoice
                     {
+                        Label = "The octopus",
+                        Sub = "The tide pools' oldest question. She watches you with one slotted eye, and copies what you do.",
+                        When = s => s.Met.TryGetValue("nine", out var m) && m,
+                        Do = s => { s.Companion = "nine"; s.SetFlag("CLEARING_DONE"); },
+                        Go = "court_nine",
+                    },
+                    new StoryChoice
+                    {
                         Label = "No one. You will do this alone.",
                         Sub = "No mouths to feed but yours. No one to lose but yourself. The hardest road, and wholly your own.",
                         Do = s => { s.SetFlag("CLEARING_DONE"); s.SetFlag("SOLO_ROUTE"); s.AddRoute(RouteAxis.Roots, 1); },
@@ -770,6 +778,53 @@ namespace Tidebound.Narrative
                             s.Warm("moa", 1);
                             s.Stat(Meter.Hunger, -2);
                             s.Stat(Meter.Hope, 5);
+                            CompanionLogic.InitTrust(s);
+                        },
+                        Go = "ch2_open",
+                    },
+                },
+            });
+
+            script.Add(new StoryScene
+            {
+                Id = "court_nine",
+                Speaker = "Nine",
+                Text = s => new List<string>
+                {
+                    "You give your last free hours to the pools, which is — by every survival arithmetic you know — indefensible. You bring a live crab, and your patience, and you sit down at the edge of her pool in the low gold light like a student early for class.",
+                    "She emerges the way she does everything: as a correction to your assumptions about matter. She takes the crab — a brief, expert, upsetting demonstration of what those arms are — and then, meal concluded, she does the thing that ends any argument you were still having with yourself.",
+                    "She reaches up out of the water and lays one arm-tip, light as a thought, on the back of your hand. Tasting you, you'll learn later; octopuses read the world by touch. But what it feels like, in the moment, is being <i>read</i> — thoroughly, gently, without judgment — by something with three hearts and no reason to bother.",
+                    (s.Interest.TryGetValue("nine", out var w) && w >= 3
+                        ? "The oyster lesson, the offered tribute, the hours you gave a rock that watched: it was all, apparently, syllabus. "
+                        : "")
+                    + "When she withdraws, she traces the spiral again — in the wet sand this time, unmistakable, deliberate — and then points herself out toward the darkening reef and pauses. Looking back. An invitation, patient as tide.",
+                    "There is so much water around this island. You are beginning to suspect she knows what's in all of it.",
+                },
+                Choices = new List<StoryChoice>
+                {
+                    new StoryChoice
+                    {
+                        Label = "\"Nine.\" For the brains, the arms' near-count, the ninth wave.",
+                        Sub = "Every version of the name is true.",
+                        Do = s =>
+                        {
+                            s.Warm("nine", 2);
+                            s.Stat(Meter.Hope, 5);
+                            s.AddRoute(RouteAxis.Depth, 1);
+                            s.SetFlag("NINE_NAMED");
+                            CompanionLogic.InitTrust(s);
+                        },
+                        Go = "ch2_open",
+                    },
+                    new StoryChoice
+                    {
+                        Label = "Trace the spiral back in the sand beside hers.",
+                        Sub = "Answer in her language.",
+                        Do = s =>
+                        {
+                            s.Warm("nine", 1);
+                            s.AddRoute(RouteAxis.Depth, 2);
+                            s.Stat(Meter.Hope, 4);
                             CompanionLogic.InitTrust(s);
                         },
                         Go = "ch2_open",
