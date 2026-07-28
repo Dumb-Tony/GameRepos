@@ -1,8 +1,8 @@
-import { createInitialState, GameStore } from "./engine/game-state.js?v=northstar-20260728a";
-import { ScreenRouter } from "./engine/router.js?v=northstar-20260728a";
-import { SaveSystem } from "./engine/save-system.js?v=northstar-20260728a";
-import { AudioEngine } from "./systems/audio/audio-engine.js?v=northstar-20260728a";
-import { GameApp } from "./ui/app.js?v=northstar-20260728a";
+import { createInitialState, GameStore } from "./engine/game-state.js?v=northstar-20260728b";
+import { ScreenRouter } from "./engine/router.js?v=northstar-20260728b";
+import { SaveSystem } from "./engine/save-system.js?v=northstar-20260728b";
+import { AudioEngine } from "./systems/audio/audio-engine.js?v=northstar-20260728b";
+import { GameApp } from "./ui/app.js?v=northstar-20260728b";
 
 const root = document.querySelector("#app");
 const saves = new SaveSystem();

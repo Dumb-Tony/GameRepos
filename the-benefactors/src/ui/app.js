@@ -8,7 +8,7 @@ import {
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=northstar-20260728a";
+} from "../content/casebook-content.js?v=northstar-20260728b";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
