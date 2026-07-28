@@ -68,6 +68,15 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Persistent reporter’s notebook with objective tracking and three-stage hints
 - Responsive and high-contrast layouts for all new screens
 
+**Milestone 6 — Follow Northstar (complete)**
+
+- New illustrated location at 1400 Harrow Street
+- Building-manager interview with evidence-gated questions
+- Fictitious Suite 410 contradiction and courier-route evidence
+- Three new viewable evidence artifacts and one case conclusion
+- Evidence-board deduction linking Northstar to Brighter Horizon
+- Updated notebook objectives, hints, map route, and save migration
+
 **Prologue content now playable**
 
 - Photograph the missing west wing

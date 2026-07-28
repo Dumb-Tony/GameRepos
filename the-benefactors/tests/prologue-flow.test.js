@@ -182,6 +182,10 @@ test("reconstructs Vale's recording, proves the distress signal, and saves the e
     state.evidence.collected.includes("meridian_gala_photograph"),
     true,
   );
+  assert.equal(
+    state.progress.unlockedLocations.includes("northstar_harrow"),
+    true,
+  );
 
   const saves = new SaveSystem(new MemoryStorage());
   saves.save(state, "prologue-complete");

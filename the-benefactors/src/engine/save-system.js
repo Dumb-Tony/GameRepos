@@ -184,6 +184,14 @@ export class SaveSystem {
       };
     }
 
+    if (
+      legacyVersion < 9 &&
+      migrated.progress.prologueComplete &&
+      !migrated.progress.unlockedLocations.includes("northstar_harrow")
+    ) {
+      migrated.progress.unlockedLocations.push("northstar_harrow");
+    }
+
     return migrated;
   }
 }

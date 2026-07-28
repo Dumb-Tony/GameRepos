@@ -169,3 +169,24 @@ test("migrates Milestone 5 saves with an empty persistent notebook", () => {
   assert.deepEqual(migrated.journal.revealedHints, {});
   assert.equal(migrated.player.firstName, "Sam");
 });
+
+test("unlocks Harrow Street for completed Milestone 5 saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Rae" });
+  previous.version = 8;
+  previous.progress.prologueComplete = true;
+  previous.progress.unlockedLocations =
+    previous.progress.unlockedLocations.filter(
+      (locationId) => locationId !== "northstar_harrow",
+    );
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(
+    migrated.progress.unlockedLocations.includes("northstar_harrow"),
+    true,
+  );
+});

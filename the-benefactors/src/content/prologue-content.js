@@ -161,6 +161,7 @@ export const PROLOGUE_ENDING_BEATS = Object.freeze([
     ],
     completionEffects: [
       { type: "setPath", path: "progress.prologueComplete", value: true },
+      { type: "unlockLocation", id: "northstar_harrow" },
     ],
   },
 ]);

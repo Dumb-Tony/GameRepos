@@ -4,11 +4,11 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=prologue-20260726c";
+} from "../content/game-content.js?v=northstar-20260728a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=notebook-20260728a";
+} from "../content/casebook-content.js?v=northstar-20260728a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
@@ -19,15 +19,15 @@ import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=prologue-20260726c";
+} from "../content/prologue-content.js?v=northstar-20260728a";
 import { evaluateCondition } from "../engine/conditions.js?v=prologue-20260726a";
 import { applyEffects } from "../engine/events.js?v=prologue-20260726a";
-import { createInitialState } from "../engine/game-state.js?v=prologue-20260726a";
+import { createInitialState } from "../engine/game-state.js?v=northstar-20260728a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
 } from "../engine/player-language.js?v=prologue-20260726a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=notebook-20260728a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=northstar-20260728a";
 import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=prologue-20260726a";
 import {
   advanceDialogue,
@@ -758,12 +758,31 @@ export class GameApp {
   renderHome() {
     const state = this.store.getState();
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
-    const caseUpdate = state.progress.prologueComplete
+    const caseUpdate = state.flags.northstarRoutesToBrighterHorizon
       ? {
-          title: "The next address",
+          title: "A charity collecting shell-company mail",
           text:
-            "The gala photograph and Northstar’s Harrow Street address wait on the board. The renovation story is over. The larger one has begun.",
+            "Northstar's courier trail ends at Brighter Horizon Foundation, 8 Calder Square. The people in the gala photograph are no longer background faces.",
         }
+      : state.flags.foundNorthstarCourierManifest &&
+          state.flags.photographedHarrowDirectory
+        ? {
+            title: "Northstar's empty office",
+            text:
+              "Suite 410 does not exist, but its mail does. Put the Harrow Street evidence beside the gala photograph on the board.",
+          }
+        : (state.locationVisits.northstar_harrow || 0) > 0
+          ? {
+              title: "Suite 410 does not exist",
+              text:
+                "The fourth floor ends at 409. Photograph the directory, question the manager, and find out who collects Northstar's mail.",
+            }
+          : state.progress.prologueComplete
+            ? {
+                title: "The next address",
+                text:
+                  "The gala photograph and Northstar’s Harrow Street address wait on the board. The renovation story is over. The larger one has begun.",
+              }
       : state.flags.prologueEndingReady
         ? {
             title: "Three knocks at the door",
@@ -810,7 +829,7 @@ export class GameApp {
 
     this.root.innerHTML = `
       <main id="game-main" class="screen game-screen office-screen">
-        ${this.renderGameHeader(GAME_CONTENT.chapter, "Home office")}
+        ${this.renderGameHeader(this.chapterLabel(state), "Home office")}
         <section class="scene-frame" aria-label="Home office">
           <div class="office-room office-state-${state.progress.officeState} has-illustration">
             <img
@@ -940,7 +959,7 @@ export class GameApp {
 
     this.root.innerHTML = `
       <main id="game-main" class="screen game-screen location-screen">
-        ${this.renderGameHeader(GAME_CONTENT.chapter, location.name)}
+        ${this.renderGameHeader(this.chapterLabel(state), location.name)}
         <section class="location-stage">
           ${renderExplorationScene(location, state)}
           <article class="location-copy">
@@ -1085,7 +1104,7 @@ export class GameApp {
 
     this.root.innerHTML = `
       <main id="game-main" class="screen game-screen puzzle-screen alignment-screen">
-        ${this.renderGameHeader(GAME_CONTENT.chapter, "Mayor Vale’s study")}
+        ${this.renderGameHeader(this.chapterLabel(state), "Mayor Vale’s study")}
         <section class="puzzle-shell" aria-labelledby="alignment-title">
           <header class="puzzle-heading">
             <div>
@@ -1280,7 +1299,7 @@ export class GameApp {
 
     this.root.innerHTML = `
       <main id="game-main" class="screen game-screen puzzle-screen recording-screen">
-        ${this.renderGameHeader(GAME_CONTENT.chapter, "Hidden communications room")}
+        ${this.renderGameHeader(this.chapterLabel(state), "Hidden communications room")}
         <section class="puzzle-shell" aria-labelledby="recording-title">
           <header class="puzzle-heading">
             <div>
@@ -1652,7 +1671,7 @@ export class GameApp {
 
     this.root.innerHTML = `
       <main id="game-main" class="screen game-screen map-screen">
-        ${this.renderGameHeader(GAME_CONTENT.chapter, "City map")}
+        ${this.renderGameHeader(this.chapterLabel(state), "City map")}
         <section class="map-stage">
           <div class="map-paper" aria-label="Map of Greyhaven">
             <span class="river river-one" aria-hidden="true"></span>
@@ -1865,7 +1884,7 @@ export class GameApp {
 
     this.root.innerHTML = `
       <main id="game-main" class="screen game-screen board-screen">
-        ${this.renderGameHeader(GAME_CONTENT.chapter, "Evidence board")}
+        ${this.renderGameHeader(this.chapterLabel(state), "Evidence board")}
         <section class="board-workspace">
           <section class="connection-builder" aria-labelledby="connection-builder-title">
             <div class="connection-builder-heading">
@@ -2599,6 +2618,12 @@ export class GameApp {
     this.root.querySelector("[data-action='back']").addEventListener("click", () => {
       this.router.navigate(this.returnRoute);
     });
+  }
+
+  chapterLabel(state = this.store.getState()) {
+    return state.progress.prologueComplete
+      ? "Chapter 1 · Follow Northstar"
+      : GAME_CONTENT.chapter;
   }
 
   renderGameHeader(chapter, place) {

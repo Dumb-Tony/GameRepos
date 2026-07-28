@@ -93,14 +93,59 @@ export const CASEBOOK_STAGES = Object.freeze([
     ],
   },
   {
-    id: "northstar",
+    id: "visit_northstar",
     title: "Follow Northstar",
-    objective: "The prologue is complete. The registered address at 1400 Harrow Street is the next lead.",
+    objective: "Visit Northstar Civic Works at its registered address: 1400 Harrow Street, Suite 410.",
+    activeWhen: {
+      not: { type: "visited", location: "northstar_harrow" },
+    },
+    hints: [
+      "The address from the photograph is now marked on the city map.",
+      "Travel to 1400 Harrow Street and inspect the fourth floor.",
+      "Northstar claims Suite 410. Begin with the brass directory.",
+    ],
+  },
+  {
+    id: "investigate_northstar",
+    title: "The office that isn't there",
+    objective: "Prove Suite 410 is fictitious and learn where Northstar's mail really goes.",
+    activeWhen: {
+      any: [
+        { type: "flag", key: "photographedHarrowDirectory", equals: false },
+        { type: "flag", key: "questionedHarrowManager", equals: false },
+        { type: "flag", key: "foundNorthstarCourierManifest", equals: false },
+      ],
+    },
+    hints: [
+      "The directory, building manager, and mail cart each reveal part of Northstar's arrangement.",
+      "Photograph the directory, question Oren Pike, and inspect the canceled pickup sheet.",
+      "The discarded manifest on the mail cart names the organization receiving Northstar's envelopes.",
+    ],
+  },
+  {
+    id: "connect_northstar",
+    title: "Follow the courier route",
+    objective: "Use the evidence board to connect Northstar's false office to Brighter Horizon.",
+    activeWhen: {
+      type: "flag",
+      key: "northstarRoutesToBrighterHorizon",
+      equals: false,
+    },
+    hints: [
+      "One connection disproves the address. The other identifies who receives Northstar's mail.",
+      "Connect the Northstar address to the directory photo with White · Contradiction.",
+      "Connect the courier manifest to the gala photograph with Red · Confirmed.",
+    ],
+  },
+  {
+    id: "brighter_horizon",
+    title: "Brighter Horizon",
+    objective: "Northstar is a mailbox. The next lead is Brighter Horizon Foundation at 8 Calder Square.",
     activeWhen: null,
     hints: [
-      "Review the gala photograph and Northstar address on the board.",
-      "The circled man appears at a Brighter Horizon benefit.",
-      "The next playable chapter will begin at 1400 Harrow Street.",
+      "Review the new Brighter Horizon connection in the case file.",
+      "The gala photograph and courier manifest place the same charity on both ends of the trail.",
+      "The investigation will continue at 8 Calder Square in the next playable chapter.",
     ],
   },
 ]);
@@ -113,4 +158,7 @@ export const CASEBOOK_PROGRESS = Object.freeze([
   { label: "Vale’s message restored", when: { type: "flag", key: "recordingReconstructed" } },
   { label: "Distress signal proven", when: { type: "flag", key: "prologueEndingReady" } },
   { label: "Northstar lead recovered", when: { type: "path", path: "progress.prologueComplete", equals: true } },
+  { label: "Harrow Street investigated", when: { type: "visited", location: "northstar_harrow" } },
+  { label: "Courier route recovered", when: { type: "flag", key: "foundNorthstarCourierManifest" } },
+  { label: "Brighter Horizon connection proven", when: { type: "flag", key: "northstarRoutesToBrighterHorizon" } },
 ]);

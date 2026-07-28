@@ -219,6 +219,75 @@ export const EVIDENCE = Object.freeze({
       ],
     },
   },
+  harrow_directory_photo: {
+    id: "harrow_directory_photo",
+    title: "Harrow Street directory photograph",
+    category: "photograph",
+    summary: "The fourth-floor directory stops at Suite 409. Suite 410 does not exist.",
+    artifact: {
+      type: "photo",
+      caption: "1400 HARROW STREET · FOURTH-FLOOR DIRECTORY",
+      annotations: [
+        "SUITES 401–409 listed in sequence",
+        "No blank plate or removed lettering after Suite 409",
+        "Northstar invoice lists SUITE 410",
+        "Directory frame predates Northstar’s city registration",
+      ],
+    },
+  },
+  harrow_manager_statement: {
+    id: "harrow_manager_statement",
+    title: "Oren Pike’s statement",
+    category: "recording",
+    summary: "The building manager never saw Northstar staff, only weekly courier pickups.",
+    artifact: {
+      type: "transcript",
+      heading: "RECORDED STATEMENT — OREN PIKE",
+      timestamp: "2:16 PM · 1400 Harrow Street",
+      lines: [
+        ["ROWAN", "Who worked in Suite 410?"],
+        ["OREN PIKE", "Nobody. There is no 410. Never has been."],
+        ["ROWAN", "Then who collected Northstar’s mail?"],
+        ["OREN PIKE", "A courier came every Friday. Same green badge as the Brighter Horizon people."],
+        ["OREN PIKE", "Yesterday they emptied the box and told me to return anything new."],
+      ],
+    },
+  },
+  northstar_courier_manifest: {
+    id: "northstar_courier_manifest",
+    title: "Northstar courier manifest",
+    category: "document",
+    summary: "Northstar mail was redirected through Brighter Horizon’s local office.",
+    artifact: {
+      type: "memo",
+      heading: "HARROW STREET — COURIER PICKUP LOG",
+      body: [
+        "ACCOUNT: NORTHSTAR CONSTRUCTION GROUP",
+        "PICKUP: FRIDAY · 17:30 · LOBBY HOLD",
+        "ROUTE: BRIGHTER HORIZON / GREYHAVEN LOCAL",
+        "AUTHORIZED CONTACT: E. MARSH",
+        "FINAL COLLECTION: YESTERDAY · BOX CLOSED",
+      ],
+      handwritten: "Return all new Northstar mail to sender. — O.P.",
+    },
+  },
+  brighter_horizon_connection: {
+    id: "brighter_horizon_connection",
+    title: "Brighter Horizon connection",
+    category: "organization",
+    summary: "Northstar’s mail and E. Marsh both route through Brighter Horizon.",
+    artifact: {
+      type: "memo",
+      heading: "NEW LEAD — BRIGHTER HORIZON",
+      body: [
+        "GREYHAVEN LOCAL OFFICE · 8 CALDER SQUARE",
+        "Northstar’s courier route terminates at the foundation.",
+        "The pickup authorization names E. Marsh—the same token on Vale’s permit amendment.",
+        "The anonymous gala photograph identifies founder Cassian Rook.",
+      ],
+      handwritten: "A charity receiving mail for a contractor that does not exist.",
+    },
+  },
 });
 
 export const INVENTORY_ITEMS = Object.freeze({
@@ -373,6 +442,70 @@ export const DIALOGUES = Object.freeze({
       },
     },
   },
+  harrow_manager: {
+    id: "harrow_manager",
+    character: "Oren Pike",
+    portrait: "OP",
+    start: "intro",
+    nodes: {
+      intro: {
+        id: "intro",
+        speaker: "Oren Pike",
+        text: "If you are here for 410, save yourself the walk. This floor ends at 409.",
+        choices: [
+          {
+            id: "show-address",
+            text: "Northstar lists Suite 410 as its registered office.",
+            evidenceId: "northstar_address",
+            requires: { type: "hasEvidence", id: "northstar_address" },
+            next: "northstar",
+          },
+          { id: "ask-directory", text: "Was a plate removed from the directory?", next: "directory" },
+          { id: "leave", text: "I’ll look around.", end: true },
+        ],
+      },
+      directory: {
+        id: "directory",
+        speaker: "Oren Pike",
+        text: "That brass has been there since my father ran the desk. There was never another office after 409.",
+        choices: [
+          {
+            id: "show-address",
+            text: "Then explain Northstar’s registered address.",
+            evidenceId: "northstar_address",
+            requires: { type: "hasEvidence", id: "northstar_address" },
+            next: "northstar",
+          },
+          { id: "back", text: "Let me ask something else.", next: "intro" },
+        ],
+      },
+      northstar: {
+        id: "northstar",
+        speaker: "Oren Pike",
+        text: "Never saw an employee. Their mail sat in my hold box until a courier collected it every Friday.",
+        onEnter: [
+          { type: "setFlag", key: "questionedHarrowManager", value: true },
+          { type: "collectEvidence", id: "harrow_manager_statement" },
+        ],
+        choices: [
+          { id: "ask-courier", text: "Who sent the courier?", next: "courier" },
+          { id: "ask-last", text: "When was the last pickup?", next: "last-pickup" },
+        ],
+      },
+      courier: {
+        id: "courier",
+        speaker: "Oren Pike",
+        text: "Green badge. Brighter Horizon. They run a local office near Calder Square and apparently collect mail for imaginary builders.",
+        choices: [{ id: "finish", text: "I need to see the pickup record.", end: true }],
+      },
+      "last-pickup": {
+        id: "last-pickup",
+        speaker: "Oren Pike",
+        text: "Yesterday. Cleared the box, canceled the route, and left that copy on my cart. Convenient timing, wouldn’t you say?",
+        choices: [{ id: "finish", text: "Convenient enough to photograph.", end: true }],
+      },
+    },
+  },
 });
 
 export const DEDUCTIONS = Object.freeze({
@@ -450,6 +583,38 @@ export const DEDUCTIONS = Object.freeze({
       { type: "setFlag", key: "confirmedMeridianLead", value: true },
       { type: "setFlag", key: "prologueEndingReady", value: true },
       { type: "setPath", path: "progress.officeState", value: 2 },
+    ],
+  },
+  northstar_mail_route: {
+    id: "northstar_mail_route",
+    title: "Northstar was a mailbox for Brighter Horizon",
+    journalText:
+      "Suite 410 never existed. Northstar’s mail was collected by Brighter Horizon under the same E. Marsh name used to alter Vale’s permit.",
+    notification:
+      "Northstar leads directly to Brighter Horizon’s Greyhaven office.",
+    requiredDeductions: ["vale_distress_signal"],
+    requiredEvidence: [
+      "northstar_address",
+      "harrow_directory_photo",
+      "northstar_courier_manifest",
+      "meridian_gala_photograph",
+    ],
+    requiredConnections: [
+      {
+        a: "northstar_address",
+        b: "harrow_directory_photo",
+        type: "contradiction",
+      },
+      {
+        a: "northstar_courier_manifest",
+        b: "meridian_gala_photograph",
+        type: "confirmed",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "northstarRoutesToBrighterHorizon", value: true },
+      { type: "setPath", path: "progress.officeState", value: 3 },
+      { type: "collectEvidence", id: "brighter_horizon_connection" },
     ],
   },
 });
@@ -750,6 +915,93 @@ export const GAME_CONTENT = Object.freeze({
           height: 34,
           title: "Fresh cable conduit",
           text: "The conduit runs toward the street, not the house. This room was connected to something outside.",
+        },
+      ],
+    },
+    northstar_harrow: {
+      id: "northstar_harrow",
+      name: "1400 Harrow Street",
+      eyebrow: "Fourth floor · 2:09 PM",
+      mapX: 22,
+      mapY: 65,
+      description:
+        "Northstar's registered address belongs to a building whose directory ends one suite too early.",
+      sceneClass: "scene-northstar-harrow",
+      sceneArt: "./assets/scenes/northstar-harrow.webp",
+      hotspots: [
+        {
+          id: "harrow_directory",
+          label: "Brass directory",
+          x: 17,
+          y: 13,
+          width: 18,
+          height: 34,
+          title: "Fourth-floor directory",
+          text: "The engraved list runs from 401 to 409. Northstar's invoices claim Suite 410.",
+          actionLabel: "Photograph the directory",
+          resultText:
+            "The directory photograph is in the case file. There is no Suite 410.",
+          effects: [
+            { type: "setFlag", key: "photographedHarrowDirectory", value: true },
+            { type: "collectEvidence", id: "harrow_directory_photo" },
+          ],
+          actionWhen: {
+            not: { type: "flag", key: "photographedHarrowDirectory" },
+          },
+        },
+        {
+          id: "oren_pike",
+          label: "Building manager",
+          x: 9,
+          y: 43,
+          width: 24,
+          height: 34,
+          title: "Oren Pike, building manager",
+          text: "He watches the elevator like it owes him rent.",
+          actionLabel: "Question Oren Pike",
+          dialogueId: "harrow_manager",
+        },
+        {
+          id: "missing_suite",
+          label: "Where 410 should be",
+          x: 58,
+          y: 21,
+          width: 23,
+          height: 49,
+          title: "End of the fourth floor",
+          text:
+            "Past 409 is an exterior wall. No door, no covered number, and no room for another office.",
+        },
+        {
+          id: "northstar_mail_cart",
+          label: "Canceled pickup sheet",
+          x: 81,
+          y: 46,
+          width: 18,
+          height: 45,
+          title: "Canceled pickup sheet",
+          text: "A carbon copy is still clipped beneath today's outgoing mail.",
+          actionLabel: "Inspect the pickup sheet",
+          resultText:
+            "The manifest reroutes Northstar's mail to Brighter Horizon Foundation—authorized by E. Marsh.",
+          effects: [
+            { type: "setFlag", key: "foundNorthstarCourierManifest", value: true },
+            { type: "collectEvidence", id: "northstar_courier_manifest" },
+          ],
+          actionWhen: {
+            not: { type: "flag", key: "foundNorthstarCourierManifest" },
+          },
+        },
+        {
+          id: "harrow_elevator",
+          label: "Service elevator",
+          x: 37,
+          y: 24,
+          width: 17,
+          height: 53,
+          title: "Service elevator",
+          text:
+            "The brass panel remembers every floor except the one Northstar claims to occupy.",
         },
       ],
     },
