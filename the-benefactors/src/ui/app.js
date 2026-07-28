@@ -23,7 +23,7 @@ import {
   getPlayerLanguage,
   interpolatePlayerText,
 } from "../engine/player-language.js?v=prologue-20260726a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=prologue-20260726a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=polish-20260727b";
 import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=prologue-20260726a";
 import {
   advanceDialogue,
@@ -67,12 +67,24 @@ function escapeHtml(value = "") {
     .replaceAll("'", "&#039;");
 }
 
+function formatSaveTimestamp(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Unknown time";
+  return new Intl.DateTimeFormat(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date);
+}
+
 export class GameApp {
-  constructor({ root, store, saves, router }) {
+  constructor({ root, store, saves, router, audio }) {
     this.root = root;
     this.store = store;
     this.saves = saves;
     this.router = router;
+    this.audio = audio;
     this.notice = new TransientNotice({
       onExpire: () => {
         this.root.querySelector(".toast")?.remove();
@@ -91,12 +103,39 @@ export class GameApp {
     this.activeEvidenceId = null;
     this.puzzleAnnouncement = "";
     this.activeRecordingFragmentId = null;
+    this.pendingDeleteSlot = null;
     this.evidenceViewerActionsBound = false;
   }
 
   start() {
-    this.store.subscribe((state) => this.applyPreferences(state.settings));
+    this.store.subscribe((state) => {
+      this.applyPreferences(state.settings);
+      this.audio?.setSettings(state.settings);
+    });
     this.applyPreferences(this.store.getState().settings);
+    this.audio?.setSettings(this.store.getState().settings);
+    this.root.addEventListener(
+      "pointerdown",
+      () => {
+        this.audio?.unlock().catch?.(() => {});
+      },
+      { once: true, capture: true },
+    );
+    this.root.addEventListener("click", (event) => {
+      if (event.target.closest?.("button")) this.audio?.playEffect("paper");
+    });
+    this.root.addEventListener("keydown", (event) => {
+      if (event.target.matches?.("input, textarea, select")) return;
+      this.audio?.unlock().catch?.(() => {});
+      if (event.key.toLowerCase() === "m") {
+        event.preventDefault();
+        this.toggleQuickSetting("muted", "Audio");
+      }
+      if (event.key.toLowerCase() === "h") {
+        event.preventDefault();
+        this.toggleQuickSetting("hotspotAssist", "Hotspot assistance");
+      }
+    });
     this.router.start((route) => this.render(route));
   }
 
@@ -140,9 +179,13 @@ export class GameApp {
       alignment: () => this.renderStudyAlignment(),
       recording: () => this.renderRecordingPuzzle(),
       "prologue-ending": () => this.renderPrologueEnding(),
+      "case-files": () => this.renderCaseFiles(),
+      "content-notice": () => this.renderContentNotice(),
+      credits: () => this.renderCredits(),
       settings: () => this.renderSettings(),
     };
 
+    this.audio?.setScene(route);
     (renderers[route] || renderers.title)();
     if (this.activeEvidenceId) {
       this.root.insertAdjacentHTML("beforeend", this.renderEvidenceViewer());
@@ -173,8 +216,14 @@ export class GameApp {
             <button class="button button-secondary" data-action="continue" ${canContinue ? "" : "disabled"}>
               Continue
             </button>
+            <button class="button button-secondary" data-action="case-files">Case files</button>
             <button class="button button-ghost" data-action="settings">Settings</button>
           </div>
+          <nav class="title-utility-links" aria-label="Additional information">
+            <button data-action="content-notice">Content & fiction notice</button>
+            <span aria-hidden="true">·</span>
+            <button data-action="credits">Credits</button>
+          </nav>
           <p class="build-mark">Prologue · Playable vertical slice</p>
         </section>
         ${this.renderToast()}
@@ -184,6 +233,18 @@ export class GameApp {
     this.bindActions({
       "new-game": () => this.router.navigate("setup"),
       continue: () => this.continueGame(),
+      "case-files": () => {
+        this.returnRoute = "title";
+        this.router.navigate("case-files");
+      },
+      "content-notice": () => {
+        this.returnRoute = "title";
+        this.router.navigate("content-notice");
+      },
+      credits: () => {
+        this.returnRoute = "title";
+        this.router.navigate("credits");
+      },
       settings: () => {
         this.returnRoute = "title";
         this.router.navigate("settings");
@@ -805,7 +866,7 @@ export class GameApp {
             <button class="tool-button" data-action="board">Evidence board</button>
             <button class="tool-button" data-action="map">City map</button>
             <button class="tool-button" data-action="inventory">Inventory</button>
-            <button class="tool-button" data-action="save">Save</button>
+            <button class="tool-button" data-action="save">Case files</button>
             <button class="tool-button" data-action="settings">Settings</button>
             <button class="tool-button" data-action="title">Main menu</button>
           </div>
@@ -850,7 +911,7 @@ export class GameApp {
         this.inventoryOpen = !this.inventoryOpen;
         this.renderHome();
       },
-      save: () => this.manualSave(),
+      save: () => this.openCaseFiles("home"),
       settings: () => {
         this.returnRoute = "home";
         this.router.navigate("settings");
@@ -910,7 +971,7 @@ export class GameApp {
           <div class="toolbar-actions">
             <button class="tool-button" data-action="inventory">Inventory</button>
             <button class="tool-button" data-action="home">Return home</button>
-            <button class="tool-button" data-action="save">Save</button>
+            <button class="tool-button" data-action="save">Case files</button>
             <button class="tool-button" data-action="settings">Settings</button>
           </div>
         </footer>
@@ -976,7 +1037,7 @@ export class GameApp {
         this.saves.save(this.store.getState(), "return-home");
         this.router.navigate("home");
       },
-      save: () => this.manualSave(),
+      save: () => this.openCaseFiles("location"),
       settings: () => {
         this.returnRoute = "location";
         this.router.navigate("settings");
@@ -1625,7 +1686,7 @@ export class GameApp {
           <div><span class="toolbar-label">Case map</span><strong>Greyhaven</strong></div>
           <div class="toolbar-actions">
             <button class="tool-button" data-action="inventory">Inventory</button>
-            <button class="tool-button" data-action="save">Save</button>
+            <button class="tool-button" data-action="save">Case files</button>
             <button class="tool-button" data-action="settings">Settings</button>
           </div>
         </footer>
@@ -1646,7 +1707,7 @@ export class GameApp {
         this.inventoryOpen = !this.inventoryOpen;
         this.renderMap();
       },
-      save: () => this.manualSave(),
+      save: () => this.openCaseFiles("map"),
       settings: () => {
         this.returnRoute = "map";
         this.router.navigate("settings");
@@ -2006,7 +2067,7 @@ export class GameApp {
           <div class="toolbar-actions">
             <button class="tool-button" data-action="home">Step back</button>
             <button class="tool-button" data-action="map">City map</button>
-            <button class="tool-button" data-action="save">Save</button>
+            <button class="tool-button" data-action="save">Case files</button>
           </div>
         </footer>
         ${this.renderToast()}
@@ -2144,8 +2205,211 @@ export class GameApp {
         this.router.navigate("home");
       },
       map: () => this.router.navigate("map"),
-      save: () => this.manualSave(),
+      save: () => this.openCaseFiles("board"),
     });
+  }
+
+  renderCaseFiles() {
+    const slots = this.saves.listSlots();
+    const canSave = this.returnRoute !== "title";
+
+    this.root.innerHTML = `
+      <main id="game-main" class="screen case-files-screen">
+        <section class="panel case-files-panel">
+          <button class="back-button" data-action="back" aria-label="Close case files">← Back</button>
+          <p class="kicker">Local case archive</p>
+          <h1 tabindex="-1">Case files</h1>
+          <p class="lede">
+            Autosave protects the latest action. These three files let you preserve
+            important moments on this device.
+          </p>
+          <div class="save-slot-grid">
+            ${slots
+              .map(({ slot, state, empty }) => {
+                if (empty) {
+                  return `
+                    <article class="save-slot is-empty">
+                      <div class="save-slot-number">0${slot}</div>
+                      <div>
+                        <p class="kicker">Manual file ${slot}</p>
+                        <h2>Empty file</h2>
+                        <p>No investigation has been stored here.</p>
+                      </div>
+                      <div class="save-slot-actions">
+                        ${
+                          canSave
+                            ? `<button class="button button-primary" data-save-slot="${slot}">Save here</button>`
+                            : `<span class="save-slot-empty-label">Available</span>`
+                        }
+                      </div>
+                    </article>
+                  `;
+                }
+
+                const playerName = `${state.player.firstName} ${state.player.lastName}`;
+                return `
+                  <article class="save-slot">
+                    <div class="save-slot-number">0${slot}</div>
+                    <div>
+                      <p class="kicker">${escapeHtml(this.describeProgress(state))}</p>
+                      <h2>${escapeHtml(playerName)}</h2>
+                      <p>
+                        ${state.evidence.collected.length} clues ·
+                        ${state.completedDeductions.length} deductions ·
+                        ${escapeHtml(formatSaveTimestamp(state.meta.updatedAt))}
+                      </p>
+                    </div>
+                    <div class="save-slot-actions">
+                      <button class="button button-secondary" data-load-slot="${slot}">Load</button>
+                      ${
+                        canSave
+                          ? `<button class="button button-ghost" data-save-slot="${slot}">Overwrite</button>`
+                          : ""
+                      }
+                      ${
+                        this.pendingDeleteSlot === slot
+                          ? `
+                            <button class="save-delete is-confirming" data-delete-slot="${slot}" aria-label="Confirm deleting manual file ${slot}">Confirm delete</button>
+                            <button class="button button-ghost" data-cancel-delete>Cancel</button>
+                          `
+                          : `<button class="save-delete" data-delete-slot="${slot}" aria-label="Delete manual file ${slot}">Delete</button>`
+                      }
+                    </div>
+                  </article>
+                `;
+              })
+              .join("")}
+          </div>
+          <p class="case-files-note">
+            Saves remain in this browser. Clearing site data removes them.
+          </p>
+        </section>
+        ${this.renderToast()}
+      </main>
+    `;
+
+    this.bindActions({
+      back: () => this.router.navigate(this.returnRoute),
+    });
+    this.root.querySelectorAll("[data-save-slot]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const slot = Number(button.dataset.saveSlot);
+        this.saves.saveToSlot(slot, this.store.getState());
+        this.notice.show(`Manual case file ${slot} saved.`);
+        this.renderCaseFiles();
+        this.root.querySelector(`[data-load-slot="${slot}"]`)?.focus();
+      });
+    });
+    this.root.querySelectorAll("[data-load-slot]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const slot = Number(button.dataset.loadSlot);
+        const loaded = this.saves.loadSlot(slot);
+        if (!loaded) {
+          this.notice.show(`Manual case file ${slot} could not be read.`);
+          this.renderCaseFiles();
+          return;
+        }
+        this.resetEphemeralUi();
+        this.store.replace(loaded, `load-manual-slot-${slot}`);
+        this.saves.save(this.store.getState(), `load-manual-slot-${slot}`);
+        this.router.navigate(loaded.progress.currentScreen || "home");
+      });
+    });
+    this.root.querySelectorAll("[data-delete-slot]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const slot = Number(button.dataset.deleteSlot);
+        if (this.pendingDeleteSlot !== slot) {
+          this.pendingDeleteSlot = slot;
+          this.renderCaseFiles();
+          this.root.querySelector(`[data-delete-slot="${slot}"]`)?.focus();
+          return;
+        }
+        this.saves.deleteSlot(slot);
+        this.pendingDeleteSlot = null;
+        this.notice.show(`Manual case file ${slot} deleted.`);
+        this.renderCaseFiles();
+        this.root.querySelector(`[data-save-slot="${slot}"]`)?.focus();
+      });
+    });
+    this.root.querySelector("[data-cancel-delete]")?.addEventListener("click", () => {
+      const slot = this.pendingDeleteSlot;
+      this.pendingDeleteSlot = null;
+      this.renderCaseFiles();
+      this.root.querySelector(`[data-delete-slot="${slot}"]`)?.focus();
+    });
+  }
+
+  renderContentNotice() {
+    this.root.innerHTML = `
+      <main id="game-main" class="screen reading-screen">
+        <article class="panel reading-panel">
+          <button class="back-button" data-action="back" aria-label="Close content notice">← Back</button>
+          <p class="kicker">Before opening the file</p>
+          <h1 tabindex="-1">Content & fiction notice</h1>
+          <p class="notice-lede">
+            <em>The Benefactors</em> is a work of fiction. Its people, charities,
+            companies, governments, scandals, and secret organizations are invented.
+          </p>
+          <section>
+            <h2>Story content</h2>
+            <p>
+              The prologue contains corruption, intimidation, disappearance,
+              abuse of public funds, and implied danger. It avoids graphic violence.
+            </p>
+          </section>
+          <section>
+            <h2>Player privacy</h2>
+            <p>
+              Your chosen character name and save files stay in this browser.
+              The game has no accounts, analytics, advertising, or real-world news feed.
+            </p>
+          </section>
+          <section>
+            <h2>Accessibility</h2>
+            <p>
+              Subtitles, text scaling, high contrast, reduced motion, hotspot
+              assistance, and separate audio levels are available in Settings.
+              Press M to mute and H to toggle hotspot assistance.
+            </p>
+          </section>
+          <button class="button button-primary" data-action="back">Return to title</button>
+        </article>
+      </main>
+    `;
+    this.bindActions({ back: () => this.router.navigate(this.returnRoute) });
+  }
+
+  renderCredits() {
+    this.root.innerHTML = `
+      <main id="game-main" class="screen reading-screen credits-screen">
+        <article class="panel reading-panel">
+          <button class="back-button" data-action="back" aria-label="Close credits">← Back</button>
+          <p class="kicker">The Greyhaven Ledger presents</p>
+          <h1 tabindex="-1">The Benefactors</h1>
+          <p class="credits-tagline">Every good lie leaves paperwork.</p>
+          <div class="credits-list">
+            <section>
+              <span>Original concept & creative direction</span>
+              <strong>The game’s creator</strong>
+            </section>
+            <section>
+              <span>Design, writing & development collaboration</span>
+              <strong>Created with OpenAI Codex</strong>
+            </section>
+            <section>
+              <span>Technology</span>
+              <strong>HTML · CSS · JavaScript · Web Audio</strong>
+            </section>
+          </div>
+          <p class="credits-fiction">
+            All characters and organizations are fictional. No real person or
+            institution is portrayed or accused.
+          </p>
+          <button class="button button-primary" data-action="back">Return to title</button>
+        </article>
+      </main>
+    `;
+    this.bindActions({ back: () => this.router.navigate(this.returnRoute) });
   }
 
   renderSettings() {
@@ -2158,6 +2422,10 @@ export class GameApp {
           <button class="back-button" data-action="back" aria-label="Close settings">← Back</button>
           <p class="kicker">Preferences</p>
           <h1 tabindex="-1">Settings</h1>
+          <p class="settings-help">
+            Audio begins after your first click or key press. Press M to mute and
+            H to toggle hotspot assistance anywhere in the game.
+          </p>
           <form id="settings-form" class="settings-form">
             <label class="range-field">
               <span>Text size <output id="text-scale-value">${Math.round(settings.textScale * 100)}%</output></span>
@@ -2523,9 +2791,32 @@ export class GameApp {
     this.router.navigate("location");
   }
 
-  manualSave() {
-    this.saves.save(this.store.getState(), "manual");
-    this.notice.show("Case file saved.");
+  openCaseFiles(returnRoute = this.router.current()) {
+    this.returnRoute = returnRoute;
+    this.router.navigate("case-files");
+  }
+
+  describeProgress(state) {
+    if (state.progress.prologueComplete) return "Prologue complete";
+    if (state.flags.prologueEndingReady) return "Final deduction ready";
+    if (state.flags.recordingReconstructed) return "Vale’s message restored";
+    if (state.flags.foundWallCavity) return "Hidden room discovered";
+    if (state.flags.mayorMissing) return "Mayor Vale missing";
+    if (state.completedDeductions.length) return "The missing addition";
+    if (state.flags.downloadedAttachments) return "Following Northstar";
+    return "Opening lead";
+  }
+
+  toggleQuickSetting(key, label) {
+    this.store.update((draft) => {
+      draft.settings[key] = !draft.settings[key];
+    }, `toggle-${key}`);
+    this.saves.saveSettings(this.store.getState().settings);
+    if (this.saves.hasSave()) {
+      this.saves.save(this.store.getState(), `toggle-${key}`);
+    }
+    const enabled = this.store.getState().settings[key];
+    this.notice.show(`${label} ${enabled ? "on" : "off"}.`);
     this.render(this.router.current());
   }
 
@@ -2568,6 +2859,7 @@ export class GameApp {
     this.activeEvidenceId = null;
     this.puzzleAnnouncement = "";
     this.activeRecordingFragmentId = null;
+    this.pendingDeleteSlot = null;
   }
 
   applyPreferences(settings) {

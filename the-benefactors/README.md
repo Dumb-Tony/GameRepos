@@ -44,7 +44,7 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Data-defined deduction recipes
 - Two deductions that advance and complete the prologue
 
-**Milestone 4 — Complete prologue vertical slice**
+**Milestone 4 — Complete prologue vertical slice (complete)**
 
 - Player name and pronoun setup
 - Optional first-time-player tutorial
@@ -56,6 +56,16 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Seven-scene end-of-prologue sequence
 - Full-sized, viewable evidence artifacts, including the circled gala photograph
 - New Northstar lead at 1400 Harrow Street
+
+**Milestone 5 — Polish (in progress)**
+
+- Three persistent manual case-file slots alongside autosave
+- Load, overwrite, and delete controls with story-progress summaries
+- Generated noir music, ambience, and interaction sounds through Web Audio
+- Working mute, music, ambience, and effects settings
+- Global M mute and H hotspot-assistance shortcuts
+- Content warning, fiction/privacy notice, and credits screens
+- Responsive and high-contrast layouts for all new screens
 
 **Prologue content now playable**
 

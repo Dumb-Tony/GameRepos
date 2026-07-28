@@ -5856,3 +5856,281 @@ ol.recording-timeline,
     background: Highlight;
   }
 }
+
+/* Milestone 5 case archive, notices, and credits */
+
+.title-utility-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin-top: 18px;
+  color: var(--ink-dim);
+  font: 500 0.7rem/1.4 "IBM Plex Mono", "Courier New", monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.settings-help {
+  max-width: 620px;
+  margin: 8px 0 24px;
+  color: var(--ink-dim);
+  line-height: 1.6;
+}
+
+.title-utility-links button {
+  border: 0;
+  padding: 4px;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: rgba(190, 157, 98, 0.45);
+  text-underline-offset: 4px;
+}
+
+.title-utility-links button:hover {
+  color: var(--ink);
+  text-decoration-color: var(--gold);
+}
+
+.case-files-screen,
+.reading-screen {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  overflow-y: auto;
+  padding: 54px 24px;
+  background:
+    linear-gradient(rgba(7, 10, 9, 0.74), rgba(7, 10, 9, 0.94)),
+    radial-gradient(circle at 18% 12%, rgba(190, 157, 98, 0.16), transparent 32%),
+    url("./assets/scenes/home-office.webp") center / cover fixed;
+}
+
+.case-files-panel,
+.reading-panel {
+  width: min(1040px, 100%);
+  padding: clamp(30px, 5vw, 58px);
+  border: 1px solid rgba(216, 200, 166, 0.22);
+  background:
+    linear-gradient(135deg, rgba(28, 33, 30, 0.97), rgba(13, 17, 15, 0.98)),
+    var(--panel);
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.58);
+}
+
+.case-files-panel > h1,
+.reading-panel > h1 {
+  max-width: 760px;
+  margin: 8px 0 12px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.35rem, 6vw, 4.9rem);
+  font-weight: 500;
+  line-height: 0.98;
+}
+
+.case-files-panel > .lede {
+  max-width: 720px;
+  color: var(--ink-dim);
+  line-height: 1.7;
+}
+
+.save-slot-grid {
+  display: grid;
+  gap: 14px;
+  margin: 34px 0 22px;
+}
+
+.save-slot {
+  display: grid;
+  grid-template-columns: 66px minmax(0, 1fr) auto;
+  gap: 22px;
+  align-items: center;
+  min-height: 126px;
+  padding: 20px 22px;
+  border: 1px solid rgba(216, 200, 166, 0.22);
+  background:
+    linear-gradient(90deg, rgba(190, 157, 98, 0.09), transparent 34%),
+    rgba(7, 10, 9, 0.62);
+}
+
+.save-slot.is-empty {
+  border-style: dashed;
+  background: rgba(7, 10, 9, 0.34);
+}
+
+.save-slot-number {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 72px;
+  border: 1px solid rgba(190, 157, 98, 0.45);
+  color: var(--gold);
+  background: rgba(190, 157, 98, 0.08);
+  font: 500 1.15rem/1 "IBM Plex Mono", "Courier New", monospace;
+  letter-spacing: 0.12em;
+}
+
+.save-slot h2 {
+  margin: 4px 0 7px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  font-weight: 500;
+}
+
+.save-slot p {
+  margin: 0;
+  color: var(--ink-dim);
+}
+
+.save-slot-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  max-width: 290px;
+}
+
+.save-slot-actions .button {
+  min-height: 42px;
+  padding: 9px 14px;
+}
+
+.save-delete {
+  min-height: 42px;
+  border: 0;
+  padding: 8px 10px;
+  color: #df8876;
+  background: transparent;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.save-delete.is-confirming {
+  border: 1px solid #df8876;
+  padding-inline: 14px;
+  background: rgba(165, 66, 47, 0.18);
+  text-decoration: none;
+}
+
+.save-slot-empty-label,
+.case-files-note {
+  color: var(--ink-dim);
+  font: 500 0.72rem/1.5 "IBM Plex Mono", "Courier New", monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.case-files-note {
+  margin: 0;
+  text-align: center;
+}
+
+.reading-panel {
+  width: min(850px, 100%);
+}
+
+.reading-panel .notice-lede,
+.credits-tagline {
+  margin: 22px 0 34px;
+  color: var(--paper);
+  font: 400 clamp(1.15rem, 2.5vw, 1.55rem)/1.55 Georgia, "Times New Roman", serif;
+}
+
+.reading-panel > section {
+  margin: 28px 0;
+  padding-left: 20px;
+  border-left: 2px solid rgba(190, 157, 98, 0.52);
+}
+
+.reading-panel section h2 {
+  margin: 0 0 8px;
+  color: var(--gold);
+  font: 600 0.78rem/1.4 "IBM Plex Mono", "Courier New", monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.reading-panel section p,
+.credits-fiction {
+  margin: 0;
+  color: var(--ink-dim);
+  line-height: 1.75;
+}
+
+.reading-panel > .button {
+  margin-top: 16px;
+}
+
+.credits-list {
+  display: grid;
+  gap: 1px;
+  margin: 34px 0;
+  background: rgba(216, 200, 166, 0.18);
+}
+
+.credits-list section {
+  display: grid;
+  gap: 6px;
+  padding: 20px 22px;
+  background: rgba(10, 14, 12, 0.96);
+}
+
+.credits-list span {
+  color: var(--ink-dim);
+  font: 500 0.68rem/1.4 "IBM Plex Mono", "Courier New", monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.credits-list strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.credits-fiction {
+  margin-bottom: 22px;
+}
+
+@media (max-width: 720px) {
+  .case-files-screen,
+  .reading-screen {
+    display: block;
+    padding: 70px 12px 20px;
+  }
+
+  .case-files-panel,
+  .reading-panel {
+    padding: 28px 18px;
+  }
+
+  .save-slot {
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .save-slot-number {
+    width: 48px;
+    height: 60px;
+  }
+
+  .save-slot-actions {
+    grid-column: 1 / -1;
+    justify-content: stretch;
+    max-width: none;
+  }
+
+  .save-slot-actions .button {
+    flex: 1 1 120px;
+  }
+}
+
+[data-high-contrast="true"] .case-files-panel,
+[data-high-contrast="true"] .reading-panel,
+[data-high-contrast="true"] .save-slot,
+[data-high-contrast="true"] .save-slot-number {
+  border-color: currentColor;
+  box-shadow: none;
+}

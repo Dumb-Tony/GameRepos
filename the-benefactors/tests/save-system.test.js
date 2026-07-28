@@ -5,7 +5,11 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
 } from "../src/engine/game-state.js";
-import { SAVE_KEY, SaveSystem } from "../src/engine/save-system.js";
+import {
+  MANUAL_SAVE_SLOTS,
+  SAVE_KEY,
+  SaveSystem,
+} from "../src/engine/save-system.js";
 
 class MemoryStorage {
   values = new Map();
@@ -56,6 +60,32 @@ test("deletes an existing save", () => {
   saves.deleteSave();
 
   assert.equal(saves.hasSave(), false);
+});
+
+test("stores, lists, loads, and deletes three manual case files", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const state = createInitialState({ firstName: "Nia" });
+  state.flags.openedAnonymousEmail = true;
+
+  saves.saveToSlot(2, state);
+  const slots = saves.listSlots();
+
+  assert.equal(slots.length, MANUAL_SAVE_SLOTS);
+  assert.equal(slots[0].empty, true);
+  assert.equal(slots[1].empty, false);
+  assert.equal(slots[1].state.player.firstName, "Nia");
+  assert.equal(saves.loadSlot(2).flags.openedAnonymousEmail, true);
+  assert.equal(saves.hasSave(), true);
+
+  saves.deleteSlot(2);
+  assert.equal(saves.loadSlot(2), null);
+});
+
+test("rejects manual save slots outside the supported range", () => {
+  const saves = new SaveSystem(new MemoryStorage());
+  assert.throws(() => saves.loadSlot(0), RangeError);
+  assert.throws(() => saves.saveToSlot(4, createInitialState()), RangeError);
 });
 
 test("migrates an older save with new progress defaults", () => {

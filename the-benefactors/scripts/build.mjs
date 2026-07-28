@@ -47,6 +47,7 @@ const requiredFiles = [
   "src/systems/dialogue/dialogue-engine.js",
   "src/systems/evidence-board/evidence-board.js",
   "src/systems/evidence/evidence-renderer.js",
+  "src/systems/audio/audio-engine.js",
   "src/systems/puzzles/plan-alignment.js",
   "src/systems/puzzles/recording-reconstruction.js",
   "src/ui/app.js",
@@ -148,7 +149,7 @@ await writeFile(
   JSON.stringify(
     {
       name: "The Benefactors",
-      milestone: 4,
+      milestone: 5,
       builtAt: new Date().toISOString(),
     },
     null,

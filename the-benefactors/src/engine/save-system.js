@@ -7,6 +7,8 @@ import {
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
+export const MANUAL_SAVE_PREFIX = "the-benefactors.manual.v1";
+export const MANUAL_SAVE_SLOTS = 3;
 
 export class SaveSystem {
   constructor(storage = globalThis.localStorage) {
@@ -40,6 +42,54 @@ export class SaveSystem {
 
   deleteSave() {
     this.storage.removeItem(SAVE_KEY);
+  }
+
+  manualSaveKey(slot) {
+    const normalizedSlot = Number(slot);
+    if (
+      !Number.isInteger(normalizedSlot) ||
+      normalizedSlot < 1 ||
+      normalizedSlot > MANUAL_SAVE_SLOTS
+    ) {
+      throw new RangeError(`Manual save slot must be between 1 and ${MANUAL_SAVE_SLOTS}.`);
+    }
+    return `${MANUAL_SAVE_PREFIX}.${normalizedSlot}`;
+  }
+
+  saveToSlot(slot, state) {
+    const snapshot = structuredClone(state);
+    snapshot.meta.updatedAt = new Date().toISOString();
+    snapshot.meta.lastSaveReason = `manual-slot-${slot}`;
+    this.storage.setItem(this.manualSaveKey(slot), JSON.stringify(snapshot));
+    this.save(snapshot, `manual-slot-${slot}`);
+    return snapshot;
+  }
+
+  loadSlot(slot) {
+    const raw = this.storage.getItem(this.manualSaveKey(slot));
+    if (!raw) return null;
+
+    try {
+      return this.migrate(JSON.parse(raw));
+    } catch {
+      return null;
+    }
+  }
+
+  deleteSlot(slot) {
+    this.storage.removeItem(this.manualSaveKey(slot));
+  }
+
+  listSlots() {
+    return Array.from({ length: MANUAL_SAVE_SLOTS }, (_, index) => {
+      const slot = index + 1;
+      const state = this.loadSlot(slot);
+      return {
+        slot,
+        state,
+        empty: !state,
+      };
+    });
   }
 
   saveSettings(settings) {

@@ -12,6 +12,9 @@ export const VALID_ROUTES = new Set([
   "alignment",
   "recording",
   "prologue-ending",
+  "case-files",
+  "content-notice",
+  "credits",
   "settings",
 ]);
 
