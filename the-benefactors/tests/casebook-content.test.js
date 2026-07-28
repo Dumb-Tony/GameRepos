@@ -35,7 +35,7 @@ test("casebook objective advances with investigation state", () => {
   state.evidence.collected.push("june_statement");
   assert.equal(activeStage(state).id, "prove_missing_addition");
 
-  state.completedDeductions.push("deduction_missing_addition");
+  state.completedDeductions.push("witness_contradiction");
   assert.equal(activeStage(state).id, "study_search");
 
   state.flags.foundWallCavity = true;

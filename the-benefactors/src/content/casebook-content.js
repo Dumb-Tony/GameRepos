@@ -41,7 +41,7 @@ export const CASEBOOK_STAGES = Object.freeze([
     id: "prove_missing_addition",
     title: "Prove the contradiction",
     objective: "Use the evidence board to prove the declared construction never happened.",
-    activeWhen: { not: { type: "deductionComplete", id: "deduction_missing_addition" } },
+    activeWhen: { not: { type: "deductionComplete", id: "witness_contradiction" } },
     hints: [
       "The invoice, permit, photograph, and June’s account describe the same job differently.",
       "Pin the permit, house photograph, and June’s statement. Choose White · Contradiction.",
