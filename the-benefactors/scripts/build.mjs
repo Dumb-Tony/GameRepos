@@ -41,6 +41,7 @@ const requiredFiles = [
   "src/engine/events.js",
   "src/engine/router.js",
   "src/content/game-content.js",
+  "src/content/casebook-content.js",
   "src/content/onboarding-content.js",
   "src/content/prologue-content.js",
   "src/systems/exploration/scene-renderer.js",

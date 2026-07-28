@@ -57,7 +57,7 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Full-sized, viewable evidence artifacts, including the circled gala photograph
 - New Northstar lead at 1400 Harrow Street
 
-**Milestone 5 — Polish (in progress)**
+**Milestone 5 — Polish (complete)**
 
 - Three persistent manual case-file slots alongside autosave
 - Load, overwrite, and delete controls with story-progress summaries
@@ -65,6 +65,7 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Working mute, music, ambience, and effects settings
 - Global M mute and H hotspot-assistance shortcuts
 - Content warning, fiction/privacy notice, and credits screens
+- Persistent reporter’s notebook with objective tracking and three-stage hints
 - Responsive and high-contrast layouts for all new screens
 
 **Prologue content now playable**

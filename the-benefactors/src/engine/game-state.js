@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 7;
+export const GAME_STATE_VERSION = 8;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -84,6 +84,9 @@ export function createInitialState(player = {}, settings = {}) {
       visitedNodes: [],
       completedDialogues: [],
     },
+    journal: {
+      revealedHints: {},
+    },
     puzzles: {
       study_plan_alignment: {
         rotation: 90,
@@ -139,6 +142,8 @@ export function isGameState(value) {
       value.flags &&
       value.evidence &&
       value.board &&
+      value.journal &&
+      value.journal.revealedHints &&
       value.puzzles &&
       value.puzzles.study_plan_alignment &&
       value.puzzles.vale_recording_reconstruction &&

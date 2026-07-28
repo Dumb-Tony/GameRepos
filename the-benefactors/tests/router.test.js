@@ -36,7 +36,7 @@ test("Milestone 4 puzzle and ending screens are persistent routes", () => {
 });
 
 test("Milestone 5 archive and information screens are non-persistent routes", () => {
-  for (const route of ["case-files", "content-notice", "credits"]) {
+  for (const route of ["case-files", "notebook", "content-notice", "credits"]) {
     assert.equal(VALID_ROUTES.has(route), true);
     assert.equal(PERSISTENT_GAME_ROUTES.has(route), false);
   }

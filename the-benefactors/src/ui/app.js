@@ -6,6 +6,10 @@ import {
   INVENTORY_ITEMS,
 } from "../content/game-content.js?v=prologue-20260726c";
 import {
+  CASEBOOK_PROGRESS,
+  CASEBOOK_STAGES,
+} from "../content/casebook-content.js?v=notebook-20260728a";
+import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
@@ -23,7 +27,7 @@ import {
   getPlayerLanguage,
   interpolatePlayerText,
 } from "../engine/player-language.js?v=prologue-20260726a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=polish-20260727b";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=notebook-20260728a";
 import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=prologue-20260726a";
 import {
   advanceDialogue,
@@ -180,6 +184,7 @@ export class GameApp {
       recording: () => this.renderRecordingPuzzle(),
       "prologue-ending": () => this.renderPrologueEnding(),
       "case-files": () => this.renderCaseFiles(),
+      notebook: () => this.renderNotebook(),
       "content-notice": () => this.renderContentNotice(),
       credits: () => this.renderCredits(),
       settings: () => this.renderSettings(),
@@ -865,6 +870,7 @@ export class GameApp {
           <div class="toolbar-actions">
             <button class="tool-button" data-action="board">Evidence board</button>
             <button class="tool-button" data-action="map">City map</button>
+            <button class="tool-button" data-action="notebook">Notebook</button>
             <button class="tool-button" data-action="inventory">Inventory</button>
             <button class="tool-button" data-action="save">Case files</button>
             <button class="tool-button" data-action="settings">Settings</button>
@@ -907,6 +913,7 @@ export class GameApp {
     this.bindActions({
       map: () => this.router.navigate("map"),
       board: () => this.router.navigate("board"),
+      notebook: () => this.openNotebook("home"),
       inventory: () => {
         this.inventoryOpen = !this.inventoryOpen;
         this.renderHome();
@@ -970,6 +977,7 @@ export class GameApp {
           <div><span class="toolbar-label">Location</span><strong>${escapeHtml(location.name)}</strong></div>
           <div class="toolbar-actions">
             <button class="tool-button" data-action="inventory">Inventory</button>
+            <button class="tool-button" data-action="notebook">Notebook</button>
             <button class="tool-button" data-action="home">Return home</button>
             <button class="tool-button" data-action="save">Case files</button>
             <button class="tool-button" data-action="settings">Settings</button>
@@ -1024,6 +1032,7 @@ export class GameApp {
         this.renderLocation();
       },
       map: () => this.router.navigate("map"),
+      notebook: () => this.openNotebook("location"),
       inventory: () => {
         this.inventoryOpen = !this.inventoryOpen;
         this.renderLocation();
@@ -1686,6 +1695,7 @@ export class GameApp {
           <div><span class="toolbar-label">Case map</span><strong>Greyhaven</strong></div>
           <div class="toolbar-actions">
             <button class="tool-button" data-action="inventory">Inventory</button>
+            <button class="tool-button" data-action="notebook">Notebook</button>
             <button class="tool-button" data-action="save">Case files</button>
             <button class="tool-button" data-action="settings">Settings</button>
           </div>
@@ -1703,6 +1713,7 @@ export class GameApp {
         this.activeOfficeNote = null;
         this.router.navigate("home");
       },
+      notebook: () => this.openNotebook("map"),
       inventory: () => {
         this.inventoryOpen = !this.inventoryOpen;
         this.renderMap();
@@ -2067,6 +2078,7 @@ export class GameApp {
           <div class="toolbar-actions">
             <button class="tool-button" data-action="home">Step back</button>
             <button class="tool-button" data-action="map">City map</button>
+            <button class="tool-button" data-action="notebook">Notebook</button>
             <button class="tool-button" data-action="save">Case files</button>
           </div>
         </footer>
@@ -2205,7 +2217,108 @@ export class GameApp {
         this.router.navigate("home");
       },
       map: () => this.router.navigate("map"),
+      notebook: () => this.openNotebook("board"),
       save: () => this.openCaseFiles("board"),
+    });
+  }
+
+  renderNotebook() {
+    const state = this.store.getState();
+    const stage =
+      CASEBOOK_STAGES.find((entry) => evaluateCondition(entry.activeWhen, state)) ||
+      CASEBOOK_STAGES.at(-1);
+    const revealed = Math.min(
+      3,
+      Number(state.journal.revealedHints[stage.id]) || 0,
+    );
+    const completedCount = CASEBOOK_PROGRESS.filter((entry) =>
+      evaluateCondition(entry.when, state),
+    ).length;
+
+    this.root.innerHTML = `
+      <main id="game-main" class="screen notebook-screen">
+        <section class="notebook-shell">
+          <header class="notebook-heading">
+            <button class="back-button" data-action="back" aria-label="Close notebook">← Back</button>
+            <div>
+              <p class="kicker">Reporter’s notebook</p>
+              <h1 tabindex="-1">Current lead</h1>
+            </div>
+            <div class="notebook-progress-number">
+              <strong>${completedCount}</strong>
+              <span>of ${CASEBOOK_PROGRESS.length} case beats</span>
+            </div>
+          </header>
+          <div class="notebook-spread">
+            <article class="notebook-page objective-page">
+              <p class="notebook-date">Greyhaven · Case 01</p>
+              <span class="notebook-rule" aria-hidden="true"></span>
+              <p class="kicker">Immediate objective</p>
+              <h2>${escapeHtml(stage.title)}</h2>
+              <p class="notebook-objective">${escapeHtml(stage.objective)}</p>
+              <ol class="case-progress-list" aria-label="Case progress">
+                ${CASEBOOK_PROGRESS.map((entry) => {
+                  const complete = evaluateCondition(entry.when, state);
+                  return `
+                    <li class="${complete ? "is-complete" : ""}">
+                      <span aria-hidden="true">${complete ? "✓" : "○"}</span>
+                      <span>${escapeHtml(entry.label)}</span>
+                    </li>
+                  `;
+                }).join("")}
+              </ol>
+            </article>
+            <article class="notebook-page hints-page">
+              <p class="notebook-date">If the trail goes cold</p>
+              <span class="notebook-rule" aria-hidden="true"></span>
+              <p class="kicker">Optional hints</p>
+              <div class="case-hints" aria-live="polite">
+                ${
+                  revealed
+                    ? stage.hints
+                        .slice(0, revealed)
+                        .map(
+                          (hint, index) => `
+                            <section>
+                              <span>Hint ${index + 1}</span>
+                              <p>${escapeHtml(hint)}</p>
+                            </section>
+                          `,
+                        )
+                        .join("")
+                    : `
+                      <div class="hints-sealed">
+                        <strong>No hints opened</strong>
+                        <p>The notebook never judges. Reveal only what you need.</p>
+                      </div>
+                    `
+                }
+              </div>
+              <footer>
+                <button class="button button-secondary" data-action="reveal-case-hint" ${revealed >= 3 ? "disabled" : ""}>
+                  ${revealed ? "Reveal next hint" : "Open a hint"}
+                </button>
+                <span>${revealed} / 3 revealed</span>
+              </footer>
+            </article>
+          </div>
+        </section>
+        ${this.renderToast()}
+      </main>
+    `;
+
+    this.bindActions({
+      back: () => this.router.navigate(this.returnRoute),
+      "reveal-case-hint": () => {
+        this.store.update((draft) => {
+          const current = Number(draft.journal.revealedHints[stage.id]) || 0;
+          draft.journal.revealedHints[stage.id] = Math.min(3, current + 1);
+        }, `reveal-hint-${stage.id}`);
+        this.saves.save(this.store.getState(), `reveal-hint-${stage.id}`);
+        this.audio?.playEffect("pin");
+        this.renderNotebook();
+        this.root.querySelector("[data-action='reveal-case-hint']")?.focus();
+      },
     });
   }
 
@@ -2794,6 +2907,11 @@ export class GameApp {
   openCaseFiles(returnRoute = this.router.current()) {
     this.returnRoute = returnRoute;
     this.router.navigate("case-files");
+  }
+
+  openNotebook(returnRoute = this.router.current()) {
+    this.returnRoute = returnRoute;
+    this.router.navigate("notebook");
   }
 
   describeProgress(state) {

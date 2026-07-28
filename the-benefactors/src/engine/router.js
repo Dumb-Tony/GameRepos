@@ -13,6 +13,7 @@ export const VALID_ROUTES = new Set([
   "recording",
   "prologue-ending",
   "case-files",
+  "notebook",
   "content-notice",
   "credits",
   "settings",

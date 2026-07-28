@@ -138,6 +138,14 @@ export class SaveSystem {
       evidence: { ...fallback.evidence, ...candidate.evidence },
       board: { ...fallback.board, ...candidate.board },
       dialogue: { ...fallback.dialogue, ...candidate.dialogue },
+      journal: {
+        ...fallback.journal,
+        ...candidate.journal,
+        revealedHints: {
+          ...fallback.journal.revealedHints,
+          ...candidate.journal?.revealedHints,
+        },
+      },
       puzzles: {
         ...fallback.puzzles,
         ...candidate.puzzles,

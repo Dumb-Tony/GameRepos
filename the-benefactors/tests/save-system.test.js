@@ -154,3 +154,18 @@ test("migrates an unlocked legacy stairway without replaying alignment", () => {
     true,
   );
 });
+
+test("migrates Milestone 5 saves with an empty persistent notebook", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Sam" });
+  previous.version = 7;
+  delete previous.journal;
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.deepEqual(migrated.journal.revealedHints, {});
+  assert.equal(migrated.player.firstName, "Sam");
+});
