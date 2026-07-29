@@ -4,57 +4,57 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=foundation-20260728a";
+} from "../content/game-content.js?v=foundation-20260728b";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=foundation-20260728a";
+} from "../content/casebook-content.js?v=foundation-20260728b";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=prologue-20260726a";
+} from "../content/onboarding-content.js?v=foundation-20260728b";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=foundation-20260728a";
-import { evaluateCondition } from "../engine/conditions.js?v=prologue-20260726a";
-import { applyEffects } from "../engine/events.js?v=prologue-20260726a";
-import { createInitialState } from "../engine/game-state.js?v=foundation-20260728a";
+} from "../content/prologue-content.js?v=foundation-20260728b";
+import { evaluateCondition } from "../engine/conditions.js?v=foundation-20260728b";
+import { applyEffects } from "../engine/events.js?v=foundation-20260728b";
+import { createInitialState } from "../engine/game-state.js?v=foundation-20260728b";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=prologue-20260726a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=foundation-20260728a";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=prologue-20260726a";
+} from "../engine/player-language.js?v=foundation-20260728b";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=foundation-20260728b";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=foundation-20260728b";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=prologue-20260726a";
+} from "../systems/dialogue/dialogue-engine.js?v=foundation-20260728b";
 import {
   connectEvidence,
   evaluateBoardDeductions,
   moveEvidence,
   pinEvidence,
   removeConnection,
-} from "../systems/evidence-board/evidence-board.js?v=prologue-20260726a";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=prologue-20260726a";
+} from "../systems/evidence-board/evidence-board.js?v=foundation-20260728b";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=foundation-20260728b";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=prologue-20260726a";
+} from "../systems/puzzles/plan-alignment.js?v=foundation-20260728b";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=prologue-20260726a";
-import { TransientNotice } from "./transient-notice.js?v=prologue-20260726a";
+} from "../systems/puzzles/recording-reconstruction.js?v=foundation-20260728b";
+import { TransientNotice } from "./transient-notice.js?v=foundation-20260728b";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
