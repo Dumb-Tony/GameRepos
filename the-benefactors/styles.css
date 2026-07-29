@@ -2233,6 +2233,11 @@ input[type="range"] {
   letter-spacing: 0.12em;
 }
 
+.board-tidy-button {
+  width: 100%;
+  margin: 0 0 18px;
+}
+
 .yarn-layer {
   position: absolute;
   z-index: 2;

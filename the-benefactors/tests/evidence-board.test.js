@@ -4,11 +4,24 @@ import assert from "node:assert/strict";
 import { DEDUCTIONS } from "../src/content/game-content.js";
 import { createInitialState } from "../src/engine/game-state.js";
 import {
+  arrangeEvidence,
   connectEvidence,
   evaluateBoardDeductions,
   moveEvidence,
   pinEvidence,
 } from "../src/systems/evidence-board/evidence-board.js";
+
+test("arranges a growing evidence board without stacking its first fifteen cards", () => {
+  const state = createInitialState();
+  state.evidence.pinned = Array.from({ length: 15 }, (_, index) => `clue-${index}`);
+  const arranged = arrangeEvidence(state);
+  const positions = state.evidence.pinned.map(
+    (evidenceId) => `${arranged.board.cards[evidenceId].x},${arranged.board.cards[evidenceId].y}`,
+  );
+
+  assert.equal(new Set(positions).size, 15);
+  assert.deepEqual(state.board.cards, {});
+});
 
 test("pins and moves collected evidence without mutating source", () => {
   const source = createInitialState();

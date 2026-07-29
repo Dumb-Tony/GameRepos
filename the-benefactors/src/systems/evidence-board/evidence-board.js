@@ -1,12 +1,21 @@
 import { applyEffects } from "../../engine/events.js";
 
 const DEFAULT_POSITIONS = [
-  { x: 12, y: 15 },
-  { x: 42, y: 12 },
-  { x: 70, y: 18 },
-  { x: 23, y: 54 },
-  { x: 55, y: 52 },
-  { x: 76, y: 60 },
+  { x: 4, y: 8 },
+  { x: 23, y: 8 },
+  { x: 42, y: 8 },
+  { x: 61, y: 8 },
+  { x: 80, y: 8 },
+  { x: 4, y: 37 },
+  { x: 23, y: 37 },
+  { x: 42, y: 37 },
+  { x: 61, y: 37 },
+  { x: 80, y: 37 },
+  { x: 4, y: 66 },
+  { x: 23, y: 66 },
+  { x: 42, y: 66 },
+  { x: 61, y: 66 },
+  { x: 80, y: 66 },
 ];
 
 export function pinEvidence(state, evidenceId, position) {
@@ -33,6 +42,16 @@ export function moveEvidence(state, evidenceId, position) {
     x: clamp(position.x, 0, 82),
     y: clamp(position.y, 0, 66),
   };
+  return next;
+}
+
+export function arrangeEvidence(state) {
+  const next = structuredClone(state);
+  next.evidence.pinned.forEach((evidenceId, index) => {
+    next.board.cards[evidenceId] = {
+      ...DEFAULT_POSITIONS[index % DEFAULT_POSITIONS.length],
+    };
+  });
   return next;
 }
 

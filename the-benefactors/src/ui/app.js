@@ -4,57 +4,58 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=foundation-20260728b";
+} from "../content/game-content.js?v=foundation-20260728c";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=foundation-20260728b";
+} from "../content/casebook-content.js?v=foundation-20260728c";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=foundation-20260728b";
+} from "../content/onboarding-content.js?v=foundation-20260728c";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=foundation-20260728b";
-import { evaluateCondition } from "../engine/conditions.js?v=foundation-20260728b";
-import { applyEffects } from "../engine/events.js?v=foundation-20260728b";
-import { createInitialState } from "../engine/game-state.js?v=foundation-20260728b";
+} from "../content/prologue-content.js?v=foundation-20260728c";
+import { evaluateCondition } from "../engine/conditions.js?v=foundation-20260728c";
+import { applyEffects } from "../engine/events.js?v=foundation-20260728c";
+import { createInitialState } from "../engine/game-state.js?v=foundation-20260728c";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=foundation-20260728b";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=foundation-20260728b";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=foundation-20260728b";
+} from "../engine/player-language.js?v=foundation-20260728c";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=foundation-20260728c";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=foundation-20260728c";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=foundation-20260728b";
+} from "../systems/dialogue/dialogue-engine.js?v=foundation-20260728c";
 import {
+  arrangeEvidence,
   connectEvidence,
   evaluateBoardDeductions,
   moveEvidence,
   pinEvidence,
   removeConnection,
-} from "../systems/evidence-board/evidence-board.js?v=foundation-20260728b";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=foundation-20260728b";
+} from "../systems/evidence-board/evidence-board.js?v=foundation-20260728c";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=foundation-20260728c";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=foundation-20260728b";
+} from "../systems/puzzles/plan-alignment.js?v=foundation-20260728c";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=foundation-20260728b";
-import { TransientNotice } from "./transient-notice.js?v=foundation-20260728b";
+} from "../systems/puzzles/recording-reconstruction.js?v=foundation-20260728c";
+import { TransientNotice } from "./transient-notice.js?v=foundation-20260728c";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -2034,6 +2035,9 @@ export class GameApp {
               Pin clues from the tray, then drag them—or use their arrow keys—to arrange the
               investigation.
             </p>
+            <button class="button button-secondary board-tidy-button" data-action="tidy-board">
+              Tidy board
+            </button>
             ${
               state.flags.prologueEndingReady && !state.progress.prologueComplete
                 ? `
@@ -2186,6 +2190,14 @@ export class GameApp {
     this.bindBoardDrag();
 
     this.bindActions({
+      "tidy-board": () => {
+        const next = arrangeEvidence(this.store.getState());
+        this.store.replace(next, "tidy-board");
+        this.saves.save(this.store.getState(), "tidy-board");
+        this.selectedBoardCards = [];
+        this.notice.show("Evidence cards arranged.");
+        this.renderBoard();
+      },
       "begin-prologue-ending": () => {
         this.store.update((draft) => {
           draft.progress.currentLocation = "home_office";
