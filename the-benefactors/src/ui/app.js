@@ -4,38 +4,38 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=foundation-20260728c";
+} from "../content/game-content.js?v=foundation-20260728d";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=foundation-20260728c";
+} from "../content/casebook-content.js?v=foundation-20260728d";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=foundation-20260728c";
+} from "../content/onboarding-content.js?v=foundation-20260728d";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=foundation-20260728c";
-import { evaluateCondition } from "../engine/conditions.js?v=foundation-20260728c";
-import { applyEffects } from "../engine/events.js?v=foundation-20260728c";
-import { createInitialState } from "../engine/game-state.js?v=foundation-20260728c";
+} from "../content/prologue-content.js?v=foundation-20260728d";
+import { evaluateCondition } from "../engine/conditions.js?v=foundation-20260728d";
+import { applyEffects } from "../engine/events.js?v=foundation-20260728d";
+import { createInitialState } from "../engine/game-state.js?v=foundation-20260728d";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=foundation-20260728c";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=foundation-20260728c";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=foundation-20260728c";
+} from "../engine/player-language.js?v=foundation-20260728d";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=foundation-20260728d";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=foundation-20260728d";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=foundation-20260728c";
+} from "../systems/dialogue/dialogue-engine.js?v=foundation-20260728d";
 import {
   arrangeEvidence,
   connectEvidence,
@@ -43,19 +43,19 @@ import {
   moveEvidence,
   pinEvidence,
   removeConnection,
-} from "../systems/evidence-board/evidence-board.js?v=foundation-20260728c";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=foundation-20260728c";
+} from "../systems/evidence-board/evidence-board.js?v=foundation-20260728d";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=foundation-20260728d";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=foundation-20260728c";
+} from "../systems/puzzles/plan-alignment.js?v=foundation-20260728d";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=foundation-20260728c";
-import { TransientNotice } from "./transient-notice.js?v=foundation-20260728c";
+} from "../systems/puzzles/recording-reconstruction.js?v=foundation-20260728d";
+import { TransientNotice } from "./transient-notice.js?v=foundation-20260728d";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -1892,12 +1892,12 @@ export class GameApp {
       pinned.length < 2
         ? "Pin at least two clues to create a connection."
         : this.selectedBoardCards.length === 0
-          ? "Select the first clue on the corkboard."
+          ? "Click “Select as clue 1” on any evidence card below."
           : this.selectedBoardCards.length === 1
-            ? "Clue 1 selected. Choose a different clue."
+            ? "Clue 1 selected. Click “Select as clue 2” on a different card."
             : selectedConnection
               ? `These clues are already connected as ${relationshipById.get(selectedConnection.type)?.label || selectedConnection.type}. You can update the yarn meaning.`
-              : "Two clues selected. Ready to connect.";
+              : "Two clues selected. Use step 3 to tie the yarn.";
     const emptyBoardCopy = state.evidence.collected.length
       ? "Your evidence is in the tray. Use “Pin to board” to start arranging the case."
       : "Open the anonymous email and add its attachments to the case file.";
@@ -1910,7 +1910,7 @@ export class GameApp {
             <div class="connection-builder-heading">
               <p class="kicker">Tie the case together</p>
               <h1 id="connection-builder-title" tabindex="-1">Connect evidence</h1>
-              <p>Choose what the yarn means, select two pinned clues, then confirm the connection.</p>
+              <p>Choose what the yarn means, then use the selection controls printed on two evidence cards below.</p>
             </div>
             <fieldset class="relationship-fieldset">
               <legend>1. Choose a relationship</legend>
@@ -1949,6 +1949,7 @@ export class GameApp {
                 </div>
               </div>
               <p class="connection-status" role="status" aria-live="polite">${escapeHtml(connectionStatus)}</p>
+              <p class="connection-step-label connection-final-step">3. Tie the yarn</p>
               <div class="connection-builder-actions">
                 <button
                   class="button button-primary"
@@ -1994,6 +1995,11 @@ export class GameApp {
                         : this.selectedBoardCards.length < 2
                           ? `Select ${item.title} as clue ${this.selectedBoardCards.length + 1}`
                           : `Two clues are already selected. Clear or connect them before selecting ${item.title}`;
+                      const selectionPrompt = selected
+                        ? `✓ Clue ${selectedIndex + 1} selected`
+                        : this.selectedBoardCards.length < 2
+                          ? `Select as clue ${this.selectedBoardCards.length + 1}`
+                          : "Two clues selected";
                       return `
                         <article
                           class="evidence-card evidence-card--${item.artifact?.type || "document"} ${selected ? "is-selected" : ""}"
@@ -2012,6 +2018,7 @@ export class GameApp {
                             <span class="evidence-category">${escapeHtml(item.category)}</span>
                             <strong>${escapeHtml(item.title)}</strong>
                             <small>${escapeHtml(item.summary)}</small>
+                            <span class="evidence-select-prompt">${escapeHtml(selectionPrompt)}</span>
                           </button>
                           <button class="evidence-view-button" data-view-evidence="${item.id}">
                             View evidence

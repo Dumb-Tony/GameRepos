@@ -2306,6 +2306,21 @@ input[type="range"] {
   cursor: pointer;
 }
 
+.evidence-select-prompt {
+  align-self: end;
+  margin-top: 7px;
+  border-top: 1px solid rgba(55, 43, 25, 0.28);
+  padding-top: 7px;
+  color: #4d2c21;
+  font: 700 0.54rem "IBM Plex Mono", "Courier New", monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.evidence-card.is-selected .evidence-select-prompt {
+  color: #761f1a;
+}
+
 .evidence-view-button {
   width: calc(100% - 18px);
   margin: 0 9px 9px;
@@ -4216,6 +4231,10 @@ input[type="range"] {
 
 .connection-selection {
   min-width: 0;
+}
+
+.connection-final-step {
+  margin-top: 13px;
 }
 
 .connection-slots {

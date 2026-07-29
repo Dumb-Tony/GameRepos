@@ -1,8 +1,8 @@
-import { createInitialState, GameStore } from "./engine/game-state.js?v=foundation-20260728c";
-import { ScreenRouter } from "./engine/router.js?v=foundation-20260728c";
-import { SaveSystem } from "./engine/save-system.js?v=foundation-20260728c";
-import { AudioEngine } from "./systems/audio/audio-engine.js?v=foundation-20260728c";
-import { GameApp } from "./ui/app.js?v=foundation-20260728c";
+import { createInitialState, GameStore } from "./engine/game-state.js?v=foundation-20260728d";
+import { ScreenRouter } from "./engine/router.js?v=foundation-20260728d";
+import { SaveSystem } from "./engine/save-system.js?v=foundation-20260728d";
+import { AudioEngine } from "./systems/audio/audio-engine.js?v=foundation-20260728d";
+import { GameApp } from "./ui/app.js?v=foundation-20260728d";
 
 const root = document.querySelector("#app");
 const saves = new SaveSystem();
