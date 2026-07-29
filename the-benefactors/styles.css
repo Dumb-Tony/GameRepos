@@ -2288,8 +2288,25 @@ input[type="range"] {
     linear-gradient(135deg, rgba(255, 255, 255, 0.3), transparent 35%),
     #d1c39c;
   box-shadow: 0 7px 13px rgba(42, 27, 14, 0.42);
-  cursor: grab;
   user-select: none;
+}
+
+.evidence-drag-handle {
+  position: absolute;
+  z-index: 5;
+  top: 5px;
+  left: 8px;
+  border-bottom: 1px dotted rgba(55, 43, 25, 0.42);
+  color: rgba(55, 43, 25, 0.62);
+  font: 700 0.43rem "IBM Plex Mono", "Courier New", monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: grab;
+  touch-action: none;
+}
+
+.evidence-drag-handle:active {
+  cursor: grabbing;
 }
 
 .evidence-card-main {

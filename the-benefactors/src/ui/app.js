@@ -4,38 +4,38 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=foundation-20260728d";
+} from "../content/game-content.js?v=foundation-20260728e";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=foundation-20260728d";
+} from "../content/casebook-content.js?v=foundation-20260728e";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=foundation-20260728d";
+} from "../content/onboarding-content.js?v=foundation-20260728e";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=foundation-20260728d";
-import { evaluateCondition } from "../engine/conditions.js?v=foundation-20260728d";
-import { applyEffects } from "../engine/events.js?v=foundation-20260728d";
-import { createInitialState } from "../engine/game-state.js?v=foundation-20260728d";
+} from "../content/prologue-content.js?v=foundation-20260728e";
+import { evaluateCondition } from "../engine/conditions.js?v=foundation-20260728e";
+import { applyEffects } from "../engine/events.js?v=foundation-20260728e";
+import { createInitialState } from "../engine/game-state.js?v=foundation-20260728e";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=foundation-20260728d";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=foundation-20260728d";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=foundation-20260728d";
+} from "../engine/player-language.js?v=foundation-20260728e";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=foundation-20260728e";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=foundation-20260728e";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=foundation-20260728d";
+} from "../systems/dialogue/dialogue-engine.js?v=foundation-20260728e";
 import {
   arrangeEvidence,
   connectEvidence,
@@ -43,19 +43,19 @@ import {
   moveEvidence,
   pinEvidence,
   removeConnection,
-} from "../systems/evidence-board/evidence-board.js?v=foundation-20260728d";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=foundation-20260728d";
+} from "../systems/evidence-board/evidence-board.js?v=foundation-20260728e";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=foundation-20260728e";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=foundation-20260728d";
+} from "../systems/puzzles/plan-alignment.js?v=foundation-20260728e";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=foundation-20260728d";
-import { TransientNotice } from "./transient-notice.js?v=foundation-20260728d";
+} from "../systems/puzzles/recording-reconstruction.js?v=foundation-20260728e";
+import { TransientNotice } from "./transient-notice.js?v=foundation-20260728e";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -2006,6 +2006,9 @@ export class GameApp {
                           style="left:${position.x}%;top:${position.y}%"
                           data-evidence-card-shell="${item.id}"
                         >
+                          <span class="evidence-drag-handle" data-drag-handle aria-hidden="true">
+                            Move
+                          </span>
                           <button
                             class="evidence-card-main"
                             data-board-card="${item.id}"
@@ -2039,8 +2042,8 @@ export class GameApp {
             <p class="kicker">Casework</p>
             <h2>Case file</h2>
             <p class="board-help">
-              Pin clues from the tray, then drag them—or use their arrow keys—to arrange the
-              investigation.
+              Pin clues from the tray. Drag a card by its Move handle—or use its arrow keys—to
+              arrange the investigation.
             </p>
             <button class="button button-secondary board-tidy-button" data-action="tidy-board">
               Tidy board
@@ -2156,10 +2159,6 @@ export class GameApp {
 
     this.root.querySelectorAll("[data-board-card]").forEach((card) => {
       card.addEventListener("click", () => {
-        if (this.boardWasDragged) {
-          this.boardWasDragged = false;
-          return;
-        }
         const id = card.dataset.boardCard;
         const selectedIndex = this.selectedBoardCards.indexOf(id);
         if (selectedIndex >= 0) {
@@ -2874,7 +2873,7 @@ export class GameApp {
 
       card.addEventListener("pointerdown", (event) => {
         if (event.button !== 0) return;
-        if (event.target.closest("[data-view-evidence]")) return;
+        if (!event.target.closest("[data-drag-handle]")) return;
         this.boardWasDragged = false;
         const evidenceId = card.dataset.evidenceCardShell;
         const position = this.store.getState().board.cards[evidenceId];
@@ -2914,9 +2913,15 @@ export class GameApp {
           );
           this.store.replace(next, "drag-evidence");
           this.saves.save(this.store.getState(), "drag-evidence");
+          this.boardWasDragged = false;
           this.renderBoard();
         }
         start = null;
+      });
+
+      card.addEventListener("pointercancel", () => {
+        start = null;
+        this.boardWasDragged = false;
       });
     });
   }
