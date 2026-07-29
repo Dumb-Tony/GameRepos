@@ -184,14 +184,90 @@ export const CASEBOOK_STAGES = Object.freeze([
     ],
   },
   {
-    id: "calder_gala",
+    id: "attend_calder_gala",
     title: "Invitation only",
-    objective: "The next lead is Brighter Horizon’s Thursday benefit at the Calder Grand.",
-    activeWhen: null,
+    objective: "Use the invitation to enter Brighter Horizon’s benefit at the Calder Grand.",
+    activeWhen: {
+      not: { type: "visited", location: "calder_grand_gala" },
+    },
     hints: [
       "Review the Calder Grand gala invitation in the case file.",
-      "The circled man and Cassian Rook will both be inside an invitation-only event.",
-      "The investigation will continue at the Calder Grand in the next playable chapter.",
+      "The benefit is now available on the city map.",
+      "Travel to the Calder Grand and begin with the coat-check attendant.",
+    ],
+  },
+  {
+    id: "identify_silas_wren",
+    title: "The man outside the seating plan",
+    objective: "Identify the circled guest and learn why he avoids the public ballroom.",
+    activeWhen: {
+      any: [
+        { type: "flag", key: "identifiedSilasWren", equals: false },
+        { type: "flag", key: "photographedGalaSeatingPlan", equals: false },
+        { type: "flag", key: "questionedCassianRook", equals: false },
+        { not: { type: "hasEvidence", id: "gala_terrace_photo" } },
+      ],
+    },
+    hints: [
+      "The attendant, seating plan, podium, and terrace each reveal a different part of the guest list.",
+      "Show Imani the circled gala photograph, inspect the seating plan, and challenge Rook with the disbursement report.",
+      "After Imani identifies Silas Wren, photograph his meeting with Rook by the terrace.",
+    ],
+  },
+  {
+    id: "enter_service_corridor",
+    title: "Behind the ballroom",
+    objective: "Recover Silas Wren’s dropped pass and follow him through the staff-only door.",
+    activeWhen: {
+      not: { type: "visited", location: "calder_grand_service_corridor" },
+    },
+    hints: [
+      "Imani said Wren dropped an operations pass near coat check.",
+      "Inspect the floor beside the coat-check counter after identifying Wren.",
+      "Take the service pass, then use the staff door beside the seating plan.",
+    ],
+  },
+  {
+    id: "investigate_room_b",
+    title: "Room B",
+    objective: "Document the contractor network and identify the person Rook wants moved.",
+    activeWhen: {
+      any: [
+        { type: "flag", key: "photographedContractorRoster", equals: false },
+        { type: "flag", key: "recordedRoomBConversation", equals: false },
+        { type: "flag", key: "foundAccountantForwardingSlip", equals: false },
+      ],
+    },
+    hints: [
+      "The service roster, private salon door, and security desk preserve the useful records.",
+      "Photograph the Room B roster and record Rook and Wren through the salon door.",
+      "After recording the conversation, take the payroll forwarding slip from the security desk.",
+    ],
+  },
+  {
+    id: "connect_contractor_network",
+    title: "Disposable instruments",
+    objective: "Use the board to prove Northstar was one of several foundation-financed shell contractors.",
+    activeWhen: {
+      type: "flag",
+      key: "uncoveredContractorNetwork",
+      equals: false,
+    },
+    hints: [
+      "The gala roster has a financial twin. The Room B recording has a location twin.",
+      "Connect the Brighter Horizon disbursement report to the Room B contractor roster with Blue · Financial.",
+      "Connect the Meridian guest-list header to the Room B conversation with Red · Confirmed.",
+    ],
+  },
+  {
+    id: "accountant_lead",
+    title: "The former accountant",
+    objective: "Mina Harcourt’s forwarding address is the next lead: 26 Saltmere Walk.",
+    activeWhen: null,
+    hints: [
+      "Review Mina Harcourt’s forwarding slip in the case file.",
+      "Harcourt handled Brighter Horizon’s program advances before she was terminated.",
+      "The investigation will continue at her apartment on Saltmere Walk.",
     ],
   },
 ]);
@@ -210,4 +286,10 @@ export const CASEBOOK_PROGRESS = Object.freeze([
   { label: "Calder Square investigated", when: { type: "visited", location: "brighter_horizon_office" } },
   { label: "E. Marsh access trail recovered", when: { type: "flag", key: "foundFoundationVisitorLog" } },
   { label: "Foundation financing proven", when: { type: "flag", key: "brighterHorizonFundsNorthstar" } },
+  { label: "Calder Grand infiltrated", when: { type: "visited", location: "calder_grand_gala" } },
+  { label: "Silas Wren identified", when: { type: "flag", key: "identifiedSilasWren" } },
+  { label: "Service corridor breached", when: { type: "visited", location: "calder_grand_service_corridor" } },
+  { label: "Room B contractor roster recovered", when: { type: "flag", key: "photographedContractorRoster" } },
+  { label: "Rook and Wren recorded", when: { type: "flag", key: "recordedRoomBConversation" } },
+  { label: "Contractor network proven", when: { type: "flag", key: "uncoveredContractorNetwork" } },
 ]);

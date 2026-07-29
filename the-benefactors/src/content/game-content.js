@@ -382,6 +382,154 @@ export const EVIDENCE = Object.freeze({
       handwritten: "The photograph was taken at this event. Find the man in the circle.",
     },
   },
+  gala_seating_plan: {
+    id: "gala_seating_plan",
+    title: "Calder Grand seating plan",
+    category: "document",
+    summary:
+      "Cassian Rook has a public table. The circled guest has no assigned seat at all.",
+    artifact: {
+      type: "memo",
+      heading: "BRIGHTER HORIZON WINTER BENEFIT · EAST BALLROOM",
+      body: [
+        "PODIUM: CASSIAN ROOK · FOUNDER",
+        "TABLE 01: MUNICIPAL PARTNERS",
+        "TABLE 02: GLOBAL RESPONSE COUNCIL",
+        "TABLE 03: PRIVATE DONORS",
+        "SILAS WREN: NO PUBLIC SEAT · SERVICE ACCESS",
+      ],
+      handwritten: "A guest important enough to enter, but not to appear.",
+    },
+  },
+  imani_kade_statement: {
+    id: "imani_kade_statement",
+    title: "Imani Kade’s statement",
+    category: "recording",
+    summary:
+      "The coat-check attendant identifies the circled guest as Silas Wren and says he used the service entrance.",
+    artifact: {
+      type: "transcript",
+      heading: "RECORDED STATEMENT · IMANI KADE",
+      timestamp: "8:14 PM · CALDER GRAND EAST BALLROOM",
+      lines: [
+        ["ROWAN", "Do you recognize the man in this photograph?"],
+        ["IMANI KADE", "Silas Wren. He never checks a coat and never enters through the ballroom."],
+        ["ROWAN", "Then why is he at a public benefit?"],
+        ["IMANI KADE", "He is not here for the public part."],
+      ],
+    },
+  },
+  gala_terrace_photo: {
+    id: "gala_terrace_photo",
+    title: "Rook and Wren terrace photograph",
+    category: "photograph",
+    summary:
+      "Cassian Rook quietly meets Silas Wren while the ballroom applauds the foundation’s public promises.",
+    artifact: {
+      type: "photo",
+      caption: "CALDER GRAND · EAST TERRACE · 8:27 PM",
+      annotations: [
+        "CASSIAN ROOK leaves the podium during donor applause",
+        "SILAS WREN waits outside the public seating plan",
+        "Rook hands Wren a brass service credential",
+        "Both men enter the staff corridor marked ROOM B",
+      ],
+    },
+  },
+  gala_service_pass: {
+    id: "gala_service_pass",
+    title: "Calder Grand service pass",
+    category: "access",
+    summary:
+      "A dropped all-access credential opens the staff corridor behind the benefit.",
+    artifact: {
+      type: "memo",
+      heading: "CALDER GRAND · EVENT OPERATIONS",
+      body: [
+        "ACCESS LEVEL: SERVICE / ALL FLOORS",
+        "EVENT: BRIGHTER HORIZON WINTER BENEFIT",
+        "HOLDER: TEMPORARY OPERATIONS",
+        "VALID THROUGH: 02:00",
+        "RETURN TO EAST BALLROOM COAT CHECK",
+      ],
+      handwritten: "Wren dropped it. Imani did not see you pick it up.",
+    },
+  },
+  cassian_rook_statement: {
+    id: "cassian_rook_statement",
+    title: "Cassian Rook’s statement",
+    category: "recording",
+    summary:
+      "Rook calls Northstar an emergency instrument and refuses to say who authorized it.",
+    artifact: {
+      type: "transcript",
+      heading: "RECORDED EXCHANGE · CASSIAN ROOK",
+      timestamp: "8:22 PM · CALDER GRAND",
+      lines: [
+        ["ROWAN", "Why did your foundation finance Northstar?"],
+        ["CASSIAN ROOK", "During emergencies, useful instruments are rarely elegant."],
+        ["ROWAN", "Northstar was not a contractor. It was a false identity."],
+        ["CASSIAN ROOK", "Then I suggest you ask who required the instrument, not who paid for it."],
+      ],
+    },
+  },
+  gala_contractor_roster: {
+    id: "gala_contractor_roster",
+    title: "Room B contractor roster",
+    category: "document",
+    summary:
+      "Northstar appears among five temporary contractors routed through Brighter Horizon programs.",
+    artifact: {
+      type: "memo",
+      heading: "CALDER GRAND · SERVICE DELIVERY ROSTER",
+      body: [
+        "ROOM B · SECURE INFRASTRUCTURE SESSION",
+        "NORTHSTAR CIVIC WORKS · GREYHAVEN ACCESS",
+        "DEEPWELL RESPONSE · REGIONAL WATER",
+        "CROWNLINE SYSTEMS · DATA RESILIENCE",
+        "VERDANT SHELTER GROUP · CONSERVATION",
+        "ALL ACCOUNTS ROUTED THROUGH PROGRAM ADVANCES",
+      ],
+      handwritten: "Northstar was not an exception. It was a template.",
+    },
+  },
+  room_b_conversation: {
+    id: "room_b_conversation",
+    title: "Room B conversation",
+    category: "recording",
+    summary:
+      "Rook and Wren discuss shutting down Northstar as one of several expendable contractor identities.",
+    artifact: {
+      type: "recording",
+      heading: "CALDER GRAND · ROOM B · RECOVERED AUDIO",
+      duration: "00:38",
+      fragments: [
+        "ROOK: Vale made the Greyhaven account visible. That was the failure.",
+        "WREN: Northstar is closed. The other instruments remain compartmentalized.",
+        "ROOK: Move Harcourt before anyone audits the program advances.",
+        "WREN: Her forwarding address is already being handled.",
+      ],
+      background: ["ballroom applause through the wall", "freight elevator bell"],
+    },
+  },
+  accountant_forwarding_slip: {
+    id: "accountant_forwarding_slip",
+    title: "Mina Harcourt forwarding slip",
+    category: "location",
+    summary:
+      "A discarded payroll envelope names the former Brighter Horizon accountant and her last known address.",
+    artifact: {
+      type: "memo",
+      heading: "RETURNED PAYROLL · FORWARDING REQUEST",
+      body: [
+        "MINA HARCOURT · FORMER PROGRAM ACCOUNTANT",
+        "BRIGHTER HORIZON · GREYHAVEN",
+        "FORWARD TO: 26 SALTMERE WALK · APARTMENT 3C",
+        "STATUS: TERMINATED · RECORDS HOLD",
+      ],
+      handwritten: "Rook said to move Harcourt. Find her first.",
+    },
+  },
 });
 
 export const INVENTORY_ITEMS = Object.freeze({
@@ -695,6 +843,138 @@ export const DIALOGUES = Object.freeze({
       },
     },
   },
+  gala_attendant: {
+    id: "gala_attendant",
+    character: "Imani Kade",
+    portrait: "IK",
+    start: "intro",
+    nodes: {
+      intro: {
+        id: "intro",
+        speaker: "Imani Kade",
+        text:
+          "Invitation, please. The foundation prefers tonight’s generosity to remain carefully scheduled.",
+        choices: [
+          {
+            id: "show-invitation",
+            text: "I appear to be carefully scheduled.",
+            evidenceId: "calder_gala_invitation",
+            requires: { type: "hasEvidence", id: "calder_gala_invitation" },
+            next: "welcome",
+          },
+          {
+            id: "show-photo",
+            text: "Do you recognize the man circled in this photograph?",
+            evidenceId: "meridian_gala_photograph",
+            requires: { type: "hasEvidence", id: "meridian_gala_photograph" },
+            next: "wren",
+          },
+          { id: "leave", text: "I’ll come back.", end: true },
+        ],
+      },
+      welcome: {
+        id: "welcome",
+        speaker: "Imani Kade",
+        text:
+          "East ballroom, donor reception, and no recording during the keynote. The service corridor is for staff and men who dislike being photographed.",
+        choices: [
+          {
+            id: "show-photo",
+            text: "One of those men?",
+            evidenceId: "meridian_gala_photograph",
+            requires: { type: "hasEvidence", id: "meridian_gala_photograph" },
+            next: "wren",
+          },
+          { id: "finish", text: "That is remarkably specific.", end: true },
+        ],
+      },
+      wren: {
+        id: "wren",
+        speaker: "Imani Kade",
+        text:
+          "Silas Wren. He never checks a coat and never enters through the ballroom. He dropped an operations pass when he came through tonight. I have not decided whether I saw it.",
+        onEnter: [
+          { type: "setFlag", key: "identifiedSilasWren", value: true },
+          { type: "collectEvidence", id: "imani_kade_statement" },
+        ],
+        choices: [
+          {
+            id: "finish",
+            text: "Then I won’t ask you to decide.",
+            end: true,
+          },
+        ],
+      },
+    },
+  },
+  cassian_rook_gala: {
+    id: "cassian_rook_gala",
+    character: "Cassian Rook",
+    portrait: "CR",
+    start: "intro",
+    nodes: {
+      intro: {
+        id: "intro",
+        speaker: "Cassian Rook",
+        text:
+          "A local journalist. Good. Global hope is meaningless if it cannot survive local scrutiny.",
+        choices: [
+          {
+            id: "ask-foundation",
+            text: "What does tonight’s money actually fund?",
+            next: "programs",
+          },
+          {
+            id: "show-report",
+            text: "Why did Brighter Horizon finance Northstar?",
+            evidenceId: "foundation_disbursement_report",
+            requires: {
+              type: "hasEvidence",
+              id: "foundation_disbursement_report",
+            },
+            next: "northstar",
+          },
+          { id: "leave", text: "Enjoy the applause.", end: true },
+        ],
+      },
+      programs: {
+        id: "programs",
+        speaker: "Cassian Rook",
+        text:
+          "Emergency housing, water, medicine, access. The things governments promise after the moment for action has already passed.",
+        choices: [
+          {
+            id: "show-report",
+            text: "Your action included a contractor that did not exist.",
+            evidenceId: "foundation_disbursement_report",
+            requires: {
+              type: "hasEvidence",
+              id: "foundation_disbursement_report",
+            },
+            next: "northstar",
+          },
+          { id: "finish", text: "A polished answer.", end: true },
+        ],
+      },
+      northstar: {
+        id: "northstar",
+        speaker: "Cassian Rook",
+        text:
+          "During emergencies, useful instruments are rarely elegant. If Northstar was a false identity, ask who required the instrument—not who paid for it.",
+        onEnter: [
+          { type: "setFlag", key: "questionedCassianRook", value: true },
+          { type: "collectEvidence", id: "cassian_rook_statement" },
+        ],
+        choices: [
+          {
+            id: "finish",
+            text: "I intend to ask both.",
+            end: true,
+          },
+        ],
+      },
+    },
+  },
 });
 
 export const DEDUCTIONS = Object.freeze({
@@ -836,6 +1116,39 @@ export const DEDUCTIONS = Object.freeze({
     effects: [
       { type: "setFlag", key: "brighterHorizonFundsNorthstar", value: true },
       { type: "collectEvidence", id: "calder_gala_invitation" },
+      { type: "unlockLocation", id: "calder_grand_gala" },
+    ],
+  },
+  room_b_contractor_network: {
+    id: "room_b_contractor_network",
+    title: "Northstar was one instrument in a contractor network",
+    journalText:
+      "Room B’s roster places Northstar among temporary identities financed through Brighter Horizon program advances. Rook and Wren treated each shell as disposable infrastructure.",
+    notification:
+      "Northstar was a template, not an exception. Former program accountant Mina Harcourt is the next lead.",
+    requiredDeductions: ["foundation_funded_northstar"],
+    requiredEvidence: [
+      "foundation_disbursement_report",
+      "gala_contractor_roster",
+      "meridian_guest_list_header",
+      "room_b_conversation",
+      "accountant_forwarding_slip",
+    ],
+    requiredConnections: [
+      {
+        a: "foundation_disbursement_report",
+        b: "gala_contractor_roster",
+        type: "financial",
+      },
+      {
+        a: "meridian_guest_list_header",
+        b: "room_b_conversation",
+        type: "confirmed",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "uncoveredContractorNetwork", value: true },
+      { type: "setPath", path: "progress.officeState", value: 5 },
     ],
   },
 });
@@ -1341,6 +1654,263 @@ export const GAME_CONTENT = Object.freeze({
           title: "A table of immaculate promises",
           text:
             "Housing. Clean water. Emergency access. A card advertises Thursday’s invitation-only benefit at the Calder Grand.",
+        },
+      ],
+    },
+    calder_grand_gala: {
+      id: "calder_grand_gala",
+      name: "Calder Grand Benefit",
+      eyebrow: "East Ballroom · Thursday · 8:06 PM",
+      mapX: 66,
+      mapY: 28,
+      description:
+        "Brighter Horizon’s donors applaud beneath chandeliers while the people who manage the machinery stand outside the seating plan.",
+      sceneClass: "scene-calder-grand-gala",
+      sceneArt: "./assets/scenes/calder-grand-gala.webp",
+      hotspots: [
+        {
+          id: "gala_attendant",
+          label: "Coat-check attendant",
+          x: 3,
+          y: 43,
+          width: 19,
+          height: 37,
+          title: "Imani Kade, coat-check attendant",
+          text:
+            "She has watched every important guest arrive and has been trained to appear as if she noticed none of them.",
+          actionLabel: "Speak with Imani Kade",
+          dialogueId: "gala_attendant",
+        },
+        {
+          id: "gala_seating_plan",
+          label: "Seating plan",
+          x: 76,
+          y: 49,
+          width: 12,
+          height: 28,
+          title: "The public seating plan",
+          text:
+            "Cassian Rook has a podium, three tables have sponsors, and one familiar face has no seat at all.",
+          actionLabel: "Photograph the seating plan",
+          resultText:
+            "The plan names Silas Wren as service access only. He is a guest the public record is designed not to contain.",
+          effects: [
+            { type: "setFlag", key: "photographedGalaSeatingPlan", value: true },
+            { type: "collectEvidence", id: "gala_seating_plan" },
+          ],
+          actionWhen: {
+            not: { type: "flag", key: "photographedGalaSeatingPlan" },
+          },
+        },
+        {
+          id: "cassian_rook",
+          label: "Cassian Rook",
+          x: 43,
+          y: 36,
+          width: 13,
+          height: 28,
+          title: "Cassian Rook at the podium",
+          text:
+            "His speech makes private power sound like a public service offered at tremendous personal inconvenience.",
+          actionLabel: "Question Cassian Rook",
+          dialogueId: "cassian_rook_gala",
+        },
+        {
+          id: "silas_wren_terrace",
+          label: "Man by the terrace",
+          x: 88,
+          y: 42,
+          width: 11,
+          height: 39,
+          title: "The circled man",
+          text:
+            "He watches the exits during applause. Cassian Rook leaves the podium and crosses toward him.",
+          actionLabel: "Photograph the meeting",
+          resultText:
+            "Your camera catches Rook handing Silas Wren a brass credential before both men enter the staff corridor.",
+          effects: [
+            { type: "collectEvidence", id: "gala_terrace_photo" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "identifiedSilasWren" },
+              { type: "hasInventory", id: "smartphone" },
+              { not: { type: "hasEvidence", id: "gala_terrace_photo" } },
+            ],
+          },
+        },
+        {
+          id: "dropped_service_pass",
+          label: "Dropped service pass",
+          x: 19,
+          y: 67,
+          width: 14,
+          height: 17,
+          title: "A brass operations pass",
+          text:
+            "The credential lies beneath the coat-check counter where Silas Wren refused to stop.",
+          actionLabel: "Pocket the service pass",
+          resultText:
+            "The pass grants all-floor service access until 2:00 AM. The staff corridor is now open.",
+          effects: [
+            { type: "setFlag", key: "foundGalaServicePass", value: true },
+            { type: "collectEvidence", id: "gala_service_pass" },
+            { type: "unlockLocation", id: "calder_grand_service_corridor" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "identifiedSilasWren" },
+              { type: "flag", key: "foundGalaServicePass", equals: false },
+            ],
+          },
+        },
+        {
+          id: "gala_service_door",
+          label: "Service door",
+          x: 70,
+          y: 38,
+          width: 9,
+          height: 37,
+          title: "Staff only",
+          text:
+            "The ballroom’s most heavily used door is the one absent from the evening program.",
+          actionLabel: "Enter the service corridor",
+          resultText:
+            "The brass pass flashes green. The applause dulls behind the service door.",
+          effects: [
+            { type: "unlockLocation", id: "calder_grand_service_corridor" },
+            { type: "visitLocation", id: "calder_grand_service_corridor" },
+          ],
+          actionWhen: {
+            type: "flag",
+            key: "foundGalaServicePass",
+          },
+        },
+        {
+          id: "gala_donor_display",
+          label: "Humanitarian display",
+          x: 51,
+          y: 16,
+          width: 15,
+          height: 24,
+          title: "A monument to measurable compassion",
+          text:
+            "Every crisis has a polished photograph. Every solution has Cassian Rook standing just outside the frame.",
+        },
+      ],
+    },
+    calder_grand_service_corridor: {
+      id: "calder_grand_service_corridor",
+      name: "Calder Grand Service Corridor",
+      eyebrow: "Behind the East Ballroom · 8:39 PM",
+      mapX: 69,
+      mapY: 32,
+      description:
+        "Beyond the chandeliers, the benefit becomes freight schedules, temporary credentials, and doors without public names.",
+      sceneClass: "scene-calder-grand-service",
+      sceneArt: "./assets/scenes/calder-grand-service-corridor.webp",
+      hotspots: [
+        {
+          id: "contractor_roster",
+          label: "Delivery roster",
+          x: 36,
+          y: 19,
+          width: 15,
+          height: 29,
+          title: "Room B delivery roster",
+          text:
+            "Five contractors supplied secure infrastructure tonight. Northstar is only the first name you recognize.",
+          actionLabel: "Photograph the roster",
+          resultText:
+            "Northstar appears beside Deepwell, Crownline, and other temporary firms—all routed through program advances.",
+          effects: [
+            { type: "setFlag", key: "photographedContractorRoster", value: true },
+            { type: "collectEvidence", id: "gala_contractor_roster" },
+          ],
+          actionWhen: {
+            not: { type: "flag", key: "photographedContractorRoster" },
+          },
+        },
+        {
+          id: "room_b_door",
+          label: "Private salon door",
+          x: 53,
+          y: 25,
+          width: 13,
+          height: 43,
+          title: "Room B",
+          text:
+            "Rook and Wren speak behind the unmarked salon door. The ballroom applause covers everything but the sharpest words.",
+          actionLabel: "Record through the door",
+          resultText:
+            "The recorder captures Rook calling Northstar one of several instruments—and Wren ordering Mina Harcourt moved.",
+          effects: [
+            { type: "setFlag", key: "recordedRoomBConversation", value: true },
+            { type: "collectEvidence", id: "room_b_conversation" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "hasInventory", id: "recorder" },
+              { type: "flag", key: "recordedRoomBConversation", equals: false },
+            ],
+          },
+        },
+        {
+          id: "service_security_desk",
+          label: "Security desk",
+          x: 42,
+          y: 51,
+          width: 17,
+          height: 26,
+          title: "An unattended security desk",
+          text:
+            "A returned payroll envelope has been used as a coaster beneath the roster lamp.",
+          actionLabel: "Take the forwarding slip",
+          resultText:
+            "The envelope names former program accountant Mina Harcourt and a forwarding address at 26 Saltmere Walk.",
+          effects: [
+            { type: "setFlag", key: "foundAccountantForwardingSlip", value: true },
+            { type: "collectEvidence", id: "accountant_forwarding_slip" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "recordedRoomBConversation" },
+              { type: "flag", key: "foundAccountantForwardingSlip", equals: false },
+            ],
+          },
+        },
+        {
+          id: "service_linen_cart",
+          label: "Linen carts",
+          x: 0,
+          y: 48,
+          width: 28,
+          height: 40,
+          title: "Hotel linen and sealed crates",
+          text:
+            "The crates are labeled as table hardware. The weight marks suggest racks of electronics.",
+        },
+        {
+          id: "service_freight_elevator",
+          label: "Freight elevator",
+          x: 82,
+          y: 26,
+          width: 17,
+          height: 49,
+          title: "A guarded freight elevator",
+          text:
+            "The indicator remains on basement level two. The guard is watching the ballroom door, not you.",
+        },
+        {
+          id: "service_champagne_tray",
+          label: "Abandoned champagne",
+          x: 76,
+          y: 72,
+          width: 20,
+          height: 18,
+          title: "Celebration, interrupted",
+          text:
+            "Two untouched glasses and one empty bottle. Even the conspirators have catering minimums.",
         },
       ],
     },

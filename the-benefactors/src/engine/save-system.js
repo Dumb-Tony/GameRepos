@@ -3,7 +3,7 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js?v=foundation-20260728e";
+} from "./game-state.js?v=gala-20260728a";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
@@ -198,6 +198,14 @@ export class SaveSystem {
       !migrated.progress.unlockedLocations.includes("brighter_horizon_office")
     ) {
       migrated.progress.unlockedLocations.push("brighter_horizon_office");
+    }
+
+    if (
+      legacyVersion < 11 &&
+      migrated.flags.brighterHorizonFundsNorthstar &&
+      !migrated.progress.unlockedLocations.includes("calder_grand_gala")
+    ) {
+      migrated.progress.unlockedLocations.push("calder_grand_gala");
     }
 
     return migrated;

@@ -86,6 +86,16 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Calder Grand benefit invitation as the next story lead
 - Updated notebook progression and migration for completed Northstar saves
 
+**Milestone 8 — Calder Grand infiltration (complete)**
+
+- Invitation-only gala ballroom and staff service corridor
+- Evidence-driven conversations with Imani Kade and Cassian Rook
+- Identification of Silas Wren, the circled gala guest
+- Seating plan, terrace photograph, service pass, and full evidence artifacts
+- Room B contractor roster, covert recording, and Mina Harcourt forwarding lead
+- Board deduction proving Northstar was one of several disposable contractors
+- Updated notebook progression and migration for completed foundation saves
+
 **Prologue content now playable**
 
 - Photograph the missing west wing

@@ -28,6 +28,8 @@ const imageAssetFiles = [
   "assets/scenes/june-bell.webp",
   "assets/scenes/northstar-harrow.webp",
   "assets/scenes/brighter-horizon-office.webp",
+  "assets/scenes/calder-grand-gala.webp",
+  "assets/scenes/calder-grand-service-corridor.webp",
   "assets/social/benefactors-social.webp",
   "assets/evidence/gala-photograph.webp",
 ];

@@ -211,3 +211,24 @@ test("unlocks Calder Square for completed Northstar saves", () => {
     true,
   );
 });
+
+test("unlocks the Calder Grand for completed foundation saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Jordan" });
+  previous.version = 10;
+  previous.flags.brighterHorizonFundsNorthstar = true;
+  previous.progress.unlockedLocations =
+    previous.progress.unlockedLocations.filter(
+      (locationId) => locationId !== "calder_grand_gala",
+    );
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(
+    migrated.progress.unlockedLocations.includes("calder_grand_gala"),
+    true,
+  );
+});

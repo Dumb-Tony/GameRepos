@@ -20,7 +20,7 @@ test("every casebook stage has a three-level hint path", () => {
     assert.equal(stage.hints.length, 3, stage.id);
     assert.equal(stage.hints.every(Boolean), true, stage.id);
   }
-  assert.equal(CASEBOOK_PROGRESS.length, 13);
+  assert.equal(CASEBOOK_PROGRESS.length, 19);
 });
 
 test("casebook objective advances with investigation state", () => {
@@ -65,5 +65,25 @@ test("casebook objective advances with investigation state", () => {
   assert.equal(activeStage(state).id, "connect_foundation");
 
   state.flags.brighterHorizonFundsNorthstar = true;
-  assert.equal(activeStage(state).id, "calder_gala");
+  assert.equal(activeStage(state).id, "attend_calder_gala");
+
+  state.locationVisits.calder_grand_gala = 1;
+  assert.equal(activeStage(state).id, "identify_silas_wren");
+
+  state.flags.identifiedSilasWren = true;
+  state.flags.photographedGalaSeatingPlan = true;
+  state.flags.questionedCassianRook = true;
+  state.evidence.collected.push("gala_terrace_photo");
+  assert.equal(activeStage(state).id, "enter_service_corridor");
+
+  state.locationVisits.calder_grand_service_corridor = 1;
+  assert.equal(activeStage(state).id, "investigate_room_b");
+
+  state.flags.photographedContractorRoster = true;
+  state.flags.recordedRoomBConversation = true;
+  state.flags.foundAccountantForwardingSlip = true;
+  assert.equal(activeStage(state).id, "connect_contractor_network");
+
+  state.flags.uncoveredContractorNetwork = true;
+  assert.equal(activeStage(state).id, "accountant_lead");
 });

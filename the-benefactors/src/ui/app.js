@@ -4,38 +4,38 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=foundation-20260728e";
+} from "../content/game-content.js?v=gala-20260728a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=foundation-20260728e";
+} from "../content/casebook-content.js?v=gala-20260728a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=foundation-20260728e";
+} from "../content/onboarding-content.js?v=gala-20260728a";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=foundation-20260728e";
-import { evaluateCondition } from "../engine/conditions.js?v=foundation-20260728e";
-import { applyEffects } from "../engine/events.js?v=foundation-20260728e";
-import { createInitialState } from "../engine/game-state.js?v=foundation-20260728e";
+} from "../content/prologue-content.js?v=gala-20260728a";
+import { evaluateCondition } from "../engine/conditions.js?v=gala-20260728a";
+import { applyEffects } from "../engine/events.js?v=gala-20260728a";
+import { createInitialState } from "../engine/game-state.js?v=gala-20260728a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=foundation-20260728e";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=foundation-20260728e";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=foundation-20260728e";
+} from "../engine/player-language.js?v=gala-20260728a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=gala-20260728a";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=gala-20260728a";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=foundation-20260728e";
+} from "../systems/dialogue/dialogue-engine.js?v=gala-20260728a";
 import {
   arrangeEvidence,
   connectEvidence,
@@ -43,19 +43,19 @@ import {
   moveEvidence,
   pinEvidence,
   removeConnection,
-} from "../systems/evidence-board/evidence-board.js?v=foundation-20260728e";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=foundation-20260728e";
+} from "../systems/evidence-board/evidence-board.js?v=gala-20260728a";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=gala-20260728a";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=foundation-20260728e";
+} from "../systems/puzzles/plan-alignment.js?v=gala-20260728a";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=foundation-20260728e";
-import { TransientNotice } from "./transient-notice.js?v=foundation-20260728e";
+} from "../systems/puzzles/recording-reconstruction.js?v=gala-20260728a";
+import { TransientNotice } from "./transient-notice.js?v=gala-20260728a";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -759,7 +759,45 @@ export class GameApp {
   renderHome() {
     const state = this.store.getState();
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
-    const caseUpdate = state.flags.brighterHorizonFundsNorthstar
+    const caseUpdate = state.flags.uncoveredContractorNetwork
+      ? {
+          title: "Northstar was a template",
+          text:
+            "Room B proves Brighter Horizon financed a network of disposable contractors. Former program accountant Mina Harcourt is the next lead at 26 Saltmere Walk.",
+        }
+      : state.flags.photographedContractorRoster &&
+          state.flags.recordedRoomBConversation &&
+          state.flags.foundAccountantForwardingSlip
+        ? {
+            title: "Five contractors, one program",
+            text:
+              "The Room B roster, recorded conversation, and Harcourt forwarding slip belong on the board beside the foundation’s disbursement report and Vale’s guest-list header.",
+          }
+        : (state.locationVisits.calder_grand_service_corridor || 0) > 0
+          ? {
+              title: "Behind the chandeliers",
+              text:
+                "Photograph the Room B contractor roster, record the conversation behind the salon door, and search the security desk for Harcourt’s forwarding address.",
+            }
+          : state.flags.foundGalaServicePass
+            ? {
+                title: "The door behind the benefit",
+                text:
+                  "Silas Wren’s dropped pass opens the Calder Grand service corridor. Follow Rook and Wren beyond the public ballroom.",
+              }
+            : state.flags.identifiedSilasWren
+              ? {
+                  title: "A guest without a seat",
+                  text:
+                    "Imani identified the circled man as Silas Wren. Photograph his meeting with Rook, recover the dropped operations pass, and follow the staff door.",
+                }
+              : (state.locationVisits.calder_grand_gala || 0) > 0
+                ? {
+                    title: "Invitation only",
+                    text:
+                      "The ballroom is public theater. Start with Imani at coat check, inspect the seating plan, question Rook, and watch the terrace.",
+                  }
+                : state.flags.brighterHorizonFundsNorthstar
       ? {
           title: "The charity created the contractor",
           text:
