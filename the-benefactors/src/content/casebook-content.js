@@ -138,14 +138,60 @@ export const CASEBOOK_STAGES = Object.freeze([
     ],
   },
   {
-    id: "brighter_horizon",
-    title: "Brighter Horizon",
-    objective: "Northstar is a mailbox. The next lead is Brighter Horizon Foundation at 8 Calder Square.",
+    id: "visit_foundation",
+    title: "The foundation",
+    objective: "Visit Brighter Horizon Foundation’s Greyhaven office at 8 Calder Square.",
+    activeWhen: {
+      not: { type: "visited", location: "brighter_horizon_office" },
+    },
+    hints: [
+      "The Brighter Horizon connection is now a destination on the city map.",
+      "Travel to Calder Square and inspect the foundation’s public lobby.",
+      "Begin with the receptionist and the founders’ wall.",
+    ],
+  },
+  {
+    id: "investigate_foundation",
+    title: "Behind the donor wall",
+    objective: "Identify who used E. Marsh’s credential and trace Brighter Horizon’s payments to Northstar.",
+    activeWhen: {
+      any: [
+        { type: "flag", key: "photographedFoundationDonorWall", equals: false },
+        { type: "flag", key: "questionedFoundationReceptionist", equals: false },
+        { type: "flag", key: "foundFoundationVisitorLog", equals: false },
+        { type: "flag", key: "foundFoundationDisbursementReport", equals: false },
+      ],
+    },
+    hints: [
+      "The receptionist, donor wall, visitor terminal, and recycling console each preserve a different part of the trail.",
+      "Show Celia the Brighter Horizon connection and Northstar manifest, then inspect the terminal and public report.",
+      "Photograph the founders’ wall, confront Celia about E. Marsh, print the access log, and take the report beside recycling.",
+    ],
+  },
+  {
+    id: "connect_foundation",
+    title: "The charity and its contractor",
+    objective: "Use the board to prove Brighter Horizon financed and administered Northstar.",
+    activeWhen: {
+      type: "flag",
+      key: "brighterHorizonFundsNorthstar",
+      equals: false,
+    },
+    hints: [
+      "The invoice has a financial twin. The courier manifest has an administrative twin.",
+      "Connect the Northstar invoice to the disbursement report with Blue · Financial.",
+      "Connect the courier manifest to the visitor log with Red · Confirmed.",
+    ],
+  },
+  {
+    id: "calder_gala",
+    title: "Invitation only",
+    objective: "The next lead is Brighter Horizon’s Thursday benefit at the Calder Grand.",
     activeWhen: null,
     hints: [
-      "Review the new Brighter Horizon connection in the case file.",
-      "The gala photograph and courier manifest place the same charity on both ends of the trail.",
-      "The investigation will continue at 8 Calder Square in the next playable chapter.",
+      "Review the Calder Grand gala invitation in the case file.",
+      "The circled man and Cassian Rook will both be inside an invitation-only event.",
+      "The investigation will continue at the Calder Grand in the next playable chapter.",
     ],
   },
 ]);
@@ -161,4 +207,7 @@ export const CASEBOOK_PROGRESS = Object.freeze([
   { label: "Harrow Street investigated", when: { type: "visited", location: "northstar_harrow" } },
   { label: "Courier route recovered", when: { type: "flag", key: "foundNorthstarCourierManifest" } },
   { label: "Brighter Horizon connection proven", when: { type: "flag", key: "northstarRoutesToBrighterHorizon" } },
+  { label: "Calder Square investigated", when: { type: "visited", location: "brighter_horizon_office" } },
+  { label: "E. Marsh access trail recovered", when: { type: "flag", key: "foundFoundationVisitorLog" } },
+  { label: "Foundation financing proven", when: { type: "flag", key: "brighterHorizonFundsNorthstar" } },
 ]);

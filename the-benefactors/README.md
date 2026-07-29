@@ -77,6 +77,15 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Evidence-board deduction linking Northstar to Brighter Horizon
 - Updated notebook objectives, hints, map route, and save migration
 
+**Milestone 7 — The Foundation (complete)**
+
+- New illustrated Brighter Horizon office at 8 Calder Square
+- Evidence-driven interview with foundation receptionist Celia Orr
+- Donor-wall photograph, visitor-access log, and financial report
+- Board deduction proving Brighter Horizon financed and administered Northstar
+- Calder Grand benefit invitation as the next story lead
+- Updated notebook progression and migration for completed Northstar saves
+
 **Prologue content now playable**
 
 - Photograph the missing west wing

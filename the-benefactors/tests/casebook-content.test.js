@@ -20,7 +20,7 @@ test("every casebook stage has a three-level hint path", () => {
     assert.equal(stage.hints.length, 3, stage.id);
     assert.equal(stage.hints.every(Boolean), true, stage.id);
   }
-  assert.equal(CASEBOOK_PROGRESS.length, 10);
+  assert.equal(CASEBOOK_PROGRESS.length, 13);
 });
 
 test("casebook objective advances with investigation state", () => {
@@ -53,5 +53,17 @@ test("casebook objective advances with investigation state", () => {
   assert.equal(activeStage(state).id, "connect_northstar");
 
   state.flags.northstarRoutesToBrighterHorizon = true;
-  assert.equal(activeStage(state).id, "brighter_horizon");
+  assert.equal(activeStage(state).id, "visit_foundation");
+
+  state.locationVisits.brighter_horizon_office = 1;
+  assert.equal(activeStage(state).id, "investigate_foundation");
+
+  state.flags.photographedFoundationDonorWall = true;
+  state.flags.questionedFoundationReceptionist = true;
+  state.flags.foundFoundationVisitorLog = true;
+  state.flags.foundFoundationDisbursementReport = true;
+  assert.equal(activeStage(state).id, "connect_foundation");
+
+  state.flags.brighterHorizonFundsNorthstar = true;
+  assert.equal(activeStage(state).id, "calder_gala");
 });

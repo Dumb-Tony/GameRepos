@@ -192,6 +192,14 @@ export class SaveSystem {
       migrated.progress.unlockedLocations.push("northstar_harrow");
     }
 
+    if (
+      legacyVersion < 10 &&
+      migrated.flags.northstarRoutesToBrighterHorizon &&
+      !migrated.progress.unlockedLocations.includes("brighter_horizon_office")
+    ) {
+      migrated.progress.unlockedLocations.push("brighter_horizon_office");
+    }
+
     return migrated;
   }
 }

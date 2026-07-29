@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 9;
+export const GAME_STATE_VERSION = 10;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -67,6 +67,11 @@ export function createInitialState(player = {}, settings = {}) {
       questionedHarrowManager: false,
       foundNorthstarCourierManifest: false,
       northstarRoutesToBrighterHorizon: false,
+      photographedFoundationDonorWall: false,
+      questionedFoundationReceptionist: false,
+      foundFoundationVisitorLog: false,
+      foundFoundationDisbursementReport: false,
+      brighterHorizonFundsNorthstar: false,
     },
     inventory: ["press_credentials", "smartphone", "recorder", "notebook"],
     evidence: {
@@ -118,6 +123,7 @@ export function createInitialState(player = {}, settings = {}) {
       mayor_study: 0,
       hidden_room: 0,
       northstar_harrow: 0,
+      brighter_horizon_office: 0,
     },
     settings: {
       ...DEFAULT_SETTINGS,

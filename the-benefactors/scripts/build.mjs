@@ -27,6 +27,7 @@ const imageAssetFiles = [
   "assets/scenes/lionel-price.webp",
   "assets/scenes/june-bell.webp",
   "assets/scenes/northstar-harrow.webp",
+  "assets/scenes/brighter-horizon-office.webp",
   "assets/social/benefactors-social.webp",
   "assets/evidence/gala-photograph.webp",
 ];

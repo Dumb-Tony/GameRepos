@@ -288,6 +288,100 @@ export const EVIDENCE = Object.freeze({
       handwritten: "A charity receiving mail for a contractor that does not exist.",
     },
   },
+  calder_donor_wall_photo: {
+    id: "calder_donor_wall_photo",
+    title: "Brighter Horizon donor-wall photograph",
+    category: "photograph",
+    summary:
+      "The Calder Square donor wall quietly places Vale, Rook, and the circled gala guest in the same campaign.",
+    artifact: {
+      type: "photo",
+      caption: "BRIGHTER HORIZON · GREYHAVEN FOUNDERS' WALL",
+      annotations: [
+        "CASSIAN ROOK — GLOBAL FOUNDER",
+        "MAYOR EVELYN VALE — GREYHAVEN ACCESS PARTNERSHIP",
+        "The circled man appears in an older campaign photograph",
+        "Plaque date predates Northstar’s registration by eleven months",
+      ],
+    },
+  },
+  celia_orr_statement: {
+    id: "celia_orr_statement",
+    title: "Celia Orr’s statement",
+    category: "recording",
+    summary:
+      "Brighter Horizon denies employing E. Marsh but admits its visitor system used that authorization.",
+    artifact: {
+      type: "transcript",
+      heading: "RECORDED STATEMENT — CELIA ORR",
+      timestamp: "10:42 AM · 8 Calder Square",
+      lines: [
+        ["ROWAN", "Who is E. Marsh?"],
+        ["CELIA ORR", "No one employed by this foundation."],
+        ["ROWAN", "The same name authorized Northstar’s courier route."],
+        ["CELIA ORR", "Field partners sometimes use shared administrative credentials."],
+        ["ROWAN", "Then the visitor terminal should show who used it."],
+      ],
+    },
+  },
+  foundation_visitor_log: {
+    id: "foundation_visitor_log",
+    title: "Calder Square visitor log",
+    category: "document",
+    summary:
+      "E. Marsh repeatedly signed in for both Brighter Horizon and Northstar meetings.",
+    artifact: {
+      type: "memo",
+      heading: "VISITOR ACCESS EXTRACT · CALDER SQUARE",
+      body: [
+        "CREDENTIAL: E. MARSH / TEMPORARY ADMINISTRATOR",
+        "09 MAY · NORTHSTAR CIVIC WORKS · FINANCE OFFICE",
+        "16 MAY · BRIGHTER HORIZON · GREYHAVEN PROGRAMS",
+        "23 MAY · NORTHSTAR CIVIC WORKS · COURIER AUTHORIZATION",
+        "30 MAY · MERIDIAN SESSION · CALDER GRAND SERVICE ENTRY",
+      ],
+      handwritten: "One credential, three organizations.",
+    },
+  },
+  foundation_disbursement_report: {
+    id: "foundation_disbursement_report",
+    title: "Brighter Horizon disbursement report",
+    category: "financial",
+    summary:
+      "A foundation emergency grant funded Northstar one day before the city paid the same invoice.",
+    artifact: {
+      type: "memo",
+      heading: "GREYHAVEN RAPID ACCESS FUND · QUARTERLY DISBURSEMENTS",
+      body: [
+        "PROGRAM GY-14 · SECURE ACCESS INFRASTRUCTURE",
+        "RECIPIENT: NORTHSTAR CIVIC WORKS",
+        "FOUNDATION ADVANCE: $184,600",
+        "DATE RELEASED: 11 MAY · 08:14",
+        "MUNICIPAL REIMBURSEMENT: 12 MAY · $184,600",
+        "INTERNAL ROUTING: MERIDIAN / ROOM B",
+      ],
+      handwritten: "The charity advanced the exact invoice amount.",
+    },
+  },
+  calder_gala_invitation: {
+    id: "calder_gala_invitation",
+    title: "Calder Grand gala invitation",
+    category: "event",
+    summary:
+      "Brighter Horizon’s closed benefit at the Calder Grand is the next chance to identify the circled man.",
+    artifact: {
+      type: "memo",
+      heading: "BRIGHTER HORIZON · GREYHAVEN WINTER BENEFIT",
+      body: [
+        "THURSDAY · 7:30 PM",
+        "THE CALDER GRAND · EAST BALLROOM",
+        "FOUNDERS’ RECEPTION · INVITATION ONLY",
+        "SERVICE ACCESS: STAFF AND APPROVED VENDORS",
+        "KEYNOTE: CASSIAN ROOK",
+      ],
+      handwritten: "The photograph was taken at this event. Find the man in the circle.",
+    },
+  },
 });
 
 export const INVENTORY_ITEMS = Object.freeze({
@@ -506,6 +600,101 @@ export const DIALOGUES = Object.freeze({
       },
     },
   },
+  foundation_receptionist: {
+    id: "foundation_receptionist",
+    character: "Celia Orr",
+    portrait: "CO",
+    start: "intro",
+    nodes: {
+      intro: {
+        id: "intro",
+        speaker: "Celia Orr",
+        text:
+          "Brighter Horizon’s grant officers work by appointment. I can offer a program brochure or a statement from our communications office.",
+        choices: [
+          {
+            id: "ask-programs",
+            text: "What does the Greyhaven office actually fund?",
+            next: "programs",
+          },
+          {
+            id: "show-connection",
+            text: "Northstar’s courier route ends at this desk.",
+            evidenceId: "brighter_horizon_connection",
+            requires: { type: "hasEvidence", id: "brighter_horizon_connection" },
+            next: "northstar",
+          },
+          { id: "leave", text: "I’ll look around first.", end: true },
+        ],
+      },
+      programs: {
+        id: "programs",
+        speaker: "Celia Orr",
+        text:
+          "Emergency housing, accessibility, public health. The quarterly disbursement report is public—assuming someone has not left the internal copy beside recycling again.",
+        choices: [
+          {
+            id: "ask-northstar",
+            text: "Was Northstar one of those partners?",
+            evidenceId: "brighter_horizon_connection",
+            requires: { type: "hasEvidence", id: "brighter_horizon_connection" },
+            next: "northstar",
+          },
+          { id: "back", text: "Let me ask something else.", next: "intro" },
+        ],
+      },
+      northstar: {
+        id: "northstar",
+        speaker: "Celia Orr",
+        text:
+          "We receive correspondence for dozens of field partners. That does not make them subsidiaries, and it certainly does not make this a story.",
+        choices: [
+          {
+            id: "show-manifest",
+            text: "E. Marsh authorized Northstar’s pickups through Brighter Horizon.",
+            evidenceId: "northstar_courier_manifest",
+            requires: { type: "hasEvidence", id: "northstar_courier_manifest" },
+            next: "marsh",
+          },
+          { id: "ask-marsh", text: "Who is E. Marsh?", next: "denial" },
+          { id: "leave", text: "I’ll verify that independently.", end: true },
+        ],
+      },
+      denial: {
+        id: "denial",
+        speaker: "Celia Orr",
+        text:
+          "No one employed here. Shared administrative credentials are common in emergency programs. They are not interesting.",
+        choices: [
+          {
+            id: "show-manifest",
+            text: "Then the same credential should appear in your visitor system.",
+            evidenceId: "northstar_courier_manifest",
+            requires: { type: "hasEvidence", id: "northstar_courier_manifest" },
+            next: "marsh",
+          },
+          { id: "finish", text: "I’ll decide what is interesting.", end: true },
+        ],
+      },
+      marsh: {
+        id: "marsh",
+        speaker: "Celia Orr",
+        text:
+          "The lobby terminal keeps ninety days of access records. You may inspect the public extract. You will find a credential, not an employee.",
+        onEnter: [
+          { type: "setFlag", key: "questionedFoundationReceptionist", value: true },
+          { type: "collectEvidence", id: "celia_orr_statement" },
+        ],
+        choices: [
+          {
+            id: "finish",
+            text: "A credential used by whom is still a person.",
+            end: true,
+          },
+        ],
+      },
+    },
+  },
 });
 
 export const DEDUCTIONS = Object.freeze({
@@ -615,6 +804,38 @@ export const DEDUCTIONS = Object.freeze({
       { type: "setFlag", key: "northstarRoutesToBrighterHorizon", value: true },
       { type: "setPath", path: "progress.officeState", value: 3 },
       { type: "collectEvidence", id: "brighter_horizon_connection" },
+      { type: "unlockLocation", id: "brighter_horizon_office" },
+    ],
+  },
+  foundation_funded_northstar: {
+    id: "foundation_funded_northstar",
+    title: "Brighter Horizon financed its own shell contractor",
+    journalText:
+      "Brighter Horizon advanced Northstar the exact amount later reimbursed by the city. The same E. Marsh credential moved between the charity, contractor, and Meridian.",
+    notification:
+      "The paper trail leads to Brighter Horizon’s invitation-only benefit at the Calder Grand.",
+    requiredDeductions: ["northstar_mail_route"],
+    requiredEvidence: [
+      "invoice_northstar",
+      "northstar_courier_manifest",
+      "foundation_visitor_log",
+      "foundation_disbursement_report",
+    ],
+    requiredConnections: [
+      {
+        a: "invoice_northstar",
+        b: "foundation_disbursement_report",
+        type: "financial",
+      },
+      {
+        a: "northstar_courier_manifest",
+        b: "foundation_visitor_log",
+        type: "confirmed",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "brighterHorizonFundsNorthstar", value: true },
+      { type: "collectEvidence", id: "calder_gala_invitation" },
     ],
   },
 });
@@ -1002,6 +1223,124 @@ export const GAME_CONTENT = Object.freeze({
           title: "Service elevator",
           text:
             "The brass panel remembers every floor except the one Northstar claims to occupy.",
+        },
+      ],
+    },
+    brighter_horizon_office: {
+      id: "brighter_horizon_office",
+      name: "Brighter Horizon Foundation",
+      eyebrow: "8 Calder Square · 10:31 AM",
+      mapX: 78,
+      mapY: 59,
+      description:
+        "The foundation’s Greyhaven lobby is polished enough to make every question feel like poor manners.",
+      sceneClass: "scene-brighter-horizon",
+      sceneArt: "./assets/scenes/brighter-horizon-office.webp",
+      hotspots: [
+        {
+          id: "celia_orr",
+          label: "Receptionist",
+          x: 27,
+          y: 42,
+          width: 25,
+          height: 31,
+          title: "Celia Orr, foundation receptionist",
+          text:
+            "Her smile is warm, practiced, and positioned between you and every locked office in the building.",
+          actionLabel: "Question Celia Orr",
+          dialogueId: "foundation_receptionist",
+        },
+        {
+          id: "foundation_donor_wall",
+          label: "Founders’ wall",
+          x: 36,
+          y: 18,
+          width: 15,
+          height: 31,
+          title: "Greyhaven founders’ wall",
+          text:
+            "The same faces recur across campaigns separated by years. Vale appears under accessibility; Rook appears under everything.",
+          actionLabel: "Photograph the donor wall",
+          resultText:
+            "The photograph captures Vale, Cassian Rook, and the circled gala guest inside the same donor network.",
+          effects: [
+            { type: "setFlag", key: "photographedFoundationDonorWall", value: true },
+            { type: "collectEvidence", id: "calder_donor_wall_photo" },
+          ],
+          actionWhen: {
+            not: { type: "flag", key: "photographedFoundationDonorWall" },
+          },
+        },
+        {
+          id: "foundation_world_map",
+          label: "World relief map",
+          x: 51,
+          y: 17,
+          width: 29,
+          height: 38,
+          title: "A world rendered in brass",
+          text:
+            "Small pins mark disasters and Brighter Horizon offices with identical symbols. The crises look almost curated.",
+        },
+        {
+          id: "foundation_visitor_terminal",
+          label: "Visitor terminal",
+          x: 78,
+          y: 49,
+          width: 13,
+          height: 23,
+          title: "Visitor access terminal",
+          text:
+            "A public-record button is available, but Celia controls which credential history it displays.",
+          actionLabel: "Print the E. Marsh access log",
+          resultText:
+            "The access extract shows E. Marsh signing in for Northstar, Brighter Horizon, and a Meridian session.",
+          effects: [
+            { type: "setFlag", key: "foundFoundationVisitorLog", value: true },
+            { type: "collectEvidence", id: "foundation_visitor_log" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "questionedFoundationReceptionist" },
+              { type: "flag", key: "foundFoundationVisitorLog", equals: false },
+            ],
+          },
+        },
+        {
+          id: "foundation_recycling",
+          label: "Misfiled report",
+          x: 88,
+          y: 57,
+          width: 11,
+          height: 34,
+          title: "Paper recycling console",
+          text:
+            "A quarterly report sits in the return slot. One page still contains an internal routing column.",
+          actionLabel: "Take the public report",
+          resultText:
+            "Brighter Horizon advanced Northstar $184,600 one day before the city reimbursed the exact same amount.",
+          effects: [
+            {
+              type: "setFlag",
+              key: "foundFoundationDisbursementReport",
+              value: true,
+            },
+            { type: "collectEvidence", id: "foundation_disbursement_report" },
+          ],
+          actionWhen: {
+            not: { type: "flag", key: "foundFoundationDisbursementReport" },
+          },
+        },
+        {
+          id: "foundation_brochure_table",
+          label: "Benefit brochures",
+          x: 51,
+          y: 62,
+          width: 26,
+          height: 28,
+          title: "A table of immaculate promises",
+          text:
+            "Housing. Clean water. Emergency access. A card advertises Thursday’s invitation-only benefit at the Calder Grand.",
         },
       ],
     },

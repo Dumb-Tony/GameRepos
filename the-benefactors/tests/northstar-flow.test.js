@@ -78,4 +78,8 @@ test("Harrow Street evidence exposes Northstar's Brighter Horizon mail route", (
     state.evidence.collected.includes("brighter_horizon_connection"),
     true,
   );
+  assert.equal(
+    state.progress.unlockedLocations.includes("brighter_horizon_office"),
+    true,
+  );
 });

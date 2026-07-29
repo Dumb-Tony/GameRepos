@@ -4,11 +4,11 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=northstar-20260728a";
+} from "../content/game-content.js?v=foundation-20260728a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=northstar-20260728b";
+} from "../content/casebook-content.js?v=foundation-20260728a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
@@ -19,15 +19,15 @@ import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=northstar-20260728a";
+} from "../content/prologue-content.js?v=foundation-20260728a";
 import { evaluateCondition } from "../engine/conditions.js?v=prologue-20260726a";
 import { applyEffects } from "../engine/events.js?v=prologue-20260726a";
-import { createInitialState } from "../engine/game-state.js?v=northstar-20260728a";
+import { createInitialState } from "../engine/game-state.js?v=foundation-20260728a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
 } from "../engine/player-language.js?v=prologue-20260726a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=northstar-20260728a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=foundation-20260728a";
 import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=prologue-20260726a";
 import {
   advanceDialogue,
@@ -758,11 +758,30 @@ export class GameApp {
   renderHome() {
     const state = this.store.getState();
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
-    const caseUpdate = state.flags.northstarRoutesToBrighterHorizon
+    const caseUpdate = state.flags.brighterHorizonFundsNorthstar
+      ? {
+          title: "The charity created the contractor",
+          text:
+            "Brighter Horizon financed Northstar, administered its false identity, and routed the city’s reimbursement through Meridian. The Calder Grand benefit is the next opening.",
+        }
+      : state.flags.foundFoundationVisitorLog &&
+          state.flags.foundFoundationDisbursementReport
+        ? {
+            title: "Two records, one invisible administrator",
+            text:
+              "The E. Marsh access log and duplicate $184,600 payment belong on the board beside Northstar’s invoice and courier manifest.",
+          }
+        : (state.locationVisits.brighter_horizon_office || 0) > 0
+          ? {
+              title: "Polished stone, careless paperwork",
+              text:
+                "Celia Orr knows the E. Marsh credential. Photograph the founders’ wall, inspect the visitor terminal, and recover the quarterly disbursement report.",
+            }
+          : state.flags.northstarRoutesToBrighterHorizon
       ? {
           title: "A charity collecting shell-company mail",
           text:
-            "Northstar's courier trail ends at Brighter Horizon Foundation, 8 Calder Square. The people in the gala photograph are no longer background faces.",
+            "Northstar's courier trail ends at Brighter Horizon Foundation, 8 Calder Square. Its public office is now marked on the city map.",
         }
       : state.flags.foundNorthstarCourierManifest &&
           state.flags.photographedHarrowDirectory
@@ -2621,6 +2640,12 @@ export class GameApp {
   }
 
   chapterLabel(state = this.store.getState()) {
+    if (
+      state.progress.unlockedLocations.includes("brighter_horizon_office") ||
+      (state.locationVisits.brighter_horizon_office || 0) > 0
+    ) {
+      return "Chapter 2 · The Foundation";
+    }
     return state.progress.prologueComplete
       ? "Chapter 1 · Follow Northstar"
       : GAME_CONTENT.chapter;

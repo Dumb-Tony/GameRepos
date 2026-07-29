@@ -190,3 +190,24 @@ test("unlocks Harrow Street for completed Milestone 5 saves", () => {
     true,
   );
 });
+
+test("unlocks Calder Square for completed Northstar saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Avery" });
+  previous.version = 9;
+  previous.flags.northstarRoutesToBrighterHorizon = true;
+  previous.progress.unlockedLocations =
+    previous.progress.unlockedLocations.filter(
+      (locationId) => locationId !== "brighter_horizon_office",
+    );
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(
+    migrated.progress.unlockedLocations.includes("brighter_horizon_office"),
+    true,
+  );
+});
