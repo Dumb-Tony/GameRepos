@@ -96,6 +96,16 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Board deduction proving Northstar was one of several disposable contractors
 - Updated notebook progression and migration for completed foundation saves
 
+**Milestone 9 — The continuity network (complete)**
+
+- Mina Harcourt's searched apartment at 26 Saltmere Walk
+- Evidence-gated interview with Brighter Horizon's former program accountant
+- Harcourt's private advance ledger and restricted archive request
+- Municipal Records Archive basement and Emergency Register 09
+- Continuity-site map, destruction order, and Bellwether water-crisis lead
+- Three-connection Act II deduction proving the charity financed hidden emergency infrastructure
+- Updated notebook progression and migration for completed gala saves
+
 **Prologue content now playable**
 
 - Photograph the missing west wing

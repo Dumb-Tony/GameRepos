@@ -232,3 +232,24 @@ test("unlocks the Calder Grand for completed foundation saves", () => {
     true,
   );
 });
+
+test("unlocks Saltmere Walk for completed gala saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Taylor" });
+  previous.version = 11;
+  previous.flags.uncoveredContractorNetwork = true;
+  previous.progress.unlockedLocations =
+    previous.progress.unlockedLocations.filter(
+      (locationId) => locationId !== "saltmere_apartment",
+    );
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(
+    migrated.progress.unlockedLocations.includes("saltmere_apartment"),
+    true,
+  );
+});

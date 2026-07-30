@@ -208,6 +208,14 @@ export class SaveSystem {
       migrated.progress.unlockedLocations.push("calder_grand_gala");
     }
 
+    if (
+      legacyVersion < 12 &&
+      migrated.flags.uncoveredContractorNetwork &&
+      !migrated.progress.unlockedLocations.includes("saltmere_apartment")
+    ) {
+      migrated.progress.unlockedLocations.push("saltmere_apartment");
+    }
+
     return migrated;
   }
 }

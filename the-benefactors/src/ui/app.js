@@ -759,7 +759,46 @@ export class GameApp {
   renderHome() {
     const state = this.store.getState();
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
-    const caseUpdate = state.flags.uncoveredContractorNetwork
+    const caseUpdate = state.flags.mappedContinuitySiteNetwork
+      ? {
+          title: "The solutions came first",
+          text:
+            "The foundation financed five hidden continuity sites through disposable contractors. Deepwell was funded before Bellwether's water failed.",
+        }
+      : state.flags.copiedMunicipalContractRegister &&
+          state.flags.photographedContinuitySiteMap &&
+          state.flags.foundArchiveDestructionOrder &&
+          state.flags.foundBellwetherClipping
+        ? {
+            title: "Two ledgers, five hidden sites",
+            text:
+              "Harcourt's index, Register 09, the continuity map, and Wren's destruction order belong on the evidence board.",
+          }
+        : (state.locationVisits.municipal_archive || 0) > 0
+          ? {
+              title: "The city's second ledger",
+              text:
+                "Use Harcourt's request at the microfilm reader, then inspect the continuity map, destruction cage, and Deepwell file.",
+            }
+          : state.flags.foundHarcourtLedger
+            ? {
+                title: "Register 09",
+                text:
+                  "Harcourt's copied index names five program advances. Her request card opens the Municipal Records Archive basement.",
+              }
+            : state.flags.trustedByMinaHarcourt
+              ? {
+                  title: "The copy beneath the suitcase",
+                  text:
+                    "Mina kept her private reconciliation index and archive request beneath the half-packed suitcase.",
+                }
+              : (state.locationVisits.saltmere_apartment || 0) > 0
+                ? {
+                    title: "Someone searched Apartment 3C",
+                    text:
+                      "Photograph the opened files, then show Mina the Room B recording before whoever watched the building returns.",
+                  }
+                : state.flags.uncoveredContractorNetwork
       ? {
           title: "Northstar was a template",
           text:
@@ -2696,6 +2735,9 @@ export class GameApp {
   }
 
   chapterLabel(state = this.store.getState()) {
+    if (state.flags.mappedContinuitySiteNetwork) {
+      return "Chapter 3 · The Pattern";
+    }
     if (
       state.progress.unlockedLocations.includes("brighter_horizon_office") ||
       (state.locationVisits.brighter_horizon_office || 0) > 0

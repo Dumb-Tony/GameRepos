@@ -262,12 +262,88 @@ export const CASEBOOK_STAGES = Object.freeze([
   {
     id: "accountant_lead",
     title: "The former accountant",
-    objective: "Mina Harcourt’s forwarding address is the next lead: 26 Saltmere Walk.",
-    activeWhen: null,
+    objective: "Find Mina Harcourt at 26 Saltmere Walk, Apartment 3C.",
+    activeWhen: {
+      not: { type: "visited", location: "saltmere_apartment" },
+    },
     hints: [
       "Review Mina Harcourt’s forwarding slip in the case file.",
       "Harcourt handled Brighter Horizon’s program advances before she was terminated.",
-      "The investigation will continue at her apartment on Saltmere Walk.",
+      "Travel to 26 Saltmere Walk from the city map.",
+    ],
+  },
+  {
+    id: "question_harcourt",
+    title: "The ledger that survived",
+    objective: "Earn Harcourt's trust and recover her private program-advance index.",
+    activeWhen: {
+      any: [
+        { type: "flag", key: "questionedMinaHarcourt", equals: false },
+        { type: "flag", key: "foundHarcourtLedger", equals: false },
+        { type: "flag", key: "photographedHarcourtApartment", equals: false },
+      ],
+    },
+    hints: [
+      "Document the searched apartment, then show Mina why she is in danger.",
+      "Photograph the opened filing drawers and play Mina the Room B conversation.",
+      "After Mina trusts you, inspect the half-packed suitcase for her copied index and archive request.",
+    ],
+  },
+  {
+    id: "visit_archive",
+    title: "Register 09",
+    objective: "Use Harcourt's request card at the Municipal Records Archive.",
+    activeWhen: {
+      not: { type: "visited", location: "municipal_archive" },
+    },
+    hints: [
+      "Harcourt's old archive request unlocks a new destination on the city map.",
+      "Travel to the Municipal Records Archive basement.",
+      "Begin with the microfilm reader on the research table.",
+    ],
+  },
+  {
+    id: "investigate_archive",
+    title: "The city's second ledger",
+    objective: "Recover the matching contract register, continuity map, and destruction order.",
+    activeWhen: {
+      any: [
+        { type: "flag", key: "copiedMunicipalContractRegister", equals: false },
+        { type: "flag", key: "photographedContinuitySiteMap", equals: false },
+        { type: "flag", key: "foundArchiveDestructionOrder", equals: false },
+        { type: "flag", key: "foundBellwetherClipping", equals: false },
+      ],
+    },
+    hints: [
+      "The reader, wall map, locked cage, and Deepwell box preserve different parts of the program.",
+      "Copy Register 09, photograph the continuity map, and inspect the destruction queue.",
+      "After photographing the map, take the Bellwether clipping from the Deepwell file box.",
+    ],
+  },
+  {
+    id: "connect_continuity_network",
+    title: "Infrastructure for a crisis",
+    objective: "Use the evidence board to prove the charity and city records describe one hidden network.",
+    activeWhen: {
+      type: "flag",
+      key: "mappedContinuitySiteNetwork",
+      equals: false,
+    },
+    hints: [
+      "Match the two ledgers, place the contractors on the map, and show the attempted cover-up.",
+      "Use Blue · Financial for Harcourt's index ↔ emergency register and Red · Confirmed for contractor roster ↔ continuity map.",
+      "Use Black · Cover-up for the destruction order ↔ emergency contract register.",
+    ],
+  },
+  {
+    id: "bellwether_lead",
+    title: "The crisis that came second",
+    objective: "Deepwell was funded before Bellwether's water failed. The investigation continues there.",
+    activeWhen: null,
+    hints: [
+      "Review the Bellwether water-crisis clipping in the case file.",
+      "Compare the public crisis date with the advance date in Harcourt's index.",
+      "The next chapter begins in the Bellwether community.",
     ],
   },
 ]);
@@ -292,4 +368,10 @@ export const CASEBOOK_PROGRESS = Object.freeze([
   { label: "Room B contractor roster recovered", when: { type: "flag", key: "photographedContractorRoster" } },
   { label: "Rook and Wren recorded", when: { type: "flag", key: "recordedRoomBConversation" } },
   { label: "Contractor network proven", when: { type: "flag", key: "uncoveredContractorNetwork" } },
+  { label: "Mina Harcourt located", when: { type: "visited", location: "saltmere_apartment" } },
+  { label: "Program-advance index recovered", when: { type: "flag", key: "foundHarcourtLedger" } },
+  { label: "Emergency Register 09 copied", when: { type: "flag", key: "copiedMunicipalContractRegister" } },
+  { label: "Continuity sites mapped", when: { type: "flag", key: "photographedContinuitySiteMap" } },
+  { label: "Archive destruction order recovered", when: { type: "flag", key: "foundArchiveDestructionOrder" } },
+  { label: "Hidden continuity network proven", when: { type: "flag", key: "mappedContinuitySiteNetwork" } },
 ]);

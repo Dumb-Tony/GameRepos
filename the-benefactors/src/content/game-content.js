@@ -530,6 +530,153 @@ export const EVIDENCE = Object.freeze({
       handwritten: "Rook said to move Harcourt. Find her first.",
     },
   },
+  harcourt_apartment_photo: {
+    id: "harcourt_apartment_photo",
+    title: "Photograph of Harcourt's apartment",
+    category: "photograph",
+    summary:
+      "Mina Harcourt's files were searched selectively before the apartment was abandoned.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/saltmere-apartment.webp",
+      alt:
+        "Rain-darkened apartment with opened filing drawers, scattered accounting papers, and a half-packed suitcase",
+      caption: "26 Saltmere Walk · Apartment 3C · 10:14 PM",
+      annotations: [
+        "Drawers opened in sequence rather than dumped",
+        "Tax records left behind; program-advance files removed",
+        "Suitcase packed before the search",
+      ],
+    },
+  },
+  mina_harcourt_statement: {
+    id: "mina_harcourt_statement",
+    title: "Mina Harcourt's statement",
+    category: "recording",
+    summary:
+      "Harcourt says Brighter Horizon used temporary contractors to hide a regional secure-infrastructure program.",
+    artifact: {
+      type: "transcript",
+      heading: "RECORDED EXCHANGE · MINA HARCOURT",
+      timestamp: "10:23 PM · 26 SALTMERE WALK",
+      lines: [
+        ["HARCOURT", "Program advances were never relief grants. They were staging money."],
+        ["ROWAN", "For Northstar and the other contractors?"],
+        ["HARCOURT", "For secure rooms, private networks, and emergency sites no council ever approved."],
+        ["HARCOURT", "The city archive still has the matching contract register. Rook could not alter both ledgers."],
+      ],
+    },
+  },
+  program_advance_index: {
+    id: "program_advance_index",
+    title: "Harcourt program-advance index",
+    category: "financial",
+    summary:
+      "Harcourt's copied ledger matches foundation advances to five disposable contractors.",
+    artifact: {
+      type: "memo",
+      heading: "PROGRAM ADVANCES · PRIVATE RECONCILIATION INDEX",
+      body: [
+        "NORTHSTAR CIVIC WORKS · GREYHAVEN ACCESS · 184,600",
+        "DEEPWELL RESPONSE · REGIONAL WATER · 611,200",
+        "CROWNLINE SYSTEMS · DATA RESILIENCE · 903,450",
+        "VERDANT SHELTER GROUP · CONSERVATION · 428,000",
+        "HARBORLIGHT LOGISTICS · MARITIME ACCESS · 1,207,900",
+      ],
+      handwritten: "Each advance has a matching municipal emergency contract.",
+    },
+  },
+  archive_request_card: {
+    id: "archive_request_card",
+    title: "Restricted archive request",
+    category: "location",
+    summary:
+      "Harcourt's old request card identifies the municipal emergency-contract register.",
+    artifact: {
+      type: "memo",
+      heading: "GREYHAVEN MUNICIPAL ARCHIVE · RESEARCH REQUEST",
+      body: [
+        "COLLECTION: CIVIL CONTINUITY CONTRACTS",
+        "REGISTER: EMERGENCY INFRASTRUCTURE · 09",
+        "ACCESS: BASEMENT READING ROOM",
+        "REQUESTOR: M. HARCOURT · PROGRAM AUDIT",
+      ],
+      handwritten: "The public ledger is false. The contract register is not.",
+    },
+  },
+  municipal_contract_register: {
+    id: "municipal_contract_register",
+    title: "Emergency contract register",
+    category: "financial",
+    summary:
+      "Municipal emergency contracts mirror Harcourt's foundation advances exactly.",
+    artifact: {
+      type: "memo",
+      heading: "CIVIL CONTINUITY · EMERGENCY CONTRACT REGISTER 09",
+      body: [
+        "GREYHAVEN ACCESS NODE · NORTHSTAR CIVIC WORKS · 184,600",
+        "BELLWETHER WATER RESPONSE · DEEPWELL RESPONSE · 611,200",
+        "REGIONAL DATA CONTINUITY · CROWNLINE SYSTEMS · 903,450",
+        "LAND PRESERVATION SECURITY · VERDANT SHELTER GROUP · 428,000",
+        "HARBOR SERVICE CAPACITY · HARBORLIGHT LOGISTICS · 1,207,900",
+      ],
+      handwritten: "Same contractors. Same amounts. Different public stories.",
+    },
+  },
+  secure_site_map: {
+    id: "secure_site_map",
+    title: "Continuity-site map",
+    category: "location",
+    summary:
+      "A restricted city map places the five contractors at secure sites hidden inside public crisis projects.",
+    artifact: {
+      type: "photo",
+      caption: "Municipal Archive · Civil Continuity Map 09",
+      annotations: [
+        "Northstar · concealed communications room",
+        "Deepwell · Bellwether water-treatment bypass",
+        "Crownline · regional data-center annex",
+        "Verdant · restricted conservation parcel",
+        "Harborlight · private service berth",
+      ],
+    },
+  },
+  archive_destruction_order: {
+    id: "archive_destruction_order",
+    title: "Emergency records destruction order",
+    category: "document",
+    summary:
+      "Silas Wren ordered the matching contract files destroyed after Mayor Vale disappeared.",
+    artifact: {
+      type: "memo",
+      heading: "EXPEDITED RETENTION REVIEW · CONTINUITY RECORDS",
+      body: [
+        "DESTROY REGISTER 09 SUPPORTING FILES",
+        "AUTHORITY: EMERGENCY CONTINUITY COUNSEL",
+        "REQUESTOR: S. WREN",
+        "DEADLINE: FRIDAY · 06:00",
+      ],
+      handwritten: "Someone moved the register into the wrong cage to save it.",
+    },
+  },
+  bellwether_water_clipping: {
+    id: "bellwether_water_clipping",
+    title: "Bellwether water-crisis clipping",
+    category: "document",
+    summary:
+      "A community water emergency began days after Deepwell Response received its program advance.",
+    artifact: {
+      type: "memo",
+      heading: "GREYHAVEN LEDGER · REGIONAL DESK",
+      body: [
+        "BELLWETHER RESIDENTS REPORT METALLIC WATER",
+        "SCHOOLS CLOSE AFTER TREATMENT FAILURE",
+        "BRIGHTER HORIZON ANNOUNCES EMERGENCY RELIEF",
+        "DEEPWELL RESPONSE CONTRACTED TO RESTORE SERVICE",
+      ],
+      handwritten: "The crisis started after the solution was funded.",
+    },
+  },
 });
 
 export const INVENTORY_ITEMS = Object.freeze({
@@ -975,6 +1122,100 @@ export const DIALOGUES = Object.freeze({
       },
     },
   },
+  mina_harcourt: {
+    id: "mina_harcourt",
+    character: "Mina Harcourt",
+    portrait: "MH",
+    start: "intro",
+    nodes: {
+      intro: {
+        id: "intro",
+        speaker: "Mina Harcourt",
+        text:
+          "You have thirty seconds to explain how you found this address before I leave through the fire stairs.",
+        choices: [
+          {
+            id: "show-slip",
+            text: "Your forwarding slip was at the Calder Grand.",
+            evidenceId: "accountant_forwarding_slip",
+            requires: { type: "hasEvidence", id: "accountant_forwarding_slip" },
+            next: "slip",
+          },
+          {
+            id: "play-recording",
+            text: "Rook and Wren discussed moving you.",
+            evidenceId: "room_b_conversation",
+            requires: { type: "hasEvidence", id: "room_b_conversation" },
+            next: "room-b",
+          },
+          { id: "leave", text: "I can come back.", end: true },
+        ],
+      },
+      slip: {
+        id: "slip",
+        speaker: "Mina Harcourt",
+        text:
+          "That address was supposed to expire last month. If Wren kept it, he wanted someone to follow the paper trail here.",
+        choices: [
+          {
+            id: "play-recording",
+            text: "He also ordered you moved.",
+            evidenceId: "room_b_conversation",
+            requires: { type: "hasEvidence", id: "room_b_conversation" },
+            next: "room-b",
+          },
+          { id: "leave", text: "Then I was expected.", end: true },
+        ],
+      },
+      "room-b": {
+        id: "room-b",
+        speaker: "Mina Harcourt",
+        text:
+          "They call the contractors instruments. I reconciled the advances. Every false charity project had a matching emergency contract in the city archive.",
+        onEnter: [
+          { type: "setFlag", key: "questionedMinaHarcourt", value: true },
+          { type: "collectEvidence", id: "mina_harcourt_statement" },
+        ],
+        choices: [
+          {
+            id: "ask-proof",
+            text: "What proof survived?",
+            next: "proof",
+          },
+          {
+            id: "ask-purpose",
+            text: "What were they building?",
+            next: "purpose",
+          },
+        ],
+      },
+      purpose: {
+        id: "purpose",
+        speaker: "Mina Harcourt",
+        text:
+          "Secure rooms, private networks, bypass systems. Infrastructure that lets Meridian enter a crisis before everyone else knows there is one.",
+        choices: [
+          { id: "ask-proof", text: "Show me how to prove it.", next: "proof" },
+        ],
+      },
+      proof: {
+        id: "proof",
+        speaker: "Mina Harcourt",
+        text:
+          "My copy of the advance index is beneath the suitcase. Take the old archive request with it. Register 09 is in the basement reading room—unless Wren reached it first.",
+        onEnter: [
+          { type: "setFlag", key: "trustedByMinaHarcourt", value: true },
+        ],
+        choices: [
+          {
+            id: "finish",
+            text: "I will keep your name out of the first story.",
+            end: true,
+          },
+        ],
+      },
+    },
+  },
 });
 
 export const DEDUCTIONS = Object.freeze({
@@ -1149,6 +1390,45 @@ export const DEDUCTIONS = Object.freeze({
     effects: [
       { type: "setFlag", key: "uncoveredContractorNetwork", value: true },
       { type: "setPath", path: "progress.officeState", value: 5 },
+      { type: "unlockLocation", id: "saltmere_apartment" },
+    ],
+  },
+  continuity_site_network: {
+    id: "continuity_site_network",
+    title: "The foundation financed a hidden continuity network",
+    journalText:
+      "Harcourt's private ledger and the municipal register describe the same five projects. Each disposable contractor concealed secure infrastructure inside a public emergency response.",
+    notification:
+      "Act II complete. The first matching crisis began in Bellwether—after its solution had already been funded.",
+    requiredDeductions: ["room_b_contractor_network"],
+    requiredEvidence: [
+      "gala_contractor_roster",
+      "program_advance_index",
+      "municipal_contract_register",
+      "secure_site_map",
+      "archive_destruction_order",
+    ],
+    requiredConnections: [
+      {
+        a: "program_advance_index",
+        b: "municipal_contract_register",
+        type: "financial",
+      },
+      {
+        a: "gala_contractor_roster",
+        b: "secure_site_map",
+        type: "confirmed",
+      },
+      {
+        a: "archive_destruction_order",
+        b: "municipal_contract_register",
+        type: "coverup",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "mappedContinuitySiteNetwork", value: true },
+      { type: "setPath", path: "progress.chapter", value: 3 },
+      { type: "setPath", path: "progress.officeState", value: 6 },
     ],
   },
 });
@@ -1911,6 +2191,240 @@ export const GAME_CONTENT = Object.freeze({
           title: "Celebration, interrupted",
           text:
             "Two untouched glasses and one empty bottle. Even the conspirators have catering minimums.",
+        },
+      ],
+    },
+    saltmere_apartment: {
+      id: "saltmere_apartment",
+      name: "26 Saltmere Walk",
+      eyebrow: "Apartment 3C · Friday · 10:11 PM",
+      mapX: 78,
+      mapY: 62,
+      description:
+        "Mina Harcourt's apartment has been searched with professional patience. The kettle is still warm.",
+      sceneClass: "scene-saltmere-apartment",
+      sceneArt: "./assets/scenes/saltmere-apartment.webp",
+      hotspots: [
+        {
+          id: "mina_harcourt",
+          label: "Woman by the bedroom",
+          x: 84,
+          y: 29,
+          width: 15,
+          height: 43,
+          title: "Mina Harcourt",
+          text:
+            "She is dressed to leave and positioned where she can see both you and the fire stairs.",
+          actionLabel: "Speak with Mina Harcourt",
+          dialogueId: "mina_harcourt",
+        },
+        {
+          id: "searched_filing_desk",
+          label: "Opened filing drawers",
+          x: 35,
+          y: 43,
+          width: 31,
+          height: 37,
+          title: "A selective search",
+          text:
+            "Personal tax records remain. Every folder marked as a program reconciliation is gone.",
+          actionLabel: "Photograph the apartment",
+          resultText:
+            "The searchers removed only Brighter Horizon records. Harcourt had packed before they arrived.",
+          effects: [
+            { type: "setFlag", key: "photographedHarcourtApartment", value: true },
+            { type: "collectEvidence", id: "harcourt_apartment_photo" },
+          ],
+          actionWhen: {
+            not: { type: "flag", key: "photographedHarcourtApartment" },
+          },
+        },
+        {
+          id: "harcourt_suitcase",
+          label: "Half-packed suitcase",
+          x: 67,
+          y: 69,
+          width: 25,
+          height: 25,
+          title: "The copy Harcourt kept",
+          text:
+            "A false bottom holds a handwritten reconciliation index and an old municipal archive request.",
+          actionLabel: "Take the index and request card",
+          resultText:
+            "Harcourt's index matches five foundation advances to contractor names. Her request card points to Emergency Register 09.",
+          effects: [
+            { type: "setFlag", key: "foundHarcourtLedger", value: true },
+            { type: "collectEvidence", id: "program_advance_index" },
+            { type: "collectEvidence", id: "archive_request_card" },
+            { type: "unlockLocation", id: "municipal_archive" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "trustedByMinaHarcourt" },
+              { type: "flag", key: "foundHarcourtLedger", equals: false },
+            ],
+          },
+        },
+        {
+          id: "saltmere_front_door",
+          label: "Front-door lock",
+          x: 0,
+          y: 19,
+          width: 14,
+          height: 57,
+          title: "No sign of forced entry",
+          text:
+            "The lock is intact. Whoever searched the apartment carried a key or convinced Mina to open the door.",
+        },
+        {
+          id: "saltmere_kettle",
+          label: "Warm kettle",
+          x: 21,
+          y: 38,
+          width: 18,
+          height: 24,
+          title: "An interrupted cup of tea",
+          text:
+            "The burner is off, the kettle is warm, and a second cup was placed beside the sink.",
+        },
+        {
+          id: "saltmere_window",
+          label: "Rain-streaked window",
+          x: 46,
+          y: 12,
+          width: 20,
+          height: 34,
+          title: "Saltmere Walk",
+          text:
+            "A dark sedan idles beneath a dead streetlamp, then moves before you can photograph the plate.",
+        },
+      ],
+    },
+    municipal_archive: {
+      id: "municipal_archive",
+      name: "Municipal Records Archive",
+      eyebrow: "Basement Reading Room · Friday · 11:08 PM",
+      mapX: 41,
+      mapY: 67,
+      description:
+        "The city's discarded memory sits beneath exposed pipes, arranged by people who assumed no one would compare it with a charity ledger.",
+      sceneClass: "scene-municipal-archive",
+      sceneArt: "./assets/scenes/municipal-archive.webp",
+      hotspots: [
+        {
+          id: "archive_register_reader",
+          label: "Microfilm reader",
+          x: 25,
+          y: 42,
+          width: 27,
+          height: 31,
+          title: "Emergency Register 09",
+          text:
+            "Harcourt's request number retrieves a contract register omitted from the public database.",
+          actionLabel: "Copy the contract register",
+          resultText:
+            "Five municipal contracts match Harcourt's five foundation advances—contractor, purpose, and amount.",
+          effects: [
+            { type: "setFlag", key: "copiedMunicipalContractRegister", value: true },
+            { type: "collectEvidence", id: "municipal_contract_register" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "hasEvidence", id: "archive_request_card" },
+              { type: "flag", key: "copiedMunicipalContractRegister", equals: false },
+            ],
+          },
+        },
+        {
+          id: "archive_site_map",
+          label: "Continuity map",
+          x: 0,
+          y: 27,
+          width: 20,
+          height: 38,
+          title: "A map that explains the register",
+          text:
+            "Colored grease-pencil marks connect each contractor to infrastructure hidden inside a public emergency project.",
+          actionLabel: "Photograph the site map",
+          resultText:
+            "Northstar's room is one node. Deepwell's mark sits beneath Bellwether's water-treatment bypass.",
+          effects: [
+            { type: "setFlag", key: "photographedContinuitySiteMap", value: true },
+            { type: "collectEvidence", id: "secure_site_map" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "copiedMunicipalContractRegister" },
+              { type: "flag", key: "photographedContinuitySiteMap", equals: false },
+            ],
+          },
+        },
+        {
+          id: "archive_retention_cage",
+          label: "Locked records cage",
+          x: 77,
+          y: 14,
+          width: 22,
+          height: 58,
+          title: "Friday destruction queue",
+          text:
+            "The cage inventory includes Register 09 supporting files under an expedited destruction order.",
+          actionLabel: "Photograph the destruction order",
+          resultText:
+            "Silas Wren requested the files destroyed before sunrise. Someone hid the register in the reading room instead.",
+          effects: [
+            { type: "setFlag", key: "foundArchiveDestructionOrder", value: true },
+            { type: "collectEvidence", id: "archive_destruction_order" },
+          ],
+          actionWhen: {
+            not: { type: "flag", key: "foundArchiveDestructionOrder" },
+          },
+        },
+        {
+          id: "archive_deepwell_box",
+          label: "Deepwell file box",
+          x: 55,
+          y: 37,
+          width: 18,
+          height: 32,
+          title: "Bellwether Water Response",
+          text:
+            "A newspaper clipping was used as a divider in Deepwell's contract file.",
+          actionLabel: "Take the Bellwether clipping",
+          resultText:
+            "Deepwell received its advance days before Bellwether's water became unsafe—and Brighter Horizon arrived as the savior.",
+          effects: [
+            { type: "setFlag", key: "foundBellwetherClipping", value: true },
+            { type: "collectEvidence", id: "bellwether_water_clipping" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedContinuitySiteMap" },
+              { type: "flag", key: "foundBellwetherClipping", equals: false },
+            ],
+          },
+        },
+        {
+          id: "archive_pneumatic_terminal",
+          label: "Pneumatic terminal",
+          x: 48,
+          y: 27,
+          width: 11,
+          height: 28,
+          title: "A dead municipal nervous system",
+          text:
+            "The brass tube once moved authorization cards between departments faster than the public could request them.",
+        },
+        {
+          id: "archive_service_door",
+          label: "Heavy service door",
+          x: 68,
+          y: 25,
+          width: 10,
+          height: 36,
+          title: "Footsteps above",
+          text:
+            "Someone tries the archive's outer door, waits, and leaves without switching on the stairwell light.",
         },
       ],
     },

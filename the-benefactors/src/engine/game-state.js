@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 11;
+export const GAME_STATE_VERSION = 12;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -80,6 +80,15 @@ export function createInitialState(player = {}, settings = {}) {
       recordedRoomBConversation: false,
       foundAccountantForwardingSlip: false,
       uncoveredContractorNetwork: false,
+      photographedHarcourtApartment: false,
+      questionedMinaHarcourt: false,
+      trustedByMinaHarcourt: false,
+      foundHarcourtLedger: false,
+      copiedMunicipalContractRegister: false,
+      photographedContinuitySiteMap: false,
+      foundArchiveDestructionOrder: false,
+      foundBellwetherClipping: false,
+      mappedContinuitySiteNetwork: false,
     },
     inventory: ["press_credentials", "smartphone", "recorder", "notebook"],
     evidence: {
@@ -134,6 +143,8 @@ export function createInitialState(player = {}, settings = {}) {
       brighter_horizon_office: 0,
       calder_grand_gala: 0,
       calder_grand_service_corridor: 0,
+      saltmere_apartment: 0,
+      municipal_archive: 0,
     },
     settings: {
       ...DEFAULT_SETTINGS,
