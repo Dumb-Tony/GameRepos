@@ -4,38 +4,38 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=board-canvas-20260730b";
+} from "../content/game-content.js?v=board-canvas-20260730c";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=board-canvas-20260730b";
+} from "../content/casebook-content.js?v=board-canvas-20260730c";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=board-canvas-20260730b";
+} from "../content/onboarding-content.js?v=board-canvas-20260730c";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=board-canvas-20260730b";
-import { evaluateCondition } from "../engine/conditions.js?v=board-canvas-20260730b";
-import { applyEffects } from "../engine/events.js?v=board-canvas-20260730b";
-import { createInitialState } from "../engine/game-state.js?v=board-canvas-20260730b";
+} from "../content/prologue-content.js?v=board-canvas-20260730c";
+import { evaluateCondition } from "../engine/conditions.js?v=board-canvas-20260730c";
+import { applyEffects } from "../engine/events.js?v=board-canvas-20260730c";
+import { createInitialState } from "../engine/game-state.js?v=board-canvas-20260730c";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=board-canvas-20260730b";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=board-canvas-20260730b";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=board-canvas-20260730b";
+} from "../engine/player-language.js?v=board-canvas-20260730c";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=board-canvas-20260730c";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=board-canvas-20260730c";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=board-canvas-20260730b";
+} from "../systems/dialogue/dialogue-engine.js?v=board-canvas-20260730c";
 import {
   arrangeEvidence,
   connectEvidence,
@@ -44,19 +44,19 @@ import {
   pinEvidence,
   removeConnection,
   unpinEvidence,
-} from "../systems/evidence-board/evidence-board.js?v=board-canvas-20260730b";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=board-canvas-20260730b";
+} from "../systems/evidence-board/evidence-board.js?v=board-canvas-20260730c";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=board-canvas-20260730c";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=board-canvas-20260730b";
+} from "../systems/puzzles/plan-alignment.js?v=board-canvas-20260730c";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=board-canvas-20260730b";
-import { TransientNotice } from "./transient-notice.js?v=board-canvas-20260730b";
+} from "../systems/puzzles/recording-reconstruction.js?v=board-canvas-20260730c";
+import { TransientNotice } from "./transient-notice.js?v=board-canvas-20260730c";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -2126,7 +2126,11 @@ export class GameApp {
               </div>
             </div>
           </section>
-          <div class="board-canvas-scroll">
+          <div
+            class="board-canvas-scroll"
+            tabindex="0"
+            aria-label="Scrollable evidence-board canvas"
+          >
           <div
             class="corkboard board-density-${this.boardDensity}"
             id="evidence-corkboard"

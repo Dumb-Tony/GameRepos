@@ -2209,6 +2209,11 @@ input[type="range"] {
   scrollbar-width: thin;
 }
 
+.board-canvas-scroll:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: -4px;
+}
+
 .board-canvas-scroll::after {
   position: sticky;
   z-index: 8;
