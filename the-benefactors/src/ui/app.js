@@ -4,38 +4,38 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=verdant-20260730a";
+} from "../content/game-content.js?v=verdant-20260730b";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=verdant-20260730a";
+} from "../content/casebook-content.js?v=verdant-20260730b";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=verdant-20260730a";
+} from "../content/onboarding-content.js?v=verdant-20260730b";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=verdant-20260730a";
-import { evaluateCondition } from "../engine/conditions.js?v=verdant-20260730a";
-import { applyEffects } from "../engine/events.js?v=verdant-20260730a";
-import { createInitialState } from "../engine/game-state.js?v=verdant-20260730a";
+} from "../content/prologue-content.js?v=verdant-20260730b";
+import { evaluateCondition } from "../engine/conditions.js?v=verdant-20260730b";
+import { applyEffects } from "../engine/events.js?v=verdant-20260730b";
+import { createInitialState } from "../engine/game-state.js?v=verdant-20260730b";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=verdant-20260730a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=verdant-20260730a";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=verdant-20260730a";
+} from "../engine/player-language.js?v=verdant-20260730b";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=verdant-20260730b";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=verdant-20260730b";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=verdant-20260730a";
+} from "../systems/dialogue/dialogue-engine.js?v=verdant-20260730b";
 import {
   arrangeEvidence,
   connectEvidence,
@@ -44,19 +44,19 @@ import {
   pinEvidence,
   removeConnection,
   unpinEvidence,
-} from "../systems/evidence-board/evidence-board.js?v=verdant-20260730a";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=verdant-20260730a";
+} from "../systems/evidence-board/evidence-board.js?v=verdant-20260730b";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=verdant-20260730b";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=verdant-20260730a";
+} from "../systems/puzzles/plan-alignment.js?v=verdant-20260730b";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=verdant-20260730a";
-import { TransientNotice } from "./transient-notice.js?v=verdant-20260730a";
+} from "../systems/puzzles/recording-reconstruction.js?v=verdant-20260730b";
+import { TransientNotice } from "./transient-notice.js?v=verdant-20260730b";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -2437,10 +2437,10 @@ export class GameApp {
                         .map(
                           (required) => `
                             <div class="theory-link ${required.complete ? "is-complete" : required.connection ? "is-wrong" : ""}">
-                              <span aria-hidden="true">${required.complete ? "âœ“" : required.connection ? "!" : "â—‹"}</span>
+                              <span aria-hidden="true">${required.complete ? "OK" : required.connection ? "!" : "·"}</span>
                               <p>
                                 <strong>${escapeHtml(required.relationship.label)}</strong>
-                                <small>${escapeHtml(EVIDENCE[required.a]?.title || required.a)} â†” ${escapeHtml(EVIDENCE[required.b]?.title || required.b)}</small>
+                                <small>${escapeHtml(EVIDENCE[required.a]?.title || required.a)} / ${escapeHtml(EVIDENCE[required.b]?.title || required.b)}</small>
                                 ${required.connection && !required.complete ? `<em>Retie this pair as ${escapeHtml(required.relationship.label)}.</em>` : ""}
                               </p>
                             </div>
