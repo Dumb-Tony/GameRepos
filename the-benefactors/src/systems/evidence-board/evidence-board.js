@@ -1,22 +1,13 @@
 import { applyEffects } from "../../engine/events.js";
 
-const DEFAULT_POSITIONS = [
-  { x: 4, y: 8 },
-  { x: 23, y: 8 },
-  { x: 42, y: 8 },
-  { x: 61, y: 8 },
-  { x: 80, y: 8 },
-  { x: 4, y: 37 },
-  { x: 23, y: 37 },
-  { x: 42, y: 37 },
-  { x: 61, y: 37 },
-  { x: 80, y: 37 },
-  { x: 4, y: 66 },
-  { x: 23, y: 66 },
-  { x: 42, y: 66 },
-  { x: 61, y: 66 },
-  { x: 80, y: 66 },
-];
+const BOARD_COLUMNS = [4, 23, 42, 61, 80];
+
+function defaultPosition(index) {
+  return {
+    x: BOARD_COLUMNS[index % BOARD_COLUMNS.length],
+    y: 8 + Math.floor(index / BOARD_COLUMNS.length) * 17,
+  };
+}
 
 export function pinEvidence(state, evidenceId, position) {
   if (!state.evidence.collected.includes(evidenceId)) {
@@ -27,11 +18,17 @@ export function pinEvidence(state, evidenceId, position) {
   if (!next.evidence.pinned.includes(evidenceId)) {
     next.evidence.pinned.push(evidenceId);
   }
-  const fallback = DEFAULT_POSITIONS[next.evidence.pinned.indexOf(evidenceId) % DEFAULT_POSITIONS.length];
-  next.board.cards[evidenceId] = {
-    ...fallback,
-    ...position,
-  };
+  const fallback = defaultPosition(next.evidence.pinned.indexOf(evidenceId));
+  next.board.cards[evidenceId] = position
+    ? { ...fallback, ...position }
+    : { ...(next.board.cards[evidenceId] || fallback) };
+  return next;
+}
+
+export function unpinEvidence(state, evidenceId) {
+  if (!state.evidence.pinned.includes(evidenceId)) return state;
+  const next = structuredClone(state);
+  next.evidence.pinned = next.evidence.pinned.filter((id) => id !== evidenceId);
   return next;
 }
 
@@ -40,7 +37,7 @@ export function moveEvidence(state, evidenceId, position) {
   const next = structuredClone(state);
   next.board.cards[evidenceId] = {
     x: clamp(position.x, 0, 82),
-    y: clamp(position.y, 0, 66),
+    y: clamp(position.y, 0, 76),
   };
   return next;
 }
@@ -48,9 +45,7 @@ export function moveEvidence(state, evidenceId, position) {
 export function arrangeEvidence(state) {
   const next = structuredClone(state);
   next.evidence.pinned.forEach((evidenceId, index) => {
-    next.board.cards[evidenceId] = {
-      ...DEFAULT_POSITIONS[index % DEFAULT_POSITIONS.length],
-    };
+    next.board.cards[evidenceId] = defaultPosition(index);
   });
   return next;
 }

@@ -106,6 +106,16 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Three-connection Act II deduction proving the charity financed hidden emergency infrastructure
 - Updated notebook progression and migration for completed gala saves
 
+**Milestone 10 — Bellwether (complete)**
+
+- New illustrated Bellwether relief station and contaminated-water investigation
+- Evidence-gated interview with community organizer Rina Mercer
+- Field sample, pre-positioned relief freight, Deepwell bypass log, and suppressed lab request
+- Three-connection deduction proving the public rescue was staged before the crisis
+- Greyhaven University river-annex lead for the next chapter
+- Evidence-board category highlights, expandable layout, and reversible card tray
+- Updated notebook progression and migration for completed continuity-network saves
+
 **Prologue content now playable**
 
 - Photograph the missing west wing

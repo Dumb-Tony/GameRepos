@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 12;
+export const GAME_STATE_VERSION = 13;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -89,6 +89,12 @@ export function createInitialState(player = {}, settings = {}) {
       foundArchiveDestructionOrder: false,
       foundBellwetherClipping: false,
       mappedContinuitySiteNetwork: false,
+      questionedRinaMercer: false,
+      loggedBellwetherTapSample: false,
+      photographedBellwetherReliefCrates: false,
+      foundDeepwellPumpLog: false,
+      foundUniversityRejection: false,
+      provedBellwetherResponsePreplanned: false,
     },
     inventory: ["press_credentials", "smartphone", "recorder", "notebook"],
     evidence: {
@@ -145,6 +151,7 @@ export function createInitialState(player = {}, settings = {}) {
       calder_grand_service_corridor: 0,
       saltmere_apartment: 0,
       municipal_archive: 0,
+      bellwether_relief_station: 0,
     },
     settings: {
       ...DEFAULT_SETTINGS,

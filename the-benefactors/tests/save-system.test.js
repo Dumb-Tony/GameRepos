@@ -253,3 +253,24 @@ test("unlocks Saltmere Walk for completed gala saves", () => {
     true,
   );
 });
+
+test("unlocks Bellwether for completed continuity-network saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Morgan" });
+  previous.version = 12;
+  previous.flags.mappedContinuitySiteNetwork = true;
+  previous.progress.unlockedLocations =
+    previous.progress.unlockedLocations.filter(
+      (locationId) => locationId !== "bellwether_relief_station",
+    );
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(
+    migrated.progress.unlockedLocations.includes("bellwether_relief_station"),
+    true,
+  );
+});

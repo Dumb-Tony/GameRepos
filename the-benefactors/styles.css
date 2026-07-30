@@ -2252,6 +2252,11 @@ input[type="range"] {
   vector-effect: non-scaling-stroke;
   stroke-width: 3;
   filter: drop-shadow(1px 2px 1px rgba(0, 0, 0, 0.45));
+  transition: opacity 180ms ease;
+}
+
+.yarn.is-filter-muted {
+  opacity: 0.09;
 }
 
 .yarn-confirmed {
@@ -2278,7 +2283,7 @@ input[type="range"] {
   z-index: 4;
   width: 14%;
   min-width: 115px;
-  min-height: 20%;
+  min-height: 150px;
   transform: rotate(-1deg);
   border: 1px solid rgba(56, 43, 25, 0.38);
   padding: 0;
@@ -2289,6 +2294,22 @@ input[type="range"] {
     #d1c39c;
   box-shadow: 0 7px 13px rgba(42, 27, 14, 0.42);
   user-select: none;
+  transition:
+    opacity 180ms ease,
+    filter 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.evidence-card.is-filter-muted {
+  opacity: 0.23;
+  filter: grayscale(0.75) saturate(0.25);
+}
+
+.evidence-card.is-filter-match {
+  z-index: 5;
+  box-shadow:
+    0 0 0 3px rgba(226, 181, 89, 0.78),
+    0 9px 20px rgba(42, 27, 14, 0.52);
 }
 
 .evidence-drag-handle {
@@ -2338,9 +2359,10 @@ input[type="range"] {
   color: #761f1a;
 }
 
-.evidence-view-button {
+.evidence-view-button,
+.evidence-unpin-button {
   width: calc(100% - 18px);
-  margin: 0 9px 9px;
+  margin: 0 9px 6px;
   border: 1px solid rgba(60, 44, 25, 0.34);
   padding: 5px 7px;
   color: #4b3925;
@@ -2351,8 +2373,16 @@ input[type="range"] {
   cursor: pointer;
 }
 
-.evidence-view-button:hover {
+.evidence-view-button:hover,
+.evidence-unpin-button:hover {
   background: rgba(255, 255, 255, 0.38);
+}
+
+.evidence-unpin-button {
+  margin-bottom: 9px;
+  border-style: dashed;
+  color: rgba(65, 49, 31, 0.78);
+  background: rgba(67, 48, 27, 0.06);
 }
 
 .evidence-card:nth-of-type(even) {
@@ -2443,6 +2473,49 @@ input[type="range"] {
   color: var(--ink-dim);
   font-size: 0.72rem;
   line-height: 1.5;
+}
+
+.board-filter-panel {
+  margin: 0 0 14px;
+  border-block: 1px solid var(--line);
+  padding: 13px 0;
+}
+
+.board-filter-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.board-filter-button {
+  display: flex;
+  min-height: 30px;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--line);
+  padding: 5px 8px;
+  color: var(--ink-dim);
+  background: rgba(255, 255, 255, 0.025);
+  font: 600 0.56rem "IBM Plex Mono", "Courier New", monospace;
+  cursor: pointer;
+}
+
+.board-filter-button strong {
+  display: grid;
+  min-width: 19px;
+  height: 19px;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--paper);
+  background: rgba(255, 255, 255, 0.09);
+  font-size: 0.52rem;
+}
+
+.board-filter-button.is-active {
+  border-color: var(--gold);
+  color: var(--paper);
+  background: rgba(190, 145, 66, 0.15);
 }
 
 .relationship-picker {

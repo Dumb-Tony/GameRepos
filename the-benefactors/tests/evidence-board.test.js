@@ -9,17 +9,18 @@ import {
   evaluateBoardDeductions,
   moveEvidence,
   pinEvidence,
+  unpinEvidence,
 } from "../src/systems/evidence-board/evidence-board.js";
 
-test("arranges a growing evidence board without stacking its first fifteen cards", () => {
+test("arranges a growing evidence board without stacking its first twenty-five cards", () => {
   const state = createInitialState();
-  state.evidence.pinned = Array.from({ length: 15 }, (_, index) => `clue-${index}`);
+  state.evidence.pinned = Array.from({ length: 25 }, (_, index) => `clue-${index}`);
   const arranged = arrangeEvidence(state);
   const positions = state.evidence.pinned.map(
     (evidenceId) => `${arranged.board.cards[evidenceId].x},${arranged.board.cards[evidenceId].y}`,
   );
 
-  assert.equal(new Set(positions).size, 15);
+  assert.equal(new Set(positions).size, 25);
   assert.deepEqual(state.board.cards, {});
 });
 
@@ -40,7 +41,27 @@ test("keeps taller evidence cards within the corkboard", () => {
   const pinned = pinEvidence(source, "invoice_northstar");
   const moved = moveEvidence(pinned, "invoice_northstar", { x: 100, y: 100 });
 
-  assert.deepEqual(moved.board.cards.invoice_northstar, { x: 82, y: 66 });
+  assert.deepEqual(moved.board.cards.invoice_northstar, { x: 82, y: 76 });
+});
+
+test("moves pinned evidence back to the tray without erasing its yarn history", () => {
+  let state = createInitialState();
+  state.evidence.collected.push("invoice_northstar", "permit_summary");
+  state = pinEvidence(state, "invoice_northstar");
+  state = pinEvidence(state, "permit_summary");
+  state = connectEvidence(
+    state,
+    "invoice_northstar",
+    "permit_summary",
+    "financial",
+  );
+
+  const unpinned = unpinEvidence(state, "invoice_northstar");
+
+  assert.equal(unpinned.evidence.pinned.includes("invoice_northstar"), false);
+  assert.equal(unpinned.evidence.collected.includes("invoice_northstar"), true);
+  assert.equal(unpinned.board.connections.length, 1);
+  assert.deepEqual(unpinned.board.cards.invoice_northstar, { x: 4, y: 8 });
 });
 
 test("completes a data-defined deduction from the correct yarn connection", () => {

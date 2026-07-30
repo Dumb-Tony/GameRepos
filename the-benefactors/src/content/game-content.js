@@ -677,6 +677,114 @@ export const EVIDENCE = Object.freeze({
       handwritten: "The crisis started after the solution was funded.",
     },
   },
+  rina_mercer_statement: {
+    id: "rina_mercer_statement",
+    title: "Rina Mercer's timeline",
+    category: "recording",
+    summary:
+      "Bellwether organizer Rina Mercer saw Deepwell equipment arrive two nights before residents reported metallic water.",
+    artifact: {
+      type: "transcript",
+      heading: "FIELD INTERVIEW 14 Â· RINA MERCER",
+      timestamp: "06:51 AM Â· BELLWETHER RIVERSIDE",
+      lines: [
+        ["MERCER", "The trucks arrived Tuesday night. No city markings."],
+        ["MERCER", "Thursday morning, the school taps smelled like pennies."],
+        ["MERCER", "By lunch, Brighter Horizon already had cameras and bottled water here."],
+      ],
+    },
+  },
+  bellwether_tap_sample: {
+    id: "bellwether_tap_sample",
+    title: "Bellwether tap-field sample",
+    category: "document",
+    summary:
+      "A fresh public-tap sample shows an industrial tracer used during treatment-system bypass maintenance.",
+    artifact: {
+      type: "memo",
+      heading: "FIELD TEST Â· PUBLIC TAP B-17",
+      body: [
+        "IRON: ELEVATED",
+        "CHLORIDE: ELEVATED",
+        "TRACER DW-4: DETECTED",
+        "CHAIN OF CUSTODY: A. ROWAN / R. MERCER",
+      ],
+      handwritten: "DW-4 is not naturally occurring.",
+    },
+  },
+  relief_crate_photo: {
+    id: "relief_crate_photo",
+    title: "Pre-positioned relief crates",
+    category: "photograph",
+    summary:
+      "Brighter Horizon relief crates carry freight labels dated before Bellwether's first contamination report.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/bellwether-relief-station.webp",
+      caption: "Bellwether Relief Station Â· Freight Stack",
+      annotations: [
+        "Freight intake: Monday Â· 22:14",
+        "First public complaint: Thursday Â· 07:30",
+        "Deepwell testing van parked behind foundation awning",
+      ],
+    },
+  },
+  deepwell_pump_service_log: {
+    id: "deepwell_pump_service_log",
+    title: "Deepwell pump-service log",
+    category: "financial",
+    summary:
+      "Deepwell billed a 'controlled bypass rehearsal' at Bellwether before the public emergency began.",
+    artifact: {
+      type: "memo",
+      heading: "DEEPWELL RESPONSE Â· SERVICE LOG 44-B",
+      body: [
+        "SITE: BELLWETHER MUNICIPAL PUMP HOUSE",
+        "WORK: CONTROLLED BYPASS REHEARSAL",
+        "TRACER: DW-4",
+        "BILL TO: BRIGHTER HORIZON Â· PROGRAM ADVANCE",
+      ],
+      handwritten: "A rehearsal for the failureâ€”or the cause of it?",
+    },
+  },
+  university_lab_rejection: {
+    id: "university_lab_rejection",
+    title: "Suppressed university test request",
+    category: "document",
+    summary:
+      "A university lab rejected Bellwether samples after a Meridian counsel threatened its emergency-response funding.",
+    artifact: {
+      type: "memo",
+      heading: "GREYHAVEN UNIVERSITY Â· ENVIRONMENTAL LAB",
+      body: [
+        "REQUEST B-17: DECLINED",
+        "REASON: EXTERNAL FUNDING CONFLICT",
+        "COUNSEL NOTICE ATTACHED: MERIDIAN CIVIC PARTNERS",
+        "CONTACT: DR. ELIAN VOSS Â· AFTER HOURS",
+      ],
+      handwritten: "The lab kept a duplicate sample.",
+    },
+  },
+  university_lab_referral: {
+    id: "university_lab_referral",
+    title: "Dr. Voss's private lab address",
+    category: "location",
+    summary:
+      "A handwritten referral points to the university's shuttered river annex and a duplicate Bellwether sample.",
+    artifact: {
+      type: "memo",
+      heading: "AFTER-HOURS REFERRAL",
+      body: [
+        "DR. ELIAN VOSS",
+        "RIVER ANNEX Â· GREYHAVEN UNIVERSITY",
+        "ASK FOR SAMPLE B-17 DUPLICATE",
+        "SERVICE ENTRANCE: SOUTH FLOODGATE",
+        "ACCESS WINDOW: 23:00â€“02:00",
+        "REFERENCE: ENVIRONMENTAL HOLD 6A",
+      ],
+      handwritten: "Do not call from campus.",
+    },
+  },
 });
 
 export const INVENTORY_ITEMS = Object.freeze({
@@ -1216,6 +1324,56 @@ export const DIALOGUES = Object.freeze({
       },
     },
   },
+  rina_mercer: {
+    id: "rina_mercer",
+    character: "Rina Mercer",
+    portrait: "RM",
+    start: "intro",
+    nodes: {
+      intro: {
+        id: "intro",
+        speaker: "Rina Mercer",
+        text:
+          "Reporters came when the cameras did. They filmed the bottled water, thanked the foundation, and left before anyone asked why the relief trucks were already here.",
+        choices: [
+          {
+            id: "show-clipping",
+            text: "I found Deepwell's Bellwether contract file.",
+            evidenceId: "bellwether_water_clipping",
+            requires: { type: "hasEvidence", id: "bellwether_water_clipping" },
+            next: "timeline",
+          },
+          { id: "leave", text: "I need to look around first.", end: true },
+        ],
+      },
+      timeline: {
+        id: "timeline",
+        speaker: "Rina Mercer",
+        text:
+          "Then write the order down correctly. Deepwell's unmarked trucks came Tuesday. The water changed Thursday. Brighter Horizon's stage and television crew were ready before lunch.",
+        onEnter: [
+          { type: "setFlag", key: "questionedRinaMercer", value: true },
+          { type: "collectEvidence", id: "rina_mercer_statement" },
+        ],
+        choices: [
+          {
+            id: "ask-tap",
+            text: "Can you show me the first tap that failed?",
+            next: "tap",
+          },
+        ],
+      },
+      tap: {
+        id: "tap",
+        speaker: "Rina Mercer",
+        text:
+          "The blue one beside the noticeboard. I kept it chained off. If you take a sample, I sign the chain of custody.",
+        choices: [
+          { id: "finish", text: "Keep everyone away from it.", end: true },
+        ],
+      },
+    },
+  },
 });
 
 export const DEDUCTIONS = Object.freeze({
@@ -1429,6 +1587,46 @@ export const DEDUCTIONS = Object.freeze({
       { type: "setFlag", key: "mappedContinuitySiteNetwork", value: true },
       { type: "setPath", path: "progress.chapter", value: 3 },
       { type: "setPath", path: "progress.officeState", value: 6 },
+      { type: "unlockLocation", id: "bellwether_relief_station" },
+    ],
+  },
+  bellwether_response_preplanned: {
+    id: "bellwether_response_preplanned",
+    title: "Bellwether's rescue was staged before the crisis",
+    journalText:
+      "Deepwell rehearsed the bypass with Brighter Horizon funding, relief freight arrived before the first complaint, and the same industrial tracer remains in Bellwether's water. Meridian did not merely exploit the emergencyâ€”its network prepared it.",
+    notification:
+      "The relief operation was waiting for the crisis. A suppressed university sample may prove who contaminated the system.",
+    requiredDeductions: ["continuity_site_network"],
+    requiredEvidence: [
+      "program_advance_index",
+      "bellwether_water_clipping",
+      "rina_mercer_statement",
+      "bellwether_tap_sample",
+      "relief_crate_photo",
+      "deepwell_pump_service_log",
+    ],
+    requiredConnections: [
+      {
+        a: "bellwether_water_clipping",
+        b: "relief_crate_photo",
+        type: "contradiction",
+      },
+      {
+        a: "program_advance_index",
+        b: "deepwell_pump_service_log",
+        type: "financial",
+      },
+      {
+        a: "rina_mercer_statement",
+        b: "bellwether_tap_sample",
+        type: "confirmed",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "provedBellwetherResponsePreplanned", value: true },
+      { type: "collectEvidence", id: "university_lab_referral" },
+      { type: "setPath", path: "progress.officeState", value: 7 },
     ],
   },
 });
@@ -2425,6 +2623,139 @@ export const GAME_CONTENT = Object.freeze({
           title: "Footsteps above",
           text:
             "Someone tries the archive's outer door, waits, and leaves without switching on the stairwell light.",
+        },
+      ],
+    },
+    bellwether_relief_station: {
+      id: "bellwether_relief_station",
+      name: "Bellwether Relief Station",
+      eyebrow: "Riverside Ward Â· Saturday Â· 6:42 AM",
+      mapX: 20,
+      mapY: 78,
+      description:
+        "A foundation-branded relief camp stands between Bellwether's silent pump house and the public taps it claims to have rescued.",
+      sceneClass: "scene-bellwether-relief",
+      sceneArt: "./assets/scenes/bellwether-relief-station.webp",
+      hotspots: [
+        {
+          id: "rina_mercer",
+          label: "Rina Mercer",
+          x: 45,
+          y: 32,
+          width: 15,
+          height: 43,
+          title: "The organizer who stayed",
+          text:
+            "Rina watches the foundation volunteers pack their cameras before they pack the bottled water.",
+          dialogueId: "rina_mercer",
+        },
+        {
+          id: "bellwether_public_tap",
+          label: "Chained public tap",
+          x: 2,
+          y: 37,
+          width: 20,
+          height: 37,
+          title: "Tap B-17",
+          text:
+            "Rust-colored water stains the basin beneath a municipal seal. Rina has preserved the first failed tap.",
+          actionLabel: "Collect and field-test a sample",
+          resultText:
+            "The strip turns violet for DW-4, an industrial tracer used during controlled bypass work.",
+          effects: [
+            { type: "setFlag", key: "loggedBellwetherTapSample", value: true },
+            { type: "collectEvidence", id: "bellwether_tap_sample" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "questionedRinaMercer" },
+              { type: "flag", key: "loggedBellwetherTapSample", equals: false },
+            ],
+          },
+        },
+        {
+          id: "relief_crate_stack",
+          label: "Relief freight",
+          x: 67,
+          y: 37,
+          width: 25,
+          height: 33,
+          title: "Crates that arrived too early",
+          text:
+            "The outer labels are new, but the freight-intake stickers underneath carry Monday's date.",
+          actionLabel: "Photograph the labels",
+          resultText:
+            "The relief shipment entered Bellwether forty-eight hours before the first resident complaint.",
+          effects: [
+            {
+              type: "setFlag",
+              key: "photographedBellwetherReliefCrates",
+              value: true,
+            },
+            { type: "collectEvidence", id: "relief_crate_photo" },
+          ],
+          actionWhen: {
+            not: { type: "flag", key: "photographedBellwetherReliefCrates" },
+          },
+        },
+        {
+          id: "deepwell_pump_hatch",
+          label: "Pump-house hatch",
+          x: 23,
+          y: 29,
+          width: 18,
+          height: 40,
+          title: "Deepwell left paperwork behind",
+          text:
+            "A carbon copy is caught beneath the service hatch, blurred by rain but still legible.",
+          actionLabel: "Recover the service log",
+          resultText:
+            "Deepwell billed Brighter Horizon for a controlled bypass rehearsal using tracer DW-4.",
+          effects: [
+            { type: "setFlag", key: "foundDeepwellPumpLog", value: true },
+            { type: "collectEvidence", id: "deepwell_pump_service_log" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "loggedBellwetherTapSample" },
+              { type: "flag", key: "foundDeepwellPumpLog", equals: false },
+            ],
+          },
+        },
+        {
+          id: "community_noticeboard",
+          label: "Community noticeboard",
+          x: 55,
+          y: 21,
+          width: 12,
+          height: 30,
+          title: "A test no one was allowed to run",
+          text:
+            "Residents pinned rejection letters beside boil-water notices. One bears a Meridian counsel reference.",
+          actionLabel: "Copy the university rejection",
+          resultText:
+            "The university lab kept a duplicate sample at its river annex after Meridian threatened its funding.",
+          effects: [
+            { type: "setFlag", key: "foundUniversityRejection", value: true },
+            { type: "collectEvidence", id: "university_lab_rejection" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "foundDeepwellPumpLog" },
+              { type: "flag", key: "foundUniversityRejection", equals: false },
+            ],
+          },
+        },
+        {
+          id: "deepwell_testing_van",
+          label: "Testing van",
+          x: 83,
+          y: 15,
+          width: 16,
+          height: 28,
+          title: "No company markings",
+          text:
+            "Fresh paint covers a rectangular logo, but a Deepwell asset number remains etched into the rear glass.",
         },
       ],
     },

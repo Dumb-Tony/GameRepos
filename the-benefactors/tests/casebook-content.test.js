@@ -20,7 +20,7 @@ test("every casebook stage has a three-level hint path", () => {
     assert.equal(stage.hints.length, 3, stage.id);
     assert.equal(stage.hints.every(Boolean), true, stage.id);
   }
-  assert.equal(CASEBOOK_PROGRESS.length, 25);
+  assert.equal(CASEBOOK_PROGRESS.length, 30);
 });
 
 test("casebook objective advances with investigation state", () => {
@@ -105,5 +105,18 @@ test("casebook objective advances with investigation state", () => {
   assert.equal(activeStage(state).id, "connect_continuity_network");
 
   state.flags.mappedContinuitySiteNetwork = true;
-  assert.equal(activeStage(state).id, "bellwether_lead");
+  assert.equal(activeStage(state).id, "visit_bellwether");
+
+  state.locationVisits.bellwether_relief_station = 1;
+  assert.equal(activeStage(state).id, "investigate_bellwether");
+
+  state.flags.questionedRinaMercer = true;
+  state.flags.loggedBellwetherTapSample = true;
+  state.flags.photographedBellwetherReliefCrates = true;
+  state.flags.foundDeepwellPumpLog = true;
+  state.flags.foundUniversityRejection = true;
+  assert.equal(activeStage(state).id, "connect_bellwether");
+
+  state.flags.provedBellwetherResponsePreplanned = true;
+  assert.equal(activeStage(state).id, "university_lab_lead");
 });

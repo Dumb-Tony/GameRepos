@@ -108,4 +108,8 @@ test("Harcourt and Register 09 expose the hidden continuity-site network", () =>
   assert.equal(state.flags.mappedContinuitySiteNetwork, true);
   assert.equal(state.progress.chapter, 3);
   assert.equal(state.evidence.collected.includes("bellwether_water_clipping"), true);
+  assert.equal(
+    state.progress.unlockedLocations.includes("bellwether_relief_station"),
+    true,
+  );
 });

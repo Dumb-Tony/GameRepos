@@ -336,14 +336,61 @@ export const CASEBOOK_STAGES = Object.freeze([
     ],
   },
   {
-    id: "bellwether_lead",
+    id: "visit_bellwether",
     title: "The crisis that came second",
-    objective: "Deepwell was funded before Bellwether's water failed. The investigation continues there.",
+    objective: "Travel to Bellwether and find the residents who remained after the cameras left.",
+    activeWhen: {
+      not: { type: "visited", location: "bellwether_relief_station" },
+    },
+    hints: [
+      "The continuity-network deduction unlocks Bellwether on the city map.",
+      "Travel to the Bellwether Relief Station.",
+      "Start with the organizer standing between the public taps and the foundation camp.",
+    ],
+  },
+  {
+    id: "investigate_bellwether",
+    title: "Before the cameras arrived",
+    objective: "Reconstruct Bellwether's true timeline and preserve evidence from the failed water system.",
+    activeWhen: {
+      any: [
+        { type: "flag", key: "questionedRinaMercer", equals: false },
+        { type: "flag", key: "loggedBellwetherTapSample", equals: false },
+        { type: "flag", key: "photographedBellwetherReliefCrates", equals: false },
+        { type: "flag", key: "foundDeepwellPumpLog", equals: false },
+        { type: "flag", key: "foundUniversityRejection", equals: false },
+      ],
+    },
+    hints: [
+      "Rina knows when Deepwell and Brighter Horizon arrived.",
+      "After speaking to Rina, test the chained public tap and compare its tracer with the pump-house paperwork.",
+      "Photograph the relief labels, recover the pump log, then inspect the residents' noticeboard.",
+    ],
+  },
+  {
+    id: "connect_bellwether",
+    title: "A rescue waiting for a crisis",
+    objective: "Use the evidence board to prove Bellwether's relief operation was prepared in advance.",
+    activeWhen: {
+      type: "flag",
+      key: "provedBellwetherResponsePreplanned",
+      equals: false,
+    },
+    hints: [
+      "Connect the public story to freight that arrived before it, Deepwell's advance to its service log, and Rina's account to the field sample.",
+      "Use White Â· Contradiction for crisis clipping â†” relief-crate photo and Blue Â· Financial for program index â†” pump-service log.",
+      "Use Red Â· Confirmed for Rina's timeline â†” Bellwether tap-field sample.",
+    ],
+  },
+  {
+    id: "university_lab_lead",
+    title: "The sample they could not destroy",
+    objective: "Dr. Voss kept a duplicate Bellwether sample at Greyhaven University's river annex.",
     activeWhen: null,
     hints: [
-      "Review the Bellwether water-crisis clipping in the case file.",
-      "Compare the public crisis date with the advance date in Harcourt's index.",
-      "The next chapter begins in the Bellwether community.",
+      "Review Dr. Voss's private lab address in the case file.",
+      "Meridian threatened the university's emergency-response funding.",
+      "The next investigation begins at the shuttered river annex.",
     ],
   },
 ]);
@@ -374,4 +421,9 @@ export const CASEBOOK_PROGRESS = Object.freeze([
   { label: "Continuity sites mapped", when: { type: "flag", key: "photographedContinuitySiteMap" } },
   { label: "Archive destruction order recovered", when: { type: "flag", key: "foundArchiveDestructionOrder" } },
   { label: "Hidden continuity network proven", when: { type: "flag", key: "mappedContinuitySiteNetwork" } },
+  { label: "Bellwether organizer interviewed", when: { type: "flag", key: "questionedRinaMercer" } },
+  { label: "Bellwether tap sample preserved", when: { type: "flag", key: "loggedBellwetherTapSample" } },
+  { label: "Pre-positioned relief freight documented", when: { type: "flag", key: "photographedBellwetherReliefCrates" } },
+  { label: "Deepwell bypass log recovered", when: { type: "flag", key: "foundDeepwellPumpLog" } },
+  { label: "Staged relief operation proven", when: { type: "flag", key: "provedBellwetherResponsePreplanned" } },
 ]);

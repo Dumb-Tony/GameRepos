@@ -4,38 +4,38 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=continuity-20260730b";
+} from "../content/game-content.js?v=bellwether-20260730a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=continuity-20260730b";
+} from "../content/casebook-content.js?v=bellwether-20260730a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=continuity-20260730b";
+} from "../content/onboarding-content.js?v=bellwether-20260730a";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=continuity-20260730b";
-import { evaluateCondition } from "../engine/conditions.js?v=continuity-20260730b";
-import { applyEffects } from "../engine/events.js?v=continuity-20260730b";
-import { createInitialState } from "../engine/game-state.js?v=continuity-20260730b";
+} from "../content/prologue-content.js?v=bellwether-20260730a";
+import { evaluateCondition } from "../engine/conditions.js?v=bellwether-20260730a";
+import { applyEffects } from "../engine/events.js?v=bellwether-20260730a";
+import { createInitialState } from "../engine/game-state.js?v=bellwether-20260730a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=continuity-20260730b";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=continuity-20260730b";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=continuity-20260730b";
+} from "../engine/player-language.js?v=bellwether-20260730a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=bellwether-20260730a";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=bellwether-20260730a";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=continuity-20260730b";
+} from "../systems/dialogue/dialogue-engine.js?v=bellwether-20260730a";
 import {
   arrangeEvidence,
   connectEvidence,
@@ -43,19 +43,20 @@ import {
   moveEvidence,
   pinEvidence,
   removeConnection,
-} from "../systems/evidence-board/evidence-board.js?v=continuity-20260730b";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=continuity-20260730b";
+  unpinEvidence,
+} from "../systems/evidence-board/evidence-board.js?v=bellwether-20260730a";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=bellwether-20260730a";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=continuity-20260730b";
+} from "../systems/puzzles/plan-alignment.js?v=bellwether-20260730a";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=continuity-20260730b";
-import { TransientNotice } from "./transient-notice.js?v=continuity-20260730b";
+} from "../systems/puzzles/recording-reconstruction.js?v=bellwether-20260730a";
+import { TransientNotice } from "./transient-notice.js?v=bellwether-20260730a";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -101,6 +102,7 @@ export class GameApp {
     this.inventoryOpen = false;
     this.selectedBoardCards = [];
     this.boardConnectionType = "confirmed";
+    this.boardCategoryFilter = "all";
     this.boardWasDragged = false;
     this.tutorialHotspotFound = false;
     this.tutorialBoardCards = [];
@@ -759,7 +761,28 @@ export class GameApp {
   renderHome() {
     const state = this.store.getState();
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
-    const caseUpdate = state.flags.mappedContinuitySiteNetwork
+    const caseUpdate = state.flags.provedBellwetherResponsePreplanned
+      ? {
+          title: "The rescue was waiting",
+          text:
+            "Deepwell rehearsed the bypass, relief freight arrived early, and DW-4 remains in the taps. Dr. Voss kept a duplicate sample at the university river annex.",
+        }
+      : state.flags.foundDeepwellPumpLog &&
+          state.flags.foundUniversityRejection &&
+          state.flags.photographedBellwetherReliefCrates &&
+          state.flags.loggedBellwetherTapSample
+        ? {
+            title: "Bellwether's impossible timeline",
+            text:
+              "Rina's account, the tap sample, early relief freight, and Deepwell service log belong on the evidence board.",
+          }
+        : (state.locationVisits.bellwether_relief_station || 0) > 0
+          ? {
+              title: "The people who stayed",
+              text:
+                "Question Rina, preserve a sample from Tap B-17, and inspect the relief freight, pump house, and community noticeboard.",
+            }
+          : state.flags.mappedContinuitySiteNetwork
       ? {
           title: "The solutions came first",
           text:
@@ -1955,6 +1978,30 @@ export class GameApp {
     );
     const activeRelationship =
       relationshipById.get(this.boardConnectionType) || YARN_RELATIONSHIPS[0];
+    const boardCategoryLabels = {
+      all: "All clues",
+      document: "Documents",
+      photograph: "Photos",
+      recording: "Recordings",
+      financial: "Money",
+      location: "Locations",
+      event: "Events",
+    };
+    const boardFilters = ["all", ...new Set(pinned.map((item) => item.category))]
+      .filter((category) => boardCategoryLabels[category])
+      .map((category) => ({
+        id: category,
+        label: boardCategoryLabels[category],
+        count:
+          category === "all"
+            ? pinned.length
+            : pinned.filter((item) => item.category === category).length,
+      }));
+    if (!boardFilters.some((filter) => filter.id === this.boardCategoryFilter)) {
+      this.boardCategoryFilter = "all";
+    }
+    const boardRows = Math.max(3, Math.ceil(pinned.length / 5));
+    const corkboardHeight = 150 + boardRows * 180;
     const selectedConnection =
       this.selectedBoardCards.length === 2
         ? state.board.connections.find(
@@ -2045,14 +2092,20 @@ export class GameApp {
               </div>
             </div>
           </section>
-          <div class="corkboard" id="evidence-corkboard" aria-label="Interactive evidence board">
+          <div class="corkboard" id="evidence-corkboard" aria-label="Interactive evidence board" style="min-height:${corkboardHeight}px">
             <svg class="yarn-layer" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
               ${state.board.connections
                 .map((connection) => {
                   const a = state.board.cards[connection.a];
                   const b = state.board.cards[connection.b];
                   if (!a || !b) return "";
-                  return `<line class="yarn yarn-${connection.type}" x1="${a.x + 7}" y1="${a.y + 10}" x2="${b.x + 7}" y2="${b.y + 10}" />`;
+                  const aEvidence = EVIDENCE[connection.a];
+                  const bEvidence = EVIDENCE[connection.b];
+                  const muted =
+                    this.boardCategoryFilter !== "all" &&
+                    aEvidence?.category !== this.boardCategoryFilter &&
+                    bEvidence?.category !== this.boardCategoryFilter;
+                  return `<line class="yarn yarn-${connection.type} ${muted ? "is-filter-muted" : ""}" x1="${a.x + 7}" y1="${a.y + 10}" x2="${b.x + 7}" y2="${b.y + 10}" />`;
                 })
                 .join("")}
             </svg>
@@ -2065,6 +2118,12 @@ export class GameApp {
                 ? pinned
                     .map((item) => {
                       const position = state.board.cards[item.id] || { x: 10, y: 10 };
+                      const filterClass =
+                        this.boardCategoryFilter === "all"
+                          ? ""
+                          : item.category === this.boardCategoryFilter
+                            ? "is-filter-match"
+                            : "is-filter-muted";
                       const selectedIndex = this.selectedBoardCards.indexOf(item.id);
                       const selected = selectedIndex >= 0;
                       const selectionLabel = selected
@@ -2079,7 +2138,7 @@ export class GameApp {
                           : "Two clues selected";
                       return `
                         <article
-                          class="evidence-card evidence-card--${item.artifact?.type || "document"} ${selected ? "is-selected" : ""}"
+                          class="evidence-card evidence-card--${item.artifact?.type || "document"} ${selected ? "is-selected" : ""} ${filterClass}"
                           style="left:${position.x}%;top:${position.y}%"
                           data-evidence-card-shell="${item.id}"
                         >
@@ -2103,6 +2162,13 @@ export class GameApp {
                           <button class="evidence-view-button" data-view-evidence="${item.id}">
                             View evidence
                           </button>
+                          <button
+                            class="evidence-unpin-button"
+                            data-unpin-evidence="${item.id}"
+                            aria-label="Move ${escapeHtml(item.title)} back to the evidence tray"
+                          >
+                            Move to tray
+                          </button>
                         </article>
                       `;
                     })
@@ -2122,8 +2188,27 @@ export class GameApp {
               Pin clues from the tray. Drag a card by its Move handle—or use its arrow keys—to
               arrange the investigation.
             </p>
+            <section class="board-filter-panel" aria-labelledby="board-filter-title">
+              <p class="kicker" id="board-filter-title">Highlight by type</p>
+              <div class="board-filter-list">
+                ${boardFilters
+                  .map(
+                    (filter) => `
+                      <button
+                        class="board-filter-button ${this.boardCategoryFilter === filter.id ? "is-active" : ""}"
+                        data-board-filter="${filter.id}"
+                        aria-pressed="${this.boardCategoryFilter === filter.id}"
+                      >
+                        <span>${escapeHtml(filter.label)}</span>
+                        <strong>${filter.count}</strong>
+                      </button>
+                    `,
+                  )
+                  .join("")}
+              </div>
+            </section>
             <button class="button button-secondary board-tidy-button" data-action="tidy-board">
-              Tidy board
+              Arrange all pinned clues
             </button>
             ${
               state.flags.prologueEndingReady && !state.progress.prologueComplete
@@ -2221,6 +2306,30 @@ export class GameApp {
         this.store.replace(next, "pin-evidence");
         this.saves.save(this.store.getState(), "pin-evidence");
         this.renderBoard();
+      });
+    });
+
+    this.root.querySelectorAll("[data-unpin-evidence]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const id = button.dataset.unpinEvidence;
+        const next = unpinEvidence(this.store.getState(), id);
+        this.selectedBoardCards = this.selectedBoardCards.filter(
+          (selectedId) => selectedId !== id,
+        );
+        this.store.replace(next, "unpin-evidence");
+        this.saves.save(this.store.getState(), "unpin-evidence");
+        this.notice.show(`${EVIDENCE[id]?.title || "Evidence"} moved to the tray.`);
+        this.renderBoard();
+      });
+    });
+
+    this.root.querySelectorAll("[data-board-filter]").forEach((button) => {
+      button.addEventListener("click", () => {
+        this.boardCategoryFilter = button.dataset.boardFilter;
+        this.renderBoard();
+        this.root
+          .querySelector(`[data-board-filter="${this.boardCategoryFilter}"]`)
+          ?.focus();
       });
     });
 
@@ -2974,7 +3083,7 @@ export class GameApp {
         if (Math.abs(dx) + Math.abs(dy) < 0.6) return;
         this.boardWasDragged = true;
         card.style.left = `${Math.max(0, Math.min(82, start.cardX + dx))}%`;
-        card.style.top = `${Math.max(0, Math.min(66, start.cardY + dy))}%`;
+        card.style.top = `${Math.max(0, Math.min(76, start.cardY + dy))}%`;
       });
 
       card.addEventListener("pointerup", (event) => {
@@ -3124,6 +3233,7 @@ export class GameApp {
     this.inventoryOpen = false;
     this.selectedBoardCards = [];
     this.boardConnectionType = "confirmed";
+    this.boardCategoryFilter = "all";
     this.boardWasDragged = false;
     this.tutorialHotspotFound = false;
     this.tutorialBoardCards = [];

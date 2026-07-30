@@ -3,7 +3,7 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js?v=continuity-20260730b";
+} from "./game-state.js?v=bellwether-20260730a";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
@@ -214,6 +214,14 @@ export class SaveSystem {
       !migrated.progress.unlockedLocations.includes("saltmere_apartment")
     ) {
       migrated.progress.unlockedLocations.push("saltmere_apartment");
+    }
+
+    if (
+      legacyVersion < 13 &&
+      migrated.flags.mappedContinuitySiteNetwork &&
+      !migrated.progress.unlockedLocations.includes("bellwether_relief_station")
+    ) {
+      migrated.progress.unlockedLocations.push("bellwether_relief_station");
     }
 
     return migrated;
