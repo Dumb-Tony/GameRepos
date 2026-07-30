@@ -1,8 +1,8 @@
-import { createInitialState, GameStore } from "./engine/game-state.js?v=board-canvas-20260730d";
-import { ScreenRouter } from "./engine/router.js?v=board-canvas-20260730d";
-import { SaveSystem } from "./engine/save-system.js?v=board-canvas-20260730d";
-import { AudioEngine } from "./systems/audio/audio-engine.js?v=board-canvas-20260730d";
-import { GameApp } from "./ui/app.js?v=board-canvas-20260730d";
+import { createInitialState, GameStore } from "./engine/game-state.js?v=board-canvas-20260730e";
+import { ScreenRouter } from "./engine/router.js?v=board-canvas-20260730e";
+import { SaveSystem } from "./engine/save-system.js?v=board-canvas-20260730e";
+import { AudioEngine } from "./systems/audio/audio-engine.js?v=board-canvas-20260730e";
+import { GameApp } from "./ui/app.js?v=board-canvas-20260730e";
 
 const root = document.querySelector("#app");
 const saves = new SaveSystem();

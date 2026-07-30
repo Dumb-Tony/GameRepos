@@ -4,38 +4,38 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=board-canvas-20260730d";
+} from "../content/game-content.js?v=board-canvas-20260730e";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=board-canvas-20260730d";
+} from "../content/casebook-content.js?v=board-canvas-20260730e";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=board-canvas-20260730d";
+} from "../content/onboarding-content.js?v=board-canvas-20260730e";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=board-canvas-20260730d";
-import { evaluateCondition } from "../engine/conditions.js?v=board-canvas-20260730d";
-import { applyEffects } from "../engine/events.js?v=board-canvas-20260730d";
-import { createInitialState } from "../engine/game-state.js?v=board-canvas-20260730d";
+} from "../content/prologue-content.js?v=board-canvas-20260730e";
+import { evaluateCondition } from "../engine/conditions.js?v=board-canvas-20260730e";
+import { applyEffects } from "../engine/events.js?v=board-canvas-20260730e";
+import { createInitialState } from "../engine/game-state.js?v=board-canvas-20260730e";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=board-canvas-20260730d";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=board-canvas-20260730d";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=board-canvas-20260730d";
+} from "../engine/player-language.js?v=board-canvas-20260730e";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=board-canvas-20260730e";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=board-canvas-20260730e";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=board-canvas-20260730d";
+} from "../systems/dialogue/dialogue-engine.js?v=board-canvas-20260730e";
 import {
   arrangeEvidence,
   connectEvidence,
@@ -44,19 +44,19 @@ import {
   pinEvidence,
   removeConnection,
   unpinEvidence,
-} from "../systems/evidence-board/evidence-board.js?v=board-canvas-20260730d";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=board-canvas-20260730d";
+} from "../systems/evidence-board/evidence-board.js?v=board-canvas-20260730e";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=board-canvas-20260730e";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=board-canvas-20260730d";
+} from "../systems/puzzles/plan-alignment.js?v=board-canvas-20260730e";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=board-canvas-20260730d";
-import { TransientNotice } from "./transient-notice.js?v=board-canvas-20260730d";
+} from "../systems/puzzles/recording-reconstruction.js?v=board-canvas-20260730e";
+import { TransientNotice } from "./transient-notice.js?v=board-canvas-20260730e";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -104,6 +104,7 @@ export class GameApp {
     this.boardConnectionType = "confirmed";
     this.boardCategoryFilter = "all";
     this.boardDensity = "compact";
+    this.boardScroll = { left: 0, top: 0 };
     this.boardWasDragged = false;
     this.tutorialHotspotFound = false;
     this.tutorialBoardCards = [];
@@ -2370,6 +2371,22 @@ export class GameApp {
       </main>
     `;
 
+    const boardCanvas = this.root.querySelector(".board-canvas-scroll");
+    if (boardCanvas) {
+      boardCanvas.scrollLeft = this.boardScroll.left;
+      boardCanvas.scrollTop = this.boardScroll.top;
+      boardCanvas.addEventListener(
+        "scroll",
+        () => {
+          this.boardScroll = {
+            left: boardCanvas.scrollLeft,
+            top: boardCanvas.scrollTop,
+          };
+        },
+        { passive: true },
+      );
+    }
+
     this.root.querySelectorAll("[data-pin-evidence]").forEach((button) => {
       button.addEventListener("click", () => {
         const next = pinEvidence(this.store.getState(), button.dataset.pinEvidence);
@@ -2413,7 +2430,6 @@ export class GameApp {
       });
     });
 
-    const boardCanvas = this.root.querySelector(".board-canvas-scroll");
     boardCanvas?.addEventListener("keydown", (event) => {
       if (event.target !== boardCanvas) return;
       const horizontalStep = Math.max(180, boardCanvas.clientWidth * 0.55);
@@ -3359,6 +3375,7 @@ export class GameApp {
     this.boardConnectionType = "confirmed";
     this.boardCategoryFilter = "all";
     this.boardDensity = "compact";
+    this.boardScroll = { left: 0, top: 0 };
     this.boardWasDragged = false;
     this.tutorialHotspotFound = false;
     this.tutorialBoardCards = [];
