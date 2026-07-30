@@ -297,3 +297,24 @@ test("reflows legacy evidence cards onto the expanded seven-column board", () =>
   assert.deepEqual(migrated.board.cards["legacy-clue-6"], { x: 86, y: 7 });
   assert.deepEqual(migrated.board.cards["legacy-clue-7"], { x: 2, y: 26 });
 });
+
+test("unlocks the university annex for completed Bellwether saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Robin" });
+  previous.version = 14;
+  previous.flags.provedBellwetherResponsePreplanned = true;
+  previous.progress.unlockedLocations =
+    previous.progress.unlockedLocations.filter(
+      (locationId) => locationId !== "university_lab_annex",
+    );
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(
+    migrated.progress.unlockedLocations.includes("university_lab_annex"),
+    true,
+  );
+});

@@ -77,4 +77,8 @@ test("Bellwether evidence proves the relief operation was staged in advance", ()
   );
   assert.equal(state.flags.provedBellwetherResponsePreplanned, true);
   assert.equal(state.evidence.collected.includes("university_lab_referral"), true);
+  assert.equal(
+    state.progress.unlockedLocations.includes("university_lab_annex"),
+    true,
+  );
 });

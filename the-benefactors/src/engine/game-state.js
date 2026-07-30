@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 14;
+export const GAME_STATE_VERSION = 15;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -95,6 +95,12 @@ export function createInitialState(player = {}, settings = {}) {
       foundDeepwellPumpLog: false,
       foundUniversityRejection: false,
       provedBellwetherResponsePreplanned: false,
+      questionedElianVoss: false,
+      foundAnnexSampleAnalysis: false,
+      recordedMeridianFundingThreat: false,
+      photographedWatershedInjectionMap: false,
+      foundVerdantTransferLog: false,
+      provedBellwetherEngineered: false,
     },
     inventory: ["press_credentials", "smartphone", "recorder", "notebook"],
     evidence: {
@@ -153,6 +159,7 @@ export function createInitialState(player = {}, settings = {}) {
       saltmere_apartment: 0,
       municipal_archive: 0,
       bellwether_relief_station: 0,
+      university_lab_annex: 0,
     },
     settings: {
       ...DEFAULT_SETTINGS,

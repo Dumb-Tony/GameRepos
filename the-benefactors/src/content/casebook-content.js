@@ -383,14 +383,65 @@ export const CASEBOOK_STAGES = Object.freeze([
     ],
   },
   {
-    id: "university_lab_lead",
+    id: "visit_university_annex",
     title: "The sample they could not destroy",
-    objective: "Dr. Voss kept a duplicate Bellwether sample at Greyhaven University's river annex.",
-    activeWhen: null,
+    objective: "Find Dr. Voss and the duplicate Bellwether sample at Greyhaven University's river annex.",
+    activeWhen: {
+      not: { type: "visited", location: "university_lab_annex" },
+    },
     hints: [
       "Review Dr. Voss's private lab address in the case file.",
       "Meridian threatened the university's emergency-response funding.",
-      "The next investigation begins at the shuttered river annex.",
+      "Enter the shuttered river annex through the south floodgate.",
+    ],
+  },
+  {
+    id: "investigate_university_annex",
+    title: "Environmental Hold 6A",
+    objective: "Earn Voss's trust and recover the sample analysis, funding threat, watershed map, and transfer record.",
+    activeWhen: {
+      any: [
+        { type: "flag", key: "questionedElianVoss", equals: false },
+        { type: "flag", key: "foundAnnexSampleAnalysis", equals: false },
+        { type: "flag", key: "recordedMeridianFundingThreat", equals: false },
+        {
+          type: "flag",
+          key: "photographedWatershedInjectionMap",
+          equals: false,
+        },
+        { type: "flag", key: "foundVerdantTransferLog", equals: false },
+      ],
+    },
+    hints: [
+      "Show Voss the private referral and Bellwether field sample.",
+      "After the interview, inspect the open freezer and analog recorder.",
+      "The duplicate analysis unlocks the watershed map; the map leads to the transfer clipboard.",
+    ],
+  },
+  {
+    id: "connect_engineered_crisis",
+    title: "A live demonstration",
+    objective: "Use the evidence board to prove Meridian engineered Bellwether's contamination.",
+    activeWhen: {
+      type: "flag",
+      key: "provedBellwetherEngineered",
+      equals: false,
+    },
+    hints: [
+      "Prove the field sample matches the duplicate, the university was silenced, and VA-9 traveled from Verdant to Deepwell.",
+      "Use Red Â· Confirmed for Bellwether sample â†” duplicate analysis and Black Â· Cover-up for rejection â†” funding voicemail.",
+      "Use Red Â· Confirmed for watershed injection map â†” Verdant sample-transfer log.",
+    ],
+  },
+  {
+    id: "verdant_preserve_lead",
+    title: "A laboratory with trees around it",
+    objective: "The VA-9 culture originated inside Verdant Conservation Parcel 6.",
+    activeWhen: null,
+    hints: [
+      "Review the Verdant Parcel 6 gate pass in the case file.",
+      "Deepwell had contractor access to Meridian's watershed trial.",
+      "The investigation continues at the conservation land office.",
     ],
   },
 ]);
@@ -426,4 +477,10 @@ export const CASEBOOK_PROGRESS = Object.freeze([
   { label: "Pre-positioned relief freight documented", when: { type: "flag", key: "photographedBellwetherReliefCrates" } },
   { label: "Deepwell bypass log recovered", when: { type: "flag", key: "foundDeepwellPumpLog" } },
   { label: "Staged relief operation proven", when: { type: "flag", key: "provedBellwetherResponsePreplanned" } },
+  { label: "University river annex entered", when: { type: "visited", location: "university_lab_annex" } },
+  { label: "Dr. Voss interviewed", when: { type: "flag", key: "questionedElianVoss" } },
+  { label: "Duplicate B-17 analysis recovered", when: { type: "flag", key: "foundAnnexSampleAnalysis" } },
+  { label: "Meridian funding threat preserved", when: { type: "flag", key: "recordedMeridianFundingThreat" } },
+  { label: "Verdant transfer route documented", when: { type: "flag", key: "foundVerdantTransferLog" } },
+  { label: "Engineered Bellwether crisis proven", when: { type: "flag", key: "provedBellwetherEngineered" } },
 ]);

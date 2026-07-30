@@ -785,6 +785,115 @@ export const EVIDENCE = Object.freeze({
       handwritten: "Do not call from campus.",
     },
   },
+  voss_statement: {
+    id: "voss_statement",
+    title: "Dr. Voss's Bellwether analysis",
+    category: "recording",
+    summary:
+      "Dr. Elian Voss says DW-4 carried an engineered biofilm that could not have entered Bellwether's system by accident.",
+    artifact: {
+      type: "transcript",
+      heading: "RIVER ANNEX INTERVIEW Â· DR. ELIAN VOSS",
+      timestamp: "12:18 AM Â· ENVIRONMENTAL HOLD 6A",
+      lines: [
+        ["VOSS", "DW-4 was the carrier. The contaminant attached to it by design."],
+        ["ROWAN", "Could a treatment failure create that combination?"],
+        ["VOSS", "No. Someone introduced a prepared culture during the bypass."],
+        ["VOSS", "Its protein marker matches a watershed trial Meridian ordered buried."],
+      ],
+    },
+  },
+  annex_sample_chromatogram: {
+    id: "annex_sample_chromatogram",
+    title: "Duplicate B-17 sample analysis",
+    category: "document",
+    summary:
+      "The preserved Bellwether sample contains DW-4 and an engineered biofilm tagged with Verdant trial marker VA-9.",
+    artifact: {
+      type: "memo",
+      heading: "GREYHAVEN UNIVERSITY Â· SAMPLE B-17 DUPLICATE",
+      body: [
+        "INDUSTRIAL TRACER: DW-4 Â· CONFIRMED",
+        "BIOFILM CULTURE: ENGINEERED",
+        "PROTEIN MARKER: VA-9",
+        "REFERENCE TRIAL: VERDANT WATERSHED ADAPTATION",
+      ],
+      handwritten: "A fingerprint left inside the poison.",
+    },
+  },
+  meridian_funding_voicemail: {
+    id: "meridian_funding_voicemail",
+    title: "Meridian funding-threat voicemail",
+    category: "recording",
+    summary:
+      "A Meridian counsel warned Voss that testing Bellwether's water would end the university's emergency grants.",
+    artifact: {
+      type: "transcript",
+      heading: "SAVED VOICEMAIL Â· RIVER ANNEX LINE 2",
+      timestamp: "THURSDAY Â· 08:03 AM",
+      lines: [
+        ["CALLER", "This is a courtesy before the formal conflict notice."],
+        ["CALLER", "Analysis of Bellwether material falls outside your funded remit."],
+        ["CALLER", "Emergency-response grants are reviewed at Meridian's discretion."],
+        ["CALLER", "Destroy the intake record and there is no institutional problem."],
+      ],
+    },
+  },
+  watershed_injection_map: {
+    id: "watershed_injection_map",
+    title: "Verdant watershed injection map",
+    category: "location",
+    summary:
+      "A lab map traces VA-9 testing from a restricted conservation parcel into Bellwether's upstream intake.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/university-river-annex.webp",
+      alt:
+        "Rain-darkened environmental laboratory with an illuminated watershed map above a filing cabinet",
+      caption: "River Annex Â· Watershed Trial Map",
+      annotations: [
+        "VA-9 trial point inside Verdant conservation parcel",
+        "Floodgate release reaches Bellwether intake in ninety minutes",
+        "Public monitoring station was offline during the release",
+      ],
+    },
+  },
+  verdant_freezer_transfer_log: {
+    id: "verdant_freezer_transfer_log",
+    title: "Verdant sample-transfer log",
+    category: "financial",
+    summary:
+      "A transfer log shows Deepwell collected VA-9 cultures from Meridian's restricted conservation project.",
+    artifact: {
+      type: "memo",
+      heading: "COLD STORAGE TRANSFER Â· VA-9",
+      body: [
+        "ORIGIN: VERDANT CONSERVATION PARCEL 6",
+        "RECIPIENT: DEEPWELL RESPONSE",
+        "AUTHORITY: MERIDIAN CIVIC PARTNERS",
+        "PROJECT CODE: ADAPTIVE WATERSHED DEMONSTRATION",
+      ],
+      handwritten: "Deepwell carried the culture to the bypass.",
+    },
+  },
+  verdant_preserve_gate_pass: {
+    id: "verdant_preserve_gate_pass",
+    title: "Verdant Parcel 6 gate pass",
+    category: "location",
+    summary:
+      "Voss kept a contractor access pass for the conservation parcel where VA-9 was cultivated.",
+    artifact: {
+      type: "memo",
+      heading: "VERDANT CONSERVATION TRUST Â· FIELD ACCESS",
+      body: [
+        "PARCEL 6 Â· SOUTH SERVICE GATE",
+        "AUTHORIZED PROGRAM: WATERSHED ADAPTATION",
+        "CONTRACTOR ACCESS: DEEPWELL RESPONSE",
+        "OVERSIGHT: MERIDIAN CIVIC PARTNERS",
+      ],
+      handwritten: "The preserve is a laboratory with trees around it.",
+    },
+  },
 });
 
 export const INVENTORY_ITEMS = Object.freeze({
@@ -1374,6 +1483,91 @@ export const DIALOGUES = Object.freeze({
       },
     },
   },
+  elian_voss: {
+    id: "elian_voss",
+    character: "Dr. Elian Voss",
+    portrait: "EV",
+    start: "intro",
+    nodes: {
+      intro: {
+        id: "intro",
+        speaker: "Dr. Elian Voss",
+        text:
+          "The university closed this annex six months ago. If you found the floodgate entrance, either Rina trusts you or Meridian followed you.",
+        choices: [
+          {
+            id: "show-referral",
+            text: "Rina sent me for the duplicate B-17 sample.",
+            evidenceId: "university_lab_referral",
+            requires: { type: "hasEvidence", id: "university_lab_referral" },
+            next: "referral",
+          },
+          { id: "leave", text: "I will make sure I was not followed.", end: true },
+        ],
+      },
+      referral: {
+        id: "referral",
+        speaker: "Dr. Elian Voss",
+        text:
+          "Then lock the service door. I refused Bellwether publicly and tested it privately. The sample contains something no treatment failure could make.",
+        choices: [
+          {
+            id: "show-field-sample",
+            text: "My field sample still tests positive for DW-4.",
+            evidenceId: "bellwether_tap_sample",
+            requires: { type: "hasEvidence", id: "bellwether_tap_sample" },
+            next: "analysis",
+          },
+          {
+            id: "ask-threat",
+            text: "Why did the university refuse the test?",
+            next: "threat",
+          },
+        ],
+      },
+      threat: {
+        id: "threat",
+        speaker: "Dr. Elian Voss",
+        text:
+          "Meridian funds the emergency program, the monitoring network, and half the lab. Their counsel called before the sample courier arrived.",
+        choices: [
+          {
+            id: "show-field-sample",
+            text: "Then compare their sample with mine.",
+            evidenceId: "bellwether_tap_sample",
+            requires: { type: "hasEvidence", id: "bellwether_tap_sample" },
+            next: "analysis",
+          },
+        ],
+      },
+      analysis: {
+        id: "analysis",
+        speaker: "Dr. Elian Voss",
+        text:
+          "DW-4 carried an engineered biofilm tagged VA-9. The tag belongs to a watershed trial at Verdant conservation land. Someone used the bypass to seed Bellwether's intake.",
+        onEnter: [
+          { type: "setFlag", key: "questionedElianVoss", value: true },
+          { type: "collectEvidence", id: "voss_statement" },
+        ],
+        choices: [
+          {
+            id: "ask-proof",
+            text: "Show me what survived.",
+            next: "proof",
+          },
+        ],
+      },
+      proof: {
+        id: "proof",
+        speaker: "Dr. Elian Voss",
+        text:
+          "The duplicate is in the open freezer drawer. My recorder kept the threat. The wall map and transfer clipboard show where VA-9 came from and who collected it.",
+        choices: [
+          { id: "finish", text: "Keep the freezer running.", end: true },
+        ],
+      },
+    },
+  },
 });
 
 export const DEDUCTIONS = Object.freeze({
@@ -1627,6 +1821,47 @@ export const DEDUCTIONS = Object.freeze({
       { type: "setFlag", key: "provedBellwetherResponsePreplanned", value: true },
       { type: "collectEvidence", id: "university_lab_referral" },
       { type: "setPath", path: "progress.officeState", value: 7 },
+      { type: "unlockLocation", id: "university_lab_annex" },
+    ],
+  },
+  bellwether_engineered_contamination: {
+    id: "bellwether_engineered_contamination",
+    title: "Bellwether was an engineered demonstration",
+    journalText:
+      "The duplicate sample contains a designed biofilm tagged to Meridian's Verdant watershed trial. Deepwell removed that culture from the conservation parcel, introduced it during the bypass, and Meridian threatened the laboratory that identified it.",
+    notification:
+      "Bellwether was a live demonstration. Voss's old gate pass points to Verdant Conservation Parcel 6.",
+    requiredDeductions: ["bellwether_response_preplanned"],
+    requiredEvidence: [
+      "bellwether_tap_sample",
+      "university_lab_rejection",
+      "voss_statement",
+      "annex_sample_chromatogram",
+      "meridian_funding_voicemail",
+      "watershed_injection_map",
+      "verdant_freezer_transfer_log",
+    ],
+    requiredConnections: [
+      {
+        a: "bellwether_tap_sample",
+        b: "annex_sample_chromatogram",
+        type: "confirmed",
+      },
+      {
+        a: "university_lab_rejection",
+        b: "meridian_funding_voicemail",
+        type: "coverup",
+      },
+      {
+        a: "watershed_injection_map",
+        b: "verdant_freezer_transfer_log",
+        type: "confirmed",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "provedBellwetherEngineered", value: true },
+      { type: "collectEvidence", id: "verdant_preserve_gate_pass" },
+      { type: "setPath", path: "progress.officeState", value: 8 },
     ],
   },
 });
@@ -2756,6 +2991,157 @@ export const GAME_CONTENT = Object.freeze({
           title: "No company markings",
           text:
             "Fresh paint covers a rectangular logo, but a Deepwell asset number remains etched into the rear glass.",
+        },
+      ],
+    },
+    university_lab_annex: {
+      id: "university_lab_annex",
+      name: "University River Annex",
+      eyebrow: "South Floodgate Â· Sunday Â· 12:07 AM",
+      mapX: 29,
+      mapY: 82,
+      description:
+        "Greyhaven University's condemned environmental lab still has power, one working freezer, and a scientist who refused to destroy the truth.",
+      sceneClass: "scene-university-annex",
+      sceneArt: "./assets/scenes/university-river-annex.webp",
+      hotspots: [
+        {
+          id: "elian_voss",
+          label: "Dr. Elian Voss",
+          x: 59,
+          y: 25,
+          width: 15,
+          height: 51,
+          title: "The scientist who kept a copy",
+          text:
+            "Voss watches the floodgate reflection instead of the door. He has been expecting company, but not help.",
+          dialogueId: "elian_voss",
+        },
+        {
+          id: "annex_sample_freezer",
+          label: "Open sample freezer",
+          x: 36,
+          y: 28,
+          width: 17,
+          height: 45,
+          title: "Environmental Hold 6A",
+          text:
+            "The freezer drawer is open just far enough to reveal a sealed amber vial and a fresh chromatogram.",
+          actionLabel: "Document the duplicate sample",
+          resultText:
+            "B-17 contains DW-4 and an engineered biofilm carrying Verdant trial marker VA-9.",
+          effects: [
+            { type: "setFlag", key: "foundAnnexSampleAnalysis", value: true },
+            { type: "collectEvidence", id: "annex_sample_chromatogram" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "questionedElianVoss" },
+              { type: "flag", key: "foundAnnexSampleAnalysis", equals: false },
+            ],
+          },
+        },
+        {
+          id: "annex_reel_recorder",
+          label: "Reel recorder",
+          x: 79,
+          y: 36,
+          width: 15,
+          height: 28,
+          title: "A courtesy before the threat",
+          text:
+            "Voss routed his office line through an analog recorder after the university mail server began deleting notices.",
+          actionLabel: "Copy the saved voicemail",
+          resultText:
+            "A Meridian counsel offers to preserve the university's grants if Voss destroys Bellwether's intake record.",
+          effects: [
+            { type: "setFlag", key: "recordedMeridianFundingThreat", value: true },
+            { type: "collectEvidence", id: "meridian_funding_voicemail" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "questionedElianVoss" },
+              { type: "flag", key: "recordedMeridianFundingThreat", equals: false },
+            ],
+          },
+        },
+        {
+          id: "annex_watershed_map",
+          label: "Watershed trial map",
+          x: 69,
+          y: 14,
+          width: 22,
+          height: 25,
+          title: "The contamination route",
+          text:
+            "Grease-pencil arrows follow the floodgate from Verdant Parcel 6 to Bellwether's upstream intake.",
+          actionLabel: "Photograph the injection route",
+          resultText:
+            "The VA-9 release point reaches Bellwether in ninety minutes. Its public monitor was offline for exactly two hours.",
+          effects: [
+            {
+              type: "setFlag",
+              key: "photographedWatershedInjectionMap",
+              value: true,
+            },
+            { type: "collectEvidence", id: "watershed_injection_map" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "foundAnnexSampleAnalysis" },
+              {
+                type: "flag",
+                key: "photographedWatershedInjectionMap",
+                equals: false,
+              },
+            ],
+          },
+        },
+        {
+          id: "annex_transfer_clipboard",
+          label: "Transfer clipboard",
+          x: 48,
+          y: 43,
+          width: 10,
+          height: 25,
+          title: "Who carried VA-9",
+          text:
+            "A carbon transfer sheet was folded behind the freezer maintenance schedule.",
+          actionLabel: "Recover the transfer log",
+          resultText:
+            "Deepwell signed for VA-9 cultures from Meridian's Verdant conservation project.",
+          effects: [
+            { type: "setFlag", key: "foundVerdantTransferLog", value: true },
+            { type: "collectEvidence", id: "verdant_freezer_transfer_log" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedWatershedInjectionMap" },
+              { type: "flag", key: "foundVerdantTransferLog", equals: false },
+            ],
+          },
+        },
+        {
+          id: "annex_river_windows",
+          label: "Floodgate windows",
+          x: 0,
+          y: 10,
+          width: 31,
+          height: 52,
+          title: "Someone watching the annex",
+          text:
+            "One headlight appears across the river, vanishes, then returns reflected in the floodgate water.",
+        },
+        {
+          id: "annex_cold_bench",
+          label: "Abandoned test bench",
+          x: 2,
+          y: 48,
+          width: 31,
+          height: 34,
+          title: "An unfunded laboratory",
+          text:
+            "The newest instrument is twelve years old. The sample labels are newer than tonight's rain.",
         },
       ],
     },

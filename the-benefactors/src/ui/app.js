@@ -4,38 +4,38 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=board-canvas-20260730e";
+} from "../content/game-content.js?v=river-annex-20260730a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=board-canvas-20260730e";
+} from "../content/casebook-content.js?v=river-annex-20260730a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=board-canvas-20260730e";
+} from "../content/onboarding-content.js?v=river-annex-20260730a";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=board-canvas-20260730e";
-import { evaluateCondition } from "../engine/conditions.js?v=board-canvas-20260730e";
-import { applyEffects } from "../engine/events.js?v=board-canvas-20260730e";
-import { createInitialState } from "../engine/game-state.js?v=board-canvas-20260730e";
+} from "../content/prologue-content.js?v=river-annex-20260730a";
+import { evaluateCondition } from "../engine/conditions.js?v=river-annex-20260730a";
+import { applyEffects } from "../engine/events.js?v=river-annex-20260730a";
+import { createInitialState } from "../engine/game-state.js?v=river-annex-20260730a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=board-canvas-20260730e";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=board-canvas-20260730e";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=board-canvas-20260730e";
+} from "../engine/player-language.js?v=river-annex-20260730a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=river-annex-20260730a";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=river-annex-20260730a";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=board-canvas-20260730e";
+} from "../systems/dialogue/dialogue-engine.js?v=river-annex-20260730a";
 import {
   arrangeEvidence,
   connectEvidence,
@@ -44,19 +44,19 @@ import {
   pinEvidence,
   removeConnection,
   unpinEvidence,
-} from "../systems/evidence-board/evidence-board.js?v=board-canvas-20260730e";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=board-canvas-20260730e";
+} from "../systems/evidence-board/evidence-board.js?v=river-annex-20260730a";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=river-annex-20260730a";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=board-canvas-20260730e";
+} from "../systems/puzzles/plan-alignment.js?v=river-annex-20260730a";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=board-canvas-20260730e";
-import { TransientNotice } from "./transient-notice.js?v=board-canvas-20260730e";
+} from "../systems/puzzles/recording-reconstruction.js?v=river-annex-20260730a";
+import { TransientNotice } from "./transient-notice.js?v=river-annex-20260730a";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -105,6 +105,7 @@ export class GameApp {
     this.boardCategoryFilter = "all";
     this.boardDensity = "compact";
     this.boardScroll = { left: 0, top: 0 };
+    this.boardConnectionPanelOpen = false;
     this.boardWasDragged = false;
     this.tutorialHotspotFound = false;
     this.tutorialBoardCards = [];
@@ -763,7 +764,28 @@ export class GameApp {
   renderHome() {
     const state = this.store.getState();
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
-    const caseUpdate = state.flags.provedBellwetherResponsePreplanned
+    const caseUpdate = state.flags.provedBellwetherEngineered
+      ? {
+          title: "A demonstration disguised as a disaster",
+          text:
+            "VA-9 came from Verdant Parcel 6, Deepwell carried it to the bypass, and Meridian silenced the laboratory. Voss's gate pass is the next way in.",
+        }
+      : state.flags.foundAnnexSampleAnalysis &&
+          state.flags.recordedMeridianFundingThreat &&
+          state.flags.photographedWatershedInjectionMap &&
+          state.flags.foundVerdantTransferLog
+        ? {
+            title: "A fingerprint inside the poison",
+            text:
+              "The duplicate analysis, funding threat, watershed map, and Verdant transfer log can prove Bellwether was engineered.",
+          }
+        : (state.locationVisits.university_lab_annex || 0) > 0
+          ? {
+              title: "Environmental Hold 6A",
+              text:
+                "Show Dr. Voss the field sample, then document the freezer analysis, saved voicemail, watershed map, and transfer clipboard.",
+            }
+          : state.flags.provedBellwetherResponsePreplanned
       ? {
           title: "The rescue was waiting",
           text:
@@ -2037,6 +2059,37 @@ export class GameApp {
     );
     const yarnAnchorX = boardDensity.cardWidth / 2;
     const yarnAnchorY = (boardDensity.cardHeight / 2 / corkboardHeight) * 100;
+    const boardCase = state.flags.provedBellwetherEngineered
+      ? {
+          number: "04",
+          title: "VERDANT / WATERSHED TRIAL",
+          phase: "Next lead: Conservation Parcel 6",
+        }
+      : state.flags.provedBellwetherResponsePreplanned
+      ? {
+          number: "03",
+          title: "BELLWETHER / STAGED RELIEF",
+          phase: "Next lead: University River Annex",
+        }
+      : state.flags.mappedContinuitySiteNetwork
+        ? {
+            number: "02",
+            title: "MERIDIAN / CONTINUITY NETWORK",
+            phase: "Tracing the manufactured crises",
+          }
+        : {
+            number: "01",
+            title: "VALE / ACCESSIBILITY FUND",
+            phase: "Follow the Northstar paper trail",
+          };
+    const evidenceTypeStamps = {
+      document: "DOC",
+      photograph: "PHOTO",
+      recording: "REC",
+      financial: "$",
+      location: "MAP",
+      event: "DATE",
+    };
     const selectedConnection =
       this.selectedBoardCards.length === 2
         ? state.board.connections.find(
@@ -2065,11 +2118,18 @@ export class GameApp {
       <main id="game-main" class="screen game-screen board-screen">
         ${this.renderGameHeader(this.chapterLabel(state), "Evidence board")}
         <section class="board-workspace">
-          <section class="connection-builder" aria-labelledby="connection-builder-title">
+          <section class="connection-builder ${this.boardConnectionPanelOpen ? "is-open" : "is-collapsed"}" aria-labelledby="connection-builder-title">
             <div class="connection-builder-heading">
               <p class="kicker">Tie the case together</p>
               <h1 id="connection-builder-title" tabindex="-1">Connect evidence</h1>
               <p>Choose what the yarn means, then use the selection controls printed on two evidence cards below.</p>
+              <button
+                class="connection-panel-toggle"
+                data-action="toggle-connection-panel"
+                aria-expanded="${this.boardConnectionPanelOpen}"
+              >
+                ${this.boardConnectionPanelOpen ? "Hide yarn desk" : "Open yarn desk"}
+              </button>
             </div>
             <fieldset class="relationship-fieldset">
               <legend>1. Choose a relationship</legend>
@@ -2161,8 +2221,9 @@ export class GameApp {
                 .join("")}
             </svg>
             <div class="board-case-label">
-              <span>ACTIVE CASE 01</span>
-              <strong>VALE / MUNICIPAL ACCESSIBILITY FUND</strong>
+              <span>ACTIVE CASE ${boardCase.number}</span>
+              <strong>${escapeHtml(boardCase.title)}</strong>
+              <small>${escapeHtml(boardCase.phase)}</small>
             </div>
             ${
               pinned.length
@@ -2189,9 +2250,10 @@ export class GameApp {
                           : "Two clues selected";
                       return `
                         <article
-                          class="evidence-card evidence-card--${item.artifact?.type || "document"} ${selected ? "is-selected" : ""} ${filterClass}"
+                          class="evidence-card evidence-card--${item.artifact?.type || "document"} evidence-category-${item.category} ${selected ? "is-selected" : ""} ${filterClass}"
                           style="left:${position.x}%;top:${position.y}%"
                           data-evidence-card-shell="${item.id}"
+                          data-category="${item.category}"
                         >
                           <span class="evidence-drag-handle" data-drag-handle aria-hidden="true">
                             Move
@@ -2204,7 +2266,12 @@ export class GameApp {
                           >
                             <span class="evidence-pin" aria-hidden="true"></span>
                             ${selected ? `<span class="evidence-selection-number" aria-hidden="true">${selectedIndex + 1}</span>` : ""}
-                            <span class="evidence-card-thumbnail" aria-hidden="true"></span>
+                            <span
+                              class="evidence-card-thumbnail"
+                              aria-hidden="true"
+                              ${item.artifact?.image ? `style="background-image:linear-gradient(rgba(12,18,16,.08),rgba(12,18,16,.2)),url('${item.artifact.image}')"` : ""}
+                            ></span>
+                            <span class="evidence-type-stamp" aria-hidden="true">${escapeHtml(evidenceTypeStamps[item.category] || "CLUE")}</span>
                             <span class="evidence-category">${escapeHtml(item.category)}</span>
                             <strong>${escapeHtml(item.title)}</strong>
                             <small>${escapeHtml(item.summary)}</small>
@@ -2522,6 +2589,11 @@ export class GameApp {
     this.bindBoardDrag();
 
     this.bindActions({
+      "toggle-connection-panel": () => {
+        this.boardConnectionPanelOpen = !this.boardConnectionPanelOpen;
+        this.renderBoard();
+        this.root.querySelector("[data-action='toggle-connection-panel']")?.focus();
+      },
       "tidy-board": () => {
         const next = arrangeEvidence(this.store.getState());
         this.store.replace(next, "tidy-board");
@@ -3376,6 +3448,7 @@ export class GameApp {
     this.boardCategoryFilter = "all";
     this.boardDensity = "compact";
     this.boardScroll = { left: 0, top: 0 };
+    this.boardConnectionPanelOpen = false;
     this.boardWasDragged = false;
     this.tutorialHotspotFound = false;
     this.tutorialBoardCards = [];

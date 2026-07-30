@@ -118,6 +118,16 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Seven-column automatic layout tested with forty-two pinned clues
 - Updated notebook progression and migration for completed continuity-network saves
 
+**Milestone 11 — The River Annex (complete)**
+
+- New illustrated environmental laboratory beneath Greyhaven University's south floodgate
+- Evidence-driven interview with Dr. Elian Voss
+- Duplicate Bellwether sample analysis, preserved funding threat, watershed route, and transfer log
+- Board deduction proving Bellwether was an engineered Meridian demonstration
+- Verdant Conservation Parcel 6 lead for the next investigation
+- Collapsible yarn desk, live case-status strip, photographic clue thumbnails, and distinct clue-type treatments
+- Updated notebook progression and migration for completed Bellwether saves
+
 **Prologue content now playable**
 
 - Photograph the missing west wing

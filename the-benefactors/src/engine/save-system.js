@@ -3,7 +3,7 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js?v=board-canvas-20260730e";
+} from "./game-state.js?v=river-annex-20260730a";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
@@ -233,6 +233,14 @@ export class SaveSystem {
         };
       });
       migrated.board.layoutVersion = 2;
+    }
+
+    if (
+      legacyVersion < 15 &&
+      migrated.flags.provedBellwetherResponsePreplanned &&
+      !migrated.progress.unlockedLocations.includes("university_lab_annex")
+    ) {
+      migrated.progress.unlockedLocations.push("university_lab_annex");
     }
 
     return migrated;
