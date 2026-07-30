@@ -3,7 +3,7 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js?v=board-canvas-20260730a";
+} from "./game-state.js?v=board-canvas-20260730b";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
@@ -222,6 +222,17 @@ export class SaveSystem {
       !migrated.progress.unlockedLocations.includes("bellwether_relief_station")
     ) {
       migrated.progress.unlockedLocations.push("bellwether_relief_station");
+    }
+
+    if (legacyVersion < 14) {
+      const columns = [2, 16, 30, 44, 58, 72, 86];
+      migrated.evidence.pinned.forEach((evidenceId, index) => {
+        migrated.board.cards[evidenceId] = {
+          x: columns[index % columns.length],
+          y: 7 + Math.floor(index / columns.length) * 19,
+        };
+      });
+      migrated.board.layoutVersion = 2;
     }
 
     return migrated;

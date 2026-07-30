@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 13;
+export const GAME_STATE_VERSION = 14;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -104,6 +104,7 @@ export function createInitialState(player = {}, settings = {}) {
       discredited: [],
     },
     board: {
+      layoutVersion: 2,
       cards: {},
       connections: [],
       zoom: 1,

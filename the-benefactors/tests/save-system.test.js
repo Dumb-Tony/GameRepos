@@ -274,3 +274,26 @@ test("unlocks Bellwether for completed continuity-network saves", () => {
     true,
   );
 });
+
+test("reflows legacy evidence cards onto the expanded seven-column board", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Casey" });
+  previous.version = 13;
+  previous.board.layoutVersion = 1;
+  previous.evidence.pinned = Array.from(
+    { length: 8 },
+    (_, index) => `legacy-clue-${index}`,
+  );
+  previous.evidence.pinned.forEach((evidenceId) => {
+    previous.board.cards[evidenceId] = { x: 4, y: 8 };
+  });
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.board.layoutVersion, 2);
+  assert.deepEqual(migrated.board.cards["legacy-clue-0"], { x: 2, y: 7 });
+  assert.deepEqual(migrated.board.cards["legacy-clue-6"], { x: 86, y: 7 });
+  assert.deepEqual(migrated.board.cards["legacy-clue-7"], { x: 2, y: 26 });
+});
