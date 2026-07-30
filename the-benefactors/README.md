@@ -114,6 +114,8 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Three-connection deduction proving the public rescue was staged before the crisis
 - Greyhaven University river-annex lead for the next chapter
 - Evidence-board category highlights, expandable layout, and reversible card tray
+- Scrollable large-format corkboard with Detailed, Compact, and Overview card sizes
+- Seven-column automatic layout tested with forty-two pinned clues
 - Updated notebook progression and migration for completed continuity-network saves
 
 **Prologue content now playable**

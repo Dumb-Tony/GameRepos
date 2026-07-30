@@ -4,38 +4,38 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=bellwether-20260730b";
+} from "../content/game-content.js?v=board-canvas-20260730a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=bellwether-20260730b";
+} from "../content/casebook-content.js?v=board-canvas-20260730a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=bellwether-20260730b";
+} from "../content/onboarding-content.js?v=board-canvas-20260730a";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=bellwether-20260730b";
-import { evaluateCondition } from "../engine/conditions.js?v=bellwether-20260730b";
-import { applyEffects } from "../engine/events.js?v=bellwether-20260730b";
-import { createInitialState } from "../engine/game-state.js?v=bellwether-20260730b";
+} from "../content/prologue-content.js?v=board-canvas-20260730a";
+import { evaluateCondition } from "../engine/conditions.js?v=board-canvas-20260730a";
+import { applyEffects } from "../engine/events.js?v=board-canvas-20260730a";
+import { createInitialState } from "../engine/game-state.js?v=board-canvas-20260730a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=bellwether-20260730b";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=bellwether-20260730b";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=bellwether-20260730b";
+} from "../engine/player-language.js?v=board-canvas-20260730a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=board-canvas-20260730a";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=board-canvas-20260730a";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=bellwether-20260730b";
+} from "../systems/dialogue/dialogue-engine.js?v=board-canvas-20260730a";
 import {
   arrangeEvidence,
   connectEvidence,
@@ -44,19 +44,19 @@ import {
   pinEvidence,
   removeConnection,
   unpinEvidence,
-} from "../systems/evidence-board/evidence-board.js?v=bellwether-20260730b";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=bellwether-20260730b";
+} from "../systems/evidence-board/evidence-board.js?v=board-canvas-20260730a";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=board-canvas-20260730a";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=bellwether-20260730b";
+} from "../systems/puzzles/plan-alignment.js?v=board-canvas-20260730a";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=bellwether-20260730b";
-import { TransientNotice } from "./transient-notice.js?v=bellwether-20260730b";
+} from "../systems/puzzles/recording-reconstruction.js?v=board-canvas-20260730a";
+import { TransientNotice } from "./transient-notice.js?v=board-canvas-20260730a";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -103,6 +103,7 @@ export class GameApp {
     this.selectedBoardCards = [];
     this.boardConnectionType = "confirmed";
     this.boardCategoryFilter = "all";
+    this.boardDensity = "compact";
     this.boardWasDragged = false;
     this.tutorialHotspotFound = false;
     this.tutorialBoardCards = [];
@@ -2000,8 +2001,41 @@ export class GameApp {
     if (!boardFilters.some((filter) => filter.id === this.boardCategoryFilter)) {
       this.boardCategoryFilter = "all";
     }
-    const boardRows = Math.max(3, Math.ceil(pinned.length / 5));
-    const corkboardHeight = 150 + boardRows * 180;
+    const boardDensityOptions = {
+      detailed: {
+        label: "Detailed",
+        description: "Largest cards",
+        canvasWidth: 1800,
+        cardWidth: 12.5,
+        cardHeight: 206,
+        rowHeight: 250,
+      },
+      compact: {
+        label: "Compact",
+        description: "Best for casework",
+        canvasWidth: 1500,
+        cardWidth: 11.8,
+        cardHeight: 164,
+        rowHeight: 205,
+      },
+      overview: {
+        label: "Overview",
+        description: "See more at once",
+        canvasWidth: 1250,
+        cardWidth: 11.8,
+        cardHeight: 120,
+        rowHeight: 158,
+      },
+    };
+    const boardDensity =
+      boardDensityOptions[this.boardDensity] || boardDensityOptions.compact;
+    const boardRows = Math.max(3, Math.ceil(pinned.length / 7));
+    const corkboardHeight = Math.max(
+      680,
+      130 + boardRows * boardDensity.rowHeight,
+    );
+    const yarnAnchorX = boardDensity.cardWidth / 2;
+    const yarnAnchorY = (boardDensity.cardHeight / 2 / corkboardHeight) * 100;
     const selectedConnection =
       this.selectedBoardCards.length === 2
         ? state.board.connections.find(
@@ -2092,7 +2126,13 @@ export class GameApp {
               </div>
             </div>
           </section>
-          <div class="corkboard" id="evidence-corkboard" aria-label="Interactive evidence board" style="min-height:${corkboardHeight}px">
+          <div class="board-canvas-scroll">
+          <div
+            class="corkboard board-density-${this.boardDensity}"
+            id="evidence-corkboard"
+            aria-label="Interactive evidence board"
+            style="--board-card-width:${boardDensity.cardWidth}%;--board-card-height:${boardDensity.cardHeight}px;min-width:${boardDensity.canvasWidth}px;min-height:${corkboardHeight}px"
+          >
             <svg class="yarn-layer" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
               ${state.board.connections
                 .map((connection) => {
@@ -2111,7 +2151,7 @@ export class GameApp {
                     this.boardCategoryFilter !== "all" &&
                     aEvidence?.category !== this.boardCategoryFilter &&
                     bEvidence?.category !== this.boardCategoryFilter;
-                  return `<line class="yarn yarn-${connection.type} ${muted ? "is-filter-muted" : ""}" x1="${a.x + 7}" y1="${a.y + 10}" x2="${b.x + 7}" y2="${b.y + 10}" />`;
+                  return `<line class="yarn yarn-${connection.type} ${muted ? "is-filter-muted" : ""}" x1="${a.x + yarnAnchorX}" y1="${a.y + yarnAnchorY}" x2="${b.x + yarnAnchorX}" y2="${b.y + yarnAnchorY}" />`;
                 })
                 .join("")}
             </svg>
@@ -2187,6 +2227,7 @@ export class GameApp {
                 `
             }
           </div>
+          </div>
           <aside class="board-sidebar">
             <p class="kicker">Casework</p>
             <h2>Case file</h2>
@@ -2194,6 +2235,25 @@ export class GameApp {
               Pin clues from the tray. Drag a card by its Move handle—or use its arrow keys—to
               arrange the investigation.
             </p>
+            <section class="board-density-panel" aria-labelledby="board-density-title">
+              <p class="kicker" id="board-density-title">Card size</p>
+              <div class="board-density-list">
+                ${Object.entries(boardDensityOptions)
+                  .map(
+                    ([id, option]) => `
+                      <button
+                        class="board-density-button ${this.boardDensity === id ? "is-active" : ""}"
+                        data-board-density="${id}"
+                        aria-pressed="${this.boardDensity === id}"
+                      >
+                        <strong>${escapeHtml(option.label)}</strong>
+                        <span>${escapeHtml(option.description)}</span>
+                      </button>
+                    `,
+                  )
+                  .join("")}
+              </div>
+            </section>
             <section class="board-filter-panel" aria-labelledby="board-filter-title">
               <p class="kicker" id="board-filter-title">Highlight by type</p>
               <div class="board-filter-list">
@@ -2335,6 +2395,16 @@ export class GameApp {
         this.renderBoard();
         this.root
           .querySelector(`[data-board-filter="${this.boardCategoryFilter}"]`)
+          ?.focus();
+      });
+    });
+
+    this.root.querySelectorAll("[data-board-density]").forEach((button) => {
+      button.addEventListener("click", () => {
+        this.boardDensity = button.dataset.boardDensity;
+        this.renderBoard();
+        this.root
+          .querySelector(`[data-board-density="${this.boardDensity}"]`)
           ?.focus();
       });
     });
@@ -3088,8 +3158,8 @@ export class GameApp {
         const dy = ((event.clientY - start.pointerY) / rect.height) * 100;
         if (Math.abs(dx) + Math.abs(dy) < 0.6) return;
         this.boardWasDragged = true;
-        card.style.left = `${Math.max(0, Math.min(82, start.cardX + dx))}%`;
-        card.style.top = `${Math.max(0, Math.min(76, start.cardY + dy))}%`;
+        card.style.left = `${Math.max(0, Math.min(86, start.cardX + dx))}%`;
+        card.style.top = `${Math.max(0, Math.min(80, start.cardY + dy))}%`;
       });
 
       card.addEventListener("pointerup", (event) => {
@@ -3240,6 +3310,7 @@ export class GameApp {
     this.selectedBoardCards = [];
     this.boardConnectionType = "confirmed";
     this.boardCategoryFilter = "all";
+    this.boardDensity = "compact";
     this.boardWasDragged = false;
     this.tutorialHotspotFound = false;
     this.tutorialBoardCards = [];

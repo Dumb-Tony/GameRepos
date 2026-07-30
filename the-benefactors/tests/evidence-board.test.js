@@ -12,15 +12,15 @@ import {
   unpinEvidence,
 } from "../src/systems/evidence-board/evidence-board.js";
 
-test("arranges a growing evidence board without stacking its first twenty-five cards", () => {
+test("arranges a crowded evidence board without stacking its first forty-two cards", () => {
   const state = createInitialState();
-  state.evidence.pinned = Array.from({ length: 25 }, (_, index) => `clue-${index}`);
+  state.evidence.pinned = Array.from({ length: 42 }, (_, index) => `clue-${index}`);
   const arranged = arrangeEvidence(state);
   const positions = state.evidence.pinned.map(
     (evidenceId) => `${arranged.board.cards[evidenceId].x},${arranged.board.cards[evidenceId].y}`,
   );
 
-  assert.equal(new Set(positions).size, 25);
+  assert.equal(new Set(positions).size, 42);
   assert.deepEqual(state.board.cards, {});
 });
 
@@ -41,7 +41,7 @@ test("keeps taller evidence cards within the corkboard", () => {
   const pinned = pinEvidence(source, "invoice_northstar");
   const moved = moveEvidence(pinned, "invoice_northstar", { x: 100, y: 100 });
 
-  assert.deepEqual(moved.board.cards.invoice_northstar, { x: 82, y: 76 });
+  assert.deepEqual(moved.board.cards.invoice_northstar, { x: 86, y: 80 });
 });
 
 test("moves pinned evidence back to the tray without erasing its yarn history", () => {
@@ -61,7 +61,7 @@ test("moves pinned evidence back to the tray without erasing its yarn history", 
   assert.equal(unpinned.evidence.pinned.includes("invoice_northstar"), false);
   assert.equal(unpinned.evidence.collected.includes("invoice_northstar"), true);
   assert.equal(unpinned.board.connections.length, 1);
-  assert.deepEqual(unpinned.board.cards.invoice_northstar, { x: 4, y: 8 });
+  assert.deepEqual(unpinned.board.cards.invoice_northstar, { x: 2, y: 7 });
 });
 
 test("completes a data-defined deduction from the correct yarn connection", () => {

@@ -1,11 +1,11 @@
 import { applyEffects } from "../../engine/events.js";
 
-const BOARD_COLUMNS = [4, 23, 42, 61, 80];
+const BOARD_COLUMNS = [2, 16, 30, 44, 58, 72, 86];
 
 function defaultPosition(index) {
   return {
     x: BOARD_COLUMNS[index % BOARD_COLUMNS.length],
-    y: 8 + Math.floor(index / BOARD_COLUMNS.length) * 17,
+    y: 7 + Math.floor(index / BOARD_COLUMNS.length) * 19,
   };
 }
 
@@ -36,8 +36,8 @@ export function moveEvidence(state, evidenceId, position) {
   if (!state.evidence.pinned.includes(evidenceId)) return state;
   const next = structuredClone(state);
   next.board.cards[evidenceId] = {
-    x: clamp(position.x, 0, 82),
-    y: clamp(position.y, 0, 76),
+    x: clamp(position.x, 0, 86),
+    y: clamp(position.y, 0, 80),
   };
   return next;
 }
