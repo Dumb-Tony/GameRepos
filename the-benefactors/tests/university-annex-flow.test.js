@@ -81,4 +81,8 @@ test("the river-annex evidence proves Bellwether was engineered", () => {
   );
   assert.equal(state.flags.provedBellwetherEngineered, true);
   assert.equal(state.evidence.collected.includes("verdant_preserve_gate_pass"), true);
+  assert.equal(
+    state.progress.unlockedLocations.includes("verdant_conservation_office"),
+    true,
+  );
 });

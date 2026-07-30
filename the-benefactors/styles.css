@@ -2286,6 +2286,127 @@ input[type="range"] {
   margin: 0 0 18px;
 }
 
+.theory-desk {
+  margin: 0 0 20px;
+  border: 1px solid rgba(190, 157, 98, 0.38);
+  padding: 13px;
+  background:
+    linear-gradient(145deg, rgba(190, 157, 98, 0.09), transparent 52%),
+    rgba(4, 8, 7, 0.42);
+}
+
+.theory-desk-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.theory-desk-heading h3 {
+  margin: 4px 0 0;
+  color: var(--paper);
+  font: 700 1.02rem/1.15 Georgia, "Times New Roman", serif;
+}
+
+.theory-desk-heading > strong {
+  display: grid;
+  min-width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  color: var(--gold);
+  font: 700 0.64rem "IBM Plex Mono", "Courier New", monospace;
+}
+
+.theory-desk-copy {
+  margin: 9px 0;
+  color: var(--ink-dim);
+  font-size: 0.62rem;
+  line-height: 1.45;
+}
+
+.theory-checklist {
+  display: grid;
+  gap: 6px;
+}
+
+.theory-link {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 7px;
+  border-left: 2px solid rgba(190, 157, 98, 0.35);
+  padding: 7px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.theory-link > span {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  color: var(--gold);
+  font: 800 0.58rem system-ui, sans-serif;
+}
+
+.theory-link p {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+}
+
+.theory-link strong {
+  color: var(--paper);
+  font-size: 0.58rem;
+}
+
+.theory-link small {
+  color: var(--ink-dim);
+  font-size: 0.52rem;
+  line-height: 1.35;
+}
+
+.theory-link em {
+  color: #e7b16a;
+  font-size: 0.5rem;
+}
+
+.theory-link.is-complete {
+  border-left-color: #669878;
+  background: rgba(72, 126, 91, 0.09);
+}
+
+.theory-link.is-complete > span {
+  color: #86b894;
+}
+
+.theory-link.is-wrong {
+  border-left-color: #b46a3f;
+  background: rgba(156, 83, 47, 0.1);
+}
+
+.theory-link.is-wrong > span {
+  color: #e7a06f;
+}
+
+.theory-missing {
+  margin-top: 9px;
+  color: var(--ink-dim);
+  font-size: 0.54rem;
+}
+
+.theory-missing summary {
+  color: var(--gold);
+  cursor: pointer;
+}
+
+.theory-missing ul {
+  margin: 7px 0 0;
+  padding-left: 18px;
+}
+
 .yarn-layer {
   position: absolute;
   z-index: 2;

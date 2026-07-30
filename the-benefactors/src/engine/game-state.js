@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 15;
+export const GAME_STATE_VERSION = 16;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -101,6 +101,12 @@ export function createInitialState(player = {}, settings = {}) {
       photographedWatershedInjectionMap: false,
       foundVerdantTransferLog: false,
       provedBellwetherEngineered: false,
+      questionedTessArlen: false,
+      foundVerdantBrochure: false,
+      foundParcelMortalityLog: false,
+      photographedParcelInjectionRig: false,
+      foundCrownlineTelemetryManifest: false,
+      provedVerdantTestRange: false,
     },
     inventory: ["press_credentials", "smartphone", "recorder", "notebook"],
     evidence: {
@@ -160,6 +166,7 @@ export function createInitialState(player = {}, settings = {}) {
       municipal_archive: 0,
       bellwether_relief_station: 0,
       university_lab_annex: 0,
+      verdant_conservation_office: 0,
     },
     settings: {
       ...DEFAULT_SETTINGS,

@@ -20,7 +20,7 @@ test("every casebook stage has a three-level hint path", () => {
     assert.equal(stage.hints.length, 3, stage.id);
     assert.equal(stage.hints.every(Boolean), true, stage.id);
   }
-  assert.equal(CASEBOOK_PROGRESS.length, 36);
+  assert.equal(CASEBOOK_PROGRESS.length, 42);
 });
 
 test("casebook objective advances with investigation state", () => {
@@ -131,5 +131,18 @@ test("casebook objective advances with investigation state", () => {
   assert.equal(activeStage(state).id, "connect_engineered_crisis");
 
   state.flags.provedBellwetherEngineered = true;
-  assert.equal(activeStage(state).id, "verdant_preserve_lead");
+  assert.equal(activeStage(state).id, "visit_verdant_parcel");
+
+  state.locationVisits.verdant_conservation_office = 1;
+  assert.equal(activeStage(state).id, "investigate_verdant_parcel");
+
+  state.flags.questionedTessArlen = true;
+  state.flags.foundVerdantBrochure = true;
+  state.flags.foundParcelMortalityLog = true;
+  state.flags.photographedParcelInjectionRig = true;
+  state.flags.foundCrownlineTelemetryManifest = true;
+  assert.equal(activeStage(state).id, "connect_verdant_test_range");
+
+  state.flags.provedVerdantTestRange = true;
+  assert.equal(activeStage(state).id, "crownline_data_lead");
 });

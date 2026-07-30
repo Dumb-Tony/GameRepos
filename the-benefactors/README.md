@@ -128,6 +128,16 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Collapsible yarn desk, live case-status strip, photographic clue thumbnails, and distinct clue-type treatments
 - Updated notebook progression and migration for completed Bellwether saves
 
+**Milestone 12 — Verdant Parcel Six (complete)**
+
+- New illustrated conservation parcel hiding a fenced watershed test range
+- Evidence-gated interview with erased field ecologist Tess Arlen
+- Public recovery brochure, concealed mortality log, VA-9 injection rig, and Crownline telemetry manifest
+- Active-theory board checklist showing exact clue pairs, yarn meanings, missing evidence, and incorrectly tied yarn
+- Three-connection deduction proving Verdant conducted controlled crisis experiments
+- Crownline Data Services lead for the next chapter
+- Updated notebook progression and migration for completed river-annex saves
+
 **Prologue content now playable**
 
 - Photograph the missing west wing

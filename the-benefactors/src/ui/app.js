@@ -4,38 +4,38 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=river-annex-20260730a";
+} from "../content/game-content.js?v=verdant-20260730a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=river-annex-20260730a";
+} from "../content/casebook-content.js?v=verdant-20260730a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=river-annex-20260730a";
+} from "../content/onboarding-content.js?v=verdant-20260730a";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=river-annex-20260730a";
-import { evaluateCondition } from "../engine/conditions.js?v=river-annex-20260730a";
-import { applyEffects } from "../engine/events.js?v=river-annex-20260730a";
-import { createInitialState } from "../engine/game-state.js?v=river-annex-20260730a";
+} from "../content/prologue-content.js?v=verdant-20260730a";
+import { evaluateCondition } from "../engine/conditions.js?v=verdant-20260730a";
+import { applyEffects } from "../engine/events.js?v=verdant-20260730a";
+import { createInitialState } from "../engine/game-state.js?v=verdant-20260730a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=river-annex-20260730a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=river-annex-20260730a";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=river-annex-20260730a";
+} from "../engine/player-language.js?v=verdant-20260730a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=verdant-20260730a";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=verdant-20260730a";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=river-annex-20260730a";
+} from "../systems/dialogue/dialogue-engine.js?v=verdant-20260730a";
 import {
   arrangeEvidence,
   connectEvidence,
@@ -44,19 +44,19 @@ import {
   pinEvidence,
   removeConnection,
   unpinEvidence,
-} from "../systems/evidence-board/evidence-board.js?v=river-annex-20260730a";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=river-annex-20260730a";
+} from "../systems/evidence-board/evidence-board.js?v=verdant-20260730a";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=verdant-20260730a";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=river-annex-20260730a";
+} from "../systems/puzzles/plan-alignment.js?v=verdant-20260730a";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=river-annex-20260730a";
-import { TransientNotice } from "./transient-notice.js?v=river-annex-20260730a";
+} from "../systems/puzzles/recording-reconstruction.js?v=verdant-20260730a";
+import { TransientNotice } from "./transient-notice.js?v=verdant-20260730a";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -764,7 +764,29 @@ export class GameApp {
   renderHome() {
     const state = this.store.getState();
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
-    const caseUpdate = state.flags.provedBellwetherEngineered
+    const caseUpdate = state.flags.provedVerdantTestRange
+      ? {
+          title: "Someone watched the town fail",
+          text:
+            "Parcel Six was a controlled crisis laboratory, and Crownline received every live result. The service badge is your next way inside.",
+        }
+      : state.flags.questionedTessArlen &&
+          state.flags.foundVerdantBrochure &&
+          state.flags.foundParcelMortalityLog &&
+          state.flags.photographedParcelInjectionRig &&
+          state.flags.foundCrownlineTelemetryManifest
+        ? {
+            title: "The test range in the wetlands",
+            text:
+              "Tess's account, the hidden mortality log, injection rig, and Crownline telemetry route can expose what Parcel Six was built to do.",
+          }
+        : (state.locationVisits.verdant_conservation_office || 0) > 0
+          ? {
+              title: "The wetland that lies",
+              text:
+                "Show Tess the gate pass and sample analysis, then inspect the public board, quarantine cages, injection rig, and telemetry cabinet.",
+            }
+          : state.flags.provedBellwetherEngineered
       ? {
           title: "A demonstration disguised as a disaster",
           text:
@@ -2002,6 +2024,42 @@ export class GameApp {
     );
     const activeRelationship =
       relationshipById.get(this.boardConnectionType) || YARN_RELATIONSHIPS[0];
+    const activeTheory =
+      Object.values(DEDUCTIONS).find((deduction) => {
+        if (state.completedDeductions.includes(deduction.id)) return false;
+        const prerequisitesMet = (deduction.requiredDeductions || []).every((id) =>
+          state.completedDeductions.includes(id),
+        );
+        const hasStarted = deduction.requiredEvidence.some((id) =>
+          state.evidence.collected.includes(id),
+        );
+        return prerequisitesMet && hasStarted;
+      }) || null;
+    const activeTheoryConnections = (activeTheory?.requiredConnections || []).map(
+      (required) => {
+        const connection = state.board.connections.find(
+          (candidate) =>
+            (candidate.a === required.a && candidate.b === required.b) ||
+            (candidate.a === required.b && candidate.b === required.a),
+        );
+        return {
+          ...required,
+          connection,
+          complete: connection?.type === required.type,
+          relationship:
+            relationshipById.get(required.type) || {
+              label: required.type,
+              colorName: required.type,
+            },
+        };
+      },
+    );
+    const missingTheoryEvidence = (activeTheory?.requiredEvidence || []).filter(
+      (id) => !state.evidence.collected.includes(id),
+    );
+    const completedTheoryLinks = activeTheoryConnections.filter(
+      (connection) => connection.complete,
+    ).length;
     const boardCategoryLabels = {
       all: "All clues",
       document: "Documents",
@@ -2059,7 +2117,13 @@ export class GameApp {
     );
     const yarnAnchorX = boardDensity.cardWidth / 2;
     const yarnAnchorY = (boardDensity.cardHeight / 2 / corkboardHeight) * 100;
-    const boardCase = state.flags.provedBellwetherEngineered
+    const boardCase = state.flags.provedVerdantTestRange
+      ? {
+          number: "05",
+          title: "CROWNLINE / RESPONSE MODEL",
+          phase: "Next lead: Crownline Data Services",
+        }
+      : state.flags.provedBellwetherEngineered
       ? {
           number: "04",
           title: "VERDANT / WATERSHED TRIAL",
@@ -2348,6 +2412,51 @@ export class GameApp {
             <button class="button button-secondary board-tidy-button" data-action="tidy-board">
               Arrange all pinned clues
             </button>
+            <section class="theory-desk" aria-labelledby="theory-desk-title">
+              <div class="theory-desk-heading">
+                <div>
+                  <p class="kicker">Active theory</p>
+                  <h3 id="theory-desk-title">${escapeHtml(activeTheory?.title || "No testable theory")}</h3>
+                </div>
+                ${
+                  activeTheory
+                    ? `<strong>${completedTheoryLinks}/${activeTheoryConnections.length}</strong>`
+                    : ""
+                }
+              </div>
+              ${
+                activeTheory
+                  ? `
+                    <p class="theory-desk-copy">
+                      ${missingTheoryEvidence.length
+                        ? `${missingTheoryEvidence.length} required clue${missingTheoryEvidence.length === 1 ? "" : "s"} still missing.`
+                        : "All required clues collected. Complete these yarn links:"}
+                    </p>
+                    <div class="theory-checklist">
+                      ${activeTheoryConnections
+                        .map(
+                          (required) => `
+                            <div class="theory-link ${required.complete ? "is-complete" : required.connection ? "is-wrong" : ""}">
+                              <span aria-hidden="true">${required.complete ? "âœ“" : required.connection ? "!" : "â—‹"}</span>
+                              <p>
+                                <strong>${escapeHtml(required.relationship.label)}</strong>
+                                <small>${escapeHtml(EVIDENCE[required.a]?.title || required.a)} â†” ${escapeHtml(EVIDENCE[required.b]?.title || required.b)}</small>
+                                ${required.connection && !required.complete ? `<em>Retie this pair as ${escapeHtml(required.relationship.label)}.</em>` : ""}
+                              </p>
+                            </div>
+                          `,
+                        )
+                        .join("")}
+                    </div>
+                    ${
+                      missingTheoryEvidence.length
+                        ? `<details class="theory-missing"><summary>Missing evidence</summary><ul>${missingTheoryEvidence.map((id) => `<li>${escapeHtml(EVIDENCE[id]?.title || id)}</li>`).join("")}</ul></details>`
+                        : ""
+                    }
+                  `
+                  : "<p class=\"theory-desk-copy\">Keep investigating. The next defensible theory will appear here when you collect a relevant clue.</p>"
+              }
+            </section>
             ${
               state.flags.prologueEndingReady && !state.progress.prologueComplete
                 ? `
@@ -2634,12 +2743,21 @@ export class GameApp {
         const relationship =
           relationshipById.get(this.boardConnectionType) || activeRelationship;
         const connectionNotice = `${relationship.label} ${wasExisting ? "updated" : "connected"}: ${EVIDENCE[a]?.title || a} and ${EVIDENCE[b]?.title || b}.`;
+        const expectedTheoryLink = activeTheoryConnections.find(
+          (required) =>
+            (required.a === a && required.b === b) ||
+            (required.a === b && required.b === a),
+        );
+        const wrongYarnNotice =
+          expectedTheoryLink && expectedTheoryLink.type !== this.boardConnectionType
+            ? `This clue pair matters, but the active theory requires ${expectedTheoryLink.relationship.label} yarn.`
+            : null;
         this.selectedBoardCards = [];
         this.notice.show(
           result.newlyCompleted.length
             ? result.newlyCompleted[0].notification ||
                 `Deduction: ${result.newlyCompleted[0].title}`
-            : connectionNotice,
+            : wrongYarnNotice || connectionNotice,
         );
         this.renderBoard();
       },

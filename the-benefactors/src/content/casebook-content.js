@@ -434,14 +434,69 @@ export const CASEBOOK_STAGES = Object.freeze([
     ],
   },
   {
-    id: "verdant_preserve_lead",
+    id: "visit_verdant_parcel",
     title: "A laboratory with trees around it",
-    objective: "The VA-9 culture originated inside Verdant Conservation Parcel 6.",
-    activeWhen: null,
+    objective: "Use Voss's gate pass to enter Verdant Conservation Parcel 6.",
+    activeWhen: {
+      not: { type: "visited", location: "verdant_conservation_office" },
+    },
     hints: [
       "Review the Verdant Parcel 6 gate pass in the case file.",
       "Deepwell had contractor access to Meridian's watershed trial.",
-      "The investigation continues at the conservation land office.",
+      "Travel to the conservation parcel from the city map.",
+    ],
+  },
+  {
+    id: "investigate_verdant_parcel",
+    title: "The wetland that lies",
+    objective: "Question Tess Arlen and recover Parcel Six's hidden field records.",
+    activeWhen: {
+      any: [
+        { type: "flag", key: "questionedTessArlen", equals: false },
+        { type: "flag", key: "foundVerdantBrochure", equals: false },
+        { type: "flag", key: "foundParcelMortalityLog", equals: false },
+        {
+          type: "flag",
+          key: "photographedParcelInjectionRig",
+          equals: false,
+        },
+        {
+          type: "flag",
+          key: "foundCrownlineTelemetryManifest",
+          equals: false,
+        },
+      ],
+    },
+    hints: [
+      "Show Tess the Verdant gate pass, then the duplicate sample analysis.",
+      "Compare the public information board with the quarantine cages.",
+      "Photograph the injection rig before opening the telemetry cabinet.",
+    ],
+  },
+  {
+    id: "connect_verdant_test_range",
+    title: "A crisis laboratory",
+    objective: "Use the evidence board to prove Parcel Six was a controlled test range.",
+    activeWhen: {
+      type: "flag",
+      key: "provedVerdantTestRange",
+      equals: false,
+    },
+    hints: [
+      "Prove the brochure hid the deaths, the gate pass matches the transfer route, and Crownline watched the injection rig.",
+      "Use White · Contradiction for Verdant brochure ↔ Parcel Six mortality log.",
+      "Use Red · Confirmed for gate pass ↔ freezer transfer log and injection-rig photo ↔ Crownline telemetry manifest.",
+    ],
+  },
+  {
+    id: "crownline_data_lead",
+    title: "The people watching the experiment",
+    objective: "Crownline Data Services received every live result from Parcel Six.",
+    activeWhen: null,
+    hints: [
+      "Review the Crownline service badge in the case file.",
+      "The telemetry manifest points to a private data center inside Greyhaven.",
+      "The next chapter begins where Meridian stores its version of the truth.",
     ],
   },
 ]);
@@ -483,4 +538,10 @@ export const CASEBOOK_PROGRESS = Object.freeze([
   { label: "Meridian funding threat preserved", when: { type: "flag", key: "recordedMeridianFundingThreat" } },
   { label: "Verdant transfer route documented", when: { type: "flag", key: "foundVerdantTransferLog" } },
   { label: "Engineered Bellwether crisis proven", when: { type: "flag", key: "provedBellwetherEngineered" } },
+  { label: "Verdant Parcel Six entered", when: { type: "visited", location: "verdant_conservation_office" } },
+  { label: "Tess Arlen interviewed", when: { type: "flag", key: "questionedTessArlen" } },
+  { label: "Parcel Six mortality log recovered", when: { type: "flag", key: "foundParcelMortalityLog" } },
+  { label: "VA-9 injection rig photographed", when: { type: "flag", key: "photographedParcelInjectionRig" } },
+  { label: "Crownline telemetry route recovered", when: { type: "flag", key: "foundCrownlineTelemetryManifest" } },
+  { label: "Verdant crisis laboratory proven", when: { type: "flag", key: "provedVerdantTestRange" } },
 ]);

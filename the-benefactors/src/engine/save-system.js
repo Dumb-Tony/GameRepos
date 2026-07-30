@@ -3,7 +3,7 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js?v=river-annex-20260730a";
+} from "./game-state.js?v=verdant-20260730a";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
@@ -241,6 +241,14 @@ export class SaveSystem {
       !migrated.progress.unlockedLocations.includes("university_lab_annex")
     ) {
       migrated.progress.unlockedLocations.push("university_lab_annex");
+    }
+
+    if (
+      legacyVersion < 16 &&
+      migrated.flags.provedBellwetherEngineered &&
+      !migrated.progress.unlockedLocations.includes("verdant_conservation_office")
+    ) {
+      migrated.progress.unlockedLocations.push("verdant_conservation_office");
     }
 
     return migrated;

@@ -318,3 +318,24 @@ test("unlocks the university annex for completed Bellwether saves", () => {
     true,
   );
 });
+
+test("unlocks Verdant Parcel Six for completed river-annex saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Robin" });
+  previous.version = 15;
+  previous.flags.provedBellwetherEngineered = true;
+  previous.progress.unlockedLocations =
+    previous.progress.unlockedLocations.filter(
+      (locationId) => locationId !== "verdant_conservation_office",
+    );
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(
+    migrated.progress.unlockedLocations.includes("verdant_conservation_office"),
+    true,
+  );
+});

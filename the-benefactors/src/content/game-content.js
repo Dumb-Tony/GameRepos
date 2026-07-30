@@ -894,6 +894,115 @@ export const EVIDENCE = Object.freeze({
       handwritten: "The preserve is a laboratory with trees around it.",
     },
   },
+  verdant_public_brochure: {
+    id: "verdant_public_brochure",
+    title: "Verdant restoration brochure",
+    category: "document",
+    summary:
+      "Meridian presents Parcel 6 as a wildlife-restoration success with no mention of watershed adaptation trials.",
+    artifact: {
+      type: "memo",
+      heading: "VERDANT CONSERVATION TRUST Â· PARCEL 6",
+      body: [
+        "A MODEL WETLAND FOR A RESILIENT REGION",
+        "BIRD POPULATIONS: THRIVING",
+        "WATER QUALITY: RESTORED",
+        "SUPPORTED BY MERIDIAN CIVIC PARTNERS",
+      ],
+      handwritten: "The public version has no pipes, cages, or trial markers.",
+    },
+  },
+  tess_arlen_statement: {
+    id: "tess_arlen_statement",
+    title: "Tess Arlen's field statement",
+    category: "recording",
+    summary:
+      "Verdant ecologist Tess Arlen says Meridian ordered her to record animal deaths as storm migration.",
+    artifact: {
+      type: "transcript",
+      heading: "FIELD INTERVIEW Â· TESS ARLEN",
+      timestamp: "04:36 PM Â· VERDANT PARCEL 6",
+      lines: [
+        ["ARLEN", "The marsh was healthy until the VA-9 releases began."],
+        ["ARLEN", "Birds stopped nesting. Fish surfaced after every injection."],
+        ["ARLEN", "Meridian changed my mortality entries to storm migration."],
+        ["ARLEN", "The telemetry went somewhere called Crownline in real time."],
+      ],
+    },
+  },
+  parcel_six_mortality_log: {
+    id: "parcel_six_mortality_log",
+    title: "Parcel 6 wildlife mortality log",
+    category: "event",
+    summary:
+      "The original field log records animal deaths after each VA-9 release, contradicting Verdant's public restoration claims.",
+    artifact: {
+      type: "memo",
+      heading: "PARCEL 6 Â· UNEDITED FIELD LOG",
+      body: [
+        "RELEASE VA-9.1 Â· 14 FISH / 3 WADERS",
+        "RELEASE VA-9.2 Â· 31 FISH / 8 WADERS",
+        "RELEASE VA-9.3 Â· NESTING CHANNEL ABANDONED",
+        "PUBLIC REVISION: SEASONAL STORM MIGRATION",
+      ],
+      handwritten: "The deaths follow the injections, not the weather.",
+    },
+  },
+  parcel_injection_rig_photo: {
+    id: "parcel_injection_rig_photo",
+    title: "Photograph of the VA-9 injection rig",
+    category: "photograph",
+    summary:
+      "A concealed wetland rig matches the pressure and timing recorded during Bellwether's contamination route.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/verdant-conservation-parcel.webp",
+      alt:
+        "Wetland conservation station with a concealed injection rig, telemetry cabinet, and damaged marsh channel",
+      caption: "Verdant Parcel 6 Â· South Channel",
+      annotations: [
+        "Injection manifold calibrated for VA-9 cultures",
+        "Deepwell service fittings",
+        "Telemetry cable runs to Crownline uplink cabinet",
+      ],
+    },
+  },
+  crownline_telemetry_manifest: {
+    id: "crownline_telemetry_manifest",
+    title: "Crownline telemetry manifest",
+    category: "financial",
+    summary:
+      "Parcel 6 streamed contamination, mortality, and public-response data to Crownline Regional Data Center.",
+    artifact: {
+      type: "memo",
+      heading: "REMOTE TELEMETRY ROUTING Â· PARCEL 6",
+      body: [
+        "DESTINATION: CROWNLINE REGIONAL DATA CENTER",
+        "STREAMS: WATER / WILDLIFE / PUBLIC SENTIMENT",
+        "CLIENT: MERIDIAN CIVIC PARTNERS",
+        "RETENTION: PERMANENT MODEL TRAINING",
+      ],
+      handwritten: "They measured the damage and the reaction at the same time.",
+    },
+  },
+  crownline_service_badge: {
+    id: "crownline_service_badge",
+    title: "Crownline maintenance badge",
+    category: "location",
+    summary:
+      "A telemetry contractor badge provides after-hours access to Crownline Regional Data Center.",
+    artifact: {
+      type: "memo",
+      heading: "CROWNLINE REGIONAL DATA Â· SERVICE ACCESS",
+      body: [
+        "LEVEL: TELEMETRY MAINTENANCE",
+        "ENTRY: COOLING PLANT GATE",
+        "WINDOW: 01:00â€“04:00",
+        "SPONSOR: MERIDIAN CIVIC PARTNERS",
+      ],
+      handwritten: "The data center knows what the preserve was built to learn.",
+    },
+  },
 });
 
 export const INVENTORY_ITEMS = Object.freeze({
@@ -1568,6 +1677,72 @@ export const DIALOGUES = Object.freeze({
       },
     },
   },
+  tess_arlen: {
+    id: "tess_arlen",
+    character: "Tess Arlen",
+    portrait: "TA",
+    start: "intro",
+    nodes: {
+      intro: {
+        id: "intro",
+        speaker: "Tess Arlen",
+        text:
+          "Parcel Six is closed to the public. The wetlands are unstable, the wildlife is under quarantine, and I am done explaining Meridian's mistakes for them.",
+        choices: [
+          {
+            id: "show-gate-pass",
+            text: "Dr. Voss gave me his old Parcel Six gate pass.",
+            evidenceId: "verdant_preserve_gate_pass",
+            requires: { type: "hasEvidence", id: "verdant_preserve_gate_pass" },
+            next: "gate",
+          },
+          { id: "leave", text: "I will look around first.", end: true },
+        ],
+      },
+      gate: {
+        id: "gate",
+        speaker: "Tess Arlen",
+        text:
+          "Elian kept that? Then he kept the sample, too. Meridian erased my field reports after the Bellwether release and called the deaths a seasonal die-off.",
+        choices: [
+          {
+            id: "show-analysis",
+            text: "The duplicate sample carries Verdant marker VA-9.",
+            evidenceId: "annex_sample_chromatogram",
+            requires: { type: "hasEvidence", id: "annex_sample_chromatogram" },
+            next: "truth",
+          },
+          { id: "leave", text: "I need to verify that outside.", end: true },
+        ],
+      },
+      truth: {
+        id: "truth",
+        speaker: "Tess Arlen",
+        text:
+          "VA-9 was not conservation work. It was a controlled stress test: poison a watershed, watch a town fail, then measure how quickly Meridian's relief network could take control.",
+        onEnter: [
+          { type: "setFlag", key: "questionedTessArlen", value: true },
+          { type: "collectEvidence", id: "tess_arlen_statement" },
+        ],
+        choices: [
+          {
+            id: "ask-proof",
+            text: "What did they fail to erase?",
+            next: "proof",
+          },
+        ],
+      },
+      proof: {
+        id: "proof",
+        speaker: "Tess Arlen",
+        text:
+          "The mortality sheets are still inside the quarantine cages. Photograph the injection rig, then open the telemetry cabinet. Crownline received every live result.",
+        choices: [
+          { id: "finish", text: "Keep the gate locked behind me.", end: true },
+        ],
+      },
+    },
+  },
 });
 
 export const DEDUCTIONS = Object.freeze({
@@ -1862,6 +2037,47 @@ export const DEDUCTIONS = Object.freeze({
       { type: "setFlag", key: "provedBellwetherEngineered", value: true },
       { type: "collectEvidence", id: "verdant_preserve_gate_pass" },
       { type: "setPath", path: "progress.officeState", value: 8 },
+      { type: "unlockLocation", id: "verdant_conservation_office" },
+    ],
+  },
+  verdant_test_range: {
+    id: "verdant_test_range",
+    title: "Verdant was a controlled crisis laboratory",
+    journalText:
+      "Verdant advertised wetland recovery while Parcel Six recorded animal deaths, injected VA-9 into the watershed, and streamed the results to Crownline. Bellwether was not the trial's accident. It was its field deployment.",
+    notification:
+      "Parcel Six was a test range. A Crownline service badge identifies the data center that watched Bellwether fail in real time.",
+    requiredDeductions: ["bellwether_engineered_contamination"],
+    requiredEvidence: [
+      "verdant_preserve_gate_pass",
+      "verdant_freezer_transfer_log",
+      "verdant_public_brochure",
+      "tess_arlen_statement",
+      "parcel_six_mortality_log",
+      "parcel_injection_rig_photo",
+      "crownline_telemetry_manifest",
+    ],
+    requiredConnections: [
+      {
+        a: "verdant_public_brochure",
+        b: "parcel_six_mortality_log",
+        type: "contradiction",
+      },
+      {
+        a: "verdant_preserve_gate_pass",
+        b: "verdant_freezer_transfer_log",
+        type: "confirmed",
+      },
+      {
+        a: "parcel_injection_rig_photo",
+        b: "crownline_telemetry_manifest",
+        type: "confirmed",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "provedVerdantTestRange", value: true },
+      { type: "collectEvidence", id: "crownline_service_badge" },
+      { type: "setPath", path: "progress.officeState", value: 9 },
     ],
   },
 });
@@ -3142,6 +3358,164 @@ export const GAME_CONTENT = Object.freeze({
           title: "An unfunded laboratory",
           text:
             "The newest instrument is twelve years old. The sample labels are newer than tonight's rain.",
+        },
+      ],
+    },
+    verdant_conservation_office: {
+      id: "verdant_conservation_office",
+      name: "Verdant Conservation Parcel 6",
+      eyebrow: "North Watershed · Monday · 5:42 AM",
+      mapX: 13,
+      mapY: 63,
+      description:
+        "A charitable wetland project behind razor wire, where healthy reeds stop at the fence and every sensor points downstream.",
+      sceneClass: "scene-verdant-parcel",
+      sceneArt: "./assets/scenes/verdant-conservation-parcel.webp",
+      hotspots: [
+        {
+          id: "tess_arlen",
+          label: "Tess Arlen",
+          x: 22,
+          y: 28,
+          width: 14,
+          height: 48,
+          title: "The ecologist Meridian erased",
+          text:
+            "A field ecologist waits beneath the office awning with a radio that has not stopped hissing.",
+          dialogueId: "tess_arlen",
+        },
+        {
+          id: "verdant_public_notice",
+          label: "Public information board",
+          x: 37,
+          y: 18,
+          width: 15,
+          height: 27,
+          title: "A perfect recovery, on paper",
+          text:
+            "A weatherproof brochure promises a thriving wetland and zero adverse wildlife events.",
+          actionLabel: "Take the public brochure",
+          resultText:
+            "Meridian's public report claims Parcel Six restored every monitored habitat without a single recorded loss.",
+          effects: [
+            { type: "setFlag", key: "foundVerdantBrochure", value: true },
+            { type: "collectEvidence", id: "verdant_public_brochure" },
+          ],
+          actionWhen: {
+            type: "flag",
+            key: "foundVerdantBrochure",
+            equals: false,
+          },
+        },
+        {
+          id: "parcel_quarantine_cages",
+          label: "Quarantine cages",
+          x: 0,
+          y: 49,
+          width: 22,
+          height: 34,
+          title: "The losses behind the brochure",
+          text:
+            "Numbered cages sit beneath tarps. A damp clipboard records losses the public report says never happened.",
+          actionLabel: "Copy the mortality sheets",
+          resultText:
+            "Thirty-two test animals died within hours of each VA-9 release. The cause field was overwritten as seasonal.",
+          effects: [
+            { type: "setFlag", key: "foundParcelMortalityLog", value: true },
+            { type: "collectEvidence", id: "parcel_six_mortality_log" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "questionedTessArlen" },
+              { type: "flag", key: "foundParcelMortalityLog", equals: false },
+            ],
+          },
+        },
+        {
+          id: "parcel_injection_rig",
+          label: "Watershed injection rig",
+          x: 78,
+          y: 35,
+          width: 21,
+          height: 39,
+          title: "A release valve aimed downstream",
+          text:
+            "The fertilizer label peels away from a pressure vessel fitted with the same couplings shown on Voss's watershed map.",
+          actionLabel: "Photograph the injection rig",
+          resultText:
+            "The rig's metering plate lists VA-9 release volumes and Bellwether's intake as the downstream observation point.",
+          effects: [
+            {
+              type: "setFlag",
+              key: "photographedParcelInjectionRig",
+              value: true,
+            },
+            { type: "collectEvidence", id: "parcel_injection_rig_photo" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "questionedTessArlen" },
+              {
+                type: "flag",
+                key: "photographedParcelInjectionRig",
+                equals: false,
+              },
+            ],
+          },
+        },
+        {
+          id: "crownline_telemetry_cabinet",
+          label: "Telemetry cabinet",
+          x: 58,
+          y: 30,
+          width: 17,
+          height: 39,
+          title: "Someone watched every result",
+          text:
+            "A locked sensor cabinet routes the parcel's water, wildlife, and emergency-response data through a private uplink.",
+          actionLabel: "Recover the routing manifest",
+          resultText:
+            "Every live feed terminated at Crownline Data Services. A technician left a service badge clipped inside the cabinet.",
+          effects: [
+            {
+              type: "setFlag",
+              key: "foundCrownlineTelemetryManifest",
+              value: true,
+            },
+            { type: "collectEvidence", id: "crownline_telemetry_manifest" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedParcelInjectionRig" },
+              {
+                type: "flag",
+                key: "foundCrownlineTelemetryManifest",
+                equals: false,
+              },
+            ],
+          },
+        },
+        {
+          id: "verdant_field_office",
+          label: "Field office",
+          x: 29,
+          y: 9,
+          width: 28,
+          height: 43,
+          title: "Conservation as camouflage",
+          text:
+            "Seed packets and school-tour posters share a desk with respirators, burner phones, and nondisclosure forms.",
+        },
+        {
+          id: "verdant_outflow",
+          label: "Outflow channel",
+          x: 67,
+          y: 62,
+          width: 31,
+          height: 25,
+          title: "The river remembers",
+          text:
+            "White foam gathers where the outflow crosses the fence. Beyond it, the current bends toward Bellwether.",
         },
       ],
     },
