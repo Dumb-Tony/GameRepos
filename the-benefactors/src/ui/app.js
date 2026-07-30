@@ -4,38 +4,38 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=bellwether-20260730a";
+} from "../content/game-content.js?v=bellwether-20260730b";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=bellwether-20260730a";
+} from "../content/casebook-content.js?v=bellwether-20260730b";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=bellwether-20260730a";
+} from "../content/onboarding-content.js?v=bellwether-20260730b";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=bellwether-20260730a";
-import { evaluateCondition } from "../engine/conditions.js?v=bellwether-20260730a";
-import { applyEffects } from "../engine/events.js?v=bellwether-20260730a";
-import { createInitialState } from "../engine/game-state.js?v=bellwether-20260730a";
+} from "../content/prologue-content.js?v=bellwether-20260730b";
+import { evaluateCondition } from "../engine/conditions.js?v=bellwether-20260730b";
+import { applyEffects } from "../engine/events.js?v=bellwether-20260730b";
+import { createInitialState } from "../engine/game-state.js?v=bellwether-20260730b";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=bellwether-20260730a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=bellwether-20260730a";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=bellwether-20260730a";
+} from "../engine/player-language.js?v=bellwether-20260730b";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=bellwether-20260730b";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=bellwether-20260730b";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=bellwether-20260730a";
+} from "../systems/dialogue/dialogue-engine.js?v=bellwether-20260730b";
 import {
   arrangeEvidence,
   connectEvidence,
@@ -44,19 +44,19 @@ import {
   pinEvidence,
   removeConnection,
   unpinEvidence,
-} from "../systems/evidence-board/evidence-board.js?v=bellwether-20260730a";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=bellwether-20260730a";
+} from "../systems/evidence-board/evidence-board.js?v=bellwether-20260730b";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=bellwether-20260730b";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=bellwether-20260730a";
+} from "../systems/puzzles/plan-alignment.js?v=bellwether-20260730b";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=bellwether-20260730a";
-import { TransientNotice } from "./transient-notice.js?v=bellwether-20260730a";
+} from "../systems/puzzles/recording-reconstruction.js?v=bellwether-20260730b";
+import { TransientNotice } from "./transient-notice.js?v=bellwether-20260730b";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -2096,6 +2096,12 @@ export class GameApp {
             <svg class="yarn-layer" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
               ${state.board.connections
                 .map((connection) => {
+                  if (
+                    !state.evidence.pinned.includes(connection.a) ||
+                    !state.evidence.pinned.includes(connection.b)
+                  ) {
+                    return "";
+                  }
                   const a = state.board.cards[connection.a];
                   const b = state.board.cards[connection.b];
                   if (!a || !b) return "";
