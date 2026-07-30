@@ -4,38 +4,38 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=gala-20260728a";
+} from "../content/game-content.js?v=continuity-20260730a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=gala-20260728a";
+} from "../content/casebook-content.js?v=continuity-20260730a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=gala-20260728a";
+} from "../content/onboarding-content.js?v=continuity-20260730a";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=gala-20260728a";
-import { evaluateCondition } from "../engine/conditions.js?v=gala-20260728a";
-import { applyEffects } from "../engine/events.js?v=gala-20260728a";
-import { createInitialState } from "../engine/game-state.js?v=gala-20260728a";
+} from "../content/prologue-content.js?v=continuity-20260730a";
+import { evaluateCondition } from "../engine/conditions.js?v=continuity-20260730a";
+import { applyEffects } from "../engine/events.js?v=continuity-20260730a";
+import { createInitialState } from "../engine/game-state.js?v=continuity-20260730a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=gala-20260728a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=gala-20260728a";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=gala-20260728a";
+} from "../engine/player-language.js?v=continuity-20260730a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=continuity-20260730a";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=continuity-20260730a";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=gala-20260728a";
+} from "../systems/dialogue/dialogue-engine.js?v=continuity-20260730a";
 import {
   arrangeEvidence,
   connectEvidence,
@@ -43,19 +43,19 @@ import {
   moveEvidence,
   pinEvidence,
   removeConnection,
-} from "../systems/evidence-board/evidence-board.js?v=gala-20260728a";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=gala-20260728a";
+} from "../systems/evidence-board/evidence-board.js?v=continuity-20260730a";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=continuity-20260730a";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=gala-20260728a";
+} from "../systems/puzzles/plan-alignment.js?v=continuity-20260730a";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=gala-20260728a";
-import { TransientNotice } from "./transient-notice.js?v=gala-20260728a";
+} from "../systems/puzzles/recording-reconstruction.js?v=continuity-20260730a";
+import { TransientNotice } from "./transient-notice.js?v=continuity-20260730a";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
