@@ -3,7 +3,7 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js?v=verdant-20260730b";
+} from "./game-state.js?v=crownline-20260730a";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
@@ -249,6 +249,14 @@ export class SaveSystem {
       !migrated.progress.unlockedLocations.includes("verdant_conservation_office")
     ) {
       migrated.progress.unlockedLocations.push("verdant_conservation_office");
+    }
+
+    if (
+      legacyVersion < 17 &&
+      migrated.flags.provedVerdantTestRange &&
+      !migrated.progress.unlockedLocations.includes("crownline_data_center")
+    ) {
+      migrated.progress.unlockedLocations.push("crownline_data_center");
     }
 
     return migrated;

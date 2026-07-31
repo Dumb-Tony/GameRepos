@@ -20,7 +20,7 @@ test("every casebook stage has a three-level hint path", () => {
     assert.equal(stage.hints.length, 3, stage.id);
     assert.equal(stage.hints.every(Boolean), true, stage.id);
   }
-  assert.equal(CASEBOOK_PROGRESS.length, 42);
+  assert.equal(CASEBOOK_PROGRESS.length, 49);
 });
 
 test("casebook objective advances with investigation state", () => {
@@ -144,5 +144,19 @@ test("casebook objective advances with investigation state", () => {
   assert.equal(activeStage(state).id, "connect_verdant_test_range");
 
   state.flags.provedVerdantTestRange = true;
-  assert.equal(activeStage(state).id, "crownline_data_lead");
+  assert.equal(activeStage(state).id, "visit_crownline");
+
+  state.locationVisits.crownline_data_center = 1;
+  assert.equal(activeStage(state).id, "investigate_crownline");
+
+  state.flags.questionedNiaKade = true;
+  state.flags.foundCrownlinePublicBrief = true;
+  state.flags.photographedCrisisDashboard = true;
+  state.flags.foundBellwetherScorecard = true;
+  state.flags.foundMeridianPriorityProtocol = true;
+  state.flags.foundRedoubtFlightSyncLog = true;
+  assert.equal(activeStage(state).id, "connect_crownline_model");
+
+  state.flags.provedCrownlineGovernanceModel = true;
+  assert.equal(activeStage(state).id, "executive_airfield_lead");
 });

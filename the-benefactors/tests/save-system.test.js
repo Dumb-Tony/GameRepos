@@ -339,3 +339,24 @@ test("unlocks Verdant Parcel Six for completed river-annex saves", () => {
     true,
   );
 });
+
+test("unlocks Crownline for completed Verdant saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Robin" });
+  previous.version = 16;
+  previous.flags.provedVerdantTestRange = true;
+  previous.progress.unlockedLocations =
+    previous.progress.unlockedLocations.filter(
+      (locationId) => locationId !== "crownline_data_center",
+    );
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(
+    migrated.progress.unlockedLocations.includes("crownline_data_center"),
+    true,
+  );
+});

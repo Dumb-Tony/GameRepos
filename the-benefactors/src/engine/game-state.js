@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 16;
+export const GAME_STATE_VERSION = 17;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -107,6 +107,13 @@ export function createInitialState(player = {}, settings = {}) {
       photographedParcelInjectionRig: false,
       foundCrownlineTelemetryManifest: false,
       provedVerdantTestRange: false,
+      questionedNiaKade: false,
+      foundCrownlinePublicBrief: false,
+      photographedCrisisDashboard: false,
+      foundBellwetherScorecard: false,
+      foundMeridianPriorityProtocol: false,
+      foundRedoubtFlightSyncLog: false,
+      provedCrownlineGovernanceModel: false,
     },
     inventory: ["press_credentials", "smartphone", "recorder", "notebook"],
     evidence: {
@@ -167,6 +174,7 @@ export function createInitialState(player = {}, settings = {}) {
       bellwether_relief_station: 0,
       university_lab_annex: 0,
       verdant_conservation_office: 0,
+      crownline_data_center: 0,
     },
     settings: {
       ...DEFAULT_SETTINGS,

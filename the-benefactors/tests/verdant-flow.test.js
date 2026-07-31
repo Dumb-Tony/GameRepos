@@ -74,4 +74,8 @@ test("Parcel Six evidence proves Verdant was a controlled crisis laboratory", ()
   );
   assert.equal(state.flags.provedVerdantTestRange, true);
   assert.equal(state.evidence.collected.includes("crownline_service_badge"), true);
+  assert.equal(
+    state.progress.unlockedLocations.includes("crownline_data_center"),
+    true,
+  );
 });

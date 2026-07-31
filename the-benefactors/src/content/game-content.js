@@ -1003,6 +1003,133 @@ export const EVIDENCE = Object.freeze({
       handwritten: "The data center knows what the preserve was built to learn.",
     },
   },
+  crownline_public_continuity_brief: {
+    id: "crownline_public_continuity_brief",
+    title: "Crownline continuity-services brief",
+    category: "document",
+    summary:
+      "Crownline publicly describes its work as neutral emergency analytics that protect essential public services.",
+    artifact: {
+      type: "memo",
+      heading: "CROWNLINE REGIONAL DATA · CONTINUITY SERVICES",
+      body: [
+        "INDEPENDENT CIVIC RESILIENCE ANALYTICS",
+        "PUBLIC-SERVICE AVAILABILITY MONITORING",
+        "EQUITABLE EMERGENCY RESOURCE ALLOCATION",
+        "NO OPERATIONAL OR POLICY AUTHORITY",
+      ],
+      handwritten: "The lobby version says they only watch.",
+    },
+  },
+  nia_kade_statement: {
+    id: "nia_kade_statement",
+    title: "Nia Kade's operations statement",
+    category: "recording",
+    summary:
+      "An overnight Crownline operator says Bellwether was scored as a governance-conversion exercise, not an emergency.",
+    artifact: {
+      type: "transcript",
+      heading: "OVERNIGHT INTERVIEW · NIA KADE",
+      timestamp: "02:27 AM · CROWNLINE OPERATIONS BAY",
+      lines: [
+        ["KADE", "Bellwether was already on the wall before the first public complaint."],
+        ["KADE", "We measured trust loss, compliance, and how quickly Meridian replaced city services."],
+        ["KADE", "The system called it a governance-conversion benchmark."],
+        ["KADE", "Every completed exercise generated a Redoubt flight window."],
+      ],
+    },
+  },
+  crownline_crisis_dashboard_photo: {
+    id: "crownline_crisis_dashboard_photo",
+    title: "Photograph of Crownline's crisis dashboard",
+    category: "photograph",
+    summary:
+      "Crownline's operations wall displays Bellwether alongside public trust, compliance, and private-service adoption metrics.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/crownline-data-center.webp",
+      alt:
+        "Glass-walled data center with a raised operations bay and a wall of crisis-monitoring screens",
+      caption: "Crownline Regional Data Center · Operations Bay",
+      annotations: [
+        "Bellwether timeline begins before first public complaint",
+        "Public trust falls as Meridian service adoption rises",
+        "Completed exercise routes data to Redoubt",
+      ],
+    },
+  },
+  bellwether_response_scorecard: {
+    id: "bellwether_response_scorecard",
+    title: "Bellwether governance scorecard",
+    category: "event",
+    summary:
+      "A hidden Crownline scorecard grades Bellwether on compliance, trust collapse, and transfer of public services to Meridian.",
+    artifact: {
+      type: "memo",
+      heading: "EXERCISE BW-17 · GOVERNANCE CONVERSION",
+      body: [
+        "PUBLIC TRUST DEGRADATION: 71%",
+        "PRIVATE RELIEF ADOPTION: 84%",
+        "MUNICIPAL AUTHORITY DISPLACEMENT: 63 HOURS",
+        "DISPOSITION: SUCCESSFUL FIELD BENCHMARK",
+      ],
+      handwritten: "They graded the town for surrendering control.",
+    },
+  },
+  meridian_priority_protocol: {
+    id: "meridian_priority_protocol",
+    title: "Meridian protected-assets protocol",
+    category: "financial",
+    summary:
+      "Crownline's private protocol protects Meridian donors, compounds, and transport corridors before allocating aid to the public.",
+    artifact: {
+      type: "memo",
+      heading: "MERIDIAN CONTINUITY · PRIORITY ASSET ORDER",
+      body: [
+        "TIER 0: BENEFACTOR HOUSEHOLDS / REDOUBT TRANSIT",
+        "TIER 1: PRIVATE COMPOUNDS / DATA / FINANCIAL CUSTODY",
+        "TIER 2: CONTRACTED PUBLIC LEADERSHIP",
+        "TIER 4: GENERAL POPULATION RELIEF",
+      ],
+      handwritten: "The saviors reserve the first rescue for themselves.",
+    },
+  },
+  redoubt_flight_sync_log: {
+    id: "redoubt_flight_sync_log",
+    title: "Redoubt flight synchronization log",
+    category: "location",
+    summary:
+      "Crownline scheduled private Redoubt departures after each successful crisis exercise through Greyhaven Executive Airfield.",
+    artifact: {
+      type: "memo",
+      heading: "REDOUBT TRANSIT · AUTOMATED FLIGHT WINDOWS",
+      body: [
+        "ORIGIN: GREYHAVEN EXECUTIVE AIRFIELD · HANGAR 4",
+        "TRIGGER: FIELD BENCHMARK ACCEPTED",
+        "PASSENGER CLASS: BENEFACTOR / CONTINUITY PRINCIPAL",
+        "DESTINATION: SITE ORPHEUS · COORDINATES WITHHELD",
+      ],
+      handwritten: "Every successful crisis ends with the same people flying somewhere off the map.",
+    },
+  },
+  executive_airfield_credential: {
+    id: "executive_airfield_credential",
+    title: "Hangar 4 airfield credential",
+    category: "location",
+    summary:
+      "A Redoubt transit credential grants courier access to Hangar 4 at Greyhaven Executive Airfield.",
+    artifact: {
+      type: "memo",
+      heading: "REDOUBT TRANSIT · COURIER CREDENTIAL",
+      body: [
+        "FACILITY: GREYHAVEN EXECUTIVE AIRFIELD",
+        "ENTRY: HANGAR 4 SERVICE APRON",
+        "CLEARANCE: SEALED MANIFEST DELIVERY",
+        "DESTINATION AUTHORITY: SITE ORPHEUS",
+      ],
+      handwritten: "The next trail leaves Greyhaven by private jet.",
+    },
+  },
 });
 
 export const INVENTORY_ITEMS = Object.freeze({
@@ -1743,6 +1870,76 @@ export const DIALOGUES = Object.freeze({
       },
     },
   },
+  nia_kade: {
+    id: "nia_kade",
+    character: "Nia Kade",
+    portrait: "NK",
+    start: "intro",
+    nodes: {
+      intro: {
+        id: "intro",
+        speaker: "Nia Kade",
+        text:
+          "That cooling gate is not a public entrance. Whatever your badge says, telemetry maintenance does not happen during a locked Meridian exercise.",
+        choices: [
+          {
+            id: "show-badge",
+            text: "This service badge came from Verdant Parcel Six.",
+            evidenceId: "crownline_service_badge",
+            requires: { type: "hasEvidence", id: "crownline_service_badge" },
+            next: "badge",
+          },
+          { id: "leave", text: "I must have the wrong building.", end: true },
+        ],
+      },
+      badge: {
+        id: "badge",
+        speaker: "Nia Kade",
+        text:
+          "That contractor disappeared after Bellwether. Crownline deleted the maintenance ticket, but the Parcel Six feed is still running behind my console.",
+        choices: [
+          {
+            id: "show-manifest",
+            text: "This manifest says Crownline retained the entire trial.",
+            evidenceId: "crownline_telemetry_manifest",
+            requires: { type: "hasEvidence", id: "crownline_telemetry_manifest" },
+            next: "truth",
+          },
+          { id: "leave", text: "Then I need to see what survived.", end: true },
+        ],
+      },
+      truth: {
+        id: "truth",
+        speaker: "Nia Kade",
+        text:
+          "Bellwether was on our operations wall before anyone called it a crisis. We did not score water recovery. We scored trust collapse and how quickly Meridian replaced the city.",
+        onEnter: [
+          { type: "setFlag", key: "questionedNiaKade", value: true },
+          { type: "collectEvidence", id: "nia_kade_statement" },
+        ],
+        choices: [
+          {
+            id: "ask-proof",
+            text: "Where is the score stored?",
+            next: "proof",
+          },
+        ],
+      },
+      proof: {
+        id: "proof",
+        speaker: "Nia Kade",
+        text:
+          "Photograph the wall. The printer cached Bellwether's scorecard. The records cage holds Meridian's priority order, and the freight scheduler below it generates Redoubt flight windows.",
+        choices: [
+          {
+            id: "finish",
+            text: "Keep watching the lobby camera.",
+            end: true,
+          },
+        ],
+      },
+    },
+  },
 });
 
 export const DEDUCTIONS = Object.freeze({
@@ -2078,6 +2275,48 @@ export const DEDUCTIONS = Object.freeze({
       { type: "setFlag", key: "provedVerdantTestRange", value: true },
       { type: "collectEvidence", id: "crownline_service_badge" },
       { type: "setPath", path: "progress.officeState", value: 9 },
+      { type: "unlockLocation", id: "crownline_data_center" },
+    ],
+  },
+  crownline_governance_model: {
+    id: "crownline_governance_model",
+    title: "Crownline measured the transfer of public power",
+    journalText:
+      "Crownline's public promise of neutral analytics concealed a governance-conversion model. Bellwether was graded on trust collapse and private-service adoption while Meridian protected its benefactors first and synchronized their departure through Redoubt.",
+    notification:
+      "Bellwether was a governance experiment. A Redoubt courier credential points to Hangar 4 at Greyhaven Executive Airfield.",
+    requiredDeductions: ["verdant_test_range"],
+    requiredEvidence: [
+      "crownline_service_badge",
+      "crownline_telemetry_manifest",
+      "crownline_public_continuity_brief",
+      "nia_kade_statement",
+      "crownline_crisis_dashboard_photo",
+      "bellwether_response_scorecard",
+      "meridian_priority_protocol",
+      "redoubt_flight_sync_log",
+    ],
+    requiredConnections: [
+      {
+        a: "crownline_public_continuity_brief",
+        b: "bellwether_response_scorecard",
+        type: "contradiction",
+      },
+      {
+        a: "crownline_telemetry_manifest",
+        b: "crownline_crisis_dashboard_photo",
+        type: "confirmed",
+      },
+      {
+        a: "meridian_priority_protocol",
+        b: "redoubt_flight_sync_log",
+        type: "financial",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "provedCrownlineGovernanceModel", value: true },
+      { type: "collectEvidence", id: "executive_airfield_credential" },
+      { type: "setPath", path: "progress.officeState", value: 10 },
     ],
   },
 });
@@ -3516,6 +3755,196 @@ export const GAME_CONTENT = Object.freeze({
           title: "The river remembers",
           text:
             "White foam gathers where the outflow crosses the fence. Beyond it, the current bends toward Bellwether.",
+        },
+      ],
+    },
+    crownline_data_center: {
+      id: "crownline_data_center",
+      name: "Crownline Regional Data Center",
+      eyebrow: "East Greyhaven · Tuesday · 2:15 AM",
+      mapX: 76,
+      mapY: 58,
+      description:
+        "A windowless continuity-services building where every city emergency becomes a private performance metric.",
+      sceneClass: "scene-crownline-data-center",
+      sceneArt: "./assets/scenes/crownline-data-center.webp",
+      hotspots: [
+        {
+          id: "nia_kade",
+          label: "Nia Kade",
+          x: 67,
+          y: 20,
+          width: 14,
+          height: 44,
+          title: "The overnight systems operator",
+          text:
+            "One operator remains at the raised console, watching Bellwether's history replay beside three unnamed cities.",
+          dialogueId: "nia_kade",
+        },
+        {
+          id: "crownline_lobby_directory",
+          label: "Continuity-services directory",
+          x: 2,
+          y: 14,
+          width: 15,
+          height: 34,
+          title: "Neutral observers, according to the lobby",
+          text:
+            "A polished services brief insists Crownline monitors emergencies without influencing policy or operations.",
+          actionLabel: "Take the public services brief",
+          resultText:
+            "The brochure promises equitable allocation and explicitly denies Crownline has operational authority.",
+          effects: [
+            { type: "setFlag", key: "foundCrownlinePublicBrief", value: true },
+            { type: "collectEvidence", id: "crownline_public_continuity_brief" },
+          ],
+          actionWhen: {
+            type: "flag",
+            key: "foundCrownlinePublicBrief",
+            equals: false,
+          },
+        },
+        {
+          id: "crownline_operations_wall",
+          label: "Crisis operations wall",
+          x: 73,
+          y: 7,
+          width: 26,
+          height: 28,
+          title: "Bellwether was never just a water emergency",
+          text:
+            "The wall aligns contamination, public anger, relief adoption, and municipal surrender on a single timeline.",
+          actionLabel: "Photograph the live dashboard",
+          resultText:
+            "The timeline begins before the first complaint and ends when Meridian services replace the city's response.",
+          effects: [
+            {
+              type: "setFlag",
+              key: "photographedCrisisDashboard",
+              value: true,
+            },
+            { type: "collectEvidence", id: "crownline_crisis_dashboard_photo" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "questionedNiaKade" },
+              {
+                type: "flag",
+                key: "photographedCrisisDashboard",
+                equals: false,
+              },
+            ],
+          },
+        },
+        {
+          id: "crownline_printer_cache",
+          label: "Discarded printer page",
+          x: 24,
+          y: 79,
+          width: 15,
+          height: 15,
+          title: "A town reduced to a score",
+          text:
+            "A single page lies face-down beside the lobby desk, still warm from the overnight print queue.",
+          actionLabel: "Recover Bellwether's scorecard",
+          resultText:
+            "Crownline graded Bellwether as a successful governance-conversion benchmark completed in sixty-three hours.",
+          effects: [
+            { type: "setFlag", key: "foundBellwetherScorecard", value: true },
+            { type: "collectEvidence", id: "bellwether_response_scorecard" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedCrisisDashboard" },
+              {
+                type: "flag",
+                key: "foundBellwetherScorecard",
+                equals: false,
+              },
+            ],
+          },
+        },
+        {
+          id: "crownline_records_cage",
+          label: "Locked records cage",
+          x: 33,
+          y: 61,
+          width: 23,
+          height: 31,
+          title: "Who receives help first",
+          text:
+            "A misfiled envelope protrudes through the cage mesh beneath a row of sealed Meridian continuity cases.",
+          actionLabel: "Pull the exposed protocol",
+          resultText:
+            "Meridian's benefactors, compounds, money, and transport routes receive protection before general public relief.",
+          effects: [
+            {
+              type: "setFlag",
+              key: "foundMeridianPriorityProtocol",
+              value: true,
+            },
+            { type: "collectEvidence", id: "meridian_priority_protocol" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "foundBellwetherScorecard" },
+              {
+                type: "flag",
+                key: "foundMeridianPriorityProtocol",
+                equals: false,
+              },
+            ],
+          },
+        },
+        {
+          id: "crownline_freight_scheduler",
+          label: "Freight scheduler",
+          x: 60,
+          y: 68,
+          width: 20,
+          height: 26,
+          title: "Redoubt leaves when the exercise succeeds",
+          text:
+            "The freight-elevator terminal mirrors completed crisis scores to a private aviation scheduler.",
+          actionLabel: "Copy the flight synchronization log",
+          resultText:
+            "Every accepted field benchmark opens a flight window from Hangar 4 to a concealed destination called Site Orpheus.",
+          effects: [
+            { type: "setFlag", key: "foundRedoubtFlightSyncLog", value: true },
+            { type: "collectEvidence", id: "redoubt_flight_sync_log" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "foundMeridianPriorityProtocol" },
+              {
+                type: "flag",
+                key: "foundRedoubtFlightSyncLog",
+                equals: false,
+              },
+            ],
+          },
+        },
+        {
+          id: "crownline_server_hall",
+          label: "Glass server hall",
+          x: 32,
+          y: 12,
+          width: 33,
+          height: 50,
+          title: "The memory of manufactured emergencies",
+          text:
+            "Cold aisles preserve years of water levels, dispatches, frightened calls, purchases, and disappearing public trust.",
+        },
+        {
+          id: "crownline_freight_elevator",
+          label: "Freight elevator",
+          x: 59,
+          y: 62,
+          width: 20,
+          height: 31,
+          title: "Below the operations floor",
+          text:
+            "The elevator requires dual authorization. Its directory omits the basement and roof.",
         },
       ],
     },

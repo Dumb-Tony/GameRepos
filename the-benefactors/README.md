@@ -138,6 +138,15 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Crownline Data Services lead for the next chapter
 - Updated notebook progression and migration for completed river-annex saves
 
+**Milestone 13 — Crownline Data Center (complete)**
+
+- New illustrated after-hours data center with security lobby, server hall, operations bay, records cage, and freight scheduler
+- Evidence-gated interview with overnight systems operator Nia Kade
+- Bellwether crisis dashboard, governance scorecard, protected-assets protocol, and Redoubt flight log
+- Three-connection deduction proving Crownline measured the transfer of public authority to Meridian
+- Greyhaven Executive Airfield and concealed Site Orpheus lead for the next chapter
+- Updated notebook progression and migration for completed Verdant saves
+
 **Prologue content now playable**
 
 - Photograph the missing west wing

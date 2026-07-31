@@ -4,38 +4,38 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=verdant-20260730b";
+} from "../content/game-content.js?v=crownline-20260730a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=verdant-20260730b";
+} from "../content/casebook-content.js?v=crownline-20260730a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=verdant-20260730b";
+} from "../content/onboarding-content.js?v=crownline-20260730a";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=verdant-20260730b";
-import { evaluateCondition } from "../engine/conditions.js?v=verdant-20260730b";
-import { applyEffects } from "../engine/events.js?v=verdant-20260730b";
-import { createInitialState } from "../engine/game-state.js?v=verdant-20260730b";
+} from "../content/prologue-content.js?v=crownline-20260730a";
+import { evaluateCondition } from "../engine/conditions.js?v=crownline-20260730a";
+import { applyEffects } from "../engine/events.js?v=crownline-20260730a";
+import { createInitialState } from "../engine/game-state.js?v=crownline-20260730a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=verdant-20260730b";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=verdant-20260730b";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=verdant-20260730b";
+} from "../engine/player-language.js?v=crownline-20260730a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=crownline-20260730a";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=crownline-20260730a";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=verdant-20260730b";
+} from "../systems/dialogue/dialogue-engine.js?v=crownline-20260730a";
 import {
   arrangeEvidence,
   connectEvidence,
@@ -44,19 +44,19 @@ import {
   pinEvidence,
   removeConnection,
   unpinEvidence,
-} from "../systems/evidence-board/evidence-board.js?v=verdant-20260730b";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=verdant-20260730b";
+} from "../systems/evidence-board/evidence-board.js?v=crownline-20260730a";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=crownline-20260730a";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=verdant-20260730b";
+} from "../systems/puzzles/plan-alignment.js?v=crownline-20260730a";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=verdant-20260730b";
-import { TransientNotice } from "./transient-notice.js?v=verdant-20260730b";
+} from "../systems/puzzles/recording-reconstruction.js?v=crownline-20260730a";
+import { TransientNotice } from "./transient-notice.js?v=crownline-20260730a";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -764,7 +764,30 @@ export class GameApp {
   renderHome() {
     const state = this.store.getState();
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
-    const caseUpdate = state.flags.provedVerdantTestRange
+    const caseUpdate = state.flags.provedCrownlineGovernanceModel
+      ? {
+          title: "The trail leaves Greyhaven",
+          text:
+            "Crownline graded Bellwether as a successful transfer of public power. Redoubt moved Meridian's protected passengers through Hangar 4 toward Site Orpheus.",
+        }
+      : state.flags.questionedNiaKade &&
+          state.flags.foundCrownlinePublicBrief &&
+          state.flags.photographedCrisisDashboard &&
+          state.flags.foundBellwetherScorecard &&
+          state.flags.foundMeridianPriorityProtocol &&
+          state.flags.foundRedoubtFlightSyncLog
+        ? {
+            title: "The conversion score",
+            text:
+              "Crownline's public brief, hidden scorecard, live dashboard, protected-assets protocol, and Redoubt schedule can prove what Bellwether was built to measure.",
+          }
+        : (state.locationVisits.crownline_data_center || 0) > 0
+          ? {
+              title: "A town reduced to numbers",
+              text:
+                "Show Nia the service badge and telemetry manifest, then inspect the operations wall, printer page, records cage, and freight scheduler.",
+            }
+          : state.flags.provedVerdantTestRange
       ? {
           title: "Someone watched the town fail",
           text:
@@ -2117,7 +2140,13 @@ export class GameApp {
     );
     const yarnAnchorX = boardDensity.cardWidth / 2;
     const yarnAnchorY = (boardDensity.cardHeight / 2 / corkboardHeight) * 100;
-    const boardCase = state.flags.provedVerdantTestRange
+    const boardCase = state.flags.provedCrownlineGovernanceModel
+      ? {
+          number: "06",
+          title: "REDOUBT / SITE ORPHEUS",
+          phase: "Next lead: Greyhaven Executive Airfield",
+        }
+      : state.flags.provedVerdantTestRange
       ? {
           number: "05",
           title: "CROWNLINE / RESPONSE MODEL",

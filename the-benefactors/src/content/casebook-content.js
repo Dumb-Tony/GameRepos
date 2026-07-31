@@ -489,14 +489,70 @@ export const CASEBOOK_STAGES = Object.freeze([
     ],
   },
   {
-    id: "crownline_data_lead",
+    id: "visit_crownline",
     title: "The people watching the experiment",
-    objective: "Crownline Data Services received every live result from Parcel Six.",
-    activeWhen: null,
+    objective: "Use the recovered service badge to enter Crownline Regional Data Center.",
+    activeWhen: {
+      not: { type: "visited", location: "crownline_data_center" },
+    },
     hints: [
       "Review the Crownline service badge in the case file.",
       "The telemetry manifest points to a private data center inside Greyhaven.",
-      "The next chapter begins where Meridian stores its version of the truth.",
+      "Enter through the cooling-plant gate during its after-hours service window.",
+    ],
+  },
+  {
+    id: "investigate_crownline",
+    title: "A town reduced to numbers",
+    objective: "Question Nia Kade and recover Crownline's hidden Bellwether records.",
+    activeWhen: {
+      any: [
+        { type: "flag", key: "questionedNiaKade", equals: false },
+        { type: "flag", key: "foundCrownlinePublicBrief", equals: false },
+        {
+          type: "flag",
+          key: "photographedCrisisDashboard",
+          equals: false,
+        },
+        { type: "flag", key: "foundBellwetherScorecard", equals: false },
+        {
+          type: "flag",
+          key: "foundMeridianPriorityProtocol",
+          equals: false,
+        },
+        { type: "flag", key: "foundRedoubtFlightSyncLog", equals: false },
+      ],
+    },
+    hints: [
+      "Show Nia the Crownline service badge, then the Parcel Six telemetry manifest.",
+      "Photograph the operations wall and inspect the discarded printer page.",
+      "The scorecard leads to the records cage; the priority protocol leads to the freight scheduler.",
+    ],
+  },
+  {
+    id: "connect_crownline_model",
+    title: "The conversion score",
+    objective: "Use the evidence board to prove Crownline measured the transfer of public power.",
+    activeWhen: {
+      type: "flag",
+      key: "provedCrownlineGovernanceModel",
+      equals: false,
+    },
+    hints: [
+      "Contrast Crownline's public promise with its scorecard, verify the live feed, and trace benefactor priority to Redoubt.",
+      "Use White · Contradiction for services brief / Bellwether scorecard and Red · Confirmed for telemetry manifest / dashboard photo.",
+      "Use Blue · Financial for protected-assets protocol / Redoubt flight log.",
+    ],
+  },
+  {
+    id: "executive_airfield_lead",
+    title: "The trail leaves Greyhaven",
+    objective: "Redoubt flights depart Hangar 4 for a concealed destination called Site Orpheus.",
+    activeWhen: null,
+    hints: [
+      "Review the Hangar 4 courier credential in the case file.",
+      "Every successful crisis exercise generated a private flight window.",
+      "The next investigation begins at Greyhaven Executive Airfield.",
     ],
   },
 ]);
@@ -544,4 +600,11 @@ export const CASEBOOK_PROGRESS = Object.freeze([
   { label: "VA-9 injection rig photographed", when: { type: "flag", key: "photographedParcelInjectionRig" } },
   { label: "Crownline telemetry route recovered", when: { type: "flag", key: "foundCrownlineTelemetryManifest" } },
   { label: "Verdant crisis laboratory proven", when: { type: "flag", key: "provedVerdantTestRange" } },
+  { label: "Crownline data center entered", when: { type: "visited", location: "crownline_data_center" } },
+  { label: "Nia Kade interviewed", when: { type: "flag", key: "questionedNiaKade" } },
+  { label: "Crisis dashboard photographed", when: { type: "flag", key: "photographedCrisisDashboard" } },
+  { label: "Bellwether scorecard recovered", when: { type: "flag", key: "foundBellwetherScorecard" } },
+  { label: "Meridian priority protocol recovered", when: { type: "flag", key: "foundMeridianPriorityProtocol" } },
+  { label: "Redoubt flight schedule recovered", when: { type: "flag", key: "foundRedoubtFlightSyncLog" } },
+  { label: "Crownline governance model proven", when: { type: "flag", key: "provedCrownlineGovernanceModel" } },
 ]);

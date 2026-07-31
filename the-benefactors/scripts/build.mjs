@@ -33,6 +33,7 @@ const imageAssetFiles = [
   "assets/scenes/bellwether-relief-station.webp",
   "assets/scenes/university-river-annex.webp",
   "assets/scenes/verdant-conservation-parcel.webp",
+  "assets/scenes/crownline-data-center.webp",
   "assets/social/benefactors-social.webp",
   "assets/evidence/gala-photograph.webp",
 ];
