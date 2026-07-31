@@ -6815,29 +6815,34 @@ ol.recording-timeline,
 
 .board-screen {
   background:
-    radial-gradient(circle at 45% 15%, rgba(91, 112, 98, 0.11), transparent 34%),
-    linear-gradient(150deg, #0a0e0d, #111612 55%, #070a09);
+    repeating-linear-gradient(112deg, transparent 0 88px, rgba(210, 225, 214, 0.012) 89px 90px),
+    radial-gradient(circle at 34% 7%, rgba(128, 151, 132, 0.12), transparent 30%),
+    linear-gradient(150deg, #070a09, #101612 48%, #050706);
 }
 
 .board-workspace {
   width: calc(100% - 40px);
   margin: 20px auto;
-  border: 1px solid rgba(187, 153, 94, 0.32);
-  border-radius: 3px;
-  background: #0b100e;
+  border: 1px solid rgba(190, 157, 98, 0.42);
+  border-radius: 2px;
+  background: #080c0a;
   box-shadow:
-    0 24px 70px rgba(0, 0, 0, 0.52),
-    0 0 0 5px rgba(25, 18, 12, 0.78);
+    0 30px 90px rgba(0, 0, 0, 0.66),
+    0 0 0 5px #14100b,
+    0 0 0 6px rgba(190, 157, 98, 0.18);
 }
 
 .connection-builder {
   position: relative;
   border-bottom: 1px solid rgba(189, 156, 97, 0.32);
   background:
-    linear-gradient(90deg, rgba(177, 140, 78, 0.08), transparent 30%),
-    radial-gradient(circle at 80% 0%, rgba(83, 111, 92, 0.13), transparent 35%),
-    #101714;
-  box-shadow: inset 0 -10px 24px rgba(0, 0, 0, 0.2);
+    repeating-linear-gradient(90deg, transparent 0 119px, rgba(208, 220, 209, 0.015) 120px),
+    linear-gradient(90deg, rgba(177, 140, 78, 0.1), transparent 34%),
+    radial-gradient(circle at 82% 0%, rgba(83, 111, 92, 0.16), transparent 36%),
+    #0b110e;
+  box-shadow:
+    inset 0 -14px 28px rgba(0, 0, 0, 0.32),
+    inset 0 1px rgba(255, 255, 255, 0.025);
 }
 
 .connection-builder::after {
@@ -6862,47 +6867,55 @@ ol.recording-timeline,
 }
 
 .board-canvas-scroll {
-  border: 12px solid #291e15;
-  border-image: linear-gradient(135deg, #4d3723, #24180f 45%, #594028) 1;
+  border: 14px solid #17120e;
+  border-image: linear-gradient(135deg, #46311f, #17100b 36%, #302116 66%, #513820) 1;
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.025), transparent 20%),
-    #21170f;
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018), transparent 22%),
+    #0e100d;
   box-shadow:
-    inset 0 0 0 2px rgba(202, 166, 101, 0.18),
-    inset 0 0 24px rgba(0, 0, 0, 0.8);
+    inset 0 0 0 2px rgba(202, 166, 101, 0.24),
+    inset 0 0 32px rgba(0, 0, 0, 0.88),
+    10px 0 30px rgba(0, 0, 0, 0.22);
 }
 
 .board-canvas-scroll::after {
   border: 0;
-  border-left: 3px solid rgba(111, 37, 29, 0.72);
+  border-left: 3px solid rgba(154, 61, 49, 0.82);
   padding: 8px 12px;
-  color: rgba(47, 34, 21, 0.82);
+  color: rgba(224, 213, 183, 0.76);
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.16), transparent),
-    rgba(222, 205, 161, 0.92);
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04), transparent),
+    rgba(18, 23, 19, 0.94);
   box-shadow:
-    0 5px 13px rgba(28, 18, 10, 0.34),
-    inset 0 0 0 1px rgba(74, 52, 29, 0.18);
-  content: "CASE WALL  /  SCROLL TO EXPLORE";
+    0 6px 18px rgba(0, 0, 0, 0.46),
+    inset 0 0 0 1px rgba(187, 153, 94, 0.16);
+  content: "CASE WALL  /  DRAG TO ARRANGE  /  SCROLL TO EXPLORE";
 }
 
 .corkboard {
   background:
-    radial-gradient(circle at 18% 22%, rgba(233, 205, 144, 0.07) 0 1px, transparent 2px),
-    radial-gradient(circle at 72% 68%, rgba(39, 22, 9, 0.18), transparent 24%),
-    repeating-linear-gradient(96deg, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 7px),
-    repeating-linear-gradient(4deg, #735b3b 0 2px, #684f32 2px 4px, #765d3c 4px 7px);
+    radial-gradient(ellipse at 32% -3%, rgba(235, 193, 111, 0.25), transparent 29%),
+    radial-gradient(circle at 76% 67%, rgba(0, 0, 0, 0.24), transparent 29%),
+    radial-gradient(circle at 16% 34%, rgba(208, 187, 138, 0.05) 0 1px, transparent 2px),
+    repeating-linear-gradient(97deg, rgba(255, 255, 255, 0.014) 0 1px, transparent 1px 8px),
+    repeating-linear-gradient(3deg, #343429 0 2px, #2d2f26 2px 4px, #39382b 4px 7px);
   box-shadow:
-    inset 0 0 110px rgba(26, 14, 6, 0.58),
-    inset 0 0 0 8px rgba(42, 29, 18, 0.42);
+    inset 0 0 150px rgba(0, 0, 0, 0.76),
+    inset 0 0 0 8px rgba(14, 13, 10, 0.56);
 }
 
 .corkboard::before {
   position: absolute;
   z-index: 0;
-  inset: 36px;
-  border: 1px dashed rgba(221, 193, 137, 0.08);
+  inset: 24px;
+  border: 1px solid rgba(203, 170, 105, 0.08);
   content: "";
+  background:
+    linear-gradient(90deg, rgba(176, 58, 45, 0.08) 0 1px, transparent 1px) 25% 0 / 25% 100%,
+    linear-gradient(rgba(176, 58, 45, 0.05) 0 1px, transparent 1px) 0 25% / 100% 25%;
+  box-shadow:
+    inset 0 0 70px rgba(0, 0, 0, 0.34),
+    0 0 0 1px rgba(0, 0, 0, 0.18);
   pointer-events: none;
 }
 
@@ -6910,20 +6923,26 @@ ol.recording-timeline,
   top: 18px;
   left: 21px;
   gap: 12px;
-  border: 0;
-  border-left: 5px solid #872f28;
+  border: 1px solid rgba(194, 159, 94, 0.28);
+  border-left: 5px solid #9a3b31;
   padding: 10px 15px;
-  color: rgba(40, 31, 21, 0.8);
+  color: rgba(227, 218, 193, 0.82);
   background:
-    linear-gradient(105deg, rgba(255, 255, 255, 0.24), transparent 38%),
-    #cabb91;
+    linear-gradient(105deg, rgba(255, 255, 255, 0.045), transparent 38%),
+    #151b17;
   box-shadow:
-    0 7px 15px rgba(39, 23, 10, 0.28),
-    inset 0 0 0 1px rgba(63, 45, 26, 0.18);
+    0 9px 22px rgba(0, 0, 0, 0.48),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.018);
   transform: rotate(-0.35deg);
 }
 
+.board-case-label span,
+.board-case-label small {
+  border-color: rgba(194, 159, 94, 0.18);
+}
+
 .board-case-label strong {
+  color: #e6dcc1;
   font-family: Georgia, "Times New Roman", serif;
   letter-spacing: 0.025em;
 }
@@ -6957,15 +6976,16 @@ ol.recording-timeline,
 .evidence-card {
   border: 0;
   border-radius: 1px;
-  color: #30281d;
+  color: #2d271e;
   background:
-    linear-gradient(105deg, rgba(255, 255, 255, 0.22), transparent 35%),
-    radial-gradient(circle at 87% 82%, rgba(95, 68, 35, 0.08), transparent 25%),
-    #d8c9a3;
+    repeating-linear-gradient(0deg, transparent 0 26px, rgba(73, 63, 43, 0.032) 27px),
+    linear-gradient(105deg, rgba(255, 255, 255, 0.2), transparent 35%),
+    radial-gradient(circle at 87% 82%, rgba(75, 55, 31, 0.1), transparent 25%),
+    #d2c39d;
   box-shadow:
-    0 12px 22px rgba(35, 20, 10, 0.44),
+    0 15px 28px rgba(0, 0, 0, 0.58),
     0 1px 0 rgba(255, 255, 255, 0.28) inset,
-    0 0 0 1px rgba(52, 38, 22, 0.28);
+    0 0 0 1px rgba(23, 19, 13, 0.38);
 }
 
 .evidence-card::after {
@@ -6978,8 +6998,9 @@ ol.recording-timeline,
   transform: rotate(-4deg);
   content: "";
   background:
+    repeating-linear-gradient(90deg, transparent 0 5px, rgba(96, 78, 47, 0.08) 6px),
     linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent),
-    rgba(206, 189, 142, 0.74);
+    rgba(193, 178, 135, 0.78);
   box-shadow: 0 1px 2px rgba(34, 23, 13, 0.23);
   opacity: 0.84;
   pointer-events: none;
@@ -7005,11 +7026,11 @@ ol.recording-timeline,
   height: 12px;
   border: 1px solid rgba(55, 11, 8, 0.54);
   background:
-    radial-gradient(circle at 36% 30%, #ee8d75 0 1px, transparent 2px),
-    #8e2c25;
+    radial-gradient(circle at 36% 30%, #ffc7ae 0 1px, transparent 2px),
+    linear-gradient(135deg, #a5483d, #651b19);
   box-shadow:
-    0 3px 4px rgba(0, 0, 0, 0.62),
-    0 0 0 2px rgba(91, 48, 26, 0.13);
+    0 4px 5px rgba(0, 0, 0, 0.72),
+    0 0 0 2px rgba(205, 165, 93, 0.12);
 }
 
 .evidence-drag-handle {
@@ -7028,7 +7049,9 @@ ol.recording-timeline,
 
 .evidence-card--photo {
   padding: 7px 7px 0;
-  background: #e5ddc9;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.34), transparent 35%),
+    #ded6c4;
 }
 
 .evidence-card--photo::after {
@@ -7040,11 +7063,11 @@ ol.recording-timeline,
 }
 
 .evidence-card--photo .evidence-card-thumbnail {
-  height: 82px;
+  height: 90px;
   border: 0;
   border-bottom: 9px solid #eee7d7;
   outline: 1px solid rgba(52, 42, 31, 0.22);
-  filter: saturate(0.83) contrast(1.04);
+  filter: saturate(0.76) contrast(1.08) brightness(0.88);
   box-shadow:
     0 5px 10px rgba(44, 31, 20, 0.24),
     inset 0 0 18px rgba(10, 12, 10, 0.2);
@@ -7113,9 +7136,12 @@ ol.recording-timeline,
 .board-sidebar {
   border-left: 1px solid rgba(187, 153, 94, 0.27);
   background:
-    linear-gradient(165deg, rgba(190, 157, 98, 0.055), transparent 28%),
-    #0d1311;
-  box-shadow: inset 12px 0 24px rgba(0, 0, 0, 0.24);
+    repeating-linear-gradient(0deg, transparent 0 48px, rgba(220, 230, 220, 0.012) 49px),
+    linear-gradient(165deg, rgba(190, 157, 98, 0.07), transparent 28%),
+    #080d0b;
+  box-shadow:
+    inset 14px 0 30px rgba(0, 0, 0, 0.34),
+    inset 0 1px rgba(255, 255, 255, 0.018);
 }
 
 .board-density-panel,
@@ -7125,6 +7151,7 @@ ol.recording-timeline,
 .connection-list,
 .deduction-list {
   border-color: rgba(189, 156, 97, 0.24);
+  background: rgba(0, 0, 0, 0.12);
 }
 
 .theory-desk {
@@ -7139,6 +7166,20 @@ ol.recording-timeline,
   border: 1px solid rgba(190, 157, 98, 0.13);
   border-left: 3px solid rgba(190, 157, 98, 0.38);
   background: rgba(255, 255, 255, 0.018);
+}
+
+.tray-item {
+  border-color: rgba(190, 157, 98, 0.2);
+  background:
+    linear-gradient(90deg, rgba(190, 157, 98, 0.055), transparent 42%),
+    rgba(255, 255, 255, 0.012);
+}
+
+.tray-item:hover {
+  border-color: rgba(190, 157, 98, 0.48);
+  background:
+    linear-gradient(90deg, rgba(190, 157, 98, 0.12), transparent 55%),
+    rgba(255, 255, 255, 0.02);
 }
 
 .relationship {
@@ -7207,6 +7248,44 @@ ol.recording-timeline,
 .artifact-photo ol li {
   border-left: 3px solid #91372d;
   padding: 4px 0 4px 11px;
+}
+
+@media (max-width: 1120px) {
+  .board-workspace {
+    grid-template-areas:
+      "builder"
+      "board"
+      "sidebar";
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+  }
+
+  .board-sidebar {
+    max-height: none;
+    border-top: 1px solid rgba(187, 153, 94, 0.27);
+    border-left: 0;
+    box-shadow: inset 0 14px 30px rgba(0, 0, 0, 0.28);
+  }
+
+  .connection-builder.is-collapsed .connection-builder-heading {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .connection-builder.is-collapsed .connection-builder-heading .kicker,
+  .connection-builder.is-collapsed .connection-builder-heading h1,
+  .connection-builder.is-collapsed .connection-builder-heading > p:last-of-type {
+    grid-column: 1;
+  }
+
+  .connection-builder.is-collapsed .connection-builder-heading > p:last-of-type {
+    grid-row: 3;
+    margin-top: 4px;
+  }
+
+  .connection-builder.is-collapsed .connection-panel-toggle {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+  }
 }
 
 @media (max-width: 980px) {

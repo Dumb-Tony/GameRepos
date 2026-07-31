@@ -155,6 +155,14 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Yarn styles are visually distinct and attach directly to the pushpins
 - Added automated coverage requiring every authored photograph to provide a real WebP image and descriptive alt text
 
+**Milestone 15 — Noir case wall and full progression audit (complete)**
+
+- Reworked the evidence room into a low-lit charcoal case wall with warm task lighting, dark wood, aged paper, and restrained brass details
+- Improved compact-window behavior so the case file stacks below the board instead of being cropped
+- Verified pinning, tray storage, card density, evidence filters, automatic arrangement, full evidence viewing, and persistent yarn
+- Added a continuous leak-to-Crownline playthrough test covering all ten deductions and an autosave round trip after every chapter handoff
+- Kept the Mayor Vale survey sheet centered and visible at every rotation and responsive breakpoint
+
 **Prologue content now playable**
 
 - Photograph the missing west wing
