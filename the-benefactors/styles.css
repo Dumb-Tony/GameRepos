@@ -5498,10 +5498,13 @@ input[type="range"] {
 .plan-sheet {
   --plan-rotation: 0deg;
   position: absolute;
+  top: 50%;
+  left: 50%;
   z-index: 3;
-  width: min(68%, 620px);
+  width: min(66%, 620px);
   aspect-ratio: 4 / 3;
-  transform: rotate(var(--plan-rotation));
+  box-sizing: border-box;
+  transform: translate(-50%, -50%) rotate(var(--plan-rotation));
   transform-origin: center;
   border: 1px solid rgba(49, 43, 32, 0.7);
   padding: clamp(14px, 2vw, 26px);
@@ -5516,6 +5519,7 @@ input[type="range"] {
     inset 0 0 30px rgba(85, 68, 40, 0.1);
   transition:
     transform 220ms ease,
+    width 220ms ease,
     box-shadow 180ms ease;
 }
 
@@ -5531,6 +5535,7 @@ input[type="range"] {
 .plan-sheet[data-rotation="90"],
 .plan-sheet[data-rotation="90deg"] {
   --plan-rotation: 90deg;
+  width: min(54%, 500px);
 }
 
 .plan-sheet[data-rotation="2"],
@@ -5543,6 +5548,7 @@ input[type="range"] {
 .plan-sheet[data-rotation="270"],
 .plan-sheet[data-rotation="270deg"] {
   --plan-rotation: 270deg;
+  width: min(54%, 500px);
 }
 
 .plan-sheet[aria-current="true"],
@@ -6124,8 +6130,17 @@ ol.recording-timeline,
   }
 
   .plan-sheet {
-    width: 76%;
+    width: 68%;
     padding: 12px;
+  }
+
+  .plan-sheet[data-rotation="1"],
+  .plan-sheet[data-rotation="90"],
+  .plan-sheet[data-rotation="90deg"],
+  .plan-sheet[data-rotation="3"],
+  .plan-sheet[data-rotation="270"],
+  .plan-sheet[data-rotation="270deg"] {
+    width: 68%;
   }
 
   .plan-room {
