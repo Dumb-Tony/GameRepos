@@ -147,6 +147,14 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Greyhaven Executive Airfield and concealed Site Orpheus lead for the next chapter
 - Updated notebook progression and migration for completed Verdant saves
 
+**Milestone 14 — Evidence room visual pass (complete)**
+
+- Every photographic clue now uses grounded, painterly neo-noir artwork instead of geometric placeholders
+- Rebuilt evidence board with a wood frame, tactile cork, paper textures, masking tape, pushpins, and stronger depth
+- Photo cards now read as pinned instant prints and open into a full-size physical evidence viewer
+- Yarn styles are visually distinct and attach directly to the pushpins
+- Added automated coverage requiring every authored photograph to provide a real WebP image and descriptive alt text
+
 **Prologue content now playable**
 
 - Photograph the missing west wing

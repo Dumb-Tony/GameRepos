@@ -133,22 +133,14 @@ function renderTranscript(artifact) {
 function renderPhoto(artifact) {
   const image = artifact.image
     ? `<img src="${escapeHtml(artifact.image)}" alt="${escapeHtml(artifact.alt || artifact.caption)}" />`
-    : `
-        <span class="photo-house"></span>
-        <span class="photo-roof"></span>
-        <span class="photo-gate"></span>
-        <span class="photo-marks"></span>
-      `;
+    : `<span class="photo-unavailable">VISUAL RECORD UNAVAILABLE</span>`;
 
   return `
     <article class="artifact artifact-photo">
       <div class="photo-image ${artifact.image ? "has-evidence-image" : ""}" ${
         artifact.image
           ? ""
-          : `role="img" aria-label="${escapeHtml(
-              artifact.alt ||
-                "Photograph of the west side of Mayor Vale's brick house",
-            )}"`
+          : `role="img" aria-label="${escapeHtml(artifact.alt || "Visual record unavailable")}"`
       }>
         ${image}
       </div>

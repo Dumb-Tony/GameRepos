@@ -35,7 +35,12 @@ const imageAssetFiles = [
   "assets/scenes/verdant-conservation-parcel.webp",
   "assets/scenes/crownline-data-center.webp",
   "assets/social/benefactors-social.webp",
-  "assets/evidence/gala-photograph.webp",
+  "assets/evidence/gala-photograph-v2.webp",
+  "assets/evidence/photo-west-wall.webp",
+  "assets/evidence/harrow-directory.webp",
+  "assets/evidence/foundation-donor-wall.webp",
+  "assets/evidence/gala-terrace.webp",
+  "assets/evidence/continuity-site-map.webp",
 ];
 const requiredFiles = [
   "index.html",

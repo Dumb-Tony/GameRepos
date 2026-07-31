@@ -21,3 +21,19 @@ test("renders every collected evidence type as a substantive artifact", () => {
   }
 });
 
+test("every authored evidence photograph uses a real image asset", () => {
+  const photographs = Object.values(EVIDENCE).filter(
+    (evidence) => evidence.artifact?.type === "photo",
+  );
+
+  assert.equal(photographs.length > 0, true);
+  for (const evidence of photographs) {
+    assert.match(evidence.artifact.image || "", /^\.\/assets\/.+\.webp$/, evidence.id);
+    assert.equal(Boolean(evidence.artifact.alt), true, evidence.id);
+    assert.equal(
+      renderEvidenceArtifact(evidence).includes("photo-unavailable"),
+      false,
+      evidence.id,
+    );
+  }
+});

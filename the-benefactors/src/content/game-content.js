@@ -108,6 +108,9 @@ export const EVIDENCE = Object.freeze({
     summary: "The original brickwork and roofline are intact. No west wing was built.",
     artifact: {
       type: "photo",
+      image: "./assets/evidence/photo-west-wall.webp",
+      alt:
+        "Rain-darkened original brick wall and roofline of Mayor Vale's house, with no sign of a newly built west wing",
       caption: "WEST ELEVATION · 17 BELLWEATHER LANE · 4:26 PM",
       annotations: [
         "Original 1912 brickwork remains uninterrupted",
@@ -207,7 +210,7 @@ export const EVIDENCE = Object.freeze({
       "A Brighter Horizon gala photograph delivered anonymously, with one face circled.",
     artifact: {
       type: "photo",
-      image: "./assets/evidence/gala-photograph.webp",
+      image: "./assets/evidence/gala-photograph-v2.webp",
       alt:
         "A formal humanitarian gala group photograph. A watchful man at the right edge is circled in dark red.",
       caption: "BRIGHTER HORIZON WINTER BENEFIT · PRESS PHOTOGRAPH",
@@ -226,6 +229,9 @@ export const EVIDENCE = Object.freeze({
     summary: "The fourth-floor directory stops at Suite 409. Suite 410 does not exist.",
     artifact: {
       type: "photo",
+      image: "./assets/evidence/harrow-directory.webp",
+      alt:
+        "Tarnished brass office directory in a worn fourth-floor corridor, with its orderly tenant rows ending before the claimed final suite",
       caption: "1400 HARROW STREET · FOURTH-FLOOR DIRECTORY",
       annotations: [
         "SUITES 401–409 listed in sequence",
@@ -296,6 +302,9 @@ export const EVIDENCE = Object.freeze({
       "The Calder Square donor wall quietly places Vale, Rook, and the circled gala guest in the same campaign.",
     artifact: {
       type: "photo",
+      image: "./assets/evidence/foundation-donor-wall.webp",
+      alt:
+        "Dark wood and brass humanitarian foundation donor wall displaying connected portraits of wealthy Greyhaven patrons",
       caption: "BRIGHTER HORIZON · GREYHAVEN FOUNDERS' WALL",
       annotations: [
         "CASSIAN ROOK — GLOBAL FOUNDER",
@@ -427,6 +436,9 @@ export const EVIDENCE = Object.freeze({
       "Cassian Rook quietly meets Silas Wren while the ballroom applauds the foundation’s public promises.",
     artifact: {
       type: "photo",
+      image: "./assets/evidence/gala-terrace.webp",
+      alt:
+        "Two formally dressed men holding a private conversation on a rain-dark hotel terrace while a gala continues inside",
       caption: "CALDER GRAND · EAST TERRACE · 8:27 PM",
       annotations: [
         "CASSIAN ROOK leaves the podium during donor applause",
@@ -631,6 +643,9 @@ export const EVIDENCE = Object.freeze({
       "A restricted city map places the five contractors at secure sites hidden inside public crisis projects.",
     artifact: {
       type: "photo",
+      image: "./assets/evidence/continuity-site-map.webp",
+      alt:
+        "Aged municipal map photographed under an archive lamp, with five hidden infrastructure sites circled in dark red",
       caption: "Municipal Archive · Civil Continuity Map 09",
       annotations: [
         "Northstar · concealed communications room",
@@ -721,6 +736,8 @@ export const EVIDENCE = Object.freeze({
     artifact: {
       type: "photo",
       image: "./assets/scenes/bellwether-relief-station.webp",
+      alt:
+        "Rainy relief station with stacks of Brighter Horizon freight crates positioned before the public water emergency",
       caption: "Bellwether Relief Station Â· Freight Stack",
       annotations: [
         "Freight intake: Monday Â· 22:14",

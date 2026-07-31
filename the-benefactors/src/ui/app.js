@@ -4,38 +4,38 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=crownline-20260730a";
+} from "../content/game-content.js?v=visual-polish-20260730a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=crownline-20260730a";
+} from "../content/casebook-content.js?v=visual-polish-20260730a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=crownline-20260730a";
+} from "../content/onboarding-content.js?v=visual-polish-20260730a";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=crownline-20260730a";
-import { evaluateCondition } from "../engine/conditions.js?v=crownline-20260730a";
-import { applyEffects } from "../engine/events.js?v=crownline-20260730a";
-import { createInitialState } from "../engine/game-state.js?v=crownline-20260730a";
+} from "../content/prologue-content.js?v=visual-polish-20260730a";
+import { evaluateCondition } from "../engine/conditions.js?v=visual-polish-20260730a";
+import { applyEffects } from "../engine/events.js?v=visual-polish-20260730a";
+import { createInitialState } from "../engine/game-state.js?v=visual-polish-20260730a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=crownline-20260730a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=crownline-20260730a";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=crownline-20260730a";
+} from "../engine/player-language.js?v=visual-polish-20260730a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=visual-polish-20260730a";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=visual-polish-20260730a";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=crownline-20260730a";
+} from "../systems/dialogue/dialogue-engine.js?v=visual-polish-20260730a";
 import {
   arrangeEvidence,
   connectEvidence,
@@ -44,19 +44,19 @@ import {
   pinEvidence,
   removeConnection,
   unpinEvidence,
-} from "../systems/evidence-board/evidence-board.js?v=crownline-20260730a";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=crownline-20260730a";
+} from "../systems/evidence-board/evidence-board.js?v=visual-polish-20260730a";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=visual-polish-20260730a";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=crownline-20260730a";
+} from "../systems/puzzles/plan-alignment.js?v=visual-polish-20260730a";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=crownline-20260730a";
-import { TransientNotice } from "./transient-notice.js?v=crownline-20260730a";
+} from "../systems/puzzles/recording-reconstruction.js?v=visual-polish-20260730a";
+import { TransientNotice } from "./transient-notice.js?v=visual-polish-20260730a";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -2139,7 +2139,7 @@ export class GameApp {
       130 + boardRows * boardDensity.rowHeight,
     );
     const yarnAnchorX = boardDensity.cardWidth / 2;
-    const yarnAnchorY = (boardDensity.cardHeight / 2 / corkboardHeight) * 100;
+    const yarnAnchorY = (14 / corkboardHeight) * 100;
     const boardCase = state.flags.provedCrownlineGovernanceModel
       ? {
           number: "06",
