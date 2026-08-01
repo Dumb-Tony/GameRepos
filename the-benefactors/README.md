@@ -163,6 +163,14 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Added a continuous leak-to-Crownline playthrough test covering all ten deductions and an autosave round trip after every chapter handoff
 - Kept the Mayor Vale survey sheet centered and visible at every rotation and responsive breakpoint
 
+**Milestone 16 — Field tools and recovered audio (complete)**
+
+- Added playable audio to all three damaged-recorder fragments and the fully reconstructed Vale message
+- Added transcript support alongside the recordings so story-critical dialogue remains accessible
+- Turned the notebook, press credentials, smartphone, and recorder into contextual scene tools
+- Highlighted matching hotspots and surfaced clear tool-use prompts from the inventory
+- Added validation and automated coverage for recording assets and every inventory-tool interaction
+
 **Prologue content now playable**
 
 - Photograph the missing west wing

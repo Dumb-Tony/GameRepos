@@ -171,6 +171,11 @@ function renderRecording(artifact) {
       <div class="waveform" aria-hidden="true">
         ${Array.from({ length: 48 }, (_, index) => `<i style="height:${18 + ((index * 17) % 55)}%"></i>`).join("")}
       </div>
+      ${
+        artifact.audio
+          ? `<audio class="recording-audio recording-audio-restored" data-recording-audio="evidence" controls preload="metadata" src="${escapeHtml(artifact.audio)}" aria-label="Play recovered recording">Your browser cannot play this recording.</audio>`
+          : ""
+      }
       <ol class="recording-fragments">
         ${artifact.fragments.map((fragment) => `<li>${escapeHtml(fragment)}</li>`).join("")}
       </ol>

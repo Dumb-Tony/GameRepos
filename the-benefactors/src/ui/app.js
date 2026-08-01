@@ -4,7 +4,7 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=visual-polish-20260730a";
+} from "../content/game-content.js?v=field-tools-20260731a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
@@ -19,7 +19,7 @@ import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=visual-polish-20260730a";
+} from "../content/prologue-content.js?v=field-tools-20260731a";
 import { evaluateCondition } from "../engine/conditions.js?v=visual-polish-20260730a";
 import { applyEffects } from "../engine/events.js?v=visual-polish-20260730a";
 import { createInitialState } from "../engine/game-state.js?v=visual-polish-20260730a";
@@ -28,7 +28,8 @@ import {
   interpolatePlayerText,
 } from "../engine/player-language.js?v=visual-polish-20260730a";
 import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=visual-polish-20260730a";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=visual-polish-20260730a";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=field-tools-20260731a";
+import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=field-tools-20260731a";
 import {
   advanceDialogue,
   closeDialogue,
@@ -45,7 +46,7 @@ import {
   removeConnection,
   unpinEvidence,
 } from "../systems/evidence-board/evidence-board.js?v=visual-polish-20260730a";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=visual-polish-20260730a";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=field-tools-20260731a";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
@@ -113,8 +114,11 @@ export class GameApp {
     this.activeEvidenceId = null;
     this.puzzleAnnouncement = "";
     this.activeRecordingFragmentId = null;
+    this.activeInventoryToolId = null;
+    this.inventoryMessage = "";
     this.pendingDeleteSlot = null;
     this.evidenceViewerActionsBound = false;
+    this.inventoryActionsBound = false;
   }
 
   start() {
@@ -202,6 +206,8 @@ export class GameApp {
       this.root.insertAdjacentHTML("beforeend", this.renderEvidenceViewer());
     }
     this.bindEvidenceViewerActions();
+    this.bindInventoryActions();
+    this.bindRecordingAudioActions();
     this.root.querySelector("h1, h2, [data-autofocus]")?.focus?.();
   }
 
@@ -1124,6 +1130,7 @@ export class GameApp {
       notebook: () => this.openNotebook("home"),
       inventory: () => {
         this.inventoryOpen = !this.inventoryOpen;
+        this.inventoryMessage = "";
         this.renderHome();
       },
       save: () => this.openCaseFiles("home"),
@@ -1150,7 +1157,7 @@ export class GameApp {
       <main id="game-main" class="screen game-screen location-screen">
         ${this.renderGameHeader(this.chapterLabel(state), location.name)}
         <section class="location-stage">
-          ${renderExplorationScene(location, state)}
+          ${renderExplorationScene(location, state, this.activeInventoryToolId)}
           <article class="location-copy">
             <p class="kicker">${escapeHtml(location.eyebrow)}</p>
             <h1 tabindex="-1">${escapeHtml(location.name)}</h1>
@@ -1164,6 +1171,11 @@ export class GameApp {
                     <p>${escapeHtml(
                       note.resultShown ? note.resultText || note.text : note.text,
                     )}</p>
+                    ${
+                      note.toolId && INVENTORY_ITEMS[note.toolId]
+                        ? `<p class="tool-use-chip"><span>${escapeHtml(INVENTORY_ITEMS[note.toolId].icon)}</span> Uses ${escapeHtml(INVENTORY_ITEMS[note.toolId].name)}</p>`
+                        : ""
+                    }
                     ${
                       actionAvailable
                         ? `<button class="button button-secondary" data-action="hotspot-action">${escapeHtml(note.actionLabel)}</button>`
@@ -1202,12 +1214,16 @@ export class GameApp {
         this.activeLocationNote = location.hotspots.find(
           (hotspot) => hotspot.id === button.dataset.sceneHotspot,
         );
+        if (this.activeLocationNote?.toolId !== this.activeInventoryToolId) {
+          this.activeInventoryToolId = null;
+        }
         this.renderLocation();
       });
     });
 
     this.bindActions({
       "hotspot-action": () => {
+        this.activeInventoryToolId = null;
         if (note.route) {
           this.puzzleAnnouncement = "";
           this.store.update((draft) => {
@@ -1243,6 +1259,7 @@ export class GameApp {
       notebook: () => this.openNotebook("location"),
       inventory: () => {
         this.inventoryOpen = !this.inventoryOpen;
+        this.inventoryMessage = "";
         this.renderLocation();
       },
       home: () => {
@@ -1568,6 +1585,18 @@ export class GameApp {
                         <p class="kicker">Position ${index + 1} of ${puzzle.order.length}</p>
                         <h3>${escapeHtml(fragment.label)}</h3>
                         <p class="audio-marker">${escapeHtml(fragment.caption)}</p>
+                        ${
+                          fragment.audio
+                            ? `<audio
+                                class="recording-audio"
+                                data-recording-audio="${fragment.id}"
+                                controls
+                                preload="metadata"
+                                src="${escapeHtml(fragment.audio)}"
+                                aria-label="Play ${escapeHtml(fragment.label)} recording"
+                              >Your browser cannot play this recording.</audio>`
+                            : ""
+                        }
                         <blockquote
                           id="fragment-transcript-${fragment.id}"
                           class="fragment-copy"
@@ -1608,6 +1637,14 @@ export class GameApp {
               >
                 <p class="speaker">Recovered recording · Evelyn Vale</p>
                 <h2 id="recovered-message-title" tabindex="-1">Forty-seven continuous seconds</h2>
+                <audio
+                  class="recording-audio recording-audio-restored"
+                  data-recording-audio="restored"
+                  controls
+                  preload="metadata"
+                  src="${escapeHtml(RECORDING_PUZZLE.recoveredAudio)}"
+                  aria-label="Play Evelyn Vale's restored message"
+                >Your browser cannot play the restored message.</audio>
                 <blockquote>“${escapeHtml(RECORDING_PUZZLE.recoveredTranscript)}”</blockquote>
                 <button class="button button-primary" data-action="take-recording-home">
                   Take the restored message home
@@ -1618,6 +1655,8 @@ export class GameApp {
         </section>
       </main>
     `;
+
+    this.bindRecordingAudioActions();
 
     this.root.querySelectorAll("[data-preview-fragment]").forEach((button) => {
       button.addEventListener("click", () => {
@@ -1924,6 +1963,7 @@ export class GameApp {
       notebook: () => this.openNotebook("map"),
       inventory: () => {
         this.inventoryOpen = !this.inventoryOpen;
+        this.inventoryMessage = "";
         this.renderMap();
       },
       save: () => this.openCaseFiles("map"),
@@ -3252,16 +3292,32 @@ export class GameApp {
           ${state.inventory
             .map((id) => INVENTORY_ITEMS[id])
             .filter(Boolean)
-            .map(
-              (item) => `
-                <article class="inventory-item">
-                  <span>${item.icon}</span>
+            .map((item) => {
+              const context = getInventoryToolContext(
+                state,
+                item.id,
+                GAME_CONTENT.locations,
+              );
+              return `
+                <button
+                  class="inventory-item ${context.available ? "is-useful" : ""}"
+                  data-use-inventory="${item.id}"
+                  aria-label="${escapeHtml(context.actionLabel)} with ${escapeHtml(item.name)}"
+                >
+                  <span>${escapeHtml(item.icon)}</span>
                   <strong>${escapeHtml(item.name)}</strong>
-                </article>
-              `,
-            )
+                  <small>${escapeHtml(item.description || context.hint)}</small>
+                  <em>${escapeHtml(context.actionLabel)}</em>
+                </button>
+              `;
+            })
             .join("")}
         </div>
+        ${
+          this.inventoryMessage
+            ? `<p class="inventory-message" role="status">${escapeHtml(this.inventoryMessage)}</p>`
+            : ""
+        }
         <div class="evidence-pocket">
           <p class="kicker">Case file · ${collectedEvidence.length}</p>
           ${
@@ -3364,6 +3420,83 @@ export class GameApp {
         this.renderLocation();
       });
     });
+  }
+
+  bindRecordingAudioActions() {
+    const settings = this.store.getState().settings;
+    const recordings = [...this.root.querySelectorAll("[data-recording-audio]")];
+    const volume = Math.max(0, Math.min(1, Number(settings.effectsVolume) || 0));
+
+    recordings.forEach((recording) => {
+      if (recording.dataset.audioBound === "true") return;
+      recording.dataset.audioBound = "true";
+      recording.volume = volume;
+      recording.muted = Boolean(settings.muted);
+      recording.addEventListener("play", () => {
+        recordings.forEach((other) => {
+          if (other !== recording) other.pause();
+          other.closest(".recording-fragment")?.classList.remove("is-audible");
+        });
+        recording.closest(".recording-fragment")?.classList.add("is-audible");
+      });
+      recording.addEventListener("pause", () => {
+        recording.closest(".recording-fragment")?.classList.remove("is-audible");
+      });
+      recording.addEventListener("ended", () => {
+        recording.closest(".recording-fragment")?.classList.remove("is-audible");
+      });
+    });
+  }
+
+  bindInventoryActions() {
+    if (this.inventoryActionsBound) return;
+    this.inventoryActionsBound = true;
+
+    this.root.addEventListener("click", (event) => {
+      const toolButton = event.target.closest?.("[data-use-inventory]");
+      if (!toolButton) return;
+      event.stopPropagation();
+      this.useInventoryItem(toolButton.dataset.useInventory);
+    });
+  }
+
+  useInventoryItem(itemId) {
+    const state = this.store.getState();
+    const item = INVENTORY_ITEMS[itemId];
+    if (!item || !state.inventory.includes(itemId)) return;
+
+    if (itemId === "notebook") {
+      this.inventoryOpen = false;
+      this.inventoryMessage = "";
+      this.activeInventoryToolId = null;
+      this.openNotebook(this.router.current());
+      return;
+    }
+
+    const context = getInventoryToolContext(
+      state,
+      itemId,
+      GAME_CONTENT.locations,
+    );
+    if (!context.available || !context.hotspotId) {
+      this.inventoryMessage = context.hint;
+      this.render(this.router.current());
+      return;
+    }
+
+    const location = GAME_CONTENT.locations[state.progress.currentLocation];
+    const hotspot = location?.hotspots?.find(
+      (candidate) => candidate.id === context.hotspotId,
+    );
+    if (!hotspot) return;
+
+    this.inventoryOpen = false;
+    this.inventoryMessage = "";
+    this.activeInventoryToolId = itemId;
+    this.activeLocationNote = hotspot;
+    this.notice.show(`${item.name} ready: ${hotspot.actionLabel}.`);
+    this.renderLocation();
+    this.root.querySelector("[data-action='hotspot-action']")?.focus();
   }
 
   renderEvidenceViewer() {
@@ -3603,6 +3736,8 @@ export class GameApp {
     this.activeEvidenceId = null;
     this.puzzleAnnouncement = "";
     this.activeRecordingFragmentId = null;
+    this.activeInventoryToolId = null;
+    this.inventoryMessage = "";
     this.pendingDeleteSlot = null;
   }
 

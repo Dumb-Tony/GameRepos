@@ -51,6 +51,7 @@ export const RECORDING_PUZZLE = Object.freeze({
     {
       id: "vale_recording_rain",
       label: "Fragment A",
+      audio: "./assets/audio/vale-fragment-rain.wav",
       caption: "[The train recedes beneath steady rain.]",
       transcript:
         "…do not trust the guest list. The names are the invitation, not the guests. Follow Northstar. If I am gone, I did not run.",
@@ -58,6 +59,7 @@ export const RECORDING_PUZZLE = Object.freeze({
     {
       id: "vale_recording_clock",
       label: "Fragment B",
+      audio: "./assets/audio/vale-fragment-clock.wav",
       caption:
         "[A clock begins twelve chimes. A freight horn sounds in the distance.]",
       transcript:
@@ -66,6 +68,7 @@ export const RECORDING_PUZZLE = Object.freeze({
     {
       id: "vale_recording_freight",
       label: "Fragment C",
+      audio: "./assets/audio/vale-fragment-freight.wav",
       caption:
         "[The final chime fades beneath a passing freight train. Rain begins against glass.]",
       transcript:
@@ -92,6 +95,7 @@ export const RECORDING_PUZZLE = Object.freeze({
     "The waveforms lock. Forty-seven seconds become one continuous recording.",
   recoveredTranscript:
     "If someone found the invoice, then the irregularity worked. I needed the payment to look wrong. Not a west wing. Beneath it. Meridian arrives Thursday. Do not trust the guest list. The names are the invitation, not the guests. Follow Northstar. If I am gone, I did not run.",
+  recoveredAudio: "./assets/audio/vale-restored-message.wav",
   completionEffects: [
     { type: "setFlag", key: "recordingReconstructed", value: true },
     { type: "setFlag", key: "heardValeRecording", value: true },

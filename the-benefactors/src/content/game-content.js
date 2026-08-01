@@ -159,6 +159,7 @@ export const EVIDENCE = Object.freeze({
       type: "recording",
       heading: "E. VALE — RECOVERED MESSAGE",
       duration: "00:47 continuous",
+      audio: "./assets/audio/vale-restored-message.wav",
       fragments: [
         "If someone found the invoice, then the irregularity worked. I needed the payment to look wrong.",
         "Not a west wing. Beneath it. Meridian arrives Thursday.",
@@ -1150,10 +1151,30 @@ export const EVIDENCE = Object.freeze({
 });
 
 export const INVENTORY_ITEMS = Object.freeze({
-  press_credentials: { id: "press_credentials", name: "Press credentials", icon: "ID" },
-  smartphone: { id: "smartphone", name: "Phone & camera", icon: "CAM" },
-  recorder: { id: "recorder", name: "Audio recorder", icon: "REC" },
-  notebook: { id: "notebook", name: "Reporter’s notebook", icon: "NOTE" },
+  press_credentials: {
+    id: "press_credentials",
+    name: "Press credentials",
+    icon: "ID",
+    description: "Gets you past public-information gatekeepers when a reporter still counts as the public.",
+  },
+  smartphone: {
+    id: "smartphone",
+    name: "Phone & camera",
+    icon: "CAM",
+    description: "Photographs scenes, copies documents, and preserves visual evidence.",
+  },
+  recorder: {
+    id: "recorder",
+    name: "Audio recorder",
+    icon: "REC",
+    description: "Captures conversations and interfaces with recoverable audio sources.",
+  },
+  notebook: {
+    id: "notebook",
+    name: "Reporter’s notebook",
+    icon: "NOTE",
+    description: "Opens the current objective, deductions, leads, and progressive hints.",
+  },
 });
 
 export const DIALOGUES = Object.freeze({
@@ -2432,6 +2453,7 @@ export const GAME_CONTENT = Object.freeze({
           title: "Lionel Price, city clerk",
           text: "He has already decided which questions you are allowed to ask.",
           actionLabel: "Question Lionel",
+          toolId: "press_credentials",
           dialogueId: "lionel_records",
         },
         {
@@ -2467,6 +2489,7 @@ export const GAME_CONTENT = Object.freeze({
           title: "The Vale residence",
           text: "Old brick. Original roofline. No scaffolding, no fresh masonry, no obvious $184,600 addition.",
           actionLabel: "Photograph the west wall",
+          toolId: "smartphone",
           actionWhen: {
             all: [
               { type: "hasInventory", id: "smartphone" },
@@ -2603,6 +2626,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "One monitor wakes when Vale’s recorder is connected. Its queue holds three voice fragments with no timestamps.",
           actionLabel: "Reconstruct the recording",
+          toolId: "recorder",
           actionWhen: { type: "hasEvidence", id: "vale_damaged_recording" },
           route: "recording",
         },
@@ -2658,6 +2682,7 @@ export const GAME_CONTENT = Object.freeze({
           title: "Fourth-floor directory",
           text: "The engraved list runs from 401 to 409. Northstar's invoices claim Suite 410.",
           actionLabel: "Photograph the directory",
+          toolId: "smartphone",
           resultText:
             "The directory photograph is in the case file. There is no Suite 410.",
           effects: [
@@ -2759,6 +2784,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "The same faces recur across campaigns separated by years. Vale appears under accessibility; Rook appears under everything.",
           actionLabel: "Photograph the donor wall",
+          toolId: "smartphone",
           resultText:
             "The photograph captures Vale, Cassian Rook, and the circled gala guest inside the same donor network.",
           effects: [
@@ -2877,6 +2903,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "Cassian Rook has a podium, three tables have sponsors, and one familiar face has no seat at all.",
           actionLabel: "Photograph the seating plan",
+          toolId: "smartphone",
           resultText:
             "The plan names Silas Wren as service access only. He is a guest the public record is designed not to contain.",
           effects: [
@@ -2911,6 +2938,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "He watches the exits during applause. Cassian Rook leaves the podium and crosses toward him.",
           actionLabel: "Photograph the meeting",
+          toolId: "smartphone",
           resultText:
             "Your camera catches Rook handing Silas Wren a brass credential before both men enter the staff corridor.",
           effects: [
@@ -3006,6 +3034,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "Five contractors supplied secure infrastructure tonight. Northstar is only the first name you recognize.",
           actionLabel: "Photograph the roster",
+          toolId: "smartphone",
           resultText:
             "Northstar appears beside Deepwell, Crownline, and other temporary firms—all routed through program advances.",
           effects: [
@@ -3027,6 +3056,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "Rook and Wren speak behind the unmarked salon door. The ballroom applause covers everything but the sharpest words.",
           actionLabel: "Record through the door",
+          toolId: "recorder",
           resultText:
             "The recorder captures Rook calling Northstar one of several instruments—and Wren ordering Mina Harcourt moved.",
           effects: [
@@ -3134,6 +3164,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "Personal tax records remain. Every folder marked as a program reconciliation is gone.",
           actionLabel: "Photograph the apartment",
+          toolId: "smartphone",
           resultText:
             "The searchers removed only Brighter Horizon records. Harcourt had packed before they arrived.",
           effects: [
@@ -3227,6 +3258,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "Harcourt's request number retrieves a contract register omitted from the public database.",
           actionLabel: "Copy the contract register",
+          toolId: "smartphone",
           resultText:
             "Five municipal contracts match Harcourt's five foundation advances—contractor, purpose, and amount.",
           effects: [
@@ -3251,6 +3283,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "Colored grease-pencil marks connect each contractor to infrastructure hidden inside a public emergency project.",
           actionLabel: "Photograph the site map",
+          toolId: "smartphone",
           resultText:
             "Northstar's room is one node. Deepwell's mark sits beneath Bellwether's water-treatment bypass.",
           effects: [
@@ -3275,6 +3308,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "The cage inventory includes Register 09 supporting files under an expedited destruction order.",
           actionLabel: "Photograph the destruction order",
+          toolId: "smartphone",
           resultText:
             "Silas Wren requested the files destroyed before sunrise. Someone hid the register in the reading room instead.",
           effects: [
@@ -3391,6 +3425,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "The outer labels are new, but the freight-intake stickers underneath carry Monday's date.",
           actionLabel: "Photograph the labels",
+          toolId: "smartphone",
           resultText:
             "The relief shipment entered Bellwether forty-eight hours before the first resident complaint.",
           effects: [
@@ -3440,6 +3475,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "Residents pinned rejection letters beside boil-water notices. One bears a Meridian counsel reference.",
           actionLabel: "Copy the university rejection",
+          toolId: "smartphone",
           resultText:
             "The university lab kept a duplicate sample at its river annex after Meridian threatened its funding.",
           effects: [
@@ -3524,6 +3560,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "Voss routed his office line through an analog recorder after the university mail server began deleting notices.",
           actionLabel: "Copy the saved voicemail",
+          toolId: "recorder",
           resultText:
             "A Meridian counsel offers to preserve the university's grants if Voss destroys Bellwether's intake record.",
           effects: [
@@ -3548,6 +3585,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "Grease-pencil arrows follow the floodgate from Verdant Parcel 6 to Bellwether's upstream intake.",
           actionLabel: "Photograph the injection route",
+          toolId: "smartphone",
           resultText:
             "The VA-9 release point reaches Bellwether in ninety minutes. Its public monitor was offline for exactly two hours.",
           effects: [
@@ -3674,6 +3712,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "Numbered cages sit beneath tarps. A damp clipboard records losses the public report says never happened.",
           actionLabel: "Copy the mortality sheets",
+          toolId: "smartphone",
           resultText:
             "Thirty-two test animals died within hours of each VA-9 release. The cause field was overwritten as seasonal.",
           effects: [
@@ -3698,6 +3737,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "The fertilizer label peels away from a pressure vessel fitted with the same couplings shown on Voss's watershed map.",
           actionLabel: "Photograph the injection rig",
+          toolId: "smartphone",
           resultText:
             "The rig's metering plate lists VA-9 release volumes and Bellwether's intake as the downstream observation point.",
           effects: [
@@ -3832,6 +3872,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "The wall aligns contamination, public anger, relief adoption, and municipal surrender on a single timeline.",
           actionLabel: "Photograph the live dashboard",
+          toolId: "smartphone",
           resultText:
             "The timeline begins before the first complaint and ends when Meridian services replace the city's response.",
           effects: [
@@ -3924,6 +3965,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "The freight-elevator terminal mirrors completed crisis scores to a private aviation scheduler.",
           actionLabel: "Copy the flight synchronization log",
+          toolId: "smartphone",
           resultText:
             "Every accepted field benchmark opens a flight window from Hangar 4 to a concealed destination called Site Orpheus.",
           effects: [

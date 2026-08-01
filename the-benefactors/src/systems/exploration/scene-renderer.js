@@ -6,7 +6,7 @@ export function getVisibleHotspots(location, state) {
   );
 }
 
-export function renderExplorationScene(location, state) {
+export function renderExplorationScene(location, state, activeToolId = null) {
   const hotspots = getVisibleHotspots(location, state);
 
   return `
@@ -22,7 +22,7 @@ export function renderExplorationScene(location, state) {
         .map(
           (hotspot) => `
             <button
-              class="scene-hotspot authored-hotspot"
+              class="scene-hotspot authored-hotspot ${activeToolId && hotspot.toolId === activeToolId ? "is-tool-target" : ""}"
               style="left:${hotspot.x}%;top:${hotspot.y}%;width:${hotspot.width}%;height:${hotspot.height}%"
               data-scene-hotspot="${hotspot.id}"
               aria-label="Examine ${hotspot.label}"
