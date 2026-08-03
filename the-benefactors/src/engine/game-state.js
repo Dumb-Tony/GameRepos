@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 17;
+export const GAME_STATE_VERSION = 18;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -114,6 +114,12 @@ export function createInitialState(player = {}, settings = {}) {
       foundMeridianPriorityProtocol: false,
       foundRedoubtFlightSyncLog: false,
       provedCrownlineGovernanceModel: false,
+      questionedEllisWard: false,
+      photographedHangarManifest: false,
+      photographedBenefactorBoarding: false,
+      foundRedoubtCargoSeal: false,
+      foundOrpheusRouteStrip: false,
+      provedRedoubtEvacuation: false,
     },
     inventory: ["press_credentials", "smartphone", "recorder", "notebook"],
     evidence: {
@@ -175,6 +181,7 @@ export function createInitialState(player = {}, settings = {}) {
       university_lab_annex: 0,
       verdant_conservation_office: 0,
       crownline_data_center: 0,
+      greyhaven_executive_airfield: 0,
     },
     settings: {
       ...DEFAULT_SETTINGS,

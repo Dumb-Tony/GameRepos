@@ -3,7 +3,7 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js?v=visual-polish-20260730a";
+} from "./game-state.js?v=hangar4-20260803a";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
@@ -257,6 +257,14 @@ export class SaveSystem {
       !migrated.progress.unlockedLocations.includes("crownline_data_center")
     ) {
       migrated.progress.unlockedLocations.push("crownline_data_center");
+    }
+
+    if (
+      legacyVersion < 18 &&
+      migrated.flags.provedCrownlineGovernanceModel &&
+      !migrated.progress.unlockedLocations.includes("greyhaven_executive_airfield")
+    ) {
+      migrated.progress.unlockedLocations.push("greyhaven_executive_airfield");
     }
 
     return migrated;

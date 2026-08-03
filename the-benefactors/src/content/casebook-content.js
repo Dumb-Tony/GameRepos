@@ -547,12 +547,59 @@ export const CASEBOOK_STAGES = Object.freeze([
   {
     id: "executive_airfield_lead",
     title: "The trail leaves Greyhaven",
-    objective: "Redoubt flights depart Hangar 4 for a concealed destination called Site Orpheus.",
-    activeWhen: null,
+    objective: "Use the Redoubt courier credential to enter Greyhaven Executive Airfield.",
+    activeWhen: {
+      not: { type: "visited", location: "greyhaven_executive_airfield" },
+    },
     hints: [
       "Review the Hangar 4 courier credential in the case file.",
       "Every successful crisis exercise generated a private flight window.",
-      "The next investigation begins at Greyhaven Executive Airfield.",
+      "Take the north service road to Hangar 4 at Greyhaven Executive Airfield.",
+    ],
+  },
+  {
+    id: "investigate_airfield",
+    title: "The first rescue",
+    objective: "Question Ellis Ward and document the Redoubt departure before the jet leaves.",
+    activeWhen: {
+      any: [
+        { type: "flag", key: "questionedEllisWard", equals: false },
+        { type: "flag", key: "photographedHangarManifest", equals: false },
+        { type: "flag", key: "photographedBenefactorBoarding", equals: false },
+        { type: "flag", key: "foundRedoubtCargoSeal", equals: false },
+        { type: "flag", key: "foundOrpheusRouteStrip", equals: false },
+      ],
+    },
+    hints: [
+      "Show Ellis the Hangar 4 credential, then Crownline's Redoubt flight log.",
+      "Photograph the dispatch clipboard and the passengers crossing the apron.",
+      "Inspect the cargo scale before copying the route strip from the cockpit pouch.",
+    ],
+  },
+  {
+    id: "connect_redoubt_evacuation",
+    title: "The escape network",
+    objective: "Use the evidence board to prove Redoubt evacuates the architects of each manufactured crisis.",
+    activeWhen: {
+      type: "flag",
+      key: "provedRedoubtEvacuation",
+      equals: false,
+    },
+    hints: [
+      "Verify the credential against the manifest, match Meridian's priority policy to the boarding party, and trace Crownline's flight window to Orpheus.",
+      "Use Red · Confirmed for credential / Hangar 4 manifest and protected-assets protocol / boarding photograph.",
+      "Use Red · Confirmed for Redoubt flight log / Orpheus route strip.",
+    ],
+  },
+  {
+    id: "orpheus_lead",
+    title: "An island outside the map",
+    objective: "Orpheus is supplied through Blackwater Point. Find a way onto the island without alerting Redoubt.",
+    activeWhen: null,
+    hints: [
+      "Review the Orpheus offshore service chart in the case file.",
+      "The island has a private airstrip and a disguised coastal supply route.",
+      "The next investigation begins at Blackwater Point maintenance pier.",
     ],
   },
 ]);
@@ -607,4 +654,10 @@ export const CASEBOOK_PROGRESS = Object.freeze([
   { label: "Meridian priority protocol recovered", when: { type: "flag", key: "foundMeridianPriorityProtocol" } },
   { label: "Redoubt flight schedule recovered", when: { type: "flag", key: "foundRedoubtFlightSyncLog" } },
   { label: "Crownline governance model proven", when: { type: "flag", key: "provedCrownlineGovernanceModel" } },
+  { label: "Greyhaven Executive Airfield entered", when: { type: "visited", location: "greyhaven_executive_airfield" } },
+  { label: "Ellis Ward interviewed", when: { type: "flag", key: "questionedEllisWard" } },
+  { label: "Hangar 4 manifest photographed", when: { type: "flag", key: "photographedHangarManifest" } },
+  { label: "Redoubt boarding party photographed", when: { type: "flag", key: "photographedBenefactorBoarding" } },
+  { label: "Orpheus route strip recovered", when: { type: "flag", key: "foundOrpheusRouteStrip" } },
+  { label: "Redoubt evacuation network proven", when: { type: "flag", key: "provedRedoubtEvacuation" } },
 ]);

@@ -360,3 +360,24 @@ test("unlocks Crownline for completed Verdant saves", () => {
     true,
   );
 });
+
+test("unlocks the executive airfield for completed Crownline saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Robin" });
+  previous.version = 17;
+  previous.flags.provedCrownlineGovernanceModel = true;
+  previous.progress.unlockedLocations =
+    previous.progress.unlockedLocations.filter(
+      (locationId) => locationId !== "greyhaven_executive_airfield",
+    );
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(
+    migrated.progress.unlockedLocations.includes("greyhaven_executive_airfield"),
+    true,
+  );
+});

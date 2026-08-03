@@ -171,6 +171,14 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Highlighted matching hotspots and surfaced clear tool-use prompts from the inventory
 - Added validation and automated coverage for recording assets and every inventory-tool interaction
 
+**Milestone 17 — Hangar 4 (complete)**
+
+- Extended the investigation to Greyhaven Executive Airfield after the Crownline deduction
+- Added a painterly neo-noir Hangar 4 scene, Ellis Ward interrogation, and four sequential apron discoveries
+- Added a three-connection evidence-board deduction proving Redoubt evacuates Meridian's protected principals and archives
+- Revealed Site Orpheus as a private island supplied through the disguised Blackwater Point maintenance pier
+- Added casebook guidance, home-office progression, save migration, and a full leak-to-Hangar-4 automated playthrough
+
 **Prologue content now playable**
 
 - Photograph the missing west wing

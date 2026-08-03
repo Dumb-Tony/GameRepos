@@ -4,11 +4,11 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=field-tools-20260731a";
+} from "../content/game-content.js?v=hangar4-20260803a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=visual-polish-20260730a";
+} from "../content/casebook-content.js?v=hangar4-20260803a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
@@ -22,7 +22,7 @@ import {
 } from "../content/prologue-content.js?v=field-tools-20260731a";
 import { evaluateCondition } from "../engine/conditions.js?v=visual-polish-20260730a";
 import { applyEffects } from "../engine/events.js?v=visual-polish-20260730a";
-import { createInitialState } from "../engine/game-state.js?v=visual-polish-20260730a";
+import { createInitialState } from "../engine/game-state.js?v=hangar4-20260803a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
@@ -770,7 +770,29 @@ export class GameApp {
   renderHome() {
     const state = this.store.getState();
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
-    const caseUpdate = state.flags.provedCrownlineGovernanceModel
+    const caseUpdate = state.flags.provedRedoubtEvacuation
+      ? {
+          title: "An island outside the map",
+          text:
+            "Redoubt evacuates Meridian's principals, archives, samples, and money to Orpheus. The island's disguised supply route begins at Blackwater Point.",
+        }
+      : state.flags.questionedEllisWard &&
+          state.flags.photographedHangarManifest &&
+          state.flags.photographedBenefactorBoarding &&
+          state.flags.foundRedoubtCargoSeal &&
+          state.flags.foundOrpheusRouteStrip
+        ? {
+            title: "The escape network",
+            text:
+              "The airfield statement, manifest, boarding photograph, cargo seal, and Orpheus route can prove who Redoubt saves when a manufactured crisis succeeds.",
+          }
+        : (state.locationVisits.greyhaven_executive_airfield || 0) > 0
+          ? {
+              title: "The first rescue",
+              text:
+                "Show Ellis the Hangar 4 credential and Redoubt flight log, then document the manifest, boarding party, cargo seal, and cockpit route.",
+            }
+          : state.flags.provedCrownlineGovernanceModel
       ? {
           title: "The trail leaves Greyhaven",
           text:
@@ -2180,7 +2202,19 @@ export class GameApp {
     );
     const yarnAnchorX = boardDensity.cardWidth / 2;
     const yarnAnchorY = (14 / corkboardHeight) * 100;
-    const boardCase = state.flags.provedCrownlineGovernanceModel
+    const boardCase = state.flags.provedRedoubtEvacuation
+      ? {
+          number: "07",
+          title: "ORPHEUS / OFFSHORE NETWORK",
+          phase: "Next lead: Blackwater Point",
+        }
+      : (state.locationVisits.greyhaven_executive_airfield || 0) > 0
+        ? {
+            number: "06",
+            title: "REDOUBT / HANGAR 4",
+            phase: "Document the evacuation network",
+          }
+        : state.flags.provedCrownlineGovernanceModel
       ? {
           number: "06",
           title: "REDOUBT / SITE ORPHEUS",
@@ -3243,6 +3277,12 @@ export class GameApp {
   }
 
   chapterLabel(state = this.store.getState()) {
+    if (
+      state.progress.unlockedLocations.includes("greyhaven_executive_airfield") ||
+      (state.locationVisits.greyhaven_executive_airfield || 0) > 0
+    ) {
+      return "Chapter 4 · Redoubt";
+    }
     if (state.flags.mappedContinuitySiteNetwork) {
       return "Chapter 3 · The Pattern";
     }

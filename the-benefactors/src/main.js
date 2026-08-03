@@ -1,8 +1,8 @@
-import { createInitialState, GameStore } from "./engine/game-state.js?v=visual-polish-20260730a";
+import { createInitialState, GameStore } from "./engine/game-state.js?v=hangar4-20260803a";
 import { ScreenRouter } from "./engine/router.js?v=visual-polish-20260730a";
-import { SaveSystem } from "./engine/save-system.js?v=visual-polish-20260730a";
+import { SaveSystem } from "./engine/save-system.js?v=hangar4-20260803a";
 import { AudioEngine } from "./systems/audio/audio-engine.js?v=visual-polish-20260730a";
-import { GameApp } from "./ui/app.js?v=field-tools-20260731a";
+import { GameApp } from "./ui/app.js?v=hangar4-20260803a";
 
 const root = document.querySelector("#app");
 const saves = new SaveSystem();

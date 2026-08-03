@@ -1148,6 +1148,115 @@ export const EVIDENCE = Object.freeze({
       handwritten: "The next trail leaves Greyhaven by private jet.",
     },
   },
+  ellis_ward_statement: {
+    id: "ellis_ward_statement",
+    title: "Ellis Ward's airfield statement",
+    category: "witness",
+    summary:
+      "A night dispatcher says Redoubt flights carry Meridian principals whenever Crownline accepts a crisis benchmark.",
+    artifact: {
+      type: "transcript",
+      heading: "FIELD INTERVIEW · ELLIS WARD",
+      timestamp: "03:14 AM · GREYHAVEN EXECUTIVE AIRFIELD",
+      lines: [
+        ["WARD", "Hangar 4 does not file passenger names with the airport."],
+        ["WARD", "Crownline opens the window, Redoubt sends the convoy, and the same principals leave before the city understands what happened."],
+        ["WARD", "Tonight's destination is Orpheus. The pilots call it an island, but it has no civil identifier."],
+      ],
+    },
+  },
+  hangar_four_manifest_photo: {
+    id: "hangar_four_manifest_photo",
+    title: "Photograph of Hangar 4's departure manifest",
+    category: "photograph",
+    summary:
+      "The unfiled manifest lists Meridian benefactor codes instead of passenger names and cites a Crownline acceptance event.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/greyhaven-executive-airfield.webp",
+      alt:
+        "Rain-dark executive airfield where passengers in formal coats board a black private jet outside an illuminated hangar",
+      caption: "Greyhaven Executive Airfield · Hangar 4 apron",
+      annotations: [
+        "Departure authorized by Crownline benchmark acceptance",
+        "Passenger identities replaced by Meridian benefactor codes",
+        "Civil destination field left blank",
+      ],
+    },
+  },
+  benefactor_boarding_photo: {
+    id: "benefactor_boarding_photo",
+    title: "Photograph of the Redoubt boarding party",
+    category: "photograph",
+    summary:
+      "Meridian's protected principals board the Orpheus flight while the Bellwether emergency remains unresolved.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/greyhaven-executive-airfield.webp",
+      alt:
+        "Anonymous affluent passengers cross a wet private apron from black cars to a waiting long-range jet",
+      caption: "Redoubt departure window · 03:19 AM",
+      annotations: [
+        "Convoy vehicles match Tier 0 protected-asset routing",
+        "Passengers bypass the public terminal and security log",
+        "Departure occurs during Bellwether's continuing relief operation",
+      ],
+    },
+  },
+  redoubt_cargo_seal: {
+    id: "redoubt_cargo_seal",
+    title: "Redoubt protected-cargo seal",
+    category: "financial",
+    summary:
+      "A discarded cargo seal reserves climate-controlled capacity for donor records, biological samples, and private financial custody.",
+    artifact: {
+      type: "memo",
+      heading: "REDOUBT TRANSIT · PRIORITY CARGO",
+      body: [
+        "CLASS: TIER 0 PROTECTED ASSET",
+        "CONTENTS: RECORDS / BIOLOGICAL ARCHIVE / FINANCIAL CUSTODY",
+        "PUBLIC RELIEF FREIGHT: DEFERRED",
+        "ROUTE AUTHORITY: ORPHEUS",
+      ],
+      handwritten: "They evacuate the evidence with the people who made it.",
+    },
+  },
+  orpheus_route_strip: {
+    id: "orpheus_route_strip",
+    title: "Orpheus restricted route strip",
+    category: "location",
+    summary:
+      "A cockpit route strip directs Redoubt flights beyond civilian radar coverage to an offshore landing site identified only as Orpheus.",
+    artifact: {
+      type: "memo",
+      heading: "REDOUBT 6 · RESTRICTED ROUTE COPY",
+      body: [
+        "DEPART: GREYHAVEN EXECUTIVE · HANGAR 4",
+        "TRANSPONDER: SUPPRESS AFTER CHECKPOINT DELTA",
+        "COASTAL HANDOFF: PRIVATE MARITIME CONTROL",
+        "ARRIVAL: ORPHEUS · ISLAND STRIP 2",
+      ],
+      handwritten: "An island with its own airspace and no public name.",
+    },
+  },
+  orpheus_service_chart: {
+    id: "orpheus_service_chart",
+    title: "Orpheus offshore service chart",
+    category: "lead",
+    summary:
+      "The airfield route and cargo records expose a private island supplied through a disguised coastal maintenance pier.",
+    artifact: {
+      type: "memo",
+      heading: "ORPHEUS · GROUND AND MARITIME SERVICE",
+      body: [
+        "AIR ARRIVAL: ISLAND STRIP 2",
+        "MARITIME SUPPLY: BLACKWATER POINT MAINTENANCE PIER",
+        "CIVIL RECORD: NONE",
+        "SECURITY: REDOUBT / MERIDIAN CONTINUITY",
+      ],
+      handwritten: "The secret society finally has an address—just not one on a public map.",
+    },
+  },
 });
 
 export const INVENTORY_ITEMS = Object.freeze({
@@ -1978,6 +2087,72 @@ export const DIALOGUES = Object.freeze({
       },
     },
   },
+  ellis_ward: {
+    id: "ellis_ward",
+    character: "Ellis Ward",
+    portrait: "EW",
+    start: "intro",
+    nodes: {
+      intro: {
+        id: "intro",
+        speaker: "Ellis Ward",
+        text:
+          "This apron is closed, the terminal is dark, and whatever you think you saw belongs to a charter operator that does not answer questions.",
+        choices: [
+          {
+            id: "show-credential",
+            text: "Then why does this Redoubt credential open Hangar 4?",
+            evidenceId: "executive_airfield_credential",
+            requires: { type: "hasEvidence", id: "executive_airfield_credential" },
+            next: "credential",
+          },
+          { id: "leave", text: "I took the wrong service road.", end: true },
+        ],
+      },
+      credential: {
+        id: "credential",
+        speaker: "Ellis Ward",
+        text:
+          "Put that away. Redoubt couriers do not stop at the booth. Crownline opens a flight window and black cars arrive before the acceptance notice finishes printing.",
+        choices: [
+          {
+            id: "show-flight-log",
+            text: "This log ties those windows to successful crisis exercises.",
+            evidenceId: "redoubt_flight_sync_log",
+            requires: { type: "hasEvidence", id: "redoubt_flight_sync_log" },
+            next: "truth",
+          },
+          { id: "leave", text: "I need to see the apron for myself.", end: true },
+        ],
+      },
+      truth: {
+        id: "truth",
+        speaker: "Ellis Ward",
+        text:
+          "The passengers are Meridian principals. They leave whenever a city converts—records, samples, money, all of it. Tonight they are going to Orpheus. The pilots say it is an island outside civilian radar.",
+        onEnter: [
+          { type: "setFlag", key: "questionedEllisWard", value: true },
+          { type: "collectEvidence", id: "ellis_ward_statement" },
+        ],
+        choices: [
+          {
+            id: "ask-proof",
+            text: "What did they leave behind?",
+            next: "proof",
+          },
+        ],
+      },
+      proof: {
+        id: "proof",
+        speaker: "Ellis Ward",
+        text:
+          "Photograph the dispatch clipboard and the boarding line. The cargo team dropped a seal by the scale. If the cockpit pouch is still open, the route strip will name what no public chart does.",
+        choices: [
+          { id: "finish", text: "You never saw me cross the apron.", end: true },
+        ],
+      },
+    },
+  },
 });
 
 export const DEDUCTIONS = Object.freeze({
@@ -2355,6 +2530,49 @@ export const DEDUCTIONS = Object.freeze({
       { type: "setFlag", key: "provedCrownlineGovernanceModel", value: true },
       { type: "collectEvidence", id: "executive_airfield_credential" },
       { type: "setPath", path: "progress.officeState", value: 10 },
+      { type: "unlockLocation", id: "greyhaven_executive_airfield" },
+    ],
+  },
+  redoubt_evacuation_network: {
+    id: "redoubt_evacuation_network",
+    title: "Redoubt evacuates the architects of every crisis",
+    journalText:
+      "Crownline's acceptance signal opens Hangar 4 for Meridian's protected principals. Redoubt removes the people, biological archives, records, and money while the public emergency is still unfolding, then disappears beyond civilian radar to Site Orpheus.",
+    notification:
+      "The crisis network leads offshore. An Orpheus service chart identifies a disguised coastal supply pier and a private island airstrip.",
+    requiredDeductions: ["crownline_governance_model"],
+    requiredEvidence: [
+      "executive_airfield_credential",
+      "redoubt_flight_sync_log",
+      "meridian_priority_protocol",
+      "ellis_ward_statement",
+      "hangar_four_manifest_photo",
+      "benefactor_boarding_photo",
+      "redoubt_cargo_seal",
+      "orpheus_route_strip",
+    ],
+    requiredConnections: [
+      {
+        a: "executive_airfield_credential",
+        b: "hangar_four_manifest_photo",
+        type: "confirmed",
+      },
+      {
+        a: "meridian_priority_protocol",
+        b: "benefactor_boarding_photo",
+        type: "confirmed",
+      },
+      {
+        a: "redoubt_flight_sync_log",
+        b: "orpheus_route_strip",
+        type: "confirmed",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "provedRedoubtEvacuation", value: true },
+      { type: "collectEvidence", id: "orpheus_service_chart" },
+      { type: "setPath", path: "progress.chapter", value: 4 },
+      { type: "setPath", path: "progress.officeState", value: 11 },
     ],
   },
 });
@@ -4004,6 +4222,152 @@ export const GAME_CONTENT = Object.freeze({
           title: "Below the operations floor",
           text:
             "The elevator requires dual authorization. Its directory omits the basement and roof.",
+        },
+      ],
+    },
+    greyhaven_executive_airfield: {
+      id: "greyhaven_executive_airfield",
+      name: "Greyhaven Executive Airfield",
+      eyebrow: "North apron · Tuesday · 3:10 AM",
+      mapX: 88,
+      mapY: 24,
+      description:
+        "A rain-black private apron where Redoubt moves Meridian's protected principals beyond public records and civilian radar.",
+      sceneClass: "scene-greyhaven-airfield",
+      sceneArt: "./assets/scenes/greyhaven-executive-airfield.webp",
+      hotspots: [
+        {
+          id: "ellis_ward",
+          label: "Ellis Ward",
+          x: 1,
+          y: 36,
+          width: 21,
+          height: 42,
+          title: "The dispatcher who has watched too many departures",
+          text:
+            "A lone dispatcher sits behind rain-streaked glass, pretending not to recognize the Redoubt credential in your hand.",
+          dialogueId: "ellis_ward",
+        },
+        {
+          id: "hangar_dispatch_clipboard",
+          label: "Dispatch clipboard",
+          x: 18,
+          y: 48,
+          width: 18,
+          height: 24,
+          title: "A manifest that never reaches the terminal",
+          text:
+            "The clipboard substitutes Meridian benefactor codes for names and leaves the civil destination field empty.",
+          actionLabel: "Photograph the Hangar 4 manifest",
+          toolId: "smartphone",
+          resultText:
+            "The manifest cites Crownline's Bellwether acceptance event as the departure authorization.",
+          effects: [
+            { type: "setFlag", key: "photographedHangarManifest", value: true },
+            { type: "collectEvidence", id: "hangar_four_manifest_photo" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "questionedEllisWard" },
+              { type: "flag", key: "photographedHangarManifest", equals: false },
+            ],
+          },
+        },
+        {
+          id: "redoubt_boarding_line",
+          label: "Boarding party",
+          x: 54,
+          y: 40,
+          width: 28,
+          height: 35,
+          title: "The first rescue is reserved for the people in charge",
+          text:
+            "Black cars unload silent passengers while Bellwether's public relief operation remains unresolved across town.",
+          actionLabel: "Photograph the boarding party",
+          toolId: "smartphone",
+          resultText:
+            "The convoy markings match Meridian's Tier 0 protected-asset routing protocol.",
+          effects: [
+            { type: "setFlag", key: "photographedBenefactorBoarding", value: true },
+            { type: "collectEvidence", id: "benefactor_boarding_photo" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedHangarManifest" },
+              { type: "flag", key: "photographedBenefactorBoarding", equals: false },
+            ],
+          },
+        },
+        {
+          id: "redoubt_cargo_scale",
+          label: "Cargo scale",
+          x: 57,
+          y: 70,
+          width: 20,
+          height: 23,
+          title: "Evidence has a baggage allowance",
+          text:
+            "A torn priority seal clings to the rain-slick scale beneath pallets marked for climate-controlled carriage.",
+          actionLabel: "Recover the discarded cargo seal",
+          resultText:
+            "Redoubt reserved space for records, biological archives, and financial custody while deferring public relief freight.",
+          effects: [
+            { type: "setFlag", key: "foundRedoubtCargoSeal", value: true },
+            { type: "collectEvidence", id: "redoubt_cargo_seal" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedBenefactorBoarding" },
+              { type: "flag", key: "foundRedoubtCargoSeal", equals: false },
+            ],
+          },
+        },
+        {
+          id: "orpheus_cockpit_pouch",
+          label: "Open cockpit pouch",
+          x: 43,
+          y: 35,
+          width: 16,
+          height: 23,
+          title: "The route leaves the public map",
+          text:
+            "A narrow paper strip protrudes from the flight deck pouch while the crew supervises the cargo loading.",
+          actionLabel: "Copy the restricted route strip",
+          toolId: "smartphone",
+          resultText:
+            "The route suppresses the transponder beyond the coast and names an offshore arrival: Orpheus, Island Strip 2.",
+          effects: [
+            { type: "setFlag", key: "foundOrpheusRouteStrip", value: true },
+            { type: "collectEvidence", id: "orpheus_route_strip" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "foundRedoubtCargoSeal" },
+              { type: "flag", key: "foundOrpheusRouteStrip", equals: false },
+            ],
+          },
+        },
+        {
+          id: "hangar_four_jet",
+          label: "Redoubt jet",
+          x: 39,
+          y: 16,
+          width: 56,
+          height: 49,
+          title: "A private exit from public catastrophe",
+          text:
+            "The unmarked aircraft is fueled, warm, and absent from the airport's public departure board.",
+        },
+        {
+          id: "airfield_convoy",
+          label: "Black convoy",
+          x: 20,
+          y: 44,
+          width: 28,
+          height: 25,
+          title: "Continuity for those who can afford it",
+          text:
+            "Engines idle beneath the rain. Every windshield carries the same temporary Meridian access square.",
         },
       ],
     },

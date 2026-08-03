@@ -34,6 +34,7 @@ const imageAssetFiles = [
   "assets/scenes/university-river-annex.webp",
   "assets/scenes/verdant-conservation-parcel.webp",
   "assets/scenes/crownline-data-center.webp",
+  "assets/scenes/greyhaven-executive-airfield.webp",
   "assets/social/benefactors-social.webp",
   "assets/evidence/gala-photograph-v2.webp",
   "assets/evidence/photo-west-wall.webp",

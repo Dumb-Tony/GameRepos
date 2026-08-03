@@ -20,7 +20,7 @@ test("every casebook stage has a three-level hint path", () => {
     assert.equal(stage.hints.length, 3, stage.id);
     assert.equal(stage.hints.every(Boolean), true, stage.id);
   }
-  assert.equal(CASEBOOK_PROGRESS.length, 49);
+  assert.equal(CASEBOOK_PROGRESS.length, 55);
 });
 
 test("casebook objective advances with investigation state", () => {
@@ -159,4 +159,17 @@ test("casebook objective advances with investigation state", () => {
 
   state.flags.provedCrownlineGovernanceModel = true;
   assert.equal(activeStage(state).id, "executive_airfield_lead");
+
+  state.locationVisits.greyhaven_executive_airfield = 1;
+  assert.equal(activeStage(state).id, "investigate_airfield");
+
+  state.flags.questionedEllisWard = true;
+  state.flags.photographedHangarManifest = true;
+  state.flags.photographedBenefactorBoarding = true;
+  state.flags.foundRedoubtCargoSeal = true;
+  state.flags.foundOrpheusRouteStrip = true;
+  assert.equal(activeStage(state).id, "connect_redoubt_evacuation");
+
+  state.flags.provedRedoubtEvacuation = true;
+  assert.equal(activeStage(state).id, "orpheus_lead");
 });
