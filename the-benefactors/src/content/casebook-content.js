@@ -594,12 +594,59 @@ export const CASEBOOK_STAGES = Object.freeze([
   {
     id: "orpheus_lead",
     title: "An island outside the map",
-    objective: "Orpheus is supplied through Blackwater Point. Find a way onto the island without alerting Redoubt.",
-    activeWhen: null,
+    objective: "Follow the Orpheus service chart to Blackwater Point maintenance pier.",
+    activeWhen: {
+      not: { type: "visited", location: "blackwater_point" },
+    },
     hints: [
       "Review the Orpheus offshore service chart in the case file.",
       "The island has a private airstrip and a disguised coastal supply route.",
       "The next investigation begins at Blackwater Point maintenance pier.",
+    ],
+  },
+  {
+    id: "investigate_blackwater",
+    title: "The island's hidden lifeline",
+    objective: "Question Tamsin Pike and document the Orpheus launch before dawn.",
+    activeWhen: {
+      any: [
+        { type: "flag", key: "questionedTamsinPike", equals: false },
+        { type: "flag", key: "photographedBlackwaterLedger", equals: false },
+        { type: "flag", key: "foundOrpheusColdChainManifest", equals: false },
+        { type: "flag", key: "photographedIslandServiceLaunch", equals: false },
+        { type: "flag", key: "foundBlackwaterTideWindow", equals: false },
+      ],
+    },
+    hints: [
+      "Show Tamsin the Orpheus service chart, then the Redoubt cargo seal.",
+      "Photograph the shadow ledger before opening the refrigerated container.",
+      "Document the launch, then search the tide locker for its crossing window.",
+    ],
+  },
+  {
+    id: "connect_orpheus_supply_route",
+    title: "The offshore lifeline",
+    objective: "Use the evidence board to prove Blackwater Point secretly supplies Site Orpheus.",
+    activeWhen: {
+      type: "flag",
+      key: "provedOrpheusSupplyRoute",
+      equals: false,
+    },
+    hints: [
+      "Match the service chart to the shadow ledger, the Redoubt seal to the cold-chain manifest, and the air route to the tide window.",
+      "Use Red · Confirmed for service chart / Blackwater ledger and Orpheus route strip / tide window.",
+      "Use Blue · Financial for Redoubt cargo seal / Orpheus cold-chain manifest.",
+    ],
+  },
+  {
+    id: "enter_orpheus",
+    title: "Nineteen minutes to the island",
+    objective: "Use the maintenance credential to enter Orpheus through its submerged service harbor.",
+    activeWhen: null,
+    hints: [
+      "Review the Orpheus maintenance credential in the case file.",
+      "Window 04 waives an escort for cold-chain technicians.",
+      "The next chapter begins beneath North Reef, inside the island's sublevel harbor.",
     ],
   },
 ]);
@@ -660,4 +707,11 @@ export const CASEBOOK_PROGRESS = Object.freeze([
   { label: "Redoubt boarding party photographed", when: { type: "flag", key: "photographedBenefactorBoarding" } },
   { label: "Orpheus route strip recovered", when: { type: "flag", key: "foundOrpheusRouteStrip" } },
   { label: "Redoubt evacuation network proven", when: { type: "flag", key: "provedRedoubtEvacuation" } },
+  { label: "Blackwater Point entered", when: { type: "visited", location: "blackwater_point" } },
+  { label: "Tamsin Pike interviewed", when: { type: "flag", key: "questionedTamsinPike" } },
+  { label: "Blackwater shadow ledger photographed", when: { type: "flag", key: "photographedBlackwaterLedger" } },
+  { label: "Orpheus cold-chain manifest recovered", when: { type: "flag", key: "foundOrpheusColdChainManifest" } },
+  { label: "Orpheus service launch photographed", when: { type: "flag", key: "photographedIslandServiceLaunch" } },
+  { label: "Blackwater tide window recovered", when: { type: "flag", key: "foundBlackwaterTideWindow" } },
+  { label: "Orpheus supply route proven", when: { type: "flag", key: "provedOrpheusSupplyRoute" } },
 ]);

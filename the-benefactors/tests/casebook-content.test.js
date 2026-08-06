@@ -20,7 +20,7 @@ test("every casebook stage has a three-level hint path", () => {
     assert.equal(stage.hints.length, 3, stage.id);
     assert.equal(stage.hints.every(Boolean), true, stage.id);
   }
-  assert.equal(CASEBOOK_PROGRESS.length, 55);
+  assert.equal(CASEBOOK_PROGRESS.length, 62);
 });
 
 test("casebook objective advances with investigation state", () => {
@@ -172,4 +172,17 @@ test("casebook objective advances with investigation state", () => {
 
   state.flags.provedRedoubtEvacuation = true;
   assert.equal(activeStage(state).id, "orpheus_lead");
+
+  state.locationVisits.blackwater_point = 1;
+  assert.equal(activeStage(state).id, "investigate_blackwater");
+
+  state.flags.questionedTamsinPike = true;
+  state.flags.photographedBlackwaterLedger = true;
+  state.flags.foundOrpheusColdChainManifest = true;
+  state.flags.photographedIslandServiceLaunch = true;
+  state.flags.foundBlackwaterTideWindow = true;
+  assert.equal(activeStage(state).id, "connect_orpheus_supply_route");
+
+  state.flags.provedOrpheusSupplyRoute = true;
+  assert.equal(activeStage(state).id, "enter_orpheus");
 });

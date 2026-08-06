@@ -1257,6 +1257,115 @@ export const EVIDENCE = Object.freeze({
       handwritten: "The secret society finally has an address—just not one on a public map.",
     },
   },
+  tamsin_pike_statement: {
+    id: "tamsin_pike_statement",
+    title: "Tamsin Pike's dockside statement",
+    category: "witness",
+    summary:
+      "A harbor mechanic says Blackwater's maintenance launch carries sealed people and cargo to Orpheus outside every civil harbor record.",
+    artifact: {
+      type: "transcript",
+      heading: "FIELD INTERVIEW · TAMSIN PIKE",
+      timestamp: "04:41 AM · BLACKWATER POINT",
+      lines: [
+        ["PIKE", "The launch is registered as a navigation tender. It has never repaired a buoy."],
+        ["PIKE", "It runs only after a Redoubt arrival and returns empty before daylight."],
+        ["PIKE", "Passengers stay below deck. Refrigerated cases go straight to the island clinic."],
+      ],
+    },
+  },
+  blackwater_cargo_ledger_photo: {
+    id: "blackwater_cargo_ledger_photo",
+    title: "Photograph of Blackwater's shadow ledger",
+    category: "photograph",
+    summary:
+      "The pier ledger mirrors every Hangar 4 departure with an offshore launch movement omitted from civil harbor records.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/blackwater-point.webp",
+      alt:
+        "Rain-soaked maintenance pier with an open cargo ledger beneath a work lamp, a refrigerated container, and boats in dark water",
+      caption: "Blackwater Point · Unfiled movement ledger",
+      annotations: [
+        "Each entry begins after a Redoubt flight arrives",
+        "Civil destination is replaced by service code ORP-2",
+        "Harbor-master copy omits every listed movement",
+      ],
+    },
+  },
+  orpheus_cold_chain_manifest: {
+    id: "orpheus_cold_chain_manifest",
+    title: "Orpheus cold-chain manifest",
+    category: "financial",
+    summary:
+      "The refrigerated container carries biological archives, private pharmaceuticals, and donor medical stores to the island before public relief cargo.",
+    artifact: {
+      type: "memo",
+      heading: "ORPHEUS CLINICAL SUPPLY · PRIORITY MANIFEST",
+      body: [
+        "BIOLOGICAL ARCHIVE: VA-9 / BELLWETHER SERIES",
+        "PHARMACEUTICAL RESERVE: BENEFACTOR CLINIC",
+        "DONOR MEDICAL STORES: PRIORITY ZERO",
+        "MUNICIPAL RELIEF CONSIGNMENTS: HOLD ASHORE",
+      ],
+      handwritten: "The island clinic receives the experiment before the town receives medicine.",
+    },
+  },
+  island_service_launch_photo: {
+    id: "island_service_launch_photo",
+    title: "Photograph of the Orpheus service launch",
+    category: "photograph",
+    summary:
+      "A luxury high-speed launch masquerades as a maintenance tender and carries concealed passengers to the island before dawn.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/blackwater-point.webp",
+      alt:
+        "Sleek dark passenger launch tied behind working maintenance boats at a foggy rain-covered pier",
+      caption: "Blackwater Point · Restricted berth",
+      annotations: [
+        "Tinted passenger cabin concealed behind tender registration",
+        "Fresh Redoubt cargo transferred directly from refrigerated storage",
+        "Route points toward the offshore private beacon",
+      ],
+    },
+  },
+  blackwater_tide_window: {
+    id: "blackwater_tide_window",
+    title: "Blackwater restricted tide window",
+    category: "location",
+    summary:
+      "A hidden launch card schedules Orpheus crossings during a radar maintenance gap and identifies the island's submerged service entrance.",
+    artifact: {
+      type: "memo",
+      heading: "ORPHEUS SERVICE CROSSING · WINDOW 04",
+      body: [
+        "DEPART BLACKWATER: 04:55",
+        "COASTAL RADAR GAP: 05:08–05:19",
+        "APPROACH: NORTH REEF / BEACON DARK",
+        "ARRIVAL: SUBLEVEL SERVICE CAVERN",
+      ],
+      handwritten: "The island is entered from underneath.",
+    },
+  },
+  orpheus_maintenance_badge: {
+    id: "orpheus_maintenance_badge",
+    title: "Orpheus maintenance credential",
+    category: "lead",
+    summary:
+      "A recovered service credential provides one narrow way onto Orpheus through its concealed sublevel harbor.",
+    artifact: {
+      type: "memo",
+      heading: "ORPHEUS FACILITIES · TEMPORARY SERVICE ACCESS",
+      body: [
+        "ENTRY: SUBLEVEL HARBOR / NORTH REEF",
+        "ROLE: COLD-CHAIN SYSTEMS TECHNICIAN",
+        "ESCORT: WAIVED DURING WINDOW 04",
+        "SURFACE ACCESS: CLINIC SERVICE CORRIDOR",
+      ],
+      handwritten: "A borrowed uniform and nineteen minutes to enter the island.",
+    },
+  },
 });
 
 export const INVENTORY_ITEMS = Object.freeze({
@@ -2153,6 +2262,72 @@ export const DIALOGUES = Object.freeze({
       },
     },
   },
+  tamsin_pike: {
+    id: "tamsin_pike",
+    character: "Tamsin Pike",
+    portrait: "TP",
+    start: "intro",
+    nodes: {
+      intro: {
+        id: "intro",
+        speaker: "Tamsin Pike",
+        text:
+          "Public pier is two miles south. This is a private repair berth, and nothing here goes anywhere except back into the water.",
+        choices: [
+          {
+            id: "show-chart",
+            text: "This Orpheus chart names Blackwater as its supply pier.",
+            evidenceId: "orpheus_service_chart",
+            requires: { type: "hasEvidence", id: "orpheus_service_chart" },
+            next: "chart",
+          },
+          { id: "leave", text: "I will find the public pier.", end: true },
+        ],
+      },
+      chart: {
+        id: "chart",
+        speaker: "Tamsin Pike",
+        text:
+          "That chart should be inside a Redoubt pouch, not in your hands. The launch is supposed to be a navigation tender. It has never repaired a buoy.",
+        choices: [
+          {
+            id: "show-seal",
+            text: "Redoubt also left this protected-cargo seal at Hangar 4.",
+            evidenceId: "redoubt_cargo_seal",
+            requires: { type: "hasEvidence", id: "redoubt_cargo_seal" },
+            next: "truth",
+          },
+          { id: "leave", text: "Then someone is lying about the cargo.", end: true },
+        ],
+      },
+      truth: {
+        id: "truth",
+        speaker: "Tamsin Pike",
+        text:
+          "The cases go to Orpheus's clinic. Samples, private medicine, donor files. Passengers stay below deck. The launch returns empty before daylight and every movement disappears from the harbor copy.",
+        onEnter: [
+          { type: "setFlag", key: "questionedTamsinPike", value: true },
+          { type: "collectEvidence", id: "tamsin_pike_statement" },
+        ],
+        choices: [
+          {
+            id: "ask-proof",
+            text: "What can I take before it leaves?",
+            next: "proof",
+          },
+        ],
+      },
+      proof: {
+        id: "proof",
+        speaker: "Tamsin Pike",
+        text:
+          "Photograph my shadow ledger and the launch. The cold container still holds tonight's manifest. The tide locker has a route card—and one maintenance badge that was never returned.",
+        choices: [
+          { id: "finish", text: "Keep the launch crew looking offshore.", end: true },
+        ],
+      },
+    },
+  },
 });
 
 export const DEDUCTIONS = Object.freeze({
@@ -2573,6 +2748,49 @@ export const DEDUCTIONS = Object.freeze({
       { type: "collectEvidence", id: "orpheus_service_chart" },
       { type: "setPath", path: "progress.chapter", value: 4 },
       { type: "setPath", path: "progress.officeState", value: 11 },
+      { type: "unlockLocation", id: "blackwater_point" },
+    ],
+  },
+  orpheus_supply_route: {
+    id: "orpheus_supply_route",
+    title: "Blackwater Point is Orpheus's hidden lifeline",
+    journalText:
+      "Every Redoubt arrival continues by concealed launch from Blackwater Point. The island receives biological archives, private medicine, protected passengers, and donor records through a submerged service harbor while civil air and maritime records remain empty.",
+    notification:
+      "The route onto Orpheus is exposed. A maintenance credential opens the sublevel harbor during a nineteen-minute coastal radar gap.",
+    requiredDeductions: ["redoubt_evacuation_network"],
+    requiredEvidence: [
+      "orpheus_service_chart",
+      "redoubt_cargo_seal",
+      "orpheus_route_strip",
+      "tamsin_pike_statement",
+      "blackwater_cargo_ledger_photo",
+      "orpheus_cold_chain_manifest",
+      "island_service_launch_photo",
+      "blackwater_tide_window",
+    ],
+    requiredConnections: [
+      {
+        a: "orpheus_service_chart",
+        b: "blackwater_cargo_ledger_photo",
+        type: "confirmed",
+      },
+      {
+        a: "redoubt_cargo_seal",
+        b: "orpheus_cold_chain_manifest",
+        type: "financial",
+      },
+      {
+        a: "orpheus_route_strip",
+        b: "blackwater_tide_window",
+        type: "confirmed",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "provedOrpheusSupplyRoute", value: true },
+      { type: "collectEvidence", id: "orpheus_maintenance_badge" },
+      { type: "setPath", path: "progress.chapter", value: 5 },
+      { type: "setPath", path: "progress.officeState", value: 12 },
     ],
   },
 });
@@ -4368,6 +4586,152 @@ export const GAME_CONTENT = Object.freeze({
           title: "Continuity for those who can afford it",
           text:
             "Engines idle beneath the rain. Every windshield carries the same temporary Meridian access square.",
+        },
+      ],
+    },
+    blackwater_point: {
+      id: "blackwater_point",
+      name: "Blackwater Point",
+      eyebrow: "North coast · Tuesday · 4:36 AM",
+      mapX: 94,
+      mapY: 12,
+      description:
+        "A condemned maintenance pier where Redoubt's air route becomes a covert sea crossing to Site Orpheus.",
+      sceneClass: "scene-blackwater-point",
+      sceneArt: "./assets/scenes/blackwater-point.webp",
+      hotspots: [
+        {
+          id: "tamsin_pike",
+          label: "Tamsin Pike",
+          x: 2,
+          y: 25,
+          width: 22,
+          height: 42,
+          title: "The mechanic who keeps the false tender running",
+          text:
+            "A harbor mechanic watches the service launch from behind salt-streaked glass, one hand resting beside a hidden ledger.",
+          dialogueId: "tamsin_pike",
+        },
+        {
+          id: "blackwater_shadow_ledger",
+          label: "Open dock ledger",
+          x: 18,
+          y: 65,
+          width: 25,
+          height: 21,
+          title: "The crossings erased from the harbor copy",
+          text:
+            "The wet ledger mirrors Hangar 4 arrival times with movements coded ORP-2 and no civil destination.",
+          actionLabel: "Photograph the shadow ledger",
+          toolId: "smartphone",
+          resultText:
+            "Every Redoubt flight is followed by an unregistered launch movement toward Orpheus.",
+          effects: [
+            { type: "setFlag", key: "photographedBlackwaterLedger", value: true },
+            { type: "collectEvidence", id: "blackwater_cargo_ledger_photo" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "questionedTamsinPike" },
+              { type: "flag", key: "photographedBlackwaterLedger", equals: false },
+            ],
+          },
+        },
+        {
+          id: "orpheus_cold_container",
+          label: "Refrigerated container",
+          x: 31,
+          y: 28,
+          width: 26,
+          height: 42,
+          title: "The island's private relief shipment",
+          text:
+            "A clipped manifest hangs inside the refrigeration controller beneath a Redoubt priority-zero seal.",
+          actionLabel: "Recover the cold-chain manifest",
+          resultText:
+            "Orpheus receives Bellwether samples and donor medicine while municipal relief consignments are held ashore.",
+          effects: [
+            { type: "setFlag", key: "foundOrpheusColdChainManifest", value: true },
+            { type: "collectEvidence", id: "orpheus_cold_chain_manifest" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedBlackwaterLedger" },
+              { type: "flag", key: "foundOrpheusColdChainManifest", equals: false },
+            ],
+          },
+        },
+        {
+          id: "orpheus_service_launch",
+          label: "Service launch",
+          x: 64,
+          y: 42,
+          width: 31,
+          height: 28,
+          title: "A luxury launch wearing a maintenance registration",
+          text:
+            "Tinted passenger glass and a climate-controlled cargo hatch hide behind a navigation-tender registration.",
+          actionLabel: "Photograph the disguised launch",
+          toolId: "smartphone",
+          resultText:
+            "Redoubt cases move directly aboard while ordinary maintenance boats remain tied to the pier.",
+          effects: [
+            { type: "setFlag", key: "photographedIslandServiceLaunch", value: true },
+            { type: "collectEvidence", id: "island_service_launch_photo" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "foundOrpheusColdChainManifest" },
+              { type: "flag", key: "photographedIslandServiceLaunch", equals: false },
+            ],
+          },
+        },
+        {
+          id: "blackwater_tide_locker",
+          label: "Tide locker",
+          x: 49,
+          y: 60,
+          width: 16,
+          height: 24,
+          title: "Nineteen minutes outside the radar",
+          text:
+            "Behind coiled nets, an unlocked metal box holds tonight's route card and an unreturned Orpheus service credential.",
+          actionLabel: "Copy the restricted tide window",
+          toolId: "smartphone",
+          resultText:
+            "The launch crosses during a coastal radar gap and enters Orpheus through a submerged service cavern at North Reef.",
+          effects: [
+            { type: "setFlag", key: "foundBlackwaterTideWindow", value: true },
+            { type: "collectEvidence", id: "blackwater_tide_window" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedIslandServiceLaunch" },
+              { type: "flag", key: "foundBlackwaterTideWindow", equals: false },
+            ],
+          },
+        },
+        {
+          id: "orpheus_island_beacon",
+          label: "Offshore beacon",
+          x: 78,
+          y: 17,
+          width: 18,
+          height: 20,
+          title: "A private light on an unnamed island",
+          text:
+            "One pale beacon burns through the fog where public charts show open water.",
+        },
+        {
+          id: "working_boats",
+          label: "Maintenance boats",
+          x: 77,
+          y: 62,
+          width: 22,
+          height: 30,
+          title: "The disguise moored beside the truth",
+          text:
+            "The real workboats smell of fuel and fish. None has the enclosed cabin or speed of the Orpheus launch.",
         },
       ],
     },

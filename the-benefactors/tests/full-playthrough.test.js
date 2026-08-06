@@ -27,7 +27,7 @@ class MemoryStorage {
   }
 }
 
-test("the complete authored investigation can progress from the leak through Hangar 4", () => {
+test("the complete authored investigation can progress from the leak to Orpheus", () => {
   const deductionOrder = Object.keys(DEDUCTIONS);
   const saves = new SaveSystem(new MemoryStorage());
   let state = createInitialState({ firstName: "Alex" });
@@ -72,9 +72,10 @@ test("the complete authored investigation can progress from the leak through Han
   assert.deepEqual(state.completedDeductions, deductionOrder);
   assert.equal(state.flags.provedCrownlineGovernanceModel, true);
   assert.equal(state.flags.provedRedoubtEvacuation, true);
+  assert.equal(state.flags.provedOrpheusSupplyRoute, true);
   assert.equal(
-    state.evidence.collected.includes("orpheus_service_chart"),
+    state.evidence.collected.includes("orpheus_maintenance_badge"),
     true,
   );
-  assert.equal(state.board.connections.length >= 24, true);
+  assert.equal(state.board.connections.length >= 27, true);
 });

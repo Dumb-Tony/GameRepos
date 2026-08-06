@@ -3,7 +3,7 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js?v=hangar4-20260803a";
+} from "./game-state.js?v=blackwater-20260806a";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
@@ -265,6 +265,14 @@ export class SaveSystem {
       !migrated.progress.unlockedLocations.includes("greyhaven_executive_airfield")
     ) {
       migrated.progress.unlockedLocations.push("greyhaven_executive_airfield");
+    }
+
+    if (
+      legacyVersion < 19 &&
+      migrated.flags.provedRedoubtEvacuation &&
+      !migrated.progress.unlockedLocations.includes("blackwater_point")
+    ) {
+      migrated.progress.unlockedLocations.push("blackwater_point");
     }
 
     return migrated;

@@ -4,11 +4,11 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=hangar4-20260803a";
+} from "../content/game-content.js?v=blackwater-20260806a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=hangar4-20260803a";
+} from "../content/casebook-content.js?v=blackwater-20260806a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
@@ -22,7 +22,7 @@ import {
 } from "../content/prologue-content.js?v=field-tools-20260731a";
 import { evaluateCondition } from "../engine/conditions.js?v=visual-polish-20260730a";
 import { applyEffects } from "../engine/events.js?v=visual-polish-20260730a";
-import { createInitialState } from "../engine/game-state.js?v=hangar4-20260803a";
+import { createInitialState } from "../engine/game-state.js?v=blackwater-20260806a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
@@ -770,7 +770,29 @@ export class GameApp {
   renderHome() {
     const state = this.store.getState();
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
-    const caseUpdate = state.flags.provedRedoubtEvacuation
+    const caseUpdate = state.flags.provedOrpheusSupplyRoute
+      ? {
+          title: "Nineteen minutes to the island",
+          text:
+            "Blackwater is Orpheus's hidden lifeline. A maintenance credential and radar gap provide one way into the island's submerged service harbor.",
+        }
+      : state.flags.questionedTamsinPike &&
+          state.flags.photographedBlackwaterLedger &&
+          state.flags.foundOrpheusColdChainManifest &&
+          state.flags.photographedIslandServiceLaunch &&
+          state.flags.foundBlackwaterTideWindow
+        ? {
+            title: "The offshore lifeline",
+            text:
+              "The shadow ledger, cold-chain manifest, disguised launch, and tide window can prove how Redoubt supplies Orpheus outside every public record.",
+          }
+        : (state.locationVisits.blackwater_point || 0) > 0
+          ? {
+              title: "The island's hidden lifeline",
+              text:
+                "Show Tamsin the Orpheus service chart and cargo seal, then document the ledger, refrigerated container, launch, and tide locker.",
+            }
+          : state.flags.provedRedoubtEvacuation
       ? {
           title: "An island outside the map",
           text:
@@ -2202,7 +2224,19 @@ export class GameApp {
     );
     const yarnAnchorX = boardDensity.cardWidth / 2;
     const yarnAnchorY = (14 / corkboardHeight) * 100;
-    const boardCase = state.flags.provedRedoubtEvacuation
+    const boardCase = state.flags.provedOrpheusSupplyRoute
+      ? {
+          number: "08",
+          title: "ORPHEUS / ISLAND ACCESS",
+          phase: "Next lead: North Reef service harbor",
+        }
+      : (state.locationVisits.blackwater_point || 0) > 0
+        ? {
+            number: "07",
+            title: "BLACKWATER / OFFSHORE LIFELINE",
+            phase: "Trace the concealed island crossing",
+          }
+        : state.flags.provedRedoubtEvacuation
       ? {
           number: "07",
           title: "ORPHEUS / OFFSHORE NETWORK",
@@ -3277,6 +3311,12 @@ export class GameApp {
   }
 
   chapterLabel(state = this.store.getState()) {
+    if (
+      state.progress.unlockedLocations.includes("blackwater_point") ||
+      (state.locationVisits.blackwater_point || 0) > 0
+    ) {
+      return "Chapter 5 · Orpheus";
+    }
     if (
       state.progress.unlockedLocations.includes("greyhaven_executive_airfield") ||
       (state.locationVisits.greyhaven_executive_airfield || 0) > 0

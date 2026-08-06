@@ -381,3 +381,24 @@ test("unlocks the executive airfield for completed Crownline saves", () => {
     true,
   );
 });
+
+test("unlocks Blackwater Point for completed Hangar 4 saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Robin" });
+  previous.version = 18;
+  previous.flags.provedRedoubtEvacuation = true;
+  previous.progress.unlockedLocations =
+    previous.progress.unlockedLocations.filter(
+      (locationId) => locationId !== "blackwater_point",
+    );
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(
+    migrated.progress.unlockedLocations.includes("blackwater_point"),
+    true,
+  );
+});

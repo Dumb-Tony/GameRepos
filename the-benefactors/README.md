@@ -179,6 +179,14 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Revealed Site Orpheus as a private island supplied through the disguised Blackwater Point maintenance pier
 - Added casebook guidance, home-office progression, save migration, and a full leak-to-Hangar-4 automated playthrough
 
+**Milestone 18 — Blackwater Point (complete)**
+
+- Followed Redoubt's flight trail to the covert coastal supply line serving Site Orpheus
+- Added a painterly rain-soaked pier scene, Tamsin Pike interrogation, and four sequential dockside discoveries
+- Added a board deduction proving Blackwater hides Orpheus passengers, biological archives, and private medical cargo from civil records
+- Recovered a nineteen-minute radar gap and maintenance credential for entering the island's submerged harbor
+- Extended casebook guidance, office progression, save migration, and the complete automated playthrough to the Orpheus approach
+
 **Prologue content now playable**
 
 - Photograph the missing west wing
