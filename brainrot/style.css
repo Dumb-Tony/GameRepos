@@ -1080,6 +1080,16 @@ img.spr { display: inline-block; vertical-align: middle; image-rendering: auto; 
 
 /* ===== stats charts ===== */
 .stat-chart { width: 100%; height: 132px; display: block; margin: 2px 0 6px; background: rgba(16,8,34,.5); border: 1px solid rgba(150,110,220,.22); border-radius: 10px; }
+/* shorter charts on short screens (landscape phones) so more fits per scroll */
+@media (max-height:600px){ .stat-chart{ height: 96px; } }
+
+/* achievements progress summary */
+.ach-prog{ background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:9px 11px; margin-bottom:10px; }
+.ach-prog-top{ display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--dim); margin-bottom:6px; }
+.ach-prog-top b{ color:var(--txt); font-variant-numeric:tabular-nums; }
+.ach-prog-pct{ font-weight:900; color:var(--gold); }
+.ach-prog-bar{ height:8px; background:#0a0618; border:1px solid var(--line); border-radius:6px; overflow:hidden; }
+.ach-prog-bar span{ display:block; height:100%; border-radius:5px; background:linear-gradient(90deg,#ffd85c,#ff8be6); box-shadow:0 0 10px rgba(255,216,92,.5); transition:width .4s ease; }
 .chart-legend { display: flex; gap: 14px; justify-content: center; margin: -2px 0 8px; font: 600 11px Inter, system-ui, sans-serif; color: #cdbaf0; }
 .cl-item { display: inline-flex; align-items: center; gap: 5px; }
 .cl-dot { width: 9px; height: 9px; border-radius: 3px; display: inline-block; }
