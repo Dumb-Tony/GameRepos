@@ -9,9 +9,33 @@
   const MAX = 420; // hard particle cap
 
   class FX {
-    constructor() { this.parts = []; this.texts = []; }
+    constructor() { this.parts = []; this.texts = []; this.shake = 0; this._shakeMax = 0; this._shakeT = 0; }
 
     _room() { return this.parts.length < MAX; }
+
+    // ---- screen shake -------------------------------------------------
+    // amp = pixels of displacement. Decays over `dur`. Additive-ish: a bigger
+    // incoming shake wins so a small tap can't cut a big one short.
+    addShake(amp, dur) {
+      amp = Math.min(amp || 6, 14);              // keep it tasteful, never nauseating
+      if (amp <= this.shake) return;
+      this.shake = amp; this._shakeMax = amp; this._shakeT = dur || 0.4;
+    }
+    // Current (x,y) offset to translate the scene by. Call once per frame.
+    shakeOffset(t) {
+      if (this.shake <= 0) return { x: 0, y: 0 };
+      const a = this.shake;
+      return { x: Math.sin(t * 53.1) * a, y: Math.cos(t * 61.7) * a * 0.8 };
+    }
+    _updateShake(dt) {
+      if (this.shake <= 0) return;
+      this._shakeT -= dt;
+      if (this._shakeT <= 0) { this.shake = 0; return; }
+      // ease out so it settles smoothly
+      this.shake = this._shakeMax * Math.max(0, this._shakeT / (this._shakeT + dt * 6));
+      this.shake *= 0.88;
+      if (this.shake < 0.15) this.shake = 0;
+    }
 
     // Radial spark burst (used when a country jumps a brainrot stage, etc).
     burst(x, y, color, count) {
@@ -46,6 +70,7 @@
     }
 
     update(dt) {
+      this._updateShake(dt);
       for (let i = this.parts.length - 1; i >= 0; i--) {
         const p = this.parts[i];
         p.life -= dt; if (p.life <= 0) { this.parts.splice(i, 1); continue; }
@@ -88,7 +113,7 @@
       ctx.globalAlpha = 1;
     }
 
-    clear() { this.parts.length = 0; this.texts.length = 0; }
+    clear() { this.parts.length = 0; this.texts.length = 0; this.shake = 0; this._shakeT = 0; }
   }
   BR.FX = FX;
 

@@ -768,12 +768,15 @@
       if (!this.mounted) return; this._resize();
       const v = this.view, dpr = this._dpr;
       // clear the whole canvas in device space, then draw under the pan+zoom view
+      // screen shake offset (juice on big moments) — applied to the map + FX
+      // layers only, so the HUD stays rock steady and readable.
+      const sh = (this.game.fx && this.game.fx.shakeOffset) ? this.game.fx.shakeOffset(t) : { x: 0, y: 0 };
       this.mctx.setTransform(1, 0, 0, 1, 0, 0); this.mctx.clearRect(0, 0, this.mapCanvas.width, this.mapCanvas.height);
-      this.mctx.setTransform(dpr * v.zoom, 0, 0, dpr * v.zoom, dpr * v.x, dpr * v.y);
+      this.mctx.setTransform(dpr * v.zoom, 0, 0, dpr * v.zoom, dpr * (v.x + sh.x), dpr * (v.y + sh.y));
       this.game.world.render(this.mctx, this.game, t);
       if (this.game.fx) {
         this.fctx.setTransform(1, 0, 0, 1, 0, 0); this.fctx.clearRect(0, 0, this.fxCanvas.width, this.fxCanvas.height);
-        this.fctx.setTransform(dpr * v.zoom, 0, 0, dpr * v.zoom, dpr * v.x, dpr * v.y);
+        this.fctx.setTransform(dpr * v.zoom, 0, 0, dpr * v.zoom, dpr * (v.x + sh.x), dpr * (v.y + sh.y));
         this.game.fx.update(dt); this.game.fx.render(this.fctx);
       }
       this._drawBrain(t);

@@ -30,7 +30,18 @@
         this.ctx = new AC();
         this.master = this.ctx.createGain();
         this.master.gain.value = this.muted ? 0 : 0.6;
-        this.master.connect(this.ctx.destination);
+        // Soft limiter on the master bus. The meme SFX are authored at wildly
+        // different peaks (0.12 … 0.7) and several can overlap during a chaotic
+        // stretch, which clipped and made the loud ones jarring. This evens them
+        // out and protects the output without hand-tuning every sound.
+        let out = this.ctx.destination;
+        try {
+          const comp = this.ctx.createDynamicsCompressor();
+          comp.threshold.value = -18; comp.knee.value = 24; comp.ratio.value = 8;
+          comp.attack.value = 0.004; comp.release.value = 0.18;
+          comp.connect(this.ctx.destination); out = comp; this.comp = comp;
+        } catch (e) {}
+        this.master.connect(out);
         this.musicGain = this.ctx.createGain();
         this.musicGain.gain.value = 0.12;
         this.musicGain.connect(this.master);
@@ -106,13 +117,13 @@
     }
 
     // ---- meme SFX (original synths that EVOKE the sound, no sampled clips) --
-    _mVineBoom() { const t = this._now(); this._sweep(150, 42, 0.55, 'sine', 0.7, t); this._sweep(95, 30, 0.55, 'triangle', 0.4, t); }
+    _mVineBoom() { const t = this._now(); this._sweep(150, 42, 0.55, 'sine', 0.46, t); this._sweep(95, 30, 0.55, 'triangle', 0.26, t); }
     _mBruh() { const t = this._now(); this._sweep(210, 105, 0.32, 'sawtooth', 0.35, t); this._sweep(140, 80, 0.32, 'square', 0.14, t); }
     _mAirhorn() { const t = this._now(); [0, 0.16, 0.32].forEach((d) => { this._sweep(258, 292, 0.15, 'sawtooth', 0.3, t + d); this._sweep(387, 438, 0.15, 'sawtooth', 0.14, t + d); }); }
     _mRizz() { const t = this._now(); this._sweep(300, 620, 0.42, 'sine', 0.32, t); this._sweep(450, 930, 0.42, 'triangle', 0.14, t); }
     _mSkibidi() { const t = this._now(); [640, 980, 620, 1220, 520, 900].forEach((f, i) => this._tone(f, 0.06, 'square', 0.24, t + i * 0.075)); }
     _mOhio() { const t = this._now(); this._sweep(320, 110, 0.6, 'sawtooth', 0.3, t); this._noise(0.6, 0.07, 'lowpass', 500, t); }
-    _mGyatt() { const t = this._now(); this._sweep(130, 58, 0.4, 'sine', 0.7, t); this._noise(0.12, 0.15, 'lowpass', 200, t); }
+    _mGyatt() { const t = this._now(); this._sweep(130, 58, 0.4, 'sine', 0.46, t); this._noise(0.12, 0.13, 'lowpass', 200, t); }
     _mWobble() {
       const t = this._now(), o = this.ctx.createOscillator(), f = this.ctx.createBiquadFilter(), lfo = this.ctx.createOscillator(), lg = this.ctx.createGain(), g = this.ctx.createGain();
       o.type = 'sawtooth'; o.frequency.value = 104; f.type = 'lowpass'; f.frequency.value = 420;
