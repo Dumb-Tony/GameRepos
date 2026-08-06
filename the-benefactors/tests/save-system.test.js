@@ -444,3 +444,17 @@ test("unlocks the First Circle for completed Orpheus harbor saves", () => {
     true,
   );
 });
+
+test("adds the Port Prosper response field to pre-decision saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Robin" });
+  previous.version = 21;
+  delete previous.progress.portProsperResponse;
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(migrated.progress.portProsperResponse, null);
+});

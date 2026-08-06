@@ -12,6 +12,7 @@ export const VALID_ROUTES = new Set([
   "alignment",
   "recording",
   "prologue-ending",
+  "port-prosper-decision",
   "case-files",
   "notebook",
   "content-notice",
@@ -31,6 +32,7 @@ export const PERSISTENT_GAME_ROUTES = new Set([
   "alignment",
   "recording",
   "prologue-ending",
+  "port-prosper-decision",
 ]);
 
 export class ScreenRouter {

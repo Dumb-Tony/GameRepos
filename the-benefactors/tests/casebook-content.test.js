@@ -20,7 +20,7 @@ test("every casebook stage has a three-level hint path", () => {
     assert.equal(stage.hints.length, 3, stage.id);
     assert.equal(stage.hints.every(Boolean), true, stage.id);
   }
-  assert.equal(CASEBOOK_PROGRESS.length, 75);
+  assert.equal(CASEBOOK_PROGRESS.length, 79);
 });
 
 test("casebook objective advances with investigation state", () => {
@@ -210,4 +210,8 @@ test("casebook objective advances with investigation state", () => {
 
   state.flags.provedBenefactorsSelectCrises = true;
   assert.equal(activeStage(state).id, "warn_port_prosper");
+
+  state.flags.portProsperDecisionMade = true;
+  state.flags.warnedPortProsperQuietly = true;
+  assert.equal(activeStage(state).id, "quiet_warning_consequence");
 });

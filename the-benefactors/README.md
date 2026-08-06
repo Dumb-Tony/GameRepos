@@ -205,6 +205,14 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Added a four-connection deduction proving the Benefactors select, finance, and profit from manufactured crises
 - Extended save migration, casebook guidance, office progression, and the full playthrough through the First Circle vote
 
+**Milestone 21 — Port Prosper response (complete)**
+
+- Added a persistent three-way decision after proving the First Circle's crisis-selection model
+- Players can warn Port Prosper quietly, publish the entire Benefactors file immediately, or remain undercover on Orpheus
+- Each irreversible response creates distinct evidence, consequences, home-office updates, board status, and next objectives
+- Added a dedicated responsive decision screen plus automated coverage for every branch and save round trip
+- Extended the full leak-to-First-Circle playthrough through the quiet-warning route
+
 **Prologue content now playable**
 
 - Photograph the missing west wing

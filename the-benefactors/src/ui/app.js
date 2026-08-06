@@ -4,11 +4,11 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=first-circle-20260806a";
+} from "../content/game-content.js?v=port-prosper-choice-20260806a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=first-circle-20260806a";
+} from "../content/casebook-content.js?v=port-prosper-choice-20260806a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
@@ -22,14 +22,18 @@ import {
 } from "../content/prologue-content.js?v=field-tools-20260731a";
 import { evaluateCondition } from "../engine/conditions.js?v=visual-polish-20260730a";
 import { applyEffects } from "../engine/events.js?v=visual-polish-20260730a";
-import { createInitialState } from "../engine/game-state.js?v=first-circle-20260806a";
+import { createInitialState } from "../engine/game-state.js?v=port-prosper-choice-20260806a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
 } from "../engine/player-language.js?v=visual-polish-20260730a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=visual-polish-20260730a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=port-prosper-choice-20260806a";
 import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=field-tools-20260731a";
 import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=field-tools-20260731a";
+import {
+  PORT_PROSPER_RESPONSES,
+  applyPortProsperResponse,
+} from "../systems/decisions/port-prosper-response.js?v=port-prosper-choice-20260806a";
 import {
   advanceDialogue,
   closeDialogue,
@@ -193,6 +197,7 @@ export class GameApp {
       alignment: () => this.renderStudyAlignment(),
       recording: () => this.renderRecordingPuzzle(),
       "prologue-ending": () => this.renderPrologueEnding(),
+      "port-prosper-decision": () => this.renderPortProsperDecision(),
       "case-files": () => this.renderCaseFiles(),
       notebook: () => this.renderNotebook(),
       "content-notice": () => this.renderContentNotice(),
@@ -770,7 +775,25 @@ export class GameApp {
   renderHome() {
     const state = this.store.getState();
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
-    const caseUpdate = state.flags.provedBenefactorsSelectCrises
+    const caseUpdate = state.flags.warnedPortProsperQuietly
+      ? {
+          title: "The silent warning",
+          text:
+            "Port Prosper is quietly isolating its targeted systems. The First Circle still believes its operation is secret, giving you time to identify Meridian's local trigger team.",
+        }
+      : state.flags.publishedFirstCircleEvidence
+        ? {
+            title: "The story detonates",
+            text:
+              "The Benefactors files are mirrored worldwide. Meridian is denying everything, evacuating exposed principals, and destroying records before investigators can reach them.",
+          }
+        : state.flags.remainedUndercoverOnOrpheus
+          ? {
+              title: "Upstairs among the owners",
+              text:
+                "Your maintenance disguise still opens the residential wing. More conclusive leverage files wait upstairs, but Port Prosper's forty-eight-hour clock is still running.",
+            }
+          : state.flags.provedBenefactorsSelectCrises
       ? {
           title: "Forty-eight hours",
           text:
@@ -1161,6 +1184,12 @@ export class GameApp {
             <p class="observation-label">Observation</p>
             <h2>${escapeHtml(note.title)}</h2>
             <p>${escapeHtml(note.text)}</p>
+            ${
+              state.flags.provedBenefactorsSelectCrises &&
+              !state.flags.portProsperDecisionMade
+                ? '<button class="button button-primary" data-action="port-prosper-decision">Choose how to respond</button>'
+                : ""
+            }
           </aside>
         </section>
         <footer class="game-toolbar">
@@ -1226,6 +1255,91 @@ export class GameApp {
         this.router.navigate("settings");
       },
       title: () => this.router.navigate("title"),
+      "port-prosper-decision": () => this.router.navigate("port-prosper-decision"),
+    });
+  }
+
+  renderPortProsperDecision() {
+    const state = this.store.getState();
+    if (!state.flags.provedBenefactorsSelectCrises) {
+      this.router.navigate("home", { replace: true });
+      return;
+    }
+
+    const selected = state.progress.portProsperResponse
+      ? PORT_PROSPER_RESPONSES[state.progress.portProsperResponse]
+      : null;
+    const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
+
+    this.root.innerHTML = `
+      <main id="game-main" class="screen decision-screen port-prosper-decision-screen">
+        <div class="decision-backdrop" aria-hidden="true"></div>
+        <section class="decision-shell" aria-labelledby="decision-title">
+          <header class="decision-heading">
+            <p class="kicker">Port Prosper · Forty-eight hours</p>
+            <h1 id="decision-title" tabindex="-1">${selected ? escapeHtml(selected.title) : "What does the story require?"}</h1>
+            <p>
+              ${
+                selected
+                  ? escapeHtml(selected.consequence)
+                  : "The next catastrophe is scheduled, funded, and waiting. Any response can save lives—but every response changes what the Benefactors do next."
+              }
+            </p>
+          </header>
+          ${
+            selected
+              ? `
+                <article class="decision-result">
+                  <p class="speaker">Decision recorded · ${playerName}</p>
+                  <h2>${escapeHtml(selected.title)}</h2>
+                  <p>${escapeHtml(selected.consequence)}</p>
+                  <button class="button button-primary" data-action="decision-home">Return to the evidence board</button>
+                </article>
+              `
+              : `
+                <div class="decision-options">
+                  ${Object.values(PORT_PROSPER_RESPONSES)
+                    .map(
+                      (response) => `
+                        <article class="decision-option">
+                          <p class="kicker">Irreversible choice</p>
+                          <h2>${escapeHtml(response.title)}</h2>
+                          <p>${escapeHtml(response.summary)}</p>
+                          <button class="button button-primary" data-response-choice="${response.id}">Choose this response</button>
+                        </article>
+                      `,
+                    )
+                    .join("")}
+                </div>
+                <button class="button button-ghost decision-back" data-action="decision-back">Return to the office</button>
+              `
+          }
+        </section>
+      </main>
+    `;
+
+    this.root.querySelectorAll("[data-response-choice]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const next = applyPortProsperResponse(
+          this.store.getState(),
+          button.dataset.responseChoice,
+        );
+        this.store.replace(next, `port-prosper-${button.dataset.responseChoice}`);
+        this.saves.save(this.store.getState(), `port-prosper-${button.dataset.responseChoice}`);
+        this.renderPortProsperDecision();
+      });
+    });
+
+    this.bindActions({
+      "decision-back": () => this.router.navigate("home"),
+      "decision-home": () => {
+        this.store.update((draft) => {
+          draft.progress.currentScreen = "board";
+          draft.progress.currentLocation = "home_office";
+        }, "port-prosper-response-complete");
+        this.saves.save(this.store.getState(), "port-prosper-response-complete");
+        this.router.navigate("board");
+      },
     });
   }
 
@@ -2267,7 +2381,17 @@ export class GameApp {
     );
     const yarnAnchorX = boardDensity.cardWidth / 2;
     const yarnAnchorY = (14 / corkboardHeight) * 100;
-    const boardCase = state.flags.provedBenefactorsSelectCrises
+    const boardCase = state.flags.portProsperDecisionMade
+      ? {
+          number: "11",
+          title: "PORT PROSPER / RESPONSE",
+          phase: state.flags.warnedPortProsperQuietly
+            ? "City warned · Source remains covert"
+            : state.flags.publishedFirstCircleEvidence
+              ? "Evidence public · Network evacuating"
+              : "Deep cover maintained · Clock running",
+        }
+      : state.flags.provedBenefactorsSelectCrises
       ? {
           number: "10",
           title: "PORT PROSPER / FORTY-EIGHT HOURS",
@@ -3378,6 +3502,9 @@ export class GameApp {
   }
 
   chapterLabel(state = this.store.getState()) {
+    if (state.flags.portProsperDecisionMade) {
+      return "Chapter 8 · Consequences";
+    }
     if (
       state.progress.unlockedLocations.includes("orpheus_first_circle") ||
       (state.locationVisits.orpheus_first_circle || 0) > 0

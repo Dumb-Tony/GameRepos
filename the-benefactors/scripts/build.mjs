@@ -70,6 +70,7 @@ const requiredFiles = [
   "src/content/prologue-content.js",
   "src/systems/exploration/scene-renderer.js",
   "src/systems/inventory/inventory-tools.js",
+  "src/systems/decisions/port-prosper-response.js",
   "src/systems/dialogue/dialogue-engine.js",
   "src/systems/evidence-board/evidence-board.js",
   "src/systems/evidence/evidence-renderer.js",

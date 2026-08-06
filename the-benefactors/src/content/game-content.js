@@ -1567,6 +1567,60 @@ export const EVIDENCE = Object.freeze({
       handwritten: "For the first time, the next city can be warned before it becomes evidence.",
     },
   },
+  port_prosper_warning_receipt: {
+    id: "port_prosper_warning_receipt",
+    title: "Encrypted Port Prosper warning receipt",
+    category: "event",
+    summary:
+      "Trusted utility crews received the First Circle portfolio and began quietly isolating the targeted systems before Meridian noticed.",
+    artifact: {
+      type: "memo",
+      heading: "ENCRYPTED DELIVERY · PORT PROSPER EMERGENCY CELL",
+      body: [
+        "PORTFOLIO AUTHENTICATED",
+        "GRID CONTROL SEGMENTATION: IN PROGRESS",
+        "WATER SAFETY OVERRIDES: ARMED",
+        "SOURCE IDENTITY: WITHHELD",
+      ],
+      handwritten: "The city is moving before the Benefactors know why.",
+    },
+  },
+  first_circle_publication_record: {
+    id: "first_circle_publication_record",
+    title: "First Circle publication record",
+    category: "event",
+    summary:
+      "The vote, registry, portfolio, and escrow were mirrored through newsrooms worldwide before Meridian could suppress the story.",
+    artifact: {
+      type: "memo",
+      heading: "PUBLICATION LOG · THE BENEFECTORS FILES",
+      body: [
+        "PRIMARY STORY: RELEASED",
+        "AUDIO / DOCUMENT MIRRORS: 84",
+        "PORT PROSPER WARNING: PUBLIC",
+        "MERIDIAN RESPONSE: EMERGENCY DENIAL / RECORD PURGE",
+      ],
+      handwritten: "Everyone can see the board now. So can everyone named on it.",
+    },
+  },
+  orpheus_deep_cover_pass: {
+    id: "orpheus_deep_cover_pass",
+    title: "Orpheus residential-wing service pass",
+    category: "lead",
+    summary:
+      "Remaining undercover preserves access to the private residences where the First Circle keeps personal records and leverage files.",
+    artifact: {
+      type: "memo",
+      heading: "ORPHEUS FACILITIES · RESIDENTIAL SERVICE",
+      body: [
+        "ACCESS: PRINCIPAL RESIDENCES / LEVELS 08–11",
+        "ROLE: ENVIRONMENTAL SYSTEMS TECHNICIAN",
+        "ESCORT: NOT REQUIRED BEFORE 07:00",
+        "SECURITY REVIEW: PENDING",
+      ],
+      handwritten: "More proof upstairs, and less time for Port Prosper.",
+    },
+  },
 });
 
 export const INVENTORY_ITEMS = Object.freeze({

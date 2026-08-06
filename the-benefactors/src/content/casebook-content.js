@@ -734,12 +734,49 @@ export const CASEBOOK_STAGES = Object.freeze([
   {
     id: "warn_port_prosper",
     title: "Forty-eight hours",
-    objective: "Escape Orpheus and warn Port Prosper before the First Circle triggers the planned infrastructure failure.",
-    activeWhen: null,
+    objective: "Return to the home office and decide how to respond before the First Circle triggers Port Prosper's collapse.",
+    activeWhen: {
+      type: "flag",
+      key: "portProsperDecisionMade",
+      equals: false,
+    },
     hints: [
       "Review the Port Prosper warning file and preserve multiple copies of the First Circle recording.",
       "The city can be warned before Meridian's pre-positioned relief operation controls the narrative.",
       "The next chapter begins with a choice: publish immediately, warn the city quietly, or stay on Orpheus for more proof.",
+    ],
+  },
+  {
+    id: "quiet_warning_consequence",
+    title: "The silent warning",
+    objective: "Help Port Prosper harden its systems while the First Circle still believes its plan is secret.",
+    activeWhen: { type: "flag", key: "warnedPortProsperQuietly" },
+    hints: [
+      "Review the encrypted Port Prosper warning receipt.",
+      "Utility crews are isolating the exact systems named in the conversion portfolio.",
+      "The next move is to identify Meridian's local trigger team without revealing the source.",
+    ],
+  },
+  {
+    id: "publication_consequence",
+    title: "The story detonates",
+    objective: "Track the exposed principals as Meridian destroys records and launches a global denial campaign.",
+    activeWhen: { type: "flag", key: "publishedFirstCircleEvidence" },
+    hints: [
+      "Review the First Circle publication record.",
+      "The evidence is mirrored worldwide, but the network is evacuating and purging files.",
+      "The next move is to protect witnesses before Meridian reaches them.",
+    ],
+  },
+  {
+    id: "deep_cover_consequence",
+    title: "Upstairs among the owners",
+    objective: "Use the residential service pass to recover the First Circle's personal leverage files before Port Prosper's clock expires.",
+    activeWhen: { type: "flag", key: "remainedUndercoverOnOrpheus" },
+    hints: [
+      "Review the Orpheus residential-wing service pass.",
+      "The principals keep personal records above the assembly hall where staff access is lightly supervised before 07:00.",
+      "The next move is the residential wing—but Port Prosper is still in danger.",
     ],
   },
 ]);
@@ -820,4 +857,8 @@ export const CASEBOOK_PROGRESS = Object.freeze([
   { label: "Port Prosper portfolio recovered", when: { type: "flag", key: "foundPortProsperPortfolio" } },
   { label: "Crisis-investment escrow recovered", when: { type: "flag", key: "foundCrisisInvestmentEscrow" } },
   { label: "Benefactors' crisis-selection model proven", when: { type: "flag", key: "provedBenefactorsSelectCrises" } },
+  { label: "Port Prosper response chosen", when: { type: "flag", key: "portProsperDecisionMade" } },
+  { label: "Port Prosper warned quietly", when: { type: "flag", key: "warnedPortProsperQuietly" } },
+  { label: "First Circle evidence published", when: { type: "flag", key: "publishedFirstCircleEvidence" } },
+  { label: "Orpheus deep cover maintained", when: { type: "flag", key: "remainedUndercoverOnOrpheus" } },
 ]);

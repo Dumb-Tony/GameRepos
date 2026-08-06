@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 21;
+export const GAME_STATE_VERSION = 22;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -45,6 +45,7 @@ export function createInitialState(player = {}, settings = {}) {
       },
       prologueEndingStep: 0,
       prologueComplete: false,
+      portProsperResponse: null,
     },
     flags: {
       heardOpeningMessage: false,
@@ -137,6 +138,10 @@ export function createInitialState(player = {}, settings = {}) {
       foundPortProsperPortfolio: false,
       foundCrisisInvestmentEscrow: false,
       provedBenefactorsSelectCrises: false,
+      portProsperDecisionMade: false,
+      warnedPortProsperQuietly: false,
+      publishedFirstCircleEvidence: false,
+      remainedUndercoverOnOrpheus: false,
     },
     inventory: ["press_credentials", "smartphone", "recorder", "notebook"],
     evidence: {
@@ -228,6 +233,7 @@ export function isGameState(value) {
       typeof value.progress.opening.cutsceneCompleted === "boolean" &&
       Number.isInteger(value.progress.prologueEndingStep) &&
       typeof value.progress.prologueComplete === "boolean" &&
+      Object.hasOwn(value.progress, "portProsperResponse") &&
       value.flags &&
       value.evidence &&
       value.board &&
