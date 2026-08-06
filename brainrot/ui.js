@@ -237,9 +237,11 @@
 
       $('btnBegin').addEventListener('click', () => { this.game.audio && this.game.audio.ensure(); this._autoFullscreen(); this._lockLandscape(); this._captureName(); this._closeModal('introModal'); this._showSelect(); });
       const cont = $('btnContinue');
-      const resumable = () => (this.game.save.hasSlot('auto') ? 'auto' : SLOTS.find((s) => this.game.save.hasSlot(s)));
-      cont.disabled = !resumable();
-      cont.addEventListener('click', () => { this.game.audio && this.game.audio.ensure(); const s = resumable(); if (s && this.game.loadGame(s)) this._closeModal('introModal'); });
+      // Recomputed on every intro open (see _refreshContinue) — a one-shot check
+      // at mount went stale as soon as the first autosave landed.
+      this._resumableSlot = () => (this.game.save.hasSlot('auto') ? 'auto' : SLOTS.find((s) => this.game.save.hasSlot(s)));
+      this._refreshContinue();
+      cont.addEventListener('click', () => { this.game.audio && this.game.audio.ensure(); const s = this._resumableSlot(); if (s && this.game.loadGame(s)) this._closeModal('introModal'); });
 
       const mute = $('setMute'), music = $('setMusic'), hd = $('setHDIcons'), hap = $('setHaptics');
       mute.checked = this.game.save.settings.muted; music.checked = this.game.save.settings.music;
@@ -445,7 +447,12 @@
       let n = inp && inp.value ? inp.value.trim().slice(0, 22) : '';
       if (!n) n = NAMES[(Math.floor(this.game.elapsed * 7 + (this.game.save.stats.totalMemes || 0)) % NAMES.length + NAMES.length) % NAMES.length];
       this.game.plagueName = n;
-      const bl = $('brainLabel'); // keep; pathogen label uses it
+      this._applyPlagueName();
+    }
+    // Paint the strain name into the panel chrome. Split out of _captureName so
+    // a loaded save can restore its name too (not just a freshly typed one).
+    _applyPlagueName() {
+      const n = this.game.plagueName; if (!n) return;
       const pl = document.querySelector('#pathogenPanel .pathogen-lbl');
       if (pl) pl.innerHTML = `<span data-spr="hud:biohazard" data-sprsize="13" data-sprcolor="#8fd14a"></span> ${n.toUpperCase()}`;
       const pca = document.querySelector('.hud-card#left'); if (pca) pca.setAttribute('data-title', '☣ ' + n);
@@ -568,10 +575,21 @@
     // phone, changing tabs). Browsers throttle timers for hidden pages, so
     // without this the run either stalls unevenly or lurches on return — and
     // you'd lose ground to the Cure while taking a call.
+    // Keep the intro's Continue button in sync with what's actually saved.
+    _refreshContinue() {
+      const cont = $('btnContinue'); if (!cont || !this._resumableSlot) return;
+      cont.disabled = !this._resumableSlot();
+    }
     _wireVisibility() {
       // visibilitychange is the correct signal here — window blur/focus would
       // false-pause on desktop just from clicking another window.
-      const onHide = () => { this._bgPaused = true; this._updatePause(); };
+      const onHide = () => {
+        this._bgPaused = true; this._updatePause();
+        // Persist immediately: a backgrounded mobile app can be killed without
+        // further notice, and the periodic autosave is only every 15s.
+        const g = this.game;
+        if (g && !g.ended && g.phase === 'play') { try { g.save.save('auto', g); g._lastAuto = g.elapsed; } catch (e) {} }
+      };
       const onShow = () => { this._bgPaused = false; this.game._lastFrame = 0; this._updatePause(); };
       document.addEventListener('visibilitychange', () => (document.hidden ? onHide() : onShow()));
       window.addEventListener('pagehide', onHide);
@@ -1121,7 +1139,11 @@
       setTimeout(() => { t.classList.add('leaving'); setTimeout(() => t.remove(), 320); }, phone ? 2400 : 3600);
     }
     _flash(id) { const e = $(id); if (!e) return; e.classList.remove('flash'); void e.offsetWidth; e.classList.add('flash'); }
-    _openModal(id) { const m = $(id); if (m) m.classList.add('on'); this._updatePause(); }
+    _openModal(id) {
+      const m = $(id); if (m) m.classList.add('on');
+      if (id === 'introModal') this._refreshContinue();   // reflect the latest autosave
+      this._updatePause();
+    }
     _closeModal(id) { const m = $(id); if (m) m.classList.remove('on'); this._updatePause(); }
 
     _fillSlots() {

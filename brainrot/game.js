@@ -465,9 +465,16 @@
       this.cure = d.cure || 0; this.heat = d.heat || 0; this.peakHeat = d.heat || 0; this.elapsed = d.elapsed || 0;
       this.purchased = new Set(d.purchased || []); this.recomputeEv();
       this.won = !!d.won; this.lost = !!d.lost; this.ended = this.won || this.lost;
-      this.viralBubbles = []; this.cureBubbles = []; this.startChoice = this.patientZero = null;
+      this.viralBubbles = []; this.cureBubbles = [];
+      // Restore the run's identity: patient zero (so its country isn't
+      // re-announced as a brand-new outbreak, and event spread still has a
+      // fallback target) and the strain name.
+      const pz = (d.pz != null) ? this.world.countries[d.pz] : null;
+      this.startChoice = this.patientZero = pz || null;
+      if (d.name) this.plagueName = d.name;
+      if (pz && this.world._announced) this.world._announced.add(pz.id);
       this.events = new BR.EventSystem(this);
-      if (this.ui) { this.ui.onNewGame(); this.ui.onRelease(); this.ui.toast('📂', 'Loaded slot ' + slot, 'info'); }
+      if (this.ui) { this.ui.onNewGame(); this.ui.onRelease(); this.ui._applyPlagueName && this.ui._applyPlagueName(); this.ui.toast('📂', 'Loaded slot ' + slot, 'info'); }
       this.start();
       return true;
     }
