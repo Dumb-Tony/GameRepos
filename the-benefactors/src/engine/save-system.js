@@ -291,6 +291,24 @@ export class SaveSystem {
       migrated.progress.unlockedLocations.push("orpheus_first_circle");
     }
 
+    if (legacyVersion < 23) {
+      const columns = [2, 16, 30, 44, 58, 72, 86];
+      const rowCount = Math.max(
+        1,
+        Math.ceil(migrated.evidence.pinned.length / columns.length),
+      );
+      const rowGap =
+        rowCount === 1 ? 0 : Math.min(19, 73 / (rowCount - 1));
+
+      migrated.evidence.pinned.forEach((evidenceId, index) => {
+        migrated.board.cards[evidenceId] = {
+          x: columns[index % columns.length],
+          y: 7 + Math.floor(index / columns.length) * rowGap,
+        };
+      });
+      migrated.board.layoutVersion = 3;
+    }
+
     return migrated;
   }
 }

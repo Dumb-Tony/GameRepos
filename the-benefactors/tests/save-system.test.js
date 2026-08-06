@@ -292,7 +292,7 @@ test("reflows legacy evidence cards onto the expanded seven-column board", () =>
 
   const migrated = saves.load();
 
-  assert.equal(migrated.board.layoutVersion, 2);
+  assert.equal(migrated.board.layoutVersion, 3);
   assert.deepEqual(migrated.board.cards["legacy-clue-0"], { x: 2, y: 7 });
   assert.deepEqual(migrated.board.cards["legacy-clue-6"], { x: 86, y: 7 });
   assert.deepEqual(migrated.board.cards["legacy-clue-7"], { x: 2, y: 26 });
@@ -457,4 +457,36 @@ test("adds the Port Prosper response field to pre-decision saves", () => {
 
   assert.equal(migrated.version, GAME_STATE_VERSION);
   assert.equal(migrated.progress.portProsperResponse, null);
+});
+
+test("reflows an overcrowded version 22 board back inside the corkboard", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Robin" });
+  previous.version = 22;
+  previous.board.layoutVersion = 2;
+  previous.evidence.pinned = Array.from(
+    { length: 49 },
+    (_, index) => `legacy-clue-${index}`,
+  );
+  previous.evidence.collected = [...previous.evidence.pinned];
+  previous.evidence.pinned.forEach((evidenceId, index) => {
+    previous.board.cards[evidenceId] = {
+      x: [2, 16, 30, 44, 58, 72, 86][index % 7],
+      y: 7 + Math.floor(index / 7) * 19,
+    };
+  });
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+  const positions = migrated.evidence.pinned.map(
+    (evidenceId) => migrated.board.cards[evidenceId],
+  );
+
+  assert.equal(migrated.board.layoutVersion, 3);
+  assert.equal(Math.max(...positions.map((position) => position.y)), 80);
+  assert.equal(
+    new Set(positions.map((position) => `${position.x},${position.y}`)).size,
+    positions.length,
+  );
 });
