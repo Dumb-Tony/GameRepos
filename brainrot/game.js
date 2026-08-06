@@ -339,6 +339,7 @@
       if (this.world) this.world.addBurst(m.x, m.y, '#f2c94c', true);
       if (this.fx) { this.fx.floatText(m.x, m.y - 20, '+' + BR.fmt(r), '#f2c94c'); }
       if (this.audio) { this.audio.viral(); this.audio.haptic(18); }
+      if (this.fx) this.fx.addShake(3.5, 0.18);
     }
     clickCure(m) {
       const i = this.cureBubbles.indexOf(m); if (i < 0) return; this.cureBubbles.splice(i, 1);
@@ -346,6 +347,7 @@
       if (this.world) this.world.addBurst(m.x, m.y, '#4ea1ff', true);
       if (this.fx) { this.fx.floatText(m.x, m.y - 20, '-' + m.setback.toFixed(1) + '% cure', '#4ea1ff'); }
       if (this.audio) { this.audio.pop(); this.audio.haptic(15); }
+      if (this.fx) this.fx.addShake(3, 0.16);
     }
 
     // ---- event helper API (events.js) ---------------------------------
@@ -394,7 +396,7 @@
       if (gb >= 90) fire('g90', '🌍', 'Ninety percent global brain rot. Only the strongest touch-grassers remain.', 'good');
       if (this.necroticPeople() > 0.5) fire('firstTerm', '💀', 'The first minds have gone fully terminal — brains completely necrotic. Only skibidi remains.', 'chaos');
       if (this.cure >= 25) fire('c25', '🧪', 'The Cure ("Touch-Grass Campaign") reaches 25%. Ad councils are mobilizing.', 'bad');
-      if (this.cure >= 50 && !this.cureEndgame) { this.cureEndgame = true; fire('c50', '⚠️', 'THE CURE IS AT 50%. Humanity is fighting back — funding surges and borders slam shut. Finish this, fast.', 'bad'); if (this.audio) this.audio.haptic([40, 30, 40]); }
+      if (this.cure >= 50 && !this.cureEndgame) { this.cureEndgame = true; fire('c50', '⚠️', 'THE CURE IS AT 50%. Humanity is fighting back — funding surges and borders slam shut. Finish this, fast.', 'bad'); if (this.audio) this.audio.haptic([40, 30, 40]); if (this.fx) this.fx.addShake(9, 0.6); }
       if (this.cure >= 75) fire('c75', '🚨', 'The Cure hits 75%. It is very nearly over for the brain rot. De-evolve loud symptoms and stall it!', 'bad');
       const sealed = this.world.countries.filter((c) => !c.airOpen && !c.seaOpen && !c.landOpen).length;
       if (sealed >= 5) fire('sealed5', '🧱', 'Governments worldwide are slamming the door — five regions have gone fully dark. Evolve Border Pierce or the last holdouts stay clean.', 'bad');
@@ -441,11 +443,11 @@
         this.won = true; this.ended = true; this.save.stats.gamesWon++;
         if (this.save.stats.bestTime === null || this.elapsed < this.save.stats.bestTime) this.save.stats.bestTime = this.elapsed;
         this.save.saveStats(); this.checkAchievements();
-        if (this.audio) { this.audio.win(); this.audio.haptic([30, 50, 30, 50, 90]); } if (this.ui) this.ui.onWin(); return;
+        if (this.audio) { this.audio.win(); this.audio.haptic([30, 50, 30, 50, 90]); } if (this.fx) this.fx.addShake(12, 0.9); if (this.ui) this.ui.onWin(); return;
       }
       if (this.cure >= C.CURE_MAX) {
         this.lost = true; this.ended = true; this.loseReason = 'cured'; this.save.stats.gamesLost++; this.save.saveStats();
-        if (this.audio) { this.audio.lose(); this.audio.haptic([120, 60, 120]); } if (this.ui) this.ui.onLose('cured');
+        if (this.audio) { this.audio.lose(); this.audio.haptic([120, 60, 120]); } if (this.fx) this.fx.addShake(12, 0.9); if (this.ui) this.ui.onLose('cured');
       }
     }
 
