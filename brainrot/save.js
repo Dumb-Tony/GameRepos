@@ -57,6 +57,10 @@
         elapsed: game.elapsed, virality: game.virality, totalVir: game.totalViralityEarned, cure: game.cure, heat: game.heat,
         purchased: [...game.purchased], countries: game.world.countries.map((c) => c.snapshot()),
         won: game.won, lost: game.lost,
+        // patient zero (by index) + the strain name, so a resumed run keeps its
+        // identity — without these the origin country got re-announced as a
+        // fresh outbreak and the strain reverted to the default name.
+        pz: game.patientZero ? game.patientZero.id : null, name: game.plagueName || null,
       };
     }
     save(slot, game) {
