@@ -28,7 +28,7 @@
       this._pathogenCv = $('pathogenCanvas'); this._pathogenCtx = this._pathogenCv ? this._pathogenCv.getContext('2d') : null;
       this._newsQueue = []; this._newsOpen = false; this._evoOpen = false;
       this._buildMeters(); this._buildTrees(); this._buildDiffs(); this._buildGenes(); this._initBrainImgs();
-      this._wireTabs(); this._wireControls(); this._wireMap();
+      this._wireTabs(); this._wireControls(); this._wireMap(); this._wireVisibility();
       this._paintStaticIcons();
       this.mounted = true; this.onNewGame(); this._resize(); this._renderOverview(); this.tickHud();
     }
@@ -559,9 +559,22 @@
     // ---- evolution overlay (pauses the game) --------------------------
     _updatePause() {
       // Pause the sim while any blocking overlay is open — the evolve tree, a
-      // news bulletin, or a menu/stats/awards panel (Plague Inc pauses there too).
+      // news bulletin, or a menu/stats/awards panel (Plague Inc pauses there too)
+      // — or while the app is backgrounded (see _wireVisibility).
       const blocking = ['menuModal', 'statsModal', 'awardsModal'].some((id) => { const m = $(id); return m && m.classList.contains('on'); });
-      this.game.paused = !!(this._evoOpen || this._newsOpen || blocking);
+      this.game.paused = !!(this._evoOpen || this._newsOpen || blocking || this._bgPaused);
+    }
+    // Auto-pause when the app is backgrounded (switching apps, locking the
+    // phone, changing tabs). Browsers throttle timers for hidden pages, so
+    // without this the run either stalls unevenly or lurches on return — and
+    // you'd lose ground to the Cure while taking a call.
+    _wireVisibility() {
+      // visibilitychange is the correct signal here — window blur/focus would
+      // false-pause on desktop just from clicking another window.
+      const onHide = () => { this._bgPaused = true; this._updatePause(); };
+      const onShow = () => { this._bgPaused = false; this.game._lastFrame = 0; this._updatePause(); };
+      document.addEventListener('visibilitychange', () => (document.hidden ? onHide() : onShow()));
+      window.addEventListener('pagehide', onHide);
     }
     _openEvo() {
       if (this.game.phase !== 'play' || this.game.ended) return;
@@ -1076,7 +1089,14 @@
       ctx.fillStyle = 'rgba(200,180,255,0.55)'; ctx.textAlign = 'right'; ctx.fillText(clock(tmax), w - padR, h - 3); ctx.textAlign = 'left'; ctx.fillText('0:00', padL, h - 3);
     }
     _renderAwards() {
-      $('awardsBody').innerHTML = '<div class="ach-grid">' + BR.ACHIEVEMENTS.map((a) => `<div class="ach ${this.game.save.isUnlocked(a.id) ? 'got' : ''}"><div class="ach-ico">${a.emoji}</div><div><div class="ach-name">${a.name}</div><div class="ach-desc">${a.desc}</div></div></div>`).join('') + '</div>';
+      const all = BR.ACHIEVEMENTS, got = all.filter((a) => this.game.save.isUnlocked(a.id)).length;
+      const pct = all.length ? Math.round((got / all.length) * 100) : 0;
+      // Progress summary up top — "how completionist am I?" at a glance.
+      const head = `<div class="ach-prog"><div class="ach-prog-top"><span><b>${got}</b> of <b>${all.length}</b> unlocked</span><span class="ach-prog-pct">${pct}%</span></div>
+        <div class="ach-prog-bar"><span style="width:${pct}%"></span></div></div>`;
+      // Unlocked first so earned ones are the first thing you see.
+      const sorted = all.slice().sort((a, b) => (this.game.save.isUnlocked(b.id) ? 1 : 0) - (this.game.save.isUnlocked(a.id) ? 1 : 0));
+      $('awardsBody').innerHTML = head + '<div class="ach-grid">' + sorted.map((a) => `<div class="ach ${this.game.save.isUnlocked(a.id) ? 'got' : ''}"><div class="ach-ico">${a.emoji}</div><div><div class="ach-name">${a.name}</div><div class="ach-desc">${a.desc}</div></div></div>`).join('') + '</div>';
     }
     _milestones() {
       const g = this.game, gb = g.globalBrainrot();
