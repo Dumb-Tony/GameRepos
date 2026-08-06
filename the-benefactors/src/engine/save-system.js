@@ -3,7 +3,7 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js?v=visual-polish-20260730a";
+} from "./game-state.js?v=port-prosper-choice-20260806a";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
@@ -257,6 +257,56 @@ export class SaveSystem {
       !migrated.progress.unlockedLocations.includes("crownline_data_center")
     ) {
       migrated.progress.unlockedLocations.push("crownline_data_center");
+    }
+
+    if (
+      legacyVersion < 18 &&
+      migrated.flags.provedCrownlineGovernanceModel &&
+      !migrated.progress.unlockedLocations.includes("greyhaven_executive_airfield")
+    ) {
+      migrated.progress.unlockedLocations.push("greyhaven_executive_airfield");
+    }
+
+    if (
+      legacyVersion < 19 &&
+      migrated.flags.provedRedoubtEvacuation &&
+      !migrated.progress.unlockedLocations.includes("blackwater_point")
+    ) {
+      migrated.progress.unlockedLocations.push("blackwater_point");
+    }
+
+    if (
+      legacyVersion < 20 &&
+      migrated.flags.provedOrpheusSupplyRoute &&
+      !migrated.progress.unlockedLocations.includes("orpheus_sublevel_harbor")
+    ) {
+      migrated.progress.unlockedLocations.push("orpheus_sublevel_harbor");
+    }
+
+    if (
+      legacyVersion < 21 &&
+      migrated.flags.provedOrpheusCommandCenter &&
+      !migrated.progress.unlockedLocations.includes("orpheus_first_circle")
+    ) {
+      migrated.progress.unlockedLocations.push("orpheus_first_circle");
+    }
+
+    if (legacyVersion < 23) {
+      const columns = [2, 16, 30, 44, 58, 72, 86];
+      const rowCount = Math.max(
+        1,
+        Math.ceil(migrated.evidence.pinned.length / columns.length),
+      );
+      const rowGap =
+        rowCount === 1 ? 0 : Math.min(19, 73 / (rowCount - 1));
+
+      migrated.evidence.pinned.forEach((evidenceId, index) => {
+        migrated.board.cards[evidenceId] = {
+          x: columns[index % columns.length],
+          y: 7 + Math.floor(index / columns.length) * rowGap,
+        };
+      });
+      migrated.board.layoutVersion = 3;
     }
 
     return migrated;

@@ -292,7 +292,7 @@ test("reflows legacy evidence cards onto the expanded seven-column board", () =>
 
   const migrated = saves.load();
 
-  assert.equal(migrated.board.layoutVersion, 2);
+  assert.equal(migrated.board.layoutVersion, 3);
   assert.deepEqual(migrated.board.cards["legacy-clue-0"], { x: 2, y: 7 });
   assert.deepEqual(migrated.board.cards["legacy-clue-6"], { x: 86, y: 7 });
   assert.deepEqual(migrated.board.cards["legacy-clue-7"], { x: 2, y: 26 });
@@ -358,5 +358,135 @@ test("unlocks Crownline for completed Verdant saves", () => {
   assert.equal(
     migrated.progress.unlockedLocations.includes("crownline_data_center"),
     true,
+  );
+});
+
+test("unlocks the executive airfield for completed Crownline saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Robin" });
+  previous.version = 17;
+  previous.flags.provedCrownlineGovernanceModel = true;
+  previous.progress.unlockedLocations =
+    previous.progress.unlockedLocations.filter(
+      (locationId) => locationId !== "greyhaven_executive_airfield",
+    );
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(
+    migrated.progress.unlockedLocations.includes("greyhaven_executive_airfield"),
+    true,
+  );
+});
+
+test("unlocks Blackwater Point for completed Hangar 4 saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Robin" });
+  previous.version = 18;
+  previous.flags.provedRedoubtEvacuation = true;
+  previous.progress.unlockedLocations =
+    previous.progress.unlockedLocations.filter(
+      (locationId) => locationId !== "blackwater_point",
+    );
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(
+    migrated.progress.unlockedLocations.includes("blackwater_point"),
+    true,
+  );
+});
+
+test("unlocks the Orpheus harbor for completed Blackwater saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Robin" });
+  previous.version = 19;
+  previous.flags.provedOrpheusSupplyRoute = true;
+  previous.progress.unlockedLocations =
+    previous.progress.unlockedLocations.filter(
+      (locationId) => locationId !== "orpheus_sublevel_harbor",
+    );
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(
+    migrated.progress.unlockedLocations.includes("orpheus_sublevel_harbor"),
+    true,
+  );
+});
+
+test("unlocks the First Circle for completed Orpheus harbor saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Robin" });
+  previous.version = 20;
+  previous.flags.provedOrpheusCommandCenter = true;
+  previous.progress.unlockedLocations =
+    previous.progress.unlockedLocations.filter(
+      (locationId) => locationId !== "orpheus_first_circle",
+    );
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(
+    migrated.progress.unlockedLocations.includes("orpheus_first_circle"),
+    true,
+  );
+});
+
+test("adds the Port Prosper response field to pre-decision saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Robin" });
+  previous.version = 21;
+  delete previous.progress.portProsperResponse;
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(migrated.progress.portProsperResponse, null);
+});
+
+test("reflows an overcrowded version 22 board back inside the corkboard", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Robin" });
+  previous.version = 22;
+  previous.board.layoutVersion = 2;
+  previous.evidence.pinned = Array.from(
+    { length: 49 },
+    (_, index) => `legacy-clue-${index}`,
+  );
+  previous.evidence.collected = [...previous.evidence.pinned];
+  previous.evidence.pinned.forEach((evidenceId, index) => {
+    previous.board.cards[evidenceId] = {
+      x: [2, 16, 30, 44, 58, 72, 86][index % 7],
+      y: 7 + Math.floor(index / 7) * 19,
+    };
+  });
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+  const positions = migrated.evidence.pinned.map(
+    (evidenceId) => migrated.board.cards[evidenceId],
+  );
+
+  assert.equal(migrated.board.layoutVersion, 3);
+  assert.equal(Math.max(...positions.map((position) => position.y)), 80);
+  assert.equal(
+    new Set(positions.map((position) => `${position.x},${position.y}`)).size,
+    positions.length,
   );
 });

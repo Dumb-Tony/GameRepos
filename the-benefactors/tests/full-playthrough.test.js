@@ -5,6 +5,7 @@ import { DEDUCTIONS } from "../src/content/game-content.js";
 import { applyEffects } from "../src/engine/events.js";
 import { createInitialState } from "../src/engine/game-state.js";
 import { SaveSystem } from "../src/engine/save-system.js";
+import { applyPortProsperResponse } from "../src/systems/decisions/port-prosper-response.js";
 import {
   connectEvidence,
   evaluateBoardDeductions,
@@ -27,7 +28,7 @@ class MemoryStorage {
   }
 }
 
-test("the complete authored investigation can progress from the leak through Crownline", () => {
+test("the complete authored investigation can progress from the leak through the First Circle", () => {
   const deductionOrder = Object.keys(DEDUCTIONS);
   const saves = new SaveSystem(new MemoryStorage());
   let state = createInitialState({ firstName: "Alex" });
@@ -69,11 +70,20 @@ test("the complete authored investigation can progress from the leak through Cro
     );
   }
 
+  state = applyPortProsperResponse(state, "warn");
+  saves.save(state, "playthrough-port-prosper-response");
+  state = saves.load();
+
   assert.deepEqual(state.completedDeductions, deductionOrder);
   assert.equal(state.flags.provedCrownlineGovernanceModel, true);
+  assert.equal(state.flags.provedRedoubtEvacuation, true);
+  assert.equal(state.flags.provedOrpheusSupplyRoute, true);
+  assert.equal(state.flags.provedOrpheusCommandCenter, true);
+  assert.equal(state.flags.provedBenefactorsSelectCrises, true);
+  assert.equal(state.flags.warnedPortProsperQuietly, true);
   assert.equal(
-    state.evidence.collected.includes("executive_airfield_credential"),
+    state.evidence.collected.includes("port_prosper_warning_receipt"),
     true,
   );
-  assert.equal(state.board.connections.length >= 21, true);
+  assert.equal(state.board.connections.length >= 35, true);
 });

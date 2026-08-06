@@ -4,11 +4,11 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=visual-polish-20260730a";
+} from "../content/game-content.js?v=port-prosper-choice-20260806a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=visual-polish-20260730a";
+} from "../content/casebook-content.js?v=port-prosper-choice-20260806a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
@@ -19,16 +19,21 @@ import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=visual-polish-20260730a";
+} from "../content/prologue-content.js?v=field-tools-20260731a";
 import { evaluateCondition } from "../engine/conditions.js?v=visual-polish-20260730a";
 import { applyEffects } from "../engine/events.js?v=visual-polish-20260730a";
-import { createInitialState } from "../engine/game-state.js?v=visual-polish-20260730a";
+import { createInitialState } from "../engine/game-state.js?v=port-prosper-choice-20260806a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
 } from "../engine/player-language.js?v=visual-polish-20260730a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=visual-polish-20260730a";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=visual-polish-20260730a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=port-prosper-choice-20260806a";
+import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=field-tools-20260731a";
+import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=field-tools-20260731a";
+import {
+  PORT_PROSPER_RESPONSES,
+  applyPortProsperResponse,
+} from "../systems/decisions/port-prosper-response.js?v=port-prosper-choice-20260806a";
 import {
   advanceDialogue,
   closeDialogue,
@@ -45,7 +50,7 @@ import {
   removeConnection,
   unpinEvidence,
 } from "../systems/evidence-board/evidence-board.js?v=visual-polish-20260730a";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=visual-polish-20260730a";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=first-circle-20260806a";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
@@ -113,8 +118,11 @@ export class GameApp {
     this.activeEvidenceId = null;
     this.puzzleAnnouncement = "";
     this.activeRecordingFragmentId = null;
+    this.activeInventoryToolId = null;
+    this.inventoryMessage = "";
     this.pendingDeleteSlot = null;
     this.evidenceViewerActionsBound = false;
+    this.inventoryActionsBound = false;
   }
 
   start() {
@@ -189,6 +197,7 @@ export class GameApp {
       alignment: () => this.renderStudyAlignment(),
       recording: () => this.renderRecordingPuzzle(),
       "prologue-ending": () => this.renderPrologueEnding(),
+      "port-prosper-decision": () => this.renderPortProsperDecision(),
       "case-files": () => this.renderCaseFiles(),
       notebook: () => this.renderNotebook(),
       "content-notice": () => this.renderContentNotice(),
@@ -202,6 +211,8 @@ export class GameApp {
       this.root.insertAdjacentHTML("beforeend", this.renderEvidenceViewer());
     }
     this.bindEvidenceViewerActions();
+    this.bindInventoryActions();
+    this.bindRecordingAudioActions();
     this.root.querySelector("h1, h2, [data-autofocus]")?.focus?.();
   }
 
@@ -764,7 +775,112 @@ export class GameApp {
   renderHome() {
     const state = this.store.getState();
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
-    const caseUpdate = state.flags.provedCrownlineGovernanceModel
+    const caseUpdate = state.flags.warnedPortProsperQuietly
+      ? {
+          title: "The silent warning",
+          text:
+            "Port Prosper is quietly isolating its targeted systems. The First Circle still believes its operation is secret, giving you time to identify Meridian's local trigger team.",
+        }
+      : state.flags.publishedFirstCircleEvidence
+        ? {
+            title: "The story detonates",
+            text:
+              "The Benefactors files are mirrored worldwide. Meridian is denying everything, evacuating exposed principals, and destroying records before investigators can reach them.",
+          }
+        : state.flags.remainedUndercoverOnOrpheus
+          ? {
+              title: "Upstairs among the owners",
+              text:
+                "Your maintenance disguise still opens the residential wing. More conclusive leverage files wait upstairs, but Port Prosper's forty-eight-hour clock is still running.",
+            }
+          : state.flags.provedBenefactorsSelectCrises
+      ? {
+          title: "Forty-eight hours",
+          text:
+            "The First Circle selected Port Prosper and funded its collapse. You have their vote, their names, their plan, and a narrow chance to warn the city first.",
+        }
+      : state.flags.recordedFirstCircleVote &&
+          state.flags.photographedFirstCircleRegistry &&
+          state.flags.foundPortProsperPortfolio &&
+          state.flags.foundCrisisInvestmentEscrow
+        ? {
+            title: "The owners",
+            text:
+              "The vote recording, seating registry, conversion portfolio, and escrow can prove the Benefactors select and profit from every manufactured crisis.",
+          }
+        : (state.locationVisits.orpheus_first_circle || 0) > 0
+          ? {
+              title: "The vote",
+              text:
+                "Record the live First Circle session, photograph its registry, copy the Port Prosper portfolio, and recover the sealed investment escrow.",
+            }
+          : state.flags.provedOrpheusCommandCenter
+      ? {
+          title: "The First Circle",
+          text:
+            "Orpheus is the Benefactors' command center. Their principals are meeting on Level 07 now to select and pre-position the next manufactured crisis.",
+        }
+      : state.flags.questionedAdrianMoss &&
+          state.flags.photographedOrpheusArrivalRegistry &&
+          state.flags.foundBenefactorClinicTransferOrder &&
+          state.flags.photographedOrpheusSecurityWall &&
+          state.flags.foundSublevelElevatorDirectory
+        ? {
+            title: "The people upstairs",
+            text:
+              "The arrival registry, clinic order, security wall, and elevator directory can prove Orpheus is a private command center rather than a refuge.",
+          }
+        : (state.locationVisits.orpheus_sublevel_harbor || 0) > 0
+          ? {
+              title: "The refuge beneath the island",
+              text:
+                "Show Adrian the maintenance badge and cold-chain manifest, then document the registry, clinic case, security wall, and elevator directory.",
+            }
+          : state.flags.provedOrpheusSupplyRoute
+      ? {
+          title: "Nineteen minutes to the island",
+          text:
+            "Blackwater is Orpheus's hidden lifeline. A maintenance credential and radar gap provide one way into the island's submerged service harbor.",
+        }
+      : state.flags.questionedTamsinPike &&
+          state.flags.photographedBlackwaterLedger &&
+          state.flags.foundOrpheusColdChainManifest &&
+          state.flags.photographedIslandServiceLaunch &&
+          state.flags.foundBlackwaterTideWindow
+        ? {
+            title: "The offshore lifeline",
+            text:
+              "The shadow ledger, cold-chain manifest, disguised launch, and tide window can prove how Redoubt supplies Orpheus outside every public record.",
+          }
+        : (state.locationVisits.blackwater_point || 0) > 0
+          ? {
+              title: "The island's hidden lifeline",
+              text:
+                "Show Tamsin the Orpheus service chart and cargo seal, then document the ledger, refrigerated container, launch, and tide locker.",
+            }
+          : state.flags.provedRedoubtEvacuation
+      ? {
+          title: "An island outside the map",
+          text:
+            "Redoubt evacuates Meridian's principals, archives, samples, and money to Orpheus. The island's disguised supply route begins at Blackwater Point.",
+        }
+      : state.flags.questionedEllisWard &&
+          state.flags.photographedHangarManifest &&
+          state.flags.photographedBenefactorBoarding &&
+          state.flags.foundRedoubtCargoSeal &&
+          state.flags.foundOrpheusRouteStrip
+        ? {
+            title: "The escape network",
+            text:
+              "The airfield statement, manifest, boarding photograph, cargo seal, and Orpheus route can prove who Redoubt saves when a manufactured crisis succeeds.",
+          }
+        : (state.locationVisits.greyhaven_executive_airfield || 0) > 0
+          ? {
+              title: "The first rescue",
+              text:
+                "Show Ellis the Hangar 4 credential and Redoubt flight log, then document the manifest, boarding party, cargo seal, and cockpit route.",
+            }
+          : state.flags.provedCrownlineGovernanceModel
       ? {
           title: "The trail leaves Greyhaven",
           text:
@@ -1068,6 +1184,12 @@ export class GameApp {
             <p class="observation-label">Observation</p>
             <h2>${escapeHtml(note.title)}</h2>
             <p>${escapeHtml(note.text)}</p>
+            ${
+              state.flags.provedBenefactorsSelectCrises &&
+              !state.flags.portProsperDecisionMade
+                ? '<button class="button button-primary" data-action="port-prosper-decision">Choose how to respond</button>'
+                : ""
+            }
           </aside>
         </section>
         <footer class="game-toolbar">
@@ -1124,6 +1246,7 @@ export class GameApp {
       notebook: () => this.openNotebook("home"),
       inventory: () => {
         this.inventoryOpen = !this.inventoryOpen;
+        this.inventoryMessage = "";
         this.renderHome();
       },
       save: () => this.openCaseFiles("home"),
@@ -1132,6 +1255,91 @@ export class GameApp {
         this.router.navigate("settings");
       },
       title: () => this.router.navigate("title"),
+      "port-prosper-decision": () => this.router.navigate("port-prosper-decision"),
+    });
+  }
+
+  renderPortProsperDecision() {
+    const state = this.store.getState();
+    if (!state.flags.provedBenefactorsSelectCrises) {
+      this.router.navigate("home", { replace: true });
+      return;
+    }
+
+    const selected = state.progress.portProsperResponse
+      ? PORT_PROSPER_RESPONSES[state.progress.portProsperResponse]
+      : null;
+    const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
+
+    this.root.innerHTML = `
+      <main id="game-main" class="screen decision-screen port-prosper-decision-screen">
+        <div class="decision-backdrop" aria-hidden="true"></div>
+        <section class="decision-shell" aria-labelledby="decision-title">
+          <header class="decision-heading">
+            <p class="kicker">Port Prosper · Forty-eight hours</p>
+            <h1 id="decision-title" tabindex="-1">${selected ? escapeHtml(selected.title) : "What does the story require?"}</h1>
+            <p>
+              ${
+                selected
+                  ? escapeHtml(selected.consequence)
+                  : "The next catastrophe is scheduled, funded, and waiting. Any response can save lives—but every response changes what the Benefactors do next."
+              }
+            </p>
+          </header>
+          ${
+            selected
+              ? `
+                <article class="decision-result">
+                  <p class="speaker">Decision recorded · ${playerName}</p>
+                  <h2>${escapeHtml(selected.title)}</h2>
+                  <p>${escapeHtml(selected.consequence)}</p>
+                  <button class="button button-primary" data-action="decision-home">Return to the evidence board</button>
+                </article>
+              `
+              : `
+                <div class="decision-options">
+                  ${Object.values(PORT_PROSPER_RESPONSES)
+                    .map(
+                      (response) => `
+                        <article class="decision-option">
+                          <p class="kicker">Irreversible choice</p>
+                          <h2>${escapeHtml(response.title)}</h2>
+                          <p>${escapeHtml(response.summary)}</p>
+                          <button class="button button-primary" data-response-choice="${response.id}">Choose this response</button>
+                        </article>
+                      `,
+                    )
+                    .join("")}
+                </div>
+                <button class="button button-ghost decision-back" data-action="decision-back">Return to the office</button>
+              `
+          }
+        </section>
+      </main>
+    `;
+
+    this.root.querySelectorAll("[data-response-choice]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const next = applyPortProsperResponse(
+          this.store.getState(),
+          button.dataset.responseChoice,
+        );
+        this.store.replace(next, `port-prosper-${button.dataset.responseChoice}`);
+        this.saves.save(this.store.getState(), `port-prosper-${button.dataset.responseChoice}`);
+        this.renderPortProsperDecision();
+      });
+    });
+
+    this.bindActions({
+      "decision-back": () => this.router.navigate("home"),
+      "decision-home": () => {
+        this.store.update((draft) => {
+          draft.progress.currentScreen = "board";
+          draft.progress.currentLocation = "home_office";
+        }, "port-prosper-response-complete");
+        this.saves.save(this.store.getState(), "port-prosper-response-complete");
+        this.router.navigate("board");
+      },
     });
   }
 
@@ -1150,7 +1358,7 @@ export class GameApp {
       <main id="game-main" class="screen game-screen location-screen">
         ${this.renderGameHeader(this.chapterLabel(state), location.name)}
         <section class="location-stage">
-          ${renderExplorationScene(location, state)}
+          ${renderExplorationScene(location, state, this.activeInventoryToolId)}
           <article class="location-copy">
             <p class="kicker">${escapeHtml(location.eyebrow)}</p>
             <h1 tabindex="-1">${escapeHtml(location.name)}</h1>
@@ -1164,6 +1372,11 @@ export class GameApp {
                     <p>${escapeHtml(
                       note.resultShown ? note.resultText || note.text : note.text,
                     )}</p>
+                    ${
+                      note.toolId && INVENTORY_ITEMS[note.toolId]
+                        ? `<p class="tool-use-chip"><span>${escapeHtml(INVENTORY_ITEMS[note.toolId].icon)}</span> Uses ${escapeHtml(INVENTORY_ITEMS[note.toolId].name)}</p>`
+                        : ""
+                    }
                     ${
                       actionAvailable
                         ? `<button class="button button-secondary" data-action="hotspot-action">${escapeHtml(note.actionLabel)}</button>`
@@ -1202,12 +1415,16 @@ export class GameApp {
         this.activeLocationNote = location.hotspots.find(
           (hotspot) => hotspot.id === button.dataset.sceneHotspot,
         );
+        if (this.activeLocationNote?.toolId !== this.activeInventoryToolId) {
+          this.activeInventoryToolId = null;
+        }
         this.renderLocation();
       });
     });
 
     this.bindActions({
       "hotspot-action": () => {
+        this.activeInventoryToolId = null;
         if (note.route) {
           this.puzzleAnnouncement = "";
           this.store.update((draft) => {
@@ -1243,6 +1460,7 @@ export class GameApp {
       notebook: () => this.openNotebook("location"),
       inventory: () => {
         this.inventoryOpen = !this.inventoryOpen;
+        this.inventoryMessage = "";
         this.renderLocation();
       },
       home: () => {
@@ -1568,6 +1786,18 @@ export class GameApp {
                         <p class="kicker">Position ${index + 1} of ${puzzle.order.length}</p>
                         <h3>${escapeHtml(fragment.label)}</h3>
                         <p class="audio-marker">${escapeHtml(fragment.caption)}</p>
+                        ${
+                          fragment.audio
+                            ? `<audio
+                                class="recording-audio"
+                                data-recording-audio="${fragment.id}"
+                                controls
+                                preload="metadata"
+                                src="${escapeHtml(fragment.audio)}"
+                                aria-label="Play ${escapeHtml(fragment.label)} recording"
+                              >Your browser cannot play this recording.</audio>`
+                            : ""
+                        }
                         <blockquote
                           id="fragment-transcript-${fragment.id}"
                           class="fragment-copy"
@@ -1608,6 +1838,14 @@ export class GameApp {
               >
                 <p class="speaker">Recovered recording · Evelyn Vale</p>
                 <h2 id="recovered-message-title" tabindex="-1">Forty-seven continuous seconds</h2>
+                <audio
+                  class="recording-audio recording-audio-restored"
+                  data-recording-audio="restored"
+                  controls
+                  preload="metadata"
+                  src="${escapeHtml(RECORDING_PUZZLE.recoveredAudio)}"
+                  aria-label="Play Evelyn Vale's restored message"
+                >Your browser cannot play the restored message.</audio>
                 <blockquote>“${escapeHtml(RECORDING_PUZZLE.recoveredTranscript)}”</blockquote>
                 <button class="button button-primary" data-action="take-recording-home">
                   Take the restored message home
@@ -1618,6 +1856,8 @@ export class GameApp {
         </section>
       </main>
     `;
+
+    this.bindRecordingAudioActions();
 
     this.root.querySelectorAll("[data-preview-fragment]").forEach((button) => {
       button.addEventListener("click", () => {
@@ -1924,6 +2164,7 @@ export class GameApp {
       notebook: () => this.openNotebook("map"),
       inventory: () => {
         this.inventoryOpen = !this.inventoryOpen;
+        this.inventoryMessage = "";
         this.renderMap();
       },
       save: () => this.openCaseFiles("map"),
@@ -2140,7 +2381,65 @@ export class GameApp {
     );
     const yarnAnchorX = boardDensity.cardWidth / 2;
     const yarnAnchorY = (14 / corkboardHeight) * 100;
-    const boardCase = state.flags.provedCrownlineGovernanceModel
+    const boardCase = state.flags.portProsperDecisionMade
+      ? {
+          number: "11",
+          title: "PORT PROSPER / RESPONSE",
+          phase: state.flags.warnedPortProsperQuietly
+            ? "City warned · Source remains covert"
+            : state.flags.publishedFirstCircleEvidence
+              ? "Evidence public · Network evacuating"
+              : "Deep cover maintained · Clock running",
+        }
+      : state.flags.provedBenefactorsSelectCrises
+      ? {
+          number: "10",
+          title: "PORT PROSPER / FORTY-EIGHT HOURS",
+          phase: "Warn the next city before the trigger",
+        }
+      : (state.locationVisits.orpheus_first_circle || 0) > 0
+        ? {
+            number: "09",
+            title: "FIRST CIRCLE / CRISIS VOTE",
+            phase: "Prove who selects and profits",
+          }
+        : state.flags.provedOrpheusCommandCenter
+      ? {
+          number: "09",
+          title: "THE BENEFECTORS / FIRST CIRCLE",
+          phase: "Next lead: Level 07 assembly hall",
+        }
+      : (state.locationVisits.orpheus_sublevel_harbor || 0) > 0
+        ? {
+            number: "08",
+            title: "ORPHEUS / COMMAND CENTER",
+            phase: "Expose what the island protects",
+          }
+        : state.flags.provedOrpheusSupplyRoute
+      ? {
+          number: "08",
+          title: "ORPHEUS / ISLAND ACCESS",
+          phase: "Next lead: North Reef service harbor",
+        }
+      : (state.locationVisits.blackwater_point || 0) > 0
+        ? {
+            number: "07",
+            title: "BLACKWATER / OFFSHORE LIFELINE",
+            phase: "Trace the concealed island crossing",
+          }
+        : state.flags.provedRedoubtEvacuation
+      ? {
+          number: "07",
+          title: "ORPHEUS / OFFSHORE NETWORK",
+          phase: "Next lead: Blackwater Point",
+        }
+      : (state.locationVisits.greyhaven_executive_airfield || 0) > 0
+        ? {
+            number: "06",
+            title: "REDOUBT / HANGAR 4",
+            phase: "Document the evacuation network",
+          }
+        : state.flags.provedCrownlineGovernanceModel
       ? {
           number: "06",
           title: "REDOUBT / SITE ORPHEUS",
@@ -3203,6 +3502,33 @@ export class GameApp {
   }
 
   chapterLabel(state = this.store.getState()) {
+    if (state.flags.portProsperDecisionMade) {
+      return "Chapter 8 · Consequences";
+    }
+    if (
+      state.progress.unlockedLocations.includes("orpheus_first_circle") ||
+      (state.locationVisits.orpheus_first_circle || 0) > 0
+    ) {
+      return "Chapter 7 · The First Circle";
+    }
+    if (
+      state.progress.unlockedLocations.includes("orpheus_sublevel_harbor") ||
+      (state.locationVisits.orpheus_sublevel_harbor || 0) > 0
+    ) {
+      return "Chapter 6 · The Island";
+    }
+    if (
+      state.progress.unlockedLocations.includes("blackwater_point") ||
+      (state.locationVisits.blackwater_point || 0) > 0
+    ) {
+      return "Chapter 5 · Orpheus";
+    }
+    if (
+      state.progress.unlockedLocations.includes("greyhaven_executive_airfield") ||
+      (state.locationVisits.greyhaven_executive_airfield || 0) > 0
+    ) {
+      return "Chapter 4 · Redoubt";
+    }
     if (state.flags.mappedContinuitySiteNetwork) {
       return "Chapter 3 · The Pattern";
     }
@@ -3252,16 +3578,32 @@ export class GameApp {
           ${state.inventory
             .map((id) => INVENTORY_ITEMS[id])
             .filter(Boolean)
-            .map(
-              (item) => `
-                <article class="inventory-item">
-                  <span>${item.icon}</span>
+            .map((item) => {
+              const context = getInventoryToolContext(
+                state,
+                item.id,
+                GAME_CONTENT.locations,
+              );
+              return `
+                <button
+                  class="inventory-item ${context.available ? "is-useful" : ""}"
+                  data-use-inventory="${item.id}"
+                  aria-label="${escapeHtml(context.actionLabel)} with ${escapeHtml(item.name)}"
+                >
+                  <span>${escapeHtml(item.icon)}</span>
                   <strong>${escapeHtml(item.name)}</strong>
-                </article>
-              `,
-            )
+                  <small>${escapeHtml(item.description || context.hint)}</small>
+                  <em>${escapeHtml(context.actionLabel)}</em>
+                </button>
+              `;
+            })
             .join("")}
         </div>
+        ${
+          this.inventoryMessage
+            ? `<p class="inventory-message" role="status">${escapeHtml(this.inventoryMessage)}</p>`
+            : ""
+        }
         <div class="evidence-pocket">
           <p class="kicker">Case file · ${collectedEvidence.length}</p>
           ${
@@ -3364,6 +3706,83 @@ export class GameApp {
         this.renderLocation();
       });
     });
+  }
+
+  bindRecordingAudioActions() {
+    const settings = this.store.getState().settings;
+    const recordings = [...this.root.querySelectorAll("[data-recording-audio]")];
+    const volume = Math.max(0, Math.min(1, Number(settings.effectsVolume) || 0));
+
+    recordings.forEach((recording) => {
+      if (recording.dataset.audioBound === "true") return;
+      recording.dataset.audioBound = "true";
+      recording.volume = volume;
+      recording.muted = Boolean(settings.muted);
+      recording.addEventListener("play", () => {
+        recordings.forEach((other) => {
+          if (other !== recording) other.pause();
+          other.closest(".recording-fragment")?.classList.remove("is-audible");
+        });
+        recording.closest(".recording-fragment")?.classList.add("is-audible");
+      });
+      recording.addEventListener("pause", () => {
+        recording.closest(".recording-fragment")?.classList.remove("is-audible");
+      });
+      recording.addEventListener("ended", () => {
+        recording.closest(".recording-fragment")?.classList.remove("is-audible");
+      });
+    });
+  }
+
+  bindInventoryActions() {
+    if (this.inventoryActionsBound) return;
+    this.inventoryActionsBound = true;
+
+    this.root.addEventListener("click", (event) => {
+      const toolButton = event.target.closest?.("[data-use-inventory]");
+      if (!toolButton) return;
+      event.stopPropagation();
+      this.useInventoryItem(toolButton.dataset.useInventory);
+    });
+  }
+
+  useInventoryItem(itemId) {
+    const state = this.store.getState();
+    const item = INVENTORY_ITEMS[itemId];
+    if (!item || !state.inventory.includes(itemId)) return;
+
+    if (itemId === "notebook") {
+      this.inventoryOpen = false;
+      this.inventoryMessage = "";
+      this.activeInventoryToolId = null;
+      this.openNotebook(this.router.current());
+      return;
+    }
+
+    const context = getInventoryToolContext(
+      state,
+      itemId,
+      GAME_CONTENT.locations,
+    );
+    if (!context.available || !context.hotspotId) {
+      this.inventoryMessage = context.hint;
+      this.render(this.router.current());
+      return;
+    }
+
+    const location = GAME_CONTENT.locations[state.progress.currentLocation];
+    const hotspot = location?.hotspots?.find(
+      (candidate) => candidate.id === context.hotspotId,
+    );
+    if (!hotspot) return;
+
+    this.inventoryOpen = false;
+    this.inventoryMessage = "";
+    this.activeInventoryToolId = itemId;
+    this.activeLocationNote = hotspot;
+    this.notice.show(`${item.name} ready: ${hotspot.actionLabel}.`);
+    this.renderLocation();
+    this.root.querySelector("[data-action='hotspot-action']")?.focus();
   }
 
   renderEvidenceViewer() {
@@ -3603,6 +4022,8 @@ export class GameApp {
     this.activeEvidenceId = null;
     this.puzzleAnnouncement = "";
     this.activeRecordingFragmentId = null;
+    this.activeInventoryToolId = null;
+    this.inventoryMessage = "";
     this.pendingDeleteSlot = null;
   }
 

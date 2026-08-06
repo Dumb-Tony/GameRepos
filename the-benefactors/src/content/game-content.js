@@ -159,6 +159,7 @@ export const EVIDENCE = Object.freeze({
       type: "recording",
       heading: "E. VALE — RECOVERED MESSAGE",
       duration: "00:47 continuous",
+      audio: "./assets/audio/vale-restored-message.wav",
       fragments: [
         "If someone found the invoice, then the irregularity worked. I needed the payment to look wrong.",
         "Not a west wing. Beneath it. Meridian arrives Thursday.",
@@ -1147,13 +1148,506 @@ export const EVIDENCE = Object.freeze({
       handwritten: "The next trail leaves Greyhaven by private jet.",
     },
   },
+  ellis_ward_statement: {
+    id: "ellis_ward_statement",
+    title: "Ellis Ward's airfield statement",
+    category: "witness",
+    summary:
+      "A night dispatcher says Redoubt flights carry Meridian principals whenever Crownline accepts a crisis benchmark.",
+    artifact: {
+      type: "transcript",
+      heading: "FIELD INTERVIEW · ELLIS WARD",
+      timestamp: "03:14 AM · GREYHAVEN EXECUTIVE AIRFIELD",
+      lines: [
+        ["WARD", "Hangar 4 does not file passenger names with the airport."],
+        ["WARD", "Crownline opens the window, Redoubt sends the convoy, and the same principals leave before the city understands what happened."],
+        ["WARD", "Tonight's destination is Orpheus. The pilots call it an island, but it has no civil identifier."],
+      ],
+    },
+  },
+  hangar_four_manifest_photo: {
+    id: "hangar_four_manifest_photo",
+    title: "Photograph of Hangar 4's departure manifest",
+    category: "photograph",
+    summary:
+      "The unfiled manifest lists Meridian benefactor codes instead of passenger names and cites a Crownline acceptance event.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/greyhaven-executive-airfield.webp",
+      alt:
+        "Rain-dark executive airfield where passengers in formal coats board a black private jet outside an illuminated hangar",
+      caption: "Greyhaven Executive Airfield · Hangar 4 apron",
+      annotations: [
+        "Departure authorized by Crownline benchmark acceptance",
+        "Passenger identities replaced by Meridian benefactor codes",
+        "Civil destination field left blank",
+      ],
+    },
+  },
+  benefactor_boarding_photo: {
+    id: "benefactor_boarding_photo",
+    title: "Photograph of the Redoubt boarding party",
+    category: "photograph",
+    summary:
+      "Meridian's protected principals board the Orpheus flight while the Bellwether emergency remains unresolved.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/greyhaven-executive-airfield.webp",
+      alt:
+        "Anonymous affluent passengers cross a wet private apron from black cars to a waiting long-range jet",
+      caption: "Redoubt departure window · 03:19 AM",
+      annotations: [
+        "Convoy vehicles match Tier 0 protected-asset routing",
+        "Passengers bypass the public terminal and security log",
+        "Departure occurs during Bellwether's continuing relief operation",
+      ],
+    },
+  },
+  redoubt_cargo_seal: {
+    id: "redoubt_cargo_seal",
+    title: "Redoubt protected-cargo seal",
+    category: "financial",
+    summary:
+      "A discarded cargo seal reserves climate-controlled capacity for donor records, biological samples, and private financial custody.",
+    artifact: {
+      type: "memo",
+      heading: "REDOUBT TRANSIT · PRIORITY CARGO",
+      body: [
+        "CLASS: TIER 0 PROTECTED ASSET",
+        "CONTENTS: RECORDS / BIOLOGICAL ARCHIVE / FINANCIAL CUSTODY",
+        "PUBLIC RELIEF FREIGHT: DEFERRED",
+        "ROUTE AUTHORITY: ORPHEUS",
+      ],
+      handwritten: "They evacuate the evidence with the people who made it.",
+    },
+  },
+  orpheus_route_strip: {
+    id: "orpheus_route_strip",
+    title: "Orpheus restricted route strip",
+    category: "location",
+    summary:
+      "A cockpit route strip directs Redoubt flights beyond civilian radar coverage to an offshore landing site identified only as Orpheus.",
+    artifact: {
+      type: "memo",
+      heading: "REDOUBT 6 · RESTRICTED ROUTE COPY",
+      body: [
+        "DEPART: GREYHAVEN EXECUTIVE · HANGAR 4",
+        "TRANSPONDER: SUPPRESS AFTER CHECKPOINT DELTA",
+        "COASTAL HANDOFF: PRIVATE MARITIME CONTROL",
+        "ARRIVAL: ORPHEUS · ISLAND STRIP 2",
+      ],
+      handwritten: "An island with its own airspace and no public name.",
+    },
+  },
+  orpheus_service_chart: {
+    id: "orpheus_service_chart",
+    title: "Orpheus offshore service chart",
+    category: "lead",
+    summary:
+      "The airfield route and cargo records expose a private island supplied through a disguised coastal maintenance pier.",
+    artifact: {
+      type: "memo",
+      heading: "ORPHEUS · GROUND AND MARITIME SERVICE",
+      body: [
+        "AIR ARRIVAL: ISLAND STRIP 2",
+        "MARITIME SUPPLY: BLACKWATER POINT MAINTENANCE PIER",
+        "CIVIL RECORD: NONE",
+        "SECURITY: REDOUBT / MERIDIAN CONTINUITY",
+      ],
+      handwritten: "The secret society finally has an address—just not one on a public map.",
+    },
+  },
+  tamsin_pike_statement: {
+    id: "tamsin_pike_statement",
+    title: "Tamsin Pike's dockside statement",
+    category: "witness",
+    summary:
+      "A harbor mechanic says Blackwater's maintenance launch carries sealed people and cargo to Orpheus outside every civil harbor record.",
+    artifact: {
+      type: "transcript",
+      heading: "FIELD INTERVIEW · TAMSIN PIKE",
+      timestamp: "04:41 AM · BLACKWATER POINT",
+      lines: [
+        ["PIKE", "The launch is registered as a navigation tender. It has never repaired a buoy."],
+        ["PIKE", "It runs only after a Redoubt arrival and returns empty before daylight."],
+        ["PIKE", "Passengers stay below deck. Refrigerated cases go straight to the island clinic."],
+      ],
+    },
+  },
+  blackwater_cargo_ledger_photo: {
+    id: "blackwater_cargo_ledger_photo",
+    title: "Photograph of Blackwater's shadow ledger",
+    category: "photograph",
+    summary:
+      "The pier ledger mirrors every Hangar 4 departure with an offshore launch movement omitted from civil harbor records.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/blackwater-point.webp",
+      alt:
+        "Rain-soaked maintenance pier with an open cargo ledger beneath a work lamp, a refrigerated container, and boats in dark water",
+      caption: "Blackwater Point · Unfiled movement ledger",
+      annotations: [
+        "Each entry begins after a Redoubt flight arrives",
+        "Civil destination is replaced by service code ORP-2",
+        "Harbor-master copy omits every listed movement",
+      ],
+    },
+  },
+  orpheus_cold_chain_manifest: {
+    id: "orpheus_cold_chain_manifest",
+    title: "Orpheus cold-chain manifest",
+    category: "financial",
+    summary:
+      "The refrigerated container carries biological archives, private pharmaceuticals, and donor medical stores to the island before public relief cargo.",
+    artifact: {
+      type: "memo",
+      heading: "ORPHEUS CLINICAL SUPPLY · PRIORITY MANIFEST",
+      body: [
+        "BIOLOGICAL ARCHIVE: VA-9 / BELLWETHER SERIES",
+        "PHARMACEUTICAL RESERVE: BENEFACTOR CLINIC",
+        "DONOR MEDICAL STORES: PRIORITY ZERO",
+        "MUNICIPAL RELIEF CONSIGNMENTS: HOLD ASHORE",
+      ],
+      handwritten: "The island clinic receives the experiment before the town receives medicine.",
+    },
+  },
+  island_service_launch_photo: {
+    id: "island_service_launch_photo",
+    title: "Photograph of the Orpheus service launch",
+    category: "photograph",
+    summary:
+      "A luxury high-speed launch masquerades as a maintenance tender and carries concealed passengers to the island before dawn.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/blackwater-point.webp",
+      alt:
+        "Sleek dark passenger launch tied behind working maintenance boats at a foggy rain-covered pier",
+      caption: "Blackwater Point · Restricted berth",
+      annotations: [
+        "Tinted passenger cabin concealed behind tender registration",
+        "Fresh Redoubt cargo transferred directly from refrigerated storage",
+        "Route points toward the offshore private beacon",
+      ],
+    },
+  },
+  blackwater_tide_window: {
+    id: "blackwater_tide_window",
+    title: "Blackwater restricted tide window",
+    category: "location",
+    summary:
+      "A hidden launch card schedules Orpheus crossings during a radar maintenance gap and identifies the island's submerged service entrance.",
+    artifact: {
+      type: "memo",
+      heading: "ORPHEUS SERVICE CROSSING · WINDOW 04",
+      body: [
+        "DEPART BLACKWATER: 04:55",
+        "COASTAL RADAR GAP: 05:08–05:19",
+        "APPROACH: NORTH REEF / BEACON DARK",
+        "ARRIVAL: SUBLEVEL SERVICE CAVERN",
+      ],
+      handwritten: "The island is entered from underneath.",
+    },
+  },
+  orpheus_maintenance_badge: {
+    id: "orpheus_maintenance_badge",
+    title: "Orpheus maintenance credential",
+    category: "lead",
+    summary:
+      "A recovered service credential provides one narrow way onto Orpheus through its concealed sublevel harbor.",
+    artifact: {
+      type: "memo",
+      heading: "ORPHEUS FACILITIES · TEMPORARY SERVICE ACCESS",
+      body: [
+        "ENTRY: SUBLEVEL HARBOR / NORTH REEF",
+        "ROLE: COLD-CHAIN SYSTEMS TECHNICIAN",
+        "ESCORT: WAIVED DURING WINDOW 04",
+        "SURFACE ACCESS: CLINIC SERVICE CORRIDOR",
+      ],
+      handwritten: "A borrowed uniform and nineteen minutes to enter the island.",
+    },
+  },
+  adrian_moss_statement: {
+    id: "adrian_moss_statement",
+    title: "Adrian Moss's harbor statement",
+    category: "witness",
+    summary:
+      "An Orpheus logistics steward says the island shelters Meridian's decision-makers, archives, and private clinic—not disaster survivors.",
+    artifact: {
+      type: "transcript",
+      heading: "COVERT INTERVIEW · ADRIAN MOSS",
+      timestamp: "05:17 AM · ORPHEUS SUBLEVEL HARBOR",
+      lines: [
+        ["MOSS", "No evacuee has ever arrived through this harbor unless their name owns part of Meridian."],
+        ["MOSS", "The clinic studies what the field trials collect. The archive keeps the leverage. The Assembly decides where the next crisis begins."],
+        ["MOSS", "They call themselves the Benefactors because it sounds better than owners."],
+      ],
+    },
+  },
+  orpheus_arrival_registry_photo: {
+    id: "orpheus_arrival_registry_photo",
+    title: "Photograph of the Orpheus arrival registry",
+    category: "photograph",
+    summary:
+      "The island registry admits Meridian principals, protected archives, and private clinic cargo while listing no civilian survivors.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/orpheus-sublevel-harbor.webp",
+      alt:
+        "Hidden sea-cave harbor with a security desk, sealed priority crates, service launch, glass control booth, and guarded elevator",
+      caption: "Site Orpheus · Sublevel arrival control",
+      annotations: [
+        "Every passenger is marked Benefactor or continuity principal",
+        "No public evacuees appear in years of arrivals",
+        "Crisis archives enter under permanent-retention orders",
+      ],
+    },
+  },
+  benefactor_clinic_transfer_order: {
+    id: "benefactor_clinic_transfer_order",
+    title: "Benefactor clinic transfer order",
+    category: "financial",
+    summary:
+      "The island clinic receives Bellwether and Verdant biological material for private longevity research funded by the same donors behind the crises.",
+    artifact: {
+      type: "memo",
+      heading: "ORPHEUS CLINIC · ARCHIVE INTAKE 47",
+      body: [
+        "SOURCE: BELLWETHER / VERDANT FIELD SERIES",
+        "PROGRAM: BENEFACTOR LONGEVITY COHORT",
+        "PUBLIC-HEALTH RELEASE: PROHIBITED",
+        "SPONSOR: MERIDIAN FIRST CIRCLE",
+      ],
+      handwritten: "They manufacture public suffering to finance private immortality.",
+    },
+  },
+  orpheus_security_wall_photo: {
+    id: "orpheus_security_wall_photo",
+    title: "Photograph of Orpheus arrival surveillance",
+    category: "photograph",
+    summary:
+      "The harbor security wall links arriving Redoubt principals to private suites, clinic access, and sealed crisis archives.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/orpheus-sublevel-harbor.webp",
+      alt:
+        "Surveillance desk inside an opulent hidden island harbor, facing priority cargo and a launch in a sea cavern",
+      caption: "Orpheus security desk · Arrival matrix",
+      annotations: [
+        "Hangar 4 passengers assigned private compound suites",
+        "Redoubt cargo routed to the clinic and leverage archive",
+        "Upper elevator reserved for First Circle assembly",
+      ],
+    },
+  },
+  sublevel_elevator_directory: {
+    id: "sublevel_elevator_directory",
+    title: "Orpheus concealed elevator directory",
+    category: "location",
+    summary:
+      "The freight elevator connects the submerged harbor to the clinic, leverage archive, private residences, and First Circle assembly hall.",
+    artifact: {
+      type: "memo",
+      heading: "ORPHEUS INTERNAL TRANSIT · SERVICE DIRECTORY",
+      body: [
+        "S1: SUBLEVEL HARBOR / COLD CHAIN",
+        "01: BENEFECTOR CLINIC / ARCHIVE LAB",
+        "03: LEVERAGE ARCHIVE / PRIVATE CUSTODY",
+        "07: FIRST CIRCLE ASSEMBLY / RESIDENCES",
+      ],
+      handwritten: "The island is a boardroom, a laboratory, and a vault stacked on top of one another.",
+    },
+  },
+  first_circle_invitation: {
+    id: "first_circle_invitation",
+    title: "First Circle assembly invitation",
+    category: "lead",
+    summary:
+      "An invitation places the Meridian First Circle in Orpheus's upper assembly hall for a vote on the next governance-conversion site.",
+    artifact: {
+      type: "memo",
+      heading: "THE BENEFECTORS · FIRST CIRCLE",
+      body: [
+        "SESSION: GOVERNANCE CONVERSION PORTFOLIO",
+        "VENUE: ORPHEUS ASSEMBLY HALL · LEVEL 07",
+        "AGENDA: NEXT-CITY SELECTION / ASSET PREPOSITIONING",
+        "ATTENDANCE: PRINCIPALS ONLY",
+      ],
+      handwritten: "The people behind every clue are meeting upstairs right now.",
+    },
+  },
+  first_circle_vote_recording: {
+    id: "first_circle_vote_recording",
+    title: "Recording of the First Circle vote",
+    category: "recording",
+    summary:
+      "The Benefactors accept Bellwether as a successful conversion and approve Port Prosper as the next manufactured crisis site.",
+    artifact: {
+      type: "transcript",
+      heading: "COVERT RECORDING · FIRST CIRCLE SESSION",
+      timestamp: "05:44 AM · ORPHEUS LEVEL 07",
+      audio: "./assets/audio/first-circle-vote.wav",
+      lines: [
+        ["CHAIR", "The Bellwether conversion is accepted. Meridian service adoption exceeded target."],
+        ["WREN", "Archive the mortality series for the Orpheus clinic and retain the municipal leverage files."],
+        ["ROOK", "Port Prosper is approved as the next governance site. Preposition relief assets before the first infrastructure failure."],
+        ["CHAIR", "The motion carries."],
+      ],
+    },
+  },
+  first_circle_seating_registry_photo: {
+    id: "first_circle_seating_registry_photo",
+    title: "Photograph of the First Circle registry",
+    category: "photograph",
+    summary:
+      "The assembly registry identifies the donor principals, officials, contractors, and media owners seated behind Meridian's crisis network.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/orpheus-first-circle.webp",
+      alt:
+        "Luxurious circular council chamber overlooking the ocean where anonymous elites sit around an illuminated strategy table",
+      caption: "Orpheus Level 07 · First Circle session",
+      annotations: [
+        "Meridian donors occupy permanent voting seats",
+        "Public officials and media owners attend under continuity titles",
+        "Wren and Rook sit on the crisis-selection committee",
+      ],
+    },
+  },
+  port_prosper_conversion_portfolio: {
+    id: "port_prosper_conversion_portfolio",
+    title: "Port Prosper conversion portfolio",
+    category: "event",
+    summary:
+      "The next crisis portfolio schedules infrastructure failure, public-trust collapse, and Meridian relief deployment in Port Prosper.",
+    artifact: {
+      type: "memo",
+      heading: "PORT PROSPER · GOVERNANCE CONVERSION CANDIDATE",
+      body: [
+        "PHASE 1: GRID / WATER INTERRUPTION",
+        "PHASE 2: MUNICIPAL RESPONSE SATURATION",
+        "PHASE 3: MERIDIAN RELIEF PREPOSITIONING",
+        "TARGET: PRIVATE SERVICE ADOPTION ABOVE 78%",
+      ],
+      handwritten: "The next disaster is already a presentation.",
+    },
+  },
+  crisis_investment_escrow: {
+    id: "crisis_investment_escrow",
+    title: "First Circle crisis-investment escrow",
+    category: "financial",
+    summary:
+      "The Benefactors finance both the infrastructure failure and the private companies positioned to profit from replacing public services.",
+    artifact: {
+      type: "memo",
+      heading: "MERIDIAN FIRST CIRCLE · PORT PROSPER ESCROW",
+      body: [
+        "TRIGGER FUND: INFRASTRUCTURE DISRUPTION",
+        "RELIEF ACQUISITION FUND: PRE-CLEARED",
+        "MEDIA STABILIZATION FUND: CONTROLLED NARRATIVE",
+        "RETURN MODEL: MUNICIPAL SERVICE CONCESSIONS",
+      ],
+      handwritten: "They invest in the collapse and collect the city afterward.",
+    },
+  },
+  port_prosper_warning_file: {
+    id: "port_prosper_warning_file",
+    title: "Port Prosper warning file",
+    category: "lead",
+    summary:
+      "The First Circle vote provides enough detail to warn Port Prosper before Meridian triggers the planned infrastructure failure.",
+    artifact: {
+      type: "memo",
+      heading: "URGENT LEAD · PORT PROSPER",
+      body: [
+        "THREAT: COORDINATED GRID AND WATER FAILURE",
+        "ACTOR: MERIDIAN FIRST CIRCLE",
+        "RELIEF ASSETS: ALREADY PREPOSITIONED",
+        "WINDOW: FORTY-EIGHT HOURS",
+      ],
+      handwritten: "For the first time, the next city can be warned before it becomes evidence.",
+    },
+  },
+  port_prosper_warning_receipt: {
+    id: "port_prosper_warning_receipt",
+    title: "Encrypted Port Prosper warning receipt",
+    category: "event",
+    summary:
+      "Trusted utility crews received the First Circle portfolio and began quietly isolating the targeted systems before Meridian noticed.",
+    artifact: {
+      type: "memo",
+      heading: "ENCRYPTED DELIVERY · PORT PROSPER EMERGENCY CELL",
+      body: [
+        "PORTFOLIO AUTHENTICATED",
+        "GRID CONTROL SEGMENTATION: IN PROGRESS",
+        "WATER SAFETY OVERRIDES: ARMED",
+        "SOURCE IDENTITY: WITHHELD",
+      ],
+      handwritten: "The city is moving before the Benefactors know why.",
+    },
+  },
+  first_circle_publication_record: {
+    id: "first_circle_publication_record",
+    title: "First Circle publication record",
+    category: "event",
+    summary:
+      "The vote, registry, portfolio, and escrow were mirrored through newsrooms worldwide before Meridian could suppress the story.",
+    artifact: {
+      type: "memo",
+      heading: "PUBLICATION LOG · THE BENEFECTORS FILES",
+      body: [
+        "PRIMARY STORY: RELEASED",
+        "AUDIO / DOCUMENT MIRRORS: 84",
+        "PORT PROSPER WARNING: PUBLIC",
+        "MERIDIAN RESPONSE: EMERGENCY DENIAL / RECORD PURGE",
+      ],
+      handwritten: "Everyone can see the board now. So can everyone named on it.",
+    },
+  },
+  orpheus_deep_cover_pass: {
+    id: "orpheus_deep_cover_pass",
+    title: "Orpheus residential-wing service pass",
+    category: "lead",
+    summary:
+      "Remaining undercover preserves access to the private residences where the First Circle keeps personal records and leverage files.",
+    artifact: {
+      type: "memo",
+      heading: "ORPHEUS FACILITIES · RESIDENTIAL SERVICE",
+      body: [
+        "ACCESS: PRINCIPAL RESIDENCES / LEVELS 08–11",
+        "ROLE: ENVIRONMENTAL SYSTEMS TECHNICIAN",
+        "ESCORT: NOT REQUIRED BEFORE 07:00",
+        "SECURITY REVIEW: PENDING",
+      ],
+      handwritten: "More proof upstairs, and less time for Port Prosper.",
+    },
+  },
 });
 
 export const INVENTORY_ITEMS = Object.freeze({
-  press_credentials: { id: "press_credentials", name: "Press credentials", icon: "ID" },
-  smartphone: { id: "smartphone", name: "Phone & camera", icon: "CAM" },
-  recorder: { id: "recorder", name: "Audio recorder", icon: "REC" },
-  notebook: { id: "notebook", name: "Reporter’s notebook", icon: "NOTE" },
+  press_credentials: {
+    id: "press_credentials",
+    name: "Press credentials",
+    icon: "ID",
+    description: "Gets you past public-information gatekeepers when a reporter still counts as the public.",
+  },
+  smartphone: {
+    id: "smartphone",
+    name: "Phone & camera",
+    icon: "CAM",
+    description: "Photographs scenes, copies documents, and preserves visual evidence.",
+  },
+  recorder: {
+    id: "recorder",
+    name: "Audio recorder",
+    icon: "REC",
+    description: "Captures conversations and interfaces with recoverable audio sources.",
+  },
+  notebook: {
+    id: "notebook",
+    name: "Reporter’s notebook",
+    icon: "NOTE",
+    description: "Opens the current objective, deductions, leads, and progressive hints.",
+  },
 });
 
 export const DIALOGUES = Object.freeze({
@@ -1957,6 +2451,204 @@ export const DIALOGUES = Object.freeze({
       },
     },
   },
+  ellis_ward: {
+    id: "ellis_ward",
+    character: "Ellis Ward",
+    portrait: "EW",
+    start: "intro",
+    nodes: {
+      intro: {
+        id: "intro",
+        speaker: "Ellis Ward",
+        text:
+          "This apron is closed, the terminal is dark, and whatever you think you saw belongs to a charter operator that does not answer questions.",
+        choices: [
+          {
+            id: "show-credential",
+            text: "Then why does this Redoubt credential open Hangar 4?",
+            evidenceId: "executive_airfield_credential",
+            requires: { type: "hasEvidence", id: "executive_airfield_credential" },
+            next: "credential",
+          },
+          { id: "leave", text: "I took the wrong service road.", end: true },
+        ],
+      },
+      credential: {
+        id: "credential",
+        speaker: "Ellis Ward",
+        text:
+          "Put that away. Redoubt couriers do not stop at the booth. Crownline opens a flight window and black cars arrive before the acceptance notice finishes printing.",
+        choices: [
+          {
+            id: "show-flight-log",
+            text: "This log ties those windows to successful crisis exercises.",
+            evidenceId: "redoubt_flight_sync_log",
+            requires: { type: "hasEvidence", id: "redoubt_flight_sync_log" },
+            next: "truth",
+          },
+          { id: "leave", text: "I need to see the apron for myself.", end: true },
+        ],
+      },
+      truth: {
+        id: "truth",
+        speaker: "Ellis Ward",
+        text:
+          "The passengers are Meridian principals. They leave whenever a city converts—records, samples, money, all of it. Tonight they are going to Orpheus. The pilots say it is an island outside civilian radar.",
+        onEnter: [
+          { type: "setFlag", key: "questionedEllisWard", value: true },
+          { type: "collectEvidence", id: "ellis_ward_statement" },
+        ],
+        choices: [
+          {
+            id: "ask-proof",
+            text: "What did they leave behind?",
+            next: "proof",
+          },
+        ],
+      },
+      proof: {
+        id: "proof",
+        speaker: "Ellis Ward",
+        text:
+          "Photograph the dispatch clipboard and the boarding line. The cargo team dropped a seal by the scale. If the cockpit pouch is still open, the route strip will name what no public chart does.",
+        choices: [
+          { id: "finish", text: "You never saw me cross the apron.", end: true },
+        ],
+      },
+    },
+  },
+  tamsin_pike: {
+    id: "tamsin_pike",
+    character: "Tamsin Pike",
+    portrait: "TP",
+    start: "intro",
+    nodes: {
+      intro: {
+        id: "intro",
+        speaker: "Tamsin Pike",
+        text:
+          "Public pier is two miles south. This is a private repair berth, and nothing here goes anywhere except back into the water.",
+        choices: [
+          {
+            id: "show-chart",
+            text: "This Orpheus chart names Blackwater as its supply pier.",
+            evidenceId: "orpheus_service_chart",
+            requires: { type: "hasEvidence", id: "orpheus_service_chart" },
+            next: "chart",
+          },
+          { id: "leave", text: "I will find the public pier.", end: true },
+        ],
+      },
+      chart: {
+        id: "chart",
+        speaker: "Tamsin Pike",
+        text:
+          "That chart should be inside a Redoubt pouch, not in your hands. The launch is supposed to be a navigation tender. It has never repaired a buoy.",
+        choices: [
+          {
+            id: "show-seal",
+            text: "Redoubt also left this protected-cargo seal at Hangar 4.",
+            evidenceId: "redoubt_cargo_seal",
+            requires: { type: "hasEvidence", id: "redoubt_cargo_seal" },
+            next: "truth",
+          },
+          { id: "leave", text: "Then someone is lying about the cargo.", end: true },
+        ],
+      },
+      truth: {
+        id: "truth",
+        speaker: "Tamsin Pike",
+        text:
+          "The cases go to Orpheus's clinic. Samples, private medicine, donor files. Passengers stay below deck. The launch returns empty before daylight and every movement disappears from the harbor copy.",
+        onEnter: [
+          { type: "setFlag", key: "questionedTamsinPike", value: true },
+          { type: "collectEvidence", id: "tamsin_pike_statement" },
+        ],
+        choices: [
+          {
+            id: "ask-proof",
+            text: "What can I take before it leaves?",
+            next: "proof",
+          },
+        ],
+      },
+      proof: {
+        id: "proof",
+        speaker: "Tamsin Pike",
+        text:
+          "Photograph my shadow ledger and the launch. The cold container still holds tonight's manifest. The tide locker has a route card—and one maintenance badge that was never returned.",
+        choices: [
+          { id: "finish", text: "Keep the launch crew looking offshore.", end: true },
+        ],
+      },
+    },
+  },
+  adrian_moss: {
+    id: "adrian_moss",
+    character: "Adrian Moss",
+    portrait: "AM",
+    start: "intro",
+    nodes: {
+      intro: {
+        id: "intro",
+        speaker: "Adrian Moss",
+        text:
+          "Cold-chain technicians report to the container first. You are standing at arrival control without an escort, a work order, or enough fear.",
+        choices: [
+          {
+            id: "show-badge",
+            text: "Window 04 waives the escort for this maintenance credential.",
+            evidenceId: "orpheus_maintenance_badge",
+            requires: { type: "hasEvidence", id: "orpheus_maintenance_badge" },
+            next: "badge",
+          },
+          { id: "leave", text: "I will return to the launch.", end: true },
+        ],
+      },
+      badge: {
+        id: "badge",
+        speaker: "Adrian Moss",
+        text:
+          "That credential belonged to a contractor who asked why the clinic needed Bellwether samples. He did not use it twice.",
+        choices: [
+          {
+            id: "show-manifest",
+            text: "The Blackwater manifest sends those samples to a private donor clinic.",
+            evidenceId: "orpheus_cold_chain_manifest",
+            requires: { type: "hasEvidence", id: "orpheus_cold_chain_manifest" },
+            next: "truth",
+          },
+          { id: "leave", text: "Then I know what to look for.", end: true },
+        ],
+      },
+      truth: {
+        id: "truth",
+        speaker: "Adrian Moss",
+        text:
+          "This is not a refuge. The clinic studies what their field crises collect. The archive keeps leverage on governments. The Assembly chooses the next city. They call themselves the Benefactors because it sounds better than owners.",
+        onEnter: [
+          { type: "setFlag", key: "questionedAdrianMoss", value: true },
+          { type: "collectEvidence", id: "adrian_moss_statement" },
+        ],
+        choices: [
+          {
+            id: "ask-proof",
+            text: "Where is the Assembly?",
+            next: "proof",
+          },
+        ],
+      },
+      proof: {
+        id: "proof",
+        speaker: "Adrian Moss",
+        text:
+          "Level seven. First photograph the arrival ledger and security wall. The clinic order is clipped to the silver case. The freight-elevator directory proves everything this harbor feeds.",
+        choices: [
+          { id: "finish", text: "Keep my badge green for five more minutes.", end: true },
+        ],
+      },
+    },
+  },
 });
 
 export const DEDUCTIONS = Object.freeze({
@@ -2334,6 +3026,189 @@ export const DEDUCTIONS = Object.freeze({
       { type: "setFlag", key: "provedCrownlineGovernanceModel", value: true },
       { type: "collectEvidence", id: "executive_airfield_credential" },
       { type: "setPath", path: "progress.officeState", value: 10 },
+      { type: "unlockLocation", id: "greyhaven_executive_airfield" },
+    ],
+  },
+  redoubt_evacuation_network: {
+    id: "redoubt_evacuation_network",
+    title: "Redoubt evacuates the architects of every crisis",
+    journalText:
+      "Crownline's acceptance signal opens Hangar 4 for Meridian's protected principals. Redoubt removes the people, biological archives, records, and money while the public emergency is still unfolding, then disappears beyond civilian radar to Site Orpheus.",
+    notification:
+      "The crisis network leads offshore. An Orpheus service chart identifies a disguised coastal supply pier and a private island airstrip.",
+    requiredDeductions: ["crownline_governance_model"],
+    requiredEvidence: [
+      "executive_airfield_credential",
+      "redoubt_flight_sync_log",
+      "meridian_priority_protocol",
+      "ellis_ward_statement",
+      "hangar_four_manifest_photo",
+      "benefactor_boarding_photo",
+      "redoubt_cargo_seal",
+      "orpheus_route_strip",
+    ],
+    requiredConnections: [
+      {
+        a: "executive_airfield_credential",
+        b: "hangar_four_manifest_photo",
+        type: "confirmed",
+      },
+      {
+        a: "meridian_priority_protocol",
+        b: "benefactor_boarding_photo",
+        type: "confirmed",
+      },
+      {
+        a: "redoubt_flight_sync_log",
+        b: "orpheus_route_strip",
+        type: "confirmed",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "provedRedoubtEvacuation", value: true },
+      { type: "collectEvidence", id: "orpheus_service_chart" },
+      { type: "setPath", path: "progress.chapter", value: 4 },
+      { type: "setPath", path: "progress.officeState", value: 11 },
+      { type: "unlockLocation", id: "blackwater_point" },
+    ],
+  },
+  orpheus_supply_route: {
+    id: "orpheus_supply_route",
+    title: "Blackwater Point is Orpheus's hidden lifeline",
+    journalText:
+      "Every Redoubt arrival continues by concealed launch from Blackwater Point. The island receives biological archives, private medicine, protected passengers, and donor records through a submerged service harbor while civil air and maritime records remain empty.",
+    notification:
+      "The route onto Orpheus is exposed. A maintenance credential opens the sublevel harbor during a nineteen-minute coastal radar gap.",
+    requiredDeductions: ["redoubt_evacuation_network"],
+    requiredEvidence: [
+      "orpheus_service_chart",
+      "redoubt_cargo_seal",
+      "orpheus_route_strip",
+      "tamsin_pike_statement",
+      "blackwater_cargo_ledger_photo",
+      "orpheus_cold_chain_manifest",
+      "island_service_launch_photo",
+      "blackwater_tide_window",
+    ],
+    requiredConnections: [
+      {
+        a: "orpheus_service_chart",
+        b: "blackwater_cargo_ledger_photo",
+        type: "confirmed",
+      },
+      {
+        a: "redoubt_cargo_seal",
+        b: "orpheus_cold_chain_manifest",
+        type: "financial",
+      },
+      {
+        a: "orpheus_route_strip",
+        b: "blackwater_tide_window",
+        type: "confirmed",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "provedOrpheusSupplyRoute", value: true },
+      { type: "collectEvidence", id: "orpheus_maintenance_badge" },
+      { type: "setPath", path: "progress.chapter", value: 5 },
+      { type: "setPath", path: "progress.officeState", value: 12 },
+      { type: "unlockLocation", id: "orpheus_sublevel_harbor" },
+    ],
+  },
+  orpheus_command_center: {
+    id: "orpheus_command_center",
+    title: "Orpheus is the Benefactors' command center",
+    journalText:
+      "Orpheus is not a humanitarian refuge. It shelters Meridian's principals, private longevity clinic, leverage archive, and First Circle assembly. The same people who finance each manufactured crisis meet above the hidden harbor to select the next city.",
+    notification:
+      "The secret society has a name and a meeting place. The Benefactors' First Circle is voting upstairs on its next target.",
+    requiredDeductions: ["orpheus_supply_route"],
+    requiredEvidence: [
+      "orpheus_maintenance_badge",
+      "orpheus_cold_chain_manifest",
+      "island_service_launch_photo",
+      "blackwater_tide_window",
+      "adrian_moss_statement",
+      "orpheus_arrival_registry_photo",
+      "benefactor_clinic_transfer_order",
+      "orpheus_security_wall_photo",
+      "sublevel_elevator_directory",
+    ],
+    requiredConnections: [
+      {
+        a: "orpheus_maintenance_badge",
+        b: "orpheus_arrival_registry_photo",
+        type: "confirmed",
+      },
+      {
+        a: "orpheus_cold_chain_manifest",
+        b: "benefactor_clinic_transfer_order",
+        type: "financial",
+      },
+      {
+        a: "island_service_launch_photo",
+        b: "orpheus_security_wall_photo",
+        type: "confirmed",
+      },
+      {
+        a: "blackwater_tide_window",
+        b: "sublevel_elevator_directory",
+        type: "confirmed",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "provedOrpheusCommandCenter", value: true },
+      { type: "collectEvidence", id: "first_circle_invitation" },
+      { type: "setPath", path: "progress.chapter", value: 6 },
+      { type: "setPath", path: "progress.officeState", value: 13 },
+      { type: "unlockLocation", id: "orpheus_first_circle" },
+    ],
+  },
+  benefactors_select_crises: {
+    id: "benefactors_select_crises",
+    title: "The Benefactors select, finance, and profit from each crisis",
+    journalText:
+      "The First Circle accepts completed crises, archives their human cost for private research, and votes on the next city. Port Prosper's failure, relief response, media narrative, and transfer of public services are already funded before the first outage.",
+    notification:
+      "The next target is known before the attack begins. Port Prosper has forty-eight hours—and the Benefactors do not know their vote was recorded.",
+    requiredDeductions: ["orpheus_command_center"],
+    requiredEvidence: [
+      "first_circle_invitation",
+      "adrian_moss_statement",
+      "orpheus_security_wall_photo",
+      "benefactor_clinic_transfer_order",
+      "first_circle_vote_recording",
+      "first_circle_seating_registry_photo",
+      "port_prosper_conversion_portfolio",
+      "crisis_investment_escrow",
+    ],
+    requiredConnections: [
+      {
+        a: "first_circle_invitation",
+        b: "first_circle_seating_registry_photo",
+        type: "confirmed",
+      },
+      {
+        a: "adrian_moss_statement",
+        b: "first_circle_vote_recording",
+        type: "confirmed",
+      },
+      {
+        a: "orpheus_security_wall_photo",
+        b: "port_prosper_conversion_portfolio",
+        type: "confirmed",
+      },
+      {
+        a: "benefactor_clinic_transfer_order",
+        b: "crisis_investment_escrow",
+        type: "financial",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "provedBenefactorsSelectCrises", value: true },
+      { type: "collectEvidence", id: "port_prosper_warning_file" },
+      { type: "setPath", path: "progress.chapter", value: 7 },
+      { type: "setPath", path: "progress.officeState", value: 14 },
     ],
   },
 });
@@ -2432,6 +3307,7 @@ export const GAME_CONTENT = Object.freeze({
           title: "Lionel Price, city clerk",
           text: "He has already decided which questions you are allowed to ask.",
           actionLabel: "Question Lionel",
+          toolId: "press_credentials",
           dialogueId: "lionel_records",
         },
         {
@@ -2467,6 +3343,7 @@ export const GAME_CONTENT = Object.freeze({
           title: "The Vale residence",
           text: "Old brick. Original roofline. No scaffolding, no fresh masonry, no obvious $184,600 addition.",
           actionLabel: "Photograph the west wall",
+          toolId: "smartphone",
           actionWhen: {
             all: [
               { type: "hasInventory", id: "smartphone" },
@@ -2603,6 +3480,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "One monitor wakes when Vale’s recorder is connected. Its queue holds three voice fragments with no timestamps.",
           actionLabel: "Reconstruct the recording",
+          toolId: "recorder",
           actionWhen: { type: "hasEvidence", id: "vale_damaged_recording" },
           route: "recording",
         },
@@ -2658,6 +3536,7 @@ export const GAME_CONTENT = Object.freeze({
           title: "Fourth-floor directory",
           text: "The engraved list runs from 401 to 409. Northstar's invoices claim Suite 410.",
           actionLabel: "Photograph the directory",
+          toolId: "smartphone",
           resultText:
             "The directory photograph is in the case file. There is no Suite 410.",
           effects: [
@@ -2759,6 +3638,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "The same faces recur across campaigns separated by years. Vale appears under accessibility; Rook appears under everything.",
           actionLabel: "Photograph the donor wall",
+          toolId: "smartphone",
           resultText:
             "The photograph captures Vale, Cassian Rook, and the circled gala guest inside the same donor network.",
           effects: [
@@ -2877,6 +3757,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "Cassian Rook has a podium, three tables have sponsors, and one familiar face has no seat at all.",
           actionLabel: "Photograph the seating plan",
+          toolId: "smartphone",
           resultText:
             "The plan names Silas Wren as service access only. He is a guest the public record is designed not to contain.",
           effects: [
@@ -2911,6 +3792,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "He watches the exits during applause. Cassian Rook leaves the podium and crosses toward him.",
           actionLabel: "Photograph the meeting",
+          toolId: "smartphone",
           resultText:
             "Your camera catches Rook handing Silas Wren a brass credential before both men enter the staff corridor.",
           effects: [
@@ -3006,6 +3888,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "Five contractors supplied secure infrastructure tonight. Northstar is only the first name you recognize.",
           actionLabel: "Photograph the roster",
+          toolId: "smartphone",
           resultText:
             "Northstar appears beside Deepwell, Crownline, and other temporary firms—all routed through program advances.",
           effects: [
@@ -3027,6 +3910,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "Rook and Wren speak behind the unmarked salon door. The ballroom applause covers everything but the sharpest words.",
           actionLabel: "Record through the door",
+          toolId: "recorder",
           resultText:
             "The recorder captures Rook calling Northstar one of several instruments—and Wren ordering Mina Harcourt moved.",
           effects: [
@@ -3134,6 +4018,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "Personal tax records remain. Every folder marked as a program reconciliation is gone.",
           actionLabel: "Photograph the apartment",
+          toolId: "smartphone",
           resultText:
             "The searchers removed only Brighter Horizon records. Harcourt had packed before they arrived.",
           effects: [
@@ -3227,6 +4112,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "Harcourt's request number retrieves a contract register omitted from the public database.",
           actionLabel: "Copy the contract register",
+          toolId: "smartphone",
           resultText:
             "Five municipal contracts match Harcourt's five foundation advances—contractor, purpose, and amount.",
           effects: [
@@ -3251,6 +4137,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "Colored grease-pencil marks connect each contractor to infrastructure hidden inside a public emergency project.",
           actionLabel: "Photograph the site map",
+          toolId: "smartphone",
           resultText:
             "Northstar's room is one node. Deepwell's mark sits beneath Bellwether's water-treatment bypass.",
           effects: [
@@ -3275,6 +4162,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "The cage inventory includes Register 09 supporting files under an expedited destruction order.",
           actionLabel: "Photograph the destruction order",
+          toolId: "smartphone",
           resultText:
             "Silas Wren requested the files destroyed before sunrise. Someone hid the register in the reading room instead.",
           effects: [
@@ -3391,6 +4279,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "The outer labels are new, but the freight-intake stickers underneath carry Monday's date.",
           actionLabel: "Photograph the labels",
+          toolId: "smartphone",
           resultText:
             "The relief shipment entered Bellwether forty-eight hours before the first resident complaint.",
           effects: [
@@ -3440,6 +4329,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "Residents pinned rejection letters beside boil-water notices. One bears a Meridian counsel reference.",
           actionLabel: "Copy the university rejection",
+          toolId: "smartphone",
           resultText:
             "The university lab kept a duplicate sample at its river annex after Meridian threatened its funding.",
           effects: [
@@ -3524,6 +4414,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "Voss routed his office line through an analog recorder after the university mail server began deleting notices.",
           actionLabel: "Copy the saved voicemail",
+          toolId: "recorder",
           resultText:
             "A Meridian counsel offers to preserve the university's grants if Voss destroys Bellwether's intake record.",
           effects: [
@@ -3548,6 +4439,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "Grease-pencil arrows follow the floodgate from Verdant Parcel 6 to Bellwether's upstream intake.",
           actionLabel: "Photograph the injection route",
+          toolId: "smartphone",
           resultText:
             "The VA-9 release point reaches Bellwether in ninety minutes. Its public monitor was offline for exactly two hours.",
           effects: [
@@ -3674,6 +4566,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "Numbered cages sit beneath tarps. A damp clipboard records losses the public report says never happened.",
           actionLabel: "Copy the mortality sheets",
+          toolId: "smartphone",
           resultText:
             "Thirty-two test animals died within hours of each VA-9 release. The cause field was overwritten as seasonal.",
           effects: [
@@ -3698,6 +4591,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "The fertilizer label peels away from a pressure vessel fitted with the same couplings shown on Voss's watershed map.",
           actionLabel: "Photograph the injection rig",
+          toolId: "smartphone",
           resultText:
             "The rig's metering plate lists VA-9 release volumes and Bellwether's intake as the downstream observation point.",
           effects: [
@@ -3832,6 +4726,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "The wall aligns contamination, public anger, relief adoption, and municipal surrender on a single timeline.",
           actionLabel: "Photograph the live dashboard",
+          toolId: "smartphone",
           resultText:
             "The timeline begins before the first complaint and ends when Meridian services replace the city's response.",
           effects: [
@@ -3924,6 +4819,7 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "The freight-elevator terminal mirrors completed crisis scores to a private aviation scheduler.",
           actionLabel: "Copy the flight synchronization log",
+          toolId: "smartphone",
           resultText:
             "Every accepted field benchmark opens a flight window from Hangar 4 to a concealed destination called Site Orpheus.",
           effects: [
@@ -3962,6 +4858,577 @@ export const GAME_CONTENT = Object.freeze({
           title: "Below the operations floor",
           text:
             "The elevator requires dual authorization. Its directory omits the basement and roof.",
+        },
+      ],
+    },
+    greyhaven_executive_airfield: {
+      id: "greyhaven_executive_airfield",
+      name: "Greyhaven Executive Airfield",
+      eyebrow: "North apron · Tuesday · 3:10 AM",
+      mapX: 88,
+      mapY: 24,
+      description:
+        "A rain-black private apron where Redoubt moves Meridian's protected principals beyond public records and civilian radar.",
+      sceneClass: "scene-greyhaven-airfield",
+      sceneArt: "./assets/scenes/greyhaven-executive-airfield.webp",
+      hotspots: [
+        {
+          id: "ellis_ward",
+          label: "Ellis Ward",
+          x: 1,
+          y: 36,
+          width: 21,
+          height: 42,
+          title: "The dispatcher who has watched too many departures",
+          text:
+            "A lone dispatcher sits behind rain-streaked glass, pretending not to recognize the Redoubt credential in your hand.",
+          dialogueId: "ellis_ward",
+        },
+        {
+          id: "hangar_dispatch_clipboard",
+          label: "Dispatch clipboard",
+          x: 18,
+          y: 48,
+          width: 18,
+          height: 24,
+          title: "A manifest that never reaches the terminal",
+          text:
+            "The clipboard substitutes Meridian benefactor codes for names and leaves the civil destination field empty.",
+          actionLabel: "Photograph the Hangar 4 manifest",
+          toolId: "smartphone",
+          resultText:
+            "The manifest cites Crownline's Bellwether acceptance event as the departure authorization.",
+          effects: [
+            { type: "setFlag", key: "photographedHangarManifest", value: true },
+            { type: "collectEvidence", id: "hangar_four_manifest_photo" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "questionedEllisWard" },
+              { type: "flag", key: "photographedHangarManifest", equals: false },
+            ],
+          },
+        },
+        {
+          id: "redoubt_boarding_line",
+          label: "Boarding party",
+          x: 54,
+          y: 40,
+          width: 28,
+          height: 35,
+          title: "The first rescue is reserved for the people in charge",
+          text:
+            "Black cars unload silent passengers while Bellwether's public relief operation remains unresolved across town.",
+          actionLabel: "Photograph the boarding party",
+          toolId: "smartphone",
+          resultText:
+            "The convoy markings match Meridian's Tier 0 protected-asset routing protocol.",
+          effects: [
+            { type: "setFlag", key: "photographedBenefactorBoarding", value: true },
+            { type: "collectEvidence", id: "benefactor_boarding_photo" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedHangarManifest" },
+              { type: "flag", key: "photographedBenefactorBoarding", equals: false },
+            ],
+          },
+        },
+        {
+          id: "redoubt_cargo_scale",
+          label: "Cargo scale",
+          x: 57,
+          y: 70,
+          width: 20,
+          height: 23,
+          title: "Evidence has a baggage allowance",
+          text:
+            "A torn priority seal clings to the rain-slick scale beneath pallets marked for climate-controlled carriage.",
+          actionLabel: "Recover the discarded cargo seal",
+          resultText:
+            "Redoubt reserved space for records, biological archives, and financial custody while deferring public relief freight.",
+          effects: [
+            { type: "setFlag", key: "foundRedoubtCargoSeal", value: true },
+            { type: "collectEvidence", id: "redoubt_cargo_seal" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedBenefactorBoarding" },
+              { type: "flag", key: "foundRedoubtCargoSeal", equals: false },
+            ],
+          },
+        },
+        {
+          id: "orpheus_cockpit_pouch",
+          label: "Open cockpit pouch",
+          x: 43,
+          y: 35,
+          width: 16,
+          height: 23,
+          title: "The route leaves the public map",
+          text:
+            "A narrow paper strip protrudes from the flight deck pouch while the crew supervises the cargo loading.",
+          actionLabel: "Copy the restricted route strip",
+          toolId: "smartphone",
+          resultText:
+            "The route suppresses the transponder beyond the coast and names an offshore arrival: Orpheus, Island Strip 2.",
+          effects: [
+            { type: "setFlag", key: "foundOrpheusRouteStrip", value: true },
+            { type: "collectEvidence", id: "orpheus_route_strip" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "foundRedoubtCargoSeal" },
+              { type: "flag", key: "foundOrpheusRouteStrip", equals: false },
+            ],
+          },
+        },
+        {
+          id: "hangar_four_jet",
+          label: "Redoubt jet",
+          x: 39,
+          y: 16,
+          width: 56,
+          height: 49,
+          title: "A private exit from public catastrophe",
+          text:
+            "The unmarked aircraft is fueled, warm, and absent from the airport's public departure board.",
+        },
+        {
+          id: "airfield_convoy",
+          label: "Black convoy",
+          x: 20,
+          y: 44,
+          width: 28,
+          height: 25,
+          title: "Continuity for those who can afford it",
+          text:
+            "Engines idle beneath the rain. Every windshield carries the same temporary Meridian access square.",
+        },
+      ],
+    },
+    blackwater_point: {
+      id: "blackwater_point",
+      name: "Blackwater Point",
+      eyebrow: "North coast · Tuesday · 4:36 AM",
+      mapX: 94,
+      mapY: 12,
+      description:
+        "A condemned maintenance pier where Redoubt's air route becomes a covert sea crossing to Site Orpheus.",
+      sceneClass: "scene-blackwater-point",
+      sceneArt: "./assets/scenes/blackwater-point.webp",
+      hotspots: [
+        {
+          id: "tamsin_pike",
+          label: "Tamsin Pike",
+          x: 2,
+          y: 25,
+          width: 22,
+          height: 42,
+          title: "The mechanic who keeps the false tender running",
+          text:
+            "A harbor mechanic watches the service launch from behind salt-streaked glass, one hand resting beside a hidden ledger.",
+          dialogueId: "tamsin_pike",
+        },
+        {
+          id: "blackwater_shadow_ledger",
+          label: "Open dock ledger",
+          x: 18,
+          y: 65,
+          width: 25,
+          height: 21,
+          title: "The crossings erased from the harbor copy",
+          text:
+            "The wet ledger mirrors Hangar 4 arrival times with movements coded ORP-2 and no civil destination.",
+          actionLabel: "Photograph the shadow ledger",
+          toolId: "smartphone",
+          resultText:
+            "Every Redoubt flight is followed by an unregistered launch movement toward Orpheus.",
+          effects: [
+            { type: "setFlag", key: "photographedBlackwaterLedger", value: true },
+            { type: "collectEvidence", id: "blackwater_cargo_ledger_photo" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "questionedTamsinPike" },
+              { type: "flag", key: "photographedBlackwaterLedger", equals: false },
+            ],
+          },
+        },
+        {
+          id: "orpheus_cold_container",
+          label: "Refrigerated container",
+          x: 31,
+          y: 28,
+          width: 26,
+          height: 42,
+          title: "The island's private relief shipment",
+          text:
+            "A clipped manifest hangs inside the refrigeration controller beneath a Redoubt priority-zero seal.",
+          actionLabel: "Recover the cold-chain manifest",
+          resultText:
+            "Orpheus receives Bellwether samples and donor medicine while municipal relief consignments are held ashore.",
+          effects: [
+            { type: "setFlag", key: "foundOrpheusColdChainManifest", value: true },
+            { type: "collectEvidence", id: "orpheus_cold_chain_manifest" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedBlackwaterLedger" },
+              { type: "flag", key: "foundOrpheusColdChainManifest", equals: false },
+            ],
+          },
+        },
+        {
+          id: "orpheus_service_launch",
+          label: "Service launch",
+          x: 64,
+          y: 42,
+          width: 31,
+          height: 28,
+          title: "A luxury launch wearing a maintenance registration",
+          text:
+            "Tinted passenger glass and a climate-controlled cargo hatch hide behind a navigation-tender registration.",
+          actionLabel: "Photograph the disguised launch",
+          toolId: "smartphone",
+          resultText:
+            "Redoubt cases move directly aboard while ordinary maintenance boats remain tied to the pier.",
+          effects: [
+            { type: "setFlag", key: "photographedIslandServiceLaunch", value: true },
+            { type: "collectEvidence", id: "island_service_launch_photo" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "foundOrpheusColdChainManifest" },
+              { type: "flag", key: "photographedIslandServiceLaunch", equals: false },
+            ],
+          },
+        },
+        {
+          id: "blackwater_tide_locker",
+          label: "Tide locker",
+          x: 49,
+          y: 60,
+          width: 16,
+          height: 24,
+          title: "Nineteen minutes outside the radar",
+          text:
+            "Behind coiled nets, an unlocked metal box holds tonight's route card and an unreturned Orpheus service credential.",
+          actionLabel: "Copy the restricted tide window",
+          toolId: "smartphone",
+          resultText:
+            "The launch crosses during a coastal radar gap and enters Orpheus through a submerged service cavern at North Reef.",
+          effects: [
+            { type: "setFlag", key: "foundBlackwaterTideWindow", value: true },
+            { type: "collectEvidence", id: "blackwater_tide_window" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedIslandServiceLaunch" },
+              { type: "flag", key: "foundBlackwaterTideWindow", equals: false },
+            ],
+          },
+        },
+        {
+          id: "orpheus_island_beacon",
+          label: "Offshore beacon",
+          x: 78,
+          y: 17,
+          width: 18,
+          height: 20,
+          title: "A private light on an unnamed island",
+          text:
+            "One pale beacon burns through the fog where public charts show open water.",
+        },
+        {
+          id: "working_boats",
+          label: "Maintenance boats",
+          x: 77,
+          y: 62,
+          width: 22,
+          height: 30,
+          title: "The disguise moored beside the truth",
+          text:
+            "The real workboats smell of fuel and fish. None has the enclosed cabin or speed of the Orpheus launch.",
+        },
+      ],
+    },
+    orpheus_sublevel_harbor: {
+      id: "orpheus_sublevel_harbor",
+      name: "Orpheus Sublevel Harbor",
+      eyebrow: "Site Orpheus · Tuesday · 5:12 AM",
+      mapX: 98,
+      mapY: 5,
+      description:
+        "A fortified sea cavern beneath the island where Redoubt passengers, private medical cargo, and crisis archives disappear from the public world.",
+      sceneClass: "scene-orpheus-sublevel",
+      sceneArt: "./assets/scenes/orpheus-sublevel-harbor.webp",
+      hotspots: [
+        {
+          id: "adrian_moss",
+          label: "Adrian Moss",
+          x: 1,
+          y: 31,
+          width: 22,
+          height: 38,
+          title: "The steward who knows what the island protects",
+          text:
+            "A gray-haired logistics steward watches your maintenance badge from a glass booth built to survive both storms and questions.",
+          dialogueId: "adrian_moss",
+        },
+        {
+          id: "orpheus_arrival_desk",
+          label: "Arrival registry",
+          x: 45,
+          y: 61,
+          width: 28,
+          height: 24,
+          title: "A refuge with no survivors",
+          text:
+            "The open registry lists years of benefactors, archives, and clinic cargo—but not one civilian evacuee.",
+          actionLabel: "Photograph the arrival registry",
+          toolId: "smartphone",
+          resultText:
+            "Every Redoubt passenger is marked as a Meridian principal, and each crisis archive receives permanent retention.",
+          effects: [
+            { type: "setFlag", key: "photographedOrpheusArrivalRegistry", value: true },
+            { type: "collectEvidence", id: "orpheus_arrival_registry_photo" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "questionedAdrianMoss" },
+              { type: "flag", key: "photographedOrpheusArrivalRegistry", equals: false },
+            ],
+          },
+        },
+        {
+          id: "benefactor_clinic_case",
+          label: "Silver clinic case",
+          x: 43,
+          y: 42,
+          width: 20,
+          height: 22,
+          title: "Public experiments, private medicine",
+          text:
+            "A transfer order is clipped beneath a gold priority marker on a refrigerated case from the Blackwater launch.",
+          actionLabel: "Recover the clinic transfer order",
+          resultText:
+            "Bellwether and Verdant samples feed a private longevity cohort sponsored by Meridian's First Circle.",
+          effects: [
+            { type: "setFlag", key: "foundBenefactorClinicTransferOrder", value: true },
+            { type: "collectEvidence", id: "benefactor_clinic_transfer_order" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedOrpheusArrivalRegistry" },
+              { type: "flag", key: "foundBenefactorClinicTransferOrder", equals: false },
+            ],
+          },
+        },
+        {
+          id: "orpheus_security_console",
+          label: "Security wall",
+          x: 51,
+          y: 66,
+          width: 20,
+          height: 20,
+          title: "Every arrival already has a room upstairs",
+          text:
+            "The surveillance matrix routes passengers to private suites and cargo to the clinic, archive, or financial vault.",
+          actionLabel: "Photograph the arrival matrix",
+          toolId: "smartphone",
+          resultText:
+            "Hangar 4's passengers are assigned First Circle suites while their sealed records move into a leverage archive.",
+          effects: [
+            { type: "setFlag", key: "photographedOrpheusSecurityWall", value: true },
+            { type: "collectEvidence", id: "orpheus_security_wall_photo" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "foundBenefactorClinicTransferOrder" },
+              { type: "flag", key: "photographedOrpheusSecurityWall", equals: false },
+            ],
+          },
+        },
+        {
+          id: "orpheus_freight_elevator",
+          label: "Freight elevator",
+          x: 67,
+          y: 28,
+          width: 18,
+          height: 44,
+          title: "The island stacked above the harbor",
+          text:
+            "A brass directory beside the elevator maps the clinic, leverage archive, private residences, and First Circle assembly hall.",
+          actionLabel: "Copy the concealed elevator directory",
+          toolId: "smartphone",
+          resultText:
+            "Level seven houses the First Circle assembly where Meridian principals select the next governance-conversion site.",
+          effects: [
+            { type: "setFlag", key: "foundSublevelElevatorDirectory", value: true },
+            { type: "collectEvidence", id: "sublevel_elevator_directory" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedOrpheusSecurityWall" },
+              { type: "flag", key: "foundSublevelElevatorDirectory", equals: false },
+            ],
+          },
+        },
+        {
+          id: "orpheus_launch_berth",
+          label: "Sublevel berth",
+          x: 20,
+          y: 49,
+          width: 29,
+          height: 32,
+          title: "The Blackwater route ends underground",
+          text:
+            "Saltwater drains from the launch beneath a cavern ceiling invisible to satellites and civil navigation.",
+        },
+        {
+          id: "first_circle_stair",
+          label: "Upper compound",
+          x: 69,
+          y: 4,
+          width: 21,
+          height: 24,
+          title: "Warm lights above the machinery",
+          text:
+            "Beyond the elevator shaft, an illuminated stair climbs toward gardens and a residence built above the hidden dock.",
+        },
+      ],
+    },
+    orpheus_first_circle: {
+      id: "orpheus_first_circle",
+      name: "First Circle Assembly",
+      eyebrow: "Orpheus Level 07 · Tuesday · 5:41 AM",
+      mapX: 98,
+      mapY: 2,
+      description:
+        "A luxurious chamber above the island where Meridian's principals turn manufactured suffering into votes, portfolios, and private returns.",
+      sceneClass: "scene-orpheus-first-circle",
+      sceneArt: "./assets/scenes/orpheus-first-circle.webp",
+      hotspots: [
+        {
+          id: "first_circle_live_vote",
+          label: "Live assembly vote",
+          x: 31,
+          y: 31,
+          width: 48,
+          height: 35,
+          title: "The next city decided over breakfast",
+          text:
+            "The chair accepts Bellwether's conversion results and calls a vote on a coastal city displayed across the operations wall.",
+          actionLabel: "Record the First Circle vote",
+          toolId: "recorder",
+          resultText:
+            "Your recorder captures the Benefactors accepting Bellwether and approving Port Prosper as the next governance-conversion site.",
+          effects: [
+            { type: "setFlag", key: "recordedFirstCircleVote", value: true },
+            { type: "collectEvidence", id: "first_circle_vote_recording" },
+          ],
+          actionWhen: {
+            type: "flag",
+            key: "recordedFirstCircleVote",
+            equals: false,
+          },
+        },
+        {
+          id: "first_circle_seating_registry",
+          label: "Seating registry",
+          x: 22,
+          y: 73,
+          width: 27,
+          height: 20,
+          title: "The people behind the respectable titles",
+          text:
+            "An unattended leather registry maps permanent voting seats to donors, public officials, contractors, and media owners.",
+          actionLabel: "Photograph the First Circle registry",
+          toolId: "smartphone",
+          resultText:
+            "The registry identifies Wren, Rook, Meridian's donor principals, and the public figures who protect the network in plain sight.",
+          effects: [
+            { type: "setFlag", key: "photographedFirstCircleRegistry", value: true },
+            { type: "collectEvidence", id: "first_circle_seating_registry_photo" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "recordedFirstCircleVote" },
+              { type: "flag", key: "photographedFirstCircleRegistry", equals: false },
+            ],
+          },
+        },
+        {
+          id: "port_prosper_portfolio",
+          label: "Conversion portfolio",
+          x: 44,
+          y: 72,
+          width: 22,
+          height: 20,
+          title: "Port Prosper before the lights go out",
+          text:
+            "The open portfolio schedules grid failure, water interruption, response saturation, and Meridian's pre-positioned rescue.",
+          actionLabel: "Copy the Port Prosper portfolio",
+          toolId: "smartphone",
+          resultText:
+            "The First Circle expects private-service adoption above seventy-eight percent within forty-eight hours of the planned outage.",
+          effects: [
+            { type: "setFlag", key: "foundPortProsperPortfolio", value: true },
+            { type: "collectEvidence", id: "port_prosper_conversion_portfolio" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedFirstCircleRegistry" },
+              { type: "flag", key: "foundPortProsperPortfolio", equals: false },
+            ],
+          },
+        },
+        {
+          id: "crisis_investment_escrow",
+          label: "Sealed escrow schedule",
+          x: 69,
+          y: 68,
+          width: 18,
+          height: 22,
+          title: "Profit waits beside the catastrophe",
+          text:
+            "A sealed schedule divides money between infrastructure disruption, relief acquisition, media control, and municipal concessions.",
+          actionLabel: "Recover the crisis-investment escrow",
+          resultText:
+            "The same principals fund the collapse and the private companies contracted to replace Port Prosper's public services.",
+          effects: [
+            { type: "setFlag", key: "foundCrisisInvestmentEscrow", value: true },
+            { type: "collectEvidence", id: "crisis_investment_escrow" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "foundPortProsperPortfolio" },
+              { type: "flag", key: "foundCrisisInvestmentEscrow", equals: false },
+            ],
+          },
+        },
+        {
+          id: "port_prosper_operations_wall",
+          label: "Operations wall",
+          x: 77,
+          y: 14,
+          width: 22,
+          height: 45,
+          title: "A living city reduced to conversion metrics",
+          text:
+            "Power substations, water mains, hospitals, newsrooms, and public fears are arranged as controllable inputs around one coastal city.",
+        },
+        {
+          id: "first_circle_gallery",
+          label: "Service gallery",
+          x: 1,
+          y: 18,
+          width: 25,
+          height: 50,
+          title: "Close enough to hear everything",
+          text:
+            "A dark curtain and the low hum of camera equipment conceal your borrowed maintenance uniform from the table.",
         },
       ],
     },

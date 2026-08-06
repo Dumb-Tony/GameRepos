@@ -34,6 +34,10 @@ const imageAssetFiles = [
   "assets/scenes/university-river-annex.webp",
   "assets/scenes/verdant-conservation-parcel.webp",
   "assets/scenes/crownline-data-center.webp",
+  "assets/scenes/greyhaven-executive-airfield.webp",
+  "assets/scenes/blackwater-point.webp",
+  "assets/scenes/orpheus-sublevel-harbor.webp",
+  "assets/scenes/orpheus-first-circle.webp",
   "assets/social/benefactors-social.webp",
   "assets/evidence/gala-photograph-v2.webp",
   "assets/evidence/photo-west-wall.webp",
@@ -41,6 +45,13 @@ const imageAssetFiles = [
   "assets/evidence/foundation-donor-wall.webp",
   "assets/evidence/gala-terrace.webp",
   "assets/evidence/continuity-site-map.webp",
+];
+const audioAssetFiles = [
+  "assets/audio/vale-fragment-clock.wav",
+  "assets/audio/vale-fragment-freight.wav",
+  "assets/audio/vale-fragment-rain.wav",
+  "assets/audio/vale-restored-message.wav",
+  "assets/audio/first-circle-vote.wav",
 ];
 const requiredFiles = [
   "index.html",
@@ -58,6 +69,8 @@ const requiredFiles = [
   "src/content/onboarding-content.js",
   "src/content/prologue-content.js",
   "src/systems/exploration/scene-renderer.js",
+  "src/systems/inventory/inventory-tools.js",
+  "src/systems/decisions/port-prosper-response.js",
   "src/systems/dialogue/dialogue-engine.js",
   "src/systems/evidence-board/evidence-board.js",
   "src/systems/evidence/evidence-renderer.js",
@@ -67,6 +80,7 @@ const requiredFiles = [
   "src/ui/app.js",
   "src/ui/transient-notice.js",
   ...imageAssetFiles,
+  ...audioAssetFiles,
 ];
 
 for (const file of requiredFiles) {
@@ -100,12 +114,13 @@ const deployedFiles = [
   "index.html",
   "styles.css",
   ...imageAssetFiles,
+  ...audioAssetFiles,
   ...requiredFiles.filter((file) => file.startsWith("src/")),
 ];
 const assets = {};
 for (const file of deployedFiles) {
   const route = file === "index.html" ? "/index.html" : `/${file.replaceAll("\\", "/")}`;
-  const binary = file.endsWith(".webp");
+  const binary = file.endsWith(".webp") || file.endsWith(".wav");
   const source = await readFile(resolve(projectRoot, file), binary ? undefined : "utf8");
   const contentType = file.endsWith(".html")
     ? "text/html; charset=utf-8"
@@ -113,6 +128,8 @@ for (const file of deployedFiles) {
       ? "text/css; charset=utf-8"
       : file.endsWith(".webp")
         ? "image/webp"
+        : file.endsWith(".wav")
+          ? "audio/wav"
       : "text/javascript; charset=utf-8";
   assets[route] = {
     body: binary ? source.toString("base64") : source,

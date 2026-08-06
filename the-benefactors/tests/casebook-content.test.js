@@ -20,7 +20,7 @@ test("every casebook stage has a three-level hint path", () => {
     assert.equal(stage.hints.length, 3, stage.id);
     assert.equal(stage.hints.every(Boolean), true, stage.id);
   }
-  assert.equal(CASEBOOK_PROGRESS.length, 49);
+  assert.equal(CASEBOOK_PROGRESS.length, 79);
 });
 
 test("casebook objective advances with investigation state", () => {
@@ -159,4 +159,59 @@ test("casebook objective advances with investigation state", () => {
 
   state.flags.provedCrownlineGovernanceModel = true;
   assert.equal(activeStage(state).id, "executive_airfield_lead");
+
+  state.locationVisits.greyhaven_executive_airfield = 1;
+  assert.equal(activeStage(state).id, "investigate_airfield");
+
+  state.flags.questionedEllisWard = true;
+  state.flags.photographedHangarManifest = true;
+  state.flags.photographedBenefactorBoarding = true;
+  state.flags.foundRedoubtCargoSeal = true;
+  state.flags.foundOrpheusRouteStrip = true;
+  assert.equal(activeStage(state).id, "connect_redoubt_evacuation");
+
+  state.flags.provedRedoubtEvacuation = true;
+  assert.equal(activeStage(state).id, "orpheus_lead");
+
+  state.locationVisits.blackwater_point = 1;
+  assert.equal(activeStage(state).id, "investigate_blackwater");
+
+  state.flags.questionedTamsinPike = true;
+  state.flags.photographedBlackwaterLedger = true;
+  state.flags.foundOrpheusColdChainManifest = true;
+  state.flags.photographedIslandServiceLaunch = true;
+  state.flags.foundBlackwaterTideWindow = true;
+  assert.equal(activeStage(state).id, "connect_orpheus_supply_route");
+
+  state.flags.provedOrpheusSupplyRoute = true;
+  assert.equal(activeStage(state).id, "enter_orpheus");
+
+  state.locationVisits.orpheus_sublevel_harbor = 1;
+  assert.equal(activeStage(state).id, "investigate_orpheus_harbor");
+
+  state.flags.questionedAdrianMoss = true;
+  state.flags.photographedOrpheusArrivalRegistry = true;
+  state.flags.foundBenefactorClinicTransferOrder = true;
+  state.flags.photographedOrpheusSecurityWall = true;
+  state.flags.foundSublevelElevatorDirectory = true;
+  assert.equal(activeStage(state).id, "connect_orpheus_command_center");
+
+  state.flags.provedOrpheusCommandCenter = true;
+  assert.equal(activeStage(state).id, "reach_first_circle");
+
+  state.locationVisits.orpheus_first_circle = 1;
+  assert.equal(activeStage(state).id, "record_first_circle");
+
+  state.flags.recordedFirstCircleVote = true;
+  state.flags.photographedFirstCircleRegistry = true;
+  state.flags.foundPortProsperPortfolio = true;
+  state.flags.foundCrisisInvestmentEscrow = true;
+  assert.equal(activeStage(state).id, "connect_benefactor_vote");
+
+  state.flags.provedBenefactorsSelectCrises = true;
+  assert.equal(activeStage(state).id, "warn_port_prosper");
+
+  state.flags.portProsperDecisionMade = true;
+  state.flags.warnedPortProsperQuietly = true;
+  assert.equal(activeStage(state).id, "quiet_warning_consequence");
 });

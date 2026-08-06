@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { DEDUCTIONS } from "../src/content/game-content.js";
+import { DEDUCTIONS, EVIDENCE } from "../src/content/game-content.js";
 import { createInitialState } from "../src/engine/game-state.js";
 import {
   arrangeEvidence,
@@ -22,6 +22,24 @@ test("arranges a crowded evidence board without stacking its first forty-two car
 
   assert.equal(new Set(positions).size, 42);
   assert.deepEqual(state.board.cards, {});
+});
+
+test("keeps every current evidence card visible when pinned sequentially", () => {
+  let state = createInitialState();
+  state.evidence.collected = Object.keys(EVIDENCE);
+
+  for (const evidenceId of state.evidence.collected) {
+    state = pinEvidence(state, evidenceId);
+  }
+
+  const positions = state.evidence.pinned.map((evidenceId) => {
+    const position = state.board.cards[evidenceId];
+    assert.ok(position.x >= 0 && position.x <= 86, `${evidenceId} x is visible`);
+    assert.ok(position.y >= 0 && position.y <= 80, `${evidenceId} y is visible`);
+    return `${position.x.toFixed(4)},${position.y.toFixed(4)}`;
+  });
+
+  assert.equal(new Set(positions).size, state.evidence.pinned.length);
 });
 
 test("pins and moves collected evidence without mutating source", () => {

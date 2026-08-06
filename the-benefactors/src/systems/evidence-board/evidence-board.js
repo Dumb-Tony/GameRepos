@@ -1,12 +1,34 @@
 import { applyEffects } from "../../engine/events.js";
 
 const BOARD_COLUMNS = [2, 16, 30, 44, 58, 72, 86];
+const BOARD_TOP = 7;
+const BOARD_BOTTOM = 80;
+const PREFERRED_ROW_GAP = 19;
 
-function defaultPosition(index) {
+function defaultPosition(index, totalCards = index + 1) {
+  const rowCount = Math.max(
+    1,
+    Math.ceil(totalCards / BOARD_COLUMNS.length),
+  );
+  const rowGap =
+    rowCount === 1
+      ? 0
+      : Math.min(
+          PREFERRED_ROW_GAP,
+          (BOARD_BOTTOM - BOARD_TOP) / (rowCount - 1),
+        );
+
   return {
     x: BOARD_COLUMNS[index % BOARD_COLUMNS.length],
-    y: 7 + Math.floor(index / BOARD_COLUMNS.length) * 19,
+    y: BOARD_TOP + Math.floor(index / BOARD_COLUMNS.length) * rowGap,
   };
+}
+
+function reflowEvidence(next) {
+  const totalCards = next.evidence.pinned.length;
+  next.evidence.pinned.forEach((evidenceId, index) => {
+    next.board.cards[evidenceId] = defaultPosition(index, totalCards);
+  });
 }
 
 export function pinEvidence(state, evidenceId, position) {
@@ -18,10 +40,35 @@ export function pinEvidence(state, evidenceId, position) {
   if (!next.evidence.pinned.includes(evidenceId)) {
     next.evidence.pinned.push(evidenceId);
   }
-  const fallback = defaultPosition(next.evidence.pinned.indexOf(evidenceId));
-  next.board.cards[evidenceId] = position
-    ? { ...fallback, ...position }
-    : { ...(next.board.cards[evidenceId] || fallback) };
+  const evidenceIndex = next.evidence.pinned.indexOf(evidenceId);
+  const fallback = defaultPosition(evidenceIndex, next.evidence.pinned.length);
+
+  if (position) {
+    next.board.cards[evidenceId] = { ...fallback, ...position };
+    return next;
+  }
+
+  if (next.board.cards[evidenceId]) return next;
+
+  const positionIsOccupied = next.evidence.pinned.some((otherId) => {
+    if (otherId === evidenceId) return false;
+    const otherPosition = next.board.cards[otherId];
+    return (
+      otherPosition &&
+      Math.abs(otherPosition.x - fallback.x) < 0.01 &&
+      Math.abs(otherPosition.y - fallback.y) < 0.01
+    );
+  });
+  const boardAlreadyOverflowed = next.evidence.pinned.some((otherId) => {
+    const otherPosition = next.board.cards[otherId];
+    return otherPosition && otherPosition.y > BOARD_BOTTOM;
+  });
+
+  if (positionIsOccupied || boardAlreadyOverflowed) {
+    reflowEvidence(next);
+  } else {
+    next.board.cards[evidenceId] = fallback;
+  }
   return next;
 }
 
@@ -44,9 +91,7 @@ export function moveEvidence(state, evidenceId, position) {
 
 export function arrangeEvidence(state) {
   const next = structuredClone(state);
-  next.evidence.pinned.forEach((evidenceId, index) => {
-    next.board.cards[evidenceId] = defaultPosition(index);
-  });
+  reflowEvidence(next);
   return next;
 }
 

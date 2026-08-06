@@ -163,6 +163,56 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Added a continuous leak-to-Crownline playthrough test covering all ten deductions and an autosave round trip after every chapter handoff
 - Kept the Mayor Vale survey sheet centered and visible at every rotation and responsive breakpoint
 
+**Milestone 16 — Field tools and recovered audio (complete)**
+
+- Added playable audio to all three damaged-recorder fragments and the fully reconstructed Vale message
+- Added transcript support alongside the recordings so story-critical dialogue remains accessible
+- Turned the notebook, press credentials, smartphone, and recorder into contextual scene tools
+- Highlighted matching hotspots and surfaced clear tool-use prompts from the inventory
+- Added validation and automated coverage for recording assets and every inventory-tool interaction
+
+**Milestone 17 — Hangar 4 (complete)**
+
+- Extended the investigation to Greyhaven Executive Airfield after the Crownline deduction
+- Added a painterly neo-noir Hangar 4 scene, Ellis Ward interrogation, and four sequential apron discoveries
+- Added a three-connection evidence-board deduction proving Redoubt evacuates Meridian's protected principals and archives
+- Revealed Site Orpheus as a private island supplied through the disguised Blackwater Point maintenance pier
+- Added casebook guidance, home-office progression, save migration, and a full leak-to-Hangar-4 automated playthrough
+
+**Milestone 18 — Blackwater Point (complete)**
+
+- Followed Redoubt's flight trail to the covert coastal supply line serving Site Orpheus
+- Added a painterly rain-soaked pier scene, Tamsin Pike interrogation, and four sequential dockside discoveries
+- Added a board deduction proving Blackwater hides Orpheus passengers, biological archives, and private medical cargo from civil records
+- Recovered a nineteen-minute radar gap and maintenance credential for entering the island's submerged harbor
+- Extended casebook guidance, office progression, save migration, and the complete automated playthrough to the Orpheus approach
+
+**Milestone 19 — Orpheus Sublevel Harbor (complete)**
+
+- Entered Site Orpheus through its concealed sea-cavern harbor beneath North Reef
+- Added a painterly island command-center scene, Adrian Moss interrogation, and four sequential harbor discoveries
+- Revealed the private longevity clinic, leverage archive, protected residences, and First Circle assembly above the dock
+- Added a four-connection deduction proving Orpheus is the Benefactors' operational headquarters rather than a humanitarian refuge
+- Recovered a First Circle invitation showing the society is selecting its next target on Level 07
+- Extended save migration, casebook guidance, office progression, and the full leak-to-Orpheus automated playthrough
+
+**Milestone 20 — The First Circle (complete)**
+
+- Infiltrated the Benefactors' live assembly on Orpheus Level 07
+- Added a painterly oceanfront council chamber and four sequential stealth discoveries
+- Made the audio recorder essential for capturing a fully playable recording of the First Circle vote
+- Exposed Port Prosper as the next selected crisis site, with its infrastructure failure, relief takeover, media strategy, and investment returns funded in advance
+- Added a four-connection deduction proving the Benefactors select, finance, and profit from manufactured crises
+- Extended save migration, casebook guidance, office progression, and the full playthrough through the First Circle vote
+
+**Milestone 21 — Port Prosper response (complete)**
+
+- Added a persistent three-way decision after proving the First Circle's crisis-selection model
+- Players can warn Port Prosper quietly, publish the entire Benefactors file immediately, or remain undercover on Orpheus
+- Each irreversible response creates distinct evidence, consequences, home-office updates, board status, and next objectives
+- Added a dedicated responsive decision screen plus automated coverage for every branch and save round trip
+- Extended the full leak-to-First-Circle playthrough through the quiet-warning route
+
 **Prologue content now playable**
 
 - Photograph the missing west wing

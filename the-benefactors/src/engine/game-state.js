@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 17;
+export const GAME_STATE_VERSION = 23;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -45,6 +45,7 @@ export function createInitialState(player = {}, settings = {}) {
       },
       prologueEndingStep: 0,
       prologueComplete: false,
+      portProsperResponse: null,
     },
     flags: {
       heardOpeningMessage: false,
@@ -114,6 +115,33 @@ export function createInitialState(player = {}, settings = {}) {
       foundMeridianPriorityProtocol: false,
       foundRedoubtFlightSyncLog: false,
       provedCrownlineGovernanceModel: false,
+      questionedEllisWard: false,
+      photographedHangarManifest: false,
+      photographedBenefactorBoarding: false,
+      foundRedoubtCargoSeal: false,
+      foundOrpheusRouteStrip: false,
+      provedRedoubtEvacuation: false,
+      questionedTamsinPike: false,
+      photographedBlackwaterLedger: false,
+      foundOrpheusColdChainManifest: false,
+      photographedIslandServiceLaunch: false,
+      foundBlackwaterTideWindow: false,
+      provedOrpheusSupplyRoute: false,
+      questionedAdrianMoss: false,
+      photographedOrpheusArrivalRegistry: false,
+      foundBenefactorClinicTransferOrder: false,
+      photographedOrpheusSecurityWall: false,
+      foundSublevelElevatorDirectory: false,
+      provedOrpheusCommandCenter: false,
+      recordedFirstCircleVote: false,
+      photographedFirstCircleRegistry: false,
+      foundPortProsperPortfolio: false,
+      foundCrisisInvestmentEscrow: false,
+      provedBenefactorsSelectCrises: false,
+      portProsperDecisionMade: false,
+      warnedPortProsperQuietly: false,
+      publishedFirstCircleEvidence: false,
+      remainedUndercoverOnOrpheus: false,
     },
     inventory: ["press_credentials", "smartphone", "recorder", "notebook"],
     evidence: {
@@ -123,7 +151,7 @@ export function createInitialState(player = {}, settings = {}) {
       discredited: [],
     },
     board: {
-      layoutVersion: 2,
+      layoutVersion: 3,
       cards: {},
       connections: [],
       zoom: 1,
@@ -175,6 +203,10 @@ export function createInitialState(player = {}, settings = {}) {
       university_lab_annex: 0,
       verdant_conservation_office: 0,
       crownline_data_center: 0,
+      greyhaven_executive_airfield: 0,
+      blackwater_point: 0,
+      orpheus_sublevel_harbor: 0,
+      orpheus_first_circle: 0,
     },
     settings: {
       ...DEFAULT_SETTINGS,
@@ -201,6 +233,7 @@ export function isGameState(value) {
       typeof value.progress.opening.cutsceneCompleted === "boolean" &&
       Number.isInteger(value.progress.prologueEndingStep) &&
       typeof value.progress.prologueComplete === "boolean" &&
+      Object.hasOwn(value.progress, "portProsperResponse") &&
       value.flags &&
       value.evidence &&
       value.board &&

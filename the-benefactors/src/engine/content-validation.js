@@ -57,6 +57,11 @@ export function validateGameContent({
           `Hotspot "${hotspot.id}" references missing route "${hotspot.route}".`,
         );
       }
+      if (hotspot.toolId && !inventoryIds.has(hotspot.toolId)) {
+        errors.push(
+          `Hotspot "${hotspot.id}" references missing inventory tool "${hotspot.toolId}".`,
+        );
+      }
     }
   }
 
@@ -89,6 +94,9 @@ export function validateGameContent({
   for (const [itemId, item] of Object.entries(inventory)) {
     if (item.id !== itemId) {
       errors.push(`Inventory key "${itemId}" does not match id "${item.id}".`);
+    }
+    if (!item.description) {
+      errors.push(`Inventory tool "${itemId}" has no usage description.`);
     }
   }
 
@@ -191,6 +199,14 @@ export function validateGameContent({
     const uniqueFragmentIds = new Set(fragmentIds);
     if (fragmentIds.length !== uniqueFragmentIds.size) {
       errors.push("Recording puzzle has duplicate fragment ids.");
+    }
+    for (const fragment of recordingPuzzle.fragments || []) {
+      if (!fragment.audio) {
+        errors.push(`Recording fragment "${fragment.id}" has no playable audio.`);
+      }
+    }
+    if (!recordingPuzzle.recoveredAudio) {
+      errors.push("Recording puzzle has no playable restored message.");
     }
     for (const [label, order] of [
       ["initial", recordingPuzzle.initialOrder],
