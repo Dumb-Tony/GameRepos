@@ -17,6 +17,36 @@
     { min: 74,  name: 'Gov Posts TikTok Comments', flavor: 'Parliament debates in the replies.',          color: '#ff3ea5' },
     { min: 92,  name: 'Terminal Brainrot',      flavor: 'Brain fully necrotic. Only skibidi remains.',    color: '#ff2d6f' },
   ];
+  // ---- colour palettes ------------------------------------------------
+  // The default vaporwave ramp runs cyan → blue → purple → pink → magenta →
+  // red. The warm end (pink/magenta/red) is hard to separate for red-green
+  // colour blindness — which is most of it — so an accessible ramp is offered.
+  // The alternative is the Okabe-Ito palette, designed to stay distinguishable
+  // under every common type of colour-vision deficiency, and it also varies in
+  // lightness so the stages read even in greyscale.
+  BR.STAGE_COLORS = {
+    default: ['#4be7ff', '#6f8bff', '#b06bff', '#ff6bd6', '#ff3ea5', '#ff2d6f'],
+    cb:      ['#56B4E9', '#0072B2', '#009E73', '#F0E442', '#E69F00', '#D55E00'],
+  };
+  // Key HUD/readout colours that pair with the ramp.
+  BR.UI_COLORS = {
+    default: { infected: '#c86bff', terminal: '#ff5c8a', healthy: '#5ffbe0', cure: '#4ea1ff' },
+    cb:      { infected: '#0072B2', terminal: '#D55E00', healthy: '#009E73', cure: '#CC79A7' },
+  };
+  BR.paletteMode = 'default';
+  BR.setPalette = function (mode) {
+    mode = (mode === 'cb') ? 'cb' : 'default';
+    BR.paletteMode = mode;
+    const ramp = BR.STAGE_COLORS[mode];
+    BR.STAGES.forEach((s, i) => { s.color = ramp[i]; });
+    BR.COLORS = BR.UI_COLORS[mode];
+    if (typeof document !== 'undefined' && document.body) {
+      document.body.classList.toggle('cb-palette', mode === 'cb');
+    }
+    return mode;
+  };
+  BR.COLORS = BR.UI_COLORS.default;
+
   BR.stageFor = function (v) {
     const s = BR.STAGES;
     for (let i = s.length - 1; i >= 0; i--) if (v >= s[i].min) return s[i];

@@ -69,6 +69,39 @@
       }
     }
 
+    // A single firework: radial spray of sparks that arc and fade.
+    firework(x, y, color) {
+      const n = 26;
+      for (let i = 0; i < n && this._room(); i++) {
+        const a = (i / n) * Math.PI * 2 + Math.random() * 0.2;
+        const sp = 90 + Math.random() * 150;
+        this.parts.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 30,
+          life: 0.9 + Math.random() * 0.7, max: 1.6, r: 1.8 + Math.random() * 2.6, color, g: 140 });
+      }
+    }
+
+    // Full win sequence: confetti + staged fireworks + a shockwave of shake.
+    // Scheduled internally so it unfolds over ~2.5s instead of one flat burst.
+    celebrate(w, h, opts) {
+      opts = opts || {};
+      const cols = opts.colors || ['#ffd85c', '#ff4bd8', '#4be7ff', '#5ffbe0', '#b57bff', '#ff8be6'];
+      this.confetti(w, h);
+      this.addShake(11, 0.7);
+      // first volley immediately, then a few more staggered across the screen
+      const pop = (i) => {
+        const x = w * (0.15 + Math.random() * 0.7), y = h * (0.16 + Math.random() * 0.4);
+        this.firework(x, y, cols[i % cols.length]);
+        this.addShake(5, 0.25);
+      };
+      pop(0);
+      this._celebT = [];
+      for (let i = 1; i < 7; i++) {
+        this._celebT.push(setTimeout(() => { pop(i); if (i === 3) this.confetti(w, h); }, i * 340));
+      }
+    }
+    // Cancel any in-flight celebration timers (new game / leaving the screen).
+    stopCelebrate() { (this._celebT || []).forEach(clearTimeout); this._celebT = []; }
+
     update(dt) {
       this._updateShake(dt);
       for (let i = this.parts.length - 1; i >= 0; i--) {
@@ -113,7 +146,7 @@
       ctx.globalAlpha = 1;
     }
 
-    clear() { this.parts.length = 0; this.texts.length = 0; this.shake = 0; this._shakeT = 0; }
+    clear() { this.stopCelebrate(); this.parts.length = 0; this.texts.length = 0; this.shake = 0; this._shakeT = 0; }
   }
   BR.FX = FX;
 

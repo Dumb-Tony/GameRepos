@@ -400,13 +400,13 @@
         else { const col = inf ? stage.color : 'rgba(220,228,248,0.82)'; Spr.draw(ctx, Spr.iconFor('country', c.name), c.px + wob, c.py, c.r * 1.55, col, inf ? c.r * 0.5 : false); }
       } else { ctx.font = `${Math.round(c.r * 1.15)}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(c.emoji, c.px + wob, c.py); }
       // closed-border padlock badge
-      if (!c.airOpen || !c.seaOpen || !c.landOpen) { if (Spr) Spr.draw(ctx, 'lock', c.px + c.r + 4, c.py - c.r - 3, 11, '#ff5c8a'); }
+      if (!c.airOpen || !c.seaOpen || !c.landOpen) { if (Spr) Spr.draw(ctx, 'lock', c.px + c.r + 4, c.py - c.r - 3, 11, (BR.COLORS && BR.COLORS.terminal) || '#ff5c8a'); }
       // research-lab badge: a rich, aware region is actively building the Cure.
       // Blinks brighter the closer the Cure gets — the visible source of the race.
       if (Spr && game.cure > 6 && c.detected && c.wealth > 0.62 && !terminal) {
         const pl = 0.55 + 0.45 * Math.sin(t * 4 + c.id * 2);
         ctx.save(); ctx.globalAlpha = 0.65 + 0.35 * pl * (game.cure / 100);
-        Spr.draw(ctx, 'flask', c.px - c.r - 4, c.py - c.r - 3, 11, '#4ea1ff', c.r * 0.3 * pl); ctx.restore();
+        Spr.draw(ctx, 'flask', c.px - c.r - 4, c.py - c.r - 3, 11, (BR.COLORS && BR.COLORS.cure) || '#4ea1ff', c.r * 0.3 * pl); ctx.restore();
       }
       // Labels (name; % when infected). Drawn at a CONSTANT SCREEN SIZE by
       // dividing font/outline/offsets by the view zoom — otherwise they're

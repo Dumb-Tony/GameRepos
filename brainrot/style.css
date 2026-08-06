@@ -1018,6 +1018,47 @@ img.spr { display: inline-block; vertical-align: middle; image-rendering: auto; 
   #evoModal #pathogenPanel{ height:92px; }
 }
 
+/* ===== COLOUR-BLIND PALETTE =========================================
+ * Okabe-Ito hues: distinguishable under every common colour-vision
+ * deficiency, and they vary in lightness so they read in greyscale too.
+ * The canvas/map side is swapped in JS (BR.setPalette); these rules cover
+ * the CSS-driven HUD bits that JS doesn't paint. ================== */
+body.cb-palette{
+  --good:#009E73; --bad:#D55E00; --info:#56B4E9; --chaos:#CC79A7;
+  --lime:#009E73; --coral:#D55E00; --teal:#56B4E9; --blue:#0072B2;
+}
+body.cb-palette .dp-inf b{ color:#0072B2; }
+body.cb-palette .dp-nec b{ color:#D55E00; }
+body.cb-palette .dp-hea b{ color:#009E73; }
+body.cb-palette .wb-inf{ background:linear-gradient(90deg,#56B4E9,#0072B2); }
+body.cb-palette .wb-nec{ background:linear-gradient(90deg,#E69F00,#D55E00); }
+body.cb-palette .sb-inf b{ color:#0072B2; }
+body.cb-palette .sb-nec b{ color:#D55E00; }
+body.cb-palette .sb-hea b{ color:#009E73; }
+body.cb-palette .cure-fill{ background:linear-gradient(90deg,#CC79A7,#D55E00) !important; }
+body.cb-palette .m-inf .meter-fill{ background:linear-gradient(90deg,#56B4E9,#0072B2); }
+body.cb-palette .m-sev .meter-fill{ background:linear-gradient(90deg,#F0E442,#E69F00); }
+body.cb-palette .m-let .meter-fill{ background:linear-gradient(90deg,#E69F00,#D55E00); }
+body.cb-palette .m-aware .meter-fill{ background:linear-gradient(90deg,#56B4E9,#CC79A7); }
+body.cb-palette .rr-tag.rr-good{ background:#009E7322; color:#009E73; }
+body.cb-palette .rr-tag.rr-bad{ background:#D55E0022; color:#D55E00; }
+
+/* ===== HOW TO PLAY ================================================== */
+.help-body{ display:flex; flex-direction:column; gap:12px; }
+.help-sec{ background:var(--panel2); border:1px solid var(--line); border-radius:11px; padding:10px 12px; }
+.help-h{ font-size:12px; font-weight:900; letter-spacing:.6px; text-transform:uppercase; color:var(--violet); margin-bottom:6px; }
+.help-sec p{ margin:0; font-size:12.5px; line-height:1.5; color:var(--dim); }
+.help-step{ font-size:12.5px; line-height:1.5; color:var(--dim); padding:3px 0; }
+.help-step b, .help-sec p b{ color:var(--txt); }
+
+/* ===== WIN FLASH — a warm bloom washes the screen the moment you win ===== */
+body.win-flash::after{
+  content:""; position:fixed; inset:0; z-index:390; pointer-events:none;
+  background:radial-gradient(120% 80% at 50% 45%, rgba(255,216,92,.55), rgba(255,75,216,.25) 45%, transparent 72%);
+  animation:winFlash .9s ease-out forwards;
+}
+@keyframes winFlash{ 0%{ opacity:0; } 12%{ opacity:1; } 100%{ opacity:0; } }
+
 /* ===== ROTATE-TO-LANDSCAPE GATE ===================================== */
 #rotateGate{ display:none; position:fixed; inset:0; z-index:600;
   background:radial-gradient(120% 90% at 50% 0%, #2a1156, #120833 55%, #0a0618);

@@ -14,6 +14,9 @@
   // Vector-sprite icon as an <img> HTML string (falls back to empty if sprites
   // haven't loaded). kind: 'upgrade' | 'country' | 'hud'.
   const spr = (kind, id, size, color, cls) => (BR.Sprites ? BR.Sprites.img(BR.Sprites.iconFor(kind, id), size, color || '#efe6ff', cls) : '');
+  // Semantic colours come from the active palette (see BR.setPalette) so the
+  // colour-blind mode can retint the infection readouts, not just the map.
+  const CO = (k) => (BR.COLORS && BR.COLORS[k]) || { infected: '#c86bff', terminal: '#ff5c8a', healthy: '#5ffbe0', cure: '#4ea1ff' }[k];
   const SLOTS = [1, 2, 3];
   const MET = { inf: 8, sev: 16, let: 8 };
 
@@ -21,6 +24,9 @@
     constructor(game) { this.game = game; this.mounted = false; this.nodeEls = {}; this.cssW = 0; this.cssH = 0; this.milestones = new Set(); this.selected = null; this.view = { zoom: 1, x: 0, y: 0 }; this._dpr = 1; }
 
     mount() {
+      // Apply the saved palette FIRST — icons and meters bake their colour in
+      // at build time, so switching after would leave stale tints behind.
+      if (BR.setPalette) BR.setPalette(this.game.save.settings.colorblind ? 'cb' : 'default');
       this.mapCanvas = $('mapCanvas'); this.fxCanvas = $('fxCanvas');
       this.mctx = this.mapCanvas.getContext('2d'); this.fctx = this.fxCanvas.getContext('2d');
       this.mapWrap = $('mapWrap');
@@ -38,9 +44,16 @@
     // data-sprsize / data-sprcolor tune it.
     _paintStaticIcons() {
       if (!BR.Sprites) return;
+      // The markup carries the default-palette hex for each icon; remap the
+      // semantic ones through the active palette so colour-blind mode reaches
+      // the static HUD icons too, not just the JS-painted ones.
+      const SEM = { '#c86bff': 'infected', '#ff5c8a': 'terminal', '#5ffbe0': 'healthy', '#4ea1ff': 'cure' };
       document.querySelectorAll('[data-spr]').forEach((e) => {
         const [kind, id] = e.getAttribute('data-spr').split(':');
-        const size = +(e.getAttribute('data-sprsize') || 18), color = e.getAttribute('data-sprcolor') || '#efe6ff';
+        const size = +(e.getAttribute('data-sprsize') || 18);
+        let color = e.getAttribute('data-sprcolor') || '#efe6ff';
+        const sem = SEM[color.toLowerCase()];
+        if (sem && ['infected', 'terminal', 'healthy', 'cure'].indexOf(id) >= 0) color = CO(sem);
         e.innerHTML = spr(kind, id, size, color);
       });
     }
@@ -247,6 +260,18 @@
       mute.checked = this.game.save.settings.muted; music.checked = this.game.save.settings.music;
       mute.addEventListener('change', () => { this.game.save.settings.muted = mute.checked; this.game.save.saveSettings(); this.game.audio && this.game.audio.setMuted(mute.checked); });
       music.addEventListener('change', () => { this.game.save.settings.music = music.checked; this.game.save.saveSettings(); this.game.audio && (this.game.audio.ensure(), this.game.audio.setMusic(music.checked)); });
+      const cb = $('setCB');
+      if (cb) {
+        cb.checked = !!this.game.save.settings.colorblind;
+        cb.addEventListener('change', () => {
+          this.game.save.settings.colorblind = cb.checked; this.game.save.saveSettings();
+          BR.setPalette(cb.checked ? 'cb' : 'default');
+          // repaint everything that bakes a colour in at build time
+          this._paintStaticIcons(); this._buildMeters(); this._buildTrees();
+          if (this.game.world) { this.game.world._buildCache && this.game.world._buildCache(); }
+          this._renderDiseasePanel(); this._renderNodeDetail(); this._renderOverview(); this.tickHud();
+        });
+      }
       if (hap) {
         const h = this.game.save.settings.haptics !== false; hap.checked = h;
         if (this.game.audio) this.game.audio.setHaptics(h);
@@ -271,7 +296,9 @@
 
       const bfs = $('btnFullscreen'); if (bfs) bfs.addEventListener('click', () => { this._toggleFullscreen(); setTimeout(() => this._refreshFsUi(), 60); });
       $('btnRestart').addEventListener('click', () => { this._closeModal('menuModal'); this.game.stop(); this.game.newGame(undefined, this.game.difficulty.id); this.game.start(); this._openModal('introModal'); });
-      $('btnHelp').addEventListener('click', () => { this._closeModal('menuModal'); this._openModal('introModal'); });
+      // Mid-game help is its own screen — reopening the intro here would show
+      // difficulty/gene pickers and a "start" button for a run already going.
+      $('btnHelp').addEventListener('click', () => { this._closeModal('menuModal'); this._openModal('helpModal'); });
       $('btnStats').addEventListener('click', () => { this._renderStats(); this._openModal('statsModal'); });
       $('btnAwards').addEventListener('click', () => { this._renderAwards(); this._openModal('awardsModal'); });
       $('btnAgain').addEventListener('click', () => { this._closeModal('endModal'); this.game.stop(); this.game.newGame(undefined, this.game.difficulty.id); this.game.start(); this._openModal('introModal'); });
@@ -416,6 +443,9 @@
       $('timeline').innerHTML = '<div class="tl"><b>0:00</b> Choose a starting country…</div>';
       this._buildDiffs(); this._buildGenes(); this._updateTree(); this.selectCountry(null); this._hideCountryPopup();
       this._newsQueue = []; this._newsOpen = false; this._evoOpen = false; this._updatePause();
+      // cancel a pending end-screen / celebration from the previous run
+      clearTimeout(this._endT); if (this.game.fx) this.game.fx.stopCelebrate();
+      document.body.classList.remove('win-flash');
       this._closeModal('evoModal'); this._closeModal('newsModal'); this.selectedNode = null; this._renderNodeDetail(); this._renderOverview();
       $('selectBanner').style.display = this.game.phase === 'select' ? 'block' : 'none';
       this.tickHud();
@@ -568,7 +598,7 @@
       // Pause the sim while any blocking overlay is open — the evolve tree, a
       // news bulletin, or a menu/stats/awards panel (Plague Inc pauses there too)
       // — or while the app is backgrounded (see _wireVisibility).
-      const blocking = ['menuModal', 'statsModal', 'awardsModal'].some((id) => { const m = $(id); return m && m.classList.contains('on'); });
+      const blocking = ['menuModal', 'statsModal', 'awardsModal', 'helpModal'].some((id) => { const m = $(id); return m && m.classList.contains('on'); });
       this.game.paused = !!(this._evoOpen || this._newsOpen || blocking || this._bgPaused);
     }
     // Auto-pause when the app is backgrounded (switching apps, locking the
@@ -726,8 +756,19 @@
     }
     onAchievement(a) { this.toast(a.emoji, `Achievement: <b>${a.name}</b>`, 'ach'); }
     onHeatSpike() { const m = $('mf-heat'), meter = m && m.closest('.meter'); if (meter) { meter.classList.remove('spike'); void meter.offsetWidth; meter.classList.add('spike'); } }
-    onWin() { this.game.fx && this.game.fx.confetti(this.cssW, this.cssH); this._showEnd(true); }
-    onLose(reason) { this._showEnd(false, reason); }
+    onWin() {
+      // Let the celebration actually play on the map before the results card
+      // covers it — the modal used to slam up instantly and hide the confetti.
+      if (this.game.fx) this.game.fx.celebrate(this.cssW, this.cssH);
+      const th = $('toasts'); if (th) th.innerHTML = '';
+      this._closeSheets && this._closeSheets();
+      document.body.classList.add('win-flash');
+      setTimeout(() => document.body.classList.remove('win-flash'), 900);
+      if (this._autoDemo) { this._showEnd(true); return; }   // harness: no delay
+      clearTimeout(this._endT);
+      this._endT = setTimeout(() => this._showEnd(true), 1500);
+    }
+    onLose(reason) { clearTimeout(this._endT); this._showEnd(false, reason); }
     autoStart() { // ?auto — jump straight into a playable game (screenshots/demo)
       this._autoDemo = true; // demo mode: news popups auto-dismiss so it keeps flowing
       this._closeModal('introModal'); this.game.chooseStart(this.game.world.byName['India'] || this.game.world.countries[0]); this.game.releaseBrainrot();
@@ -997,7 +1038,7 @@
       const g = this.game, host = $('countryPanel');
       const top = g.world.countries.filter((c) => c.total() > 0.004).sort((a, b) => b.total() - a.total()).slice(0, 9);
       const row = (c) => { const st = c.stage(); return `<div class="mi-row"><span class="mi-emo">${spr('country', c.name, 18, st.color)}</span><span class="mi-name">${c.short}</span><span class="mi-bar"><span style="width:${clamp(c.brainrotPct(), 0, 100)}%;background:${st.color}"></span></span><span class="mi-pct" style="color:${st.color}">${BR.fmtPct(c.brainrotPct())}</span></div>`; };
-      host.innerHTML = `<div class="dp-stats"><span class="dp-inf">${spr('hud', 'infected', 14, '#c86bff')} <b>${fmt(g.infectedPeople() * 1e6)}</b></span><span class="dp-nec">${spr('hud', 'terminal', 14, '#ff5c8a')} <b>${fmt(g.necroticPeople() * 1e6)}</b></span><span class="dp-hea">${spr('hud', 'healthy', 14, '#5ffbe0')} <b>${fmt(Math.max(0, g.healthyPeople()) * 1e6)}</b></span></div>
+      host.innerHTML = `<div class="dp-stats"><span class="dp-inf">${spr('hud', 'infected', 14, CO('infected'))} <b>${fmt(g.infectedPeople() * 1e6)}</b></span><span class="dp-nec">${spr('hud', 'terminal', 14, CO('terminal'))} <b>${fmt(g.necroticPeople() * 1e6)}</b></span><span class="dp-hea">${spr('hud', 'healthy', 14, CO('healthy'))} <b>${fmt(Math.max(0, g.healthyPeople()) * 1e6)}</b></span></div>
         <div class="section-h" style="padding:8px 0 4px">${spr('hud', 'global', 14, '#5ffbe0')} Most Infected Regions</div>
         <div class="mi-list">${top.length ? top.map(row).join('') : '<div class="cp-empty" style="padding:10px">No regions infected yet.</div>'}</div>`;
     }
@@ -1025,9 +1066,9 @@
       const setw = (id, w) => { const e = $(id); if (e) e.style.width = clamp(w, 0, 100) + '%'; };
       setw('cpopNec', c.necrotic * 100); setw('cpopInf', c.infected * 100);
       const seth = (id, html) => { const e = $(id); if (e) e.innerHTML = html; };
-      seth('cpopIP', spr('hud', 'infected', 12, '#c86bff') + ' ' + BR.fmtPct(c.infected * 100));
-      seth('cpopNP', spr('hud', 'terminal', 12, '#ff5c8a') + ' ' + BR.fmtPct(c.necrotic * 100));
-      seth('cpopHP', spr('hud', 'healthy', 12, '#5ffbe0') + ' ' + BR.fmtPct(c.healthy() * 100));
+      seth('cpopIP', spr('hud', 'infected', 12, CO('infected')) + ' ' + BR.fmtPct(c.infected * 100));
+      seth('cpopNP', spr('hud', 'terminal', 12, CO('terminal')) + ' ' + BR.fmtPct(c.necrotic * 100));
+      seth('cpopHP', spr('hud', 'healthy', 12, CO('healthy')) + ' ' + BR.fmtPct(c.healthy() * 100));
       const se = $('cpopStage'); if (se) { const st = c.stage(); se.textContent = st.name; se.style.color = st.color; }
       const le = $('cpopLinks'); if (le) le.innerHTML = `${this._lnk(c.airOpen, 'plane')}${this._lnk(c.seaOpen, 'ship')}${this._lnk(c.landOpen, 'road')}${c.detected ? this._lnk(false, 'eye', 'seen') : ''}`;
       const re = $('cpopRead');
@@ -1053,9 +1094,9 @@
       const g = this.game, s = g.save.stats;
       const rows = [
         [spr('hud', 'global', 14, '#5ffbe0') + ' Global brainrot', BR.fmtPct(g.globalBrainrot())],
-        [spr('hud', 'infected', 14, '#c86bff') + ' Infected', fmt(g.infectedPeople() * 1e6)],
-        [spr('hud', 'terminal', 14, '#ff5c8a') + ' Terminal', fmt(g.necroticPeople() * 1e6)],
-        [spr('hud', 'cure', 14, '#4ea1ff') + ' Cure', BR.fmtPct(g.cure)],
+        [spr('hud', 'infected', 14, CO('infected')) + ' Infected', fmt(g.infectedPeople() * 1e6)],
+        [spr('hud', 'terminal', 14, CO('terminal')) + ' Terminal', fmt(g.necroticPeople() * 1e6)],
+        [spr('hud', 'cure', 14, CO('cure')) + ' Cure', BR.fmtPct(g.cure)],
         [spr('hud', 'dna', 14, '#5ffbe0') + ' Upgrades', g.purchased.size + ' / ' + BR.UPGRADE_TREE.length],
         [spr('hud', 'clock', 14) + ' Time', clock(g.elapsed)],
       ];
@@ -1064,7 +1105,7 @@
       $('statsBody').innerHTML =
         `<div class="stat-block-h">${spr('hud', 'trending', 14, '#ff6bd6')} Outbreak curve</div>` +
         `<canvas id="statChart1" class="stat-chart"></canvas>` +
-        `<div class="chart-legend">${legend('#ff4bd8', 'Brainrot')}${legend('#c86bff', 'Terminal')}${legend('#4ea1ff', 'Cure')}</div>` +
+        `<div class="chart-legend">${legend('#ff4bd8', 'Brainrot')}${legend(CO('terminal'), 'Terminal')}${legend(CO('cure'), 'Cure')}</div>` +
         `<div class="stat-block-h">${spr('hud', 'virality', 14, '#ff6bd6')} Virality balance</div>` +
         `<canvas id="statChart2" class="stat-chart"></canvas>` +
         `<div class="stat-block-h">This run · ${g.difficulty.name}</div>` +
@@ -1079,8 +1120,8 @@
       const tmax = H.length ? Math.max(1, H[H.length - 1].t) : 1;
       this._chart(c1, H, tmax, [
         { key: 'glob', color: '#ff4bd8', fill: 'rgba(255,75,216,0.16)' },
-        { key: 'nec', color: '#c86bff', fill: 'rgba(200,107,255,0.12)' },
-        { key: 'cure', color: '#4ea1ff', fill: null },
+        { key: 'nec', color: CO('terminal'), fill: 'rgba(200,107,255,0.12)' },
+        { key: 'cure', color: CO('cure'), fill: null },
       ], 1);
       const vmax = H.reduce((m, p) => Math.max(m, p.vir), 1);
       this._chart(c2, H, tmax, [{ key: 'vir', color: '#f2c94c', fill: 'rgba(242,201,76,0.16)' }], vmax);
@@ -1172,8 +1213,8 @@
         + `<div class="end-verdict">${grade.blurb}</div>`;
       $('endStats').innerHTML = [
         [spr('hud', 'global', 15, '#5ffbe0') + ' Global rot', BR.fmtPct(g.globalBrainrot())],
-        [spr('hud', 'terminal', 15, '#ff5c8a') + ' Terminal', BR.fmtPct(g.world.necroticFraction() * 100)],
-        [spr('hud', 'cure', 15, '#4ea1ff') + ' Peak cure', BR.fmtPct(g.peakCure || g.cure)],
+        [spr('hud', 'terminal', 15, CO('terminal')) + ' Terminal', BR.fmtPct(g.world.necroticFraction() * 100)],
+        [spr('hud', 'cure', 15, CO('cure')) + ' Peak cure', BR.fmtPct(g.peakCure || g.cure)],
         [spr('hud', 'clock', 15) + ' Time', clock(g.elapsed)],
         [spr('hud', 'virality', 15, '#ff6bd6') + ' Virality', fmt(g.totalViralityEarned)],
       ].map((r) => `<div class="end-stat"><div class="es-val">${r[1]}</div><div class="es-lbl">${r[0]}</div></div>`).join('');
