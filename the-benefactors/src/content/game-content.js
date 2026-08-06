@@ -1475,6 +1475,98 @@ export const EVIDENCE = Object.freeze({
       handwritten: "The people behind every clue are meeting upstairs right now.",
     },
   },
+  first_circle_vote_recording: {
+    id: "first_circle_vote_recording",
+    title: "Recording of the First Circle vote",
+    category: "recording",
+    summary:
+      "The Benefactors accept Bellwether as a successful conversion and approve Port Prosper as the next manufactured crisis site.",
+    artifact: {
+      type: "transcript",
+      heading: "COVERT RECORDING · FIRST CIRCLE SESSION",
+      timestamp: "05:44 AM · ORPHEUS LEVEL 07",
+      audio: "./assets/audio/first-circle-vote.wav",
+      lines: [
+        ["CHAIR", "The Bellwether conversion is accepted. Meridian service adoption exceeded target."],
+        ["WREN", "Archive the mortality series for the Orpheus clinic and retain the municipal leverage files."],
+        ["ROOK", "Port Prosper is approved as the next governance site. Preposition relief assets before the first infrastructure failure."],
+        ["CHAIR", "The motion carries."],
+      ],
+    },
+  },
+  first_circle_seating_registry_photo: {
+    id: "first_circle_seating_registry_photo",
+    title: "Photograph of the First Circle registry",
+    category: "photograph",
+    summary:
+      "The assembly registry identifies the donor principals, officials, contractors, and media owners seated behind Meridian's crisis network.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/orpheus-first-circle.webp",
+      alt:
+        "Luxurious circular council chamber overlooking the ocean where anonymous elites sit around an illuminated strategy table",
+      caption: "Orpheus Level 07 · First Circle session",
+      annotations: [
+        "Meridian donors occupy permanent voting seats",
+        "Public officials and media owners attend under continuity titles",
+        "Wren and Rook sit on the crisis-selection committee",
+      ],
+    },
+  },
+  port_prosper_conversion_portfolio: {
+    id: "port_prosper_conversion_portfolio",
+    title: "Port Prosper conversion portfolio",
+    category: "event",
+    summary:
+      "The next crisis portfolio schedules infrastructure failure, public-trust collapse, and Meridian relief deployment in Port Prosper.",
+    artifact: {
+      type: "memo",
+      heading: "PORT PROSPER · GOVERNANCE CONVERSION CANDIDATE",
+      body: [
+        "PHASE 1: GRID / WATER INTERRUPTION",
+        "PHASE 2: MUNICIPAL RESPONSE SATURATION",
+        "PHASE 3: MERIDIAN RELIEF PREPOSITIONING",
+        "TARGET: PRIVATE SERVICE ADOPTION ABOVE 78%",
+      ],
+      handwritten: "The next disaster is already a presentation.",
+    },
+  },
+  crisis_investment_escrow: {
+    id: "crisis_investment_escrow",
+    title: "First Circle crisis-investment escrow",
+    category: "financial",
+    summary:
+      "The Benefactors finance both the infrastructure failure and the private companies positioned to profit from replacing public services.",
+    artifact: {
+      type: "memo",
+      heading: "MERIDIAN FIRST CIRCLE · PORT PROSPER ESCROW",
+      body: [
+        "TRIGGER FUND: INFRASTRUCTURE DISRUPTION",
+        "RELIEF ACQUISITION FUND: PRE-CLEARED",
+        "MEDIA STABILIZATION FUND: CONTROLLED NARRATIVE",
+        "RETURN MODEL: MUNICIPAL SERVICE CONCESSIONS",
+      ],
+      handwritten: "They invest in the collapse and collect the city afterward.",
+    },
+  },
+  port_prosper_warning_file: {
+    id: "port_prosper_warning_file",
+    title: "Port Prosper warning file",
+    category: "lead",
+    summary:
+      "The First Circle vote provides enough detail to warn Port Prosper before Meridian triggers the planned infrastructure failure.",
+    artifact: {
+      type: "memo",
+      heading: "URGENT LEAD · PORT PROSPER",
+      body: [
+        "THREAT: COORDINATED GRID AND WATER FAILURE",
+        "ACTOR: MERIDIAN FIRST CIRCLE",
+        "RELIEF ASSETS: ALREADY PREPOSITIONED",
+        "WINDOW: FORTY-EIGHT HOURS",
+      ],
+      handwritten: "For the first time, the next city can be warned before it becomes evidence.",
+    },
+  },
 });
 
 export const INVENTORY_ITEMS = Object.freeze({
@@ -3015,6 +3107,54 @@ export const DEDUCTIONS = Object.freeze({
       { type: "collectEvidence", id: "first_circle_invitation" },
       { type: "setPath", path: "progress.chapter", value: 6 },
       { type: "setPath", path: "progress.officeState", value: 13 },
+      { type: "unlockLocation", id: "orpheus_first_circle" },
+    ],
+  },
+  benefactors_select_crises: {
+    id: "benefactors_select_crises",
+    title: "The Benefactors select, finance, and profit from each crisis",
+    journalText:
+      "The First Circle accepts completed crises, archives their human cost for private research, and votes on the next city. Port Prosper's failure, relief response, media narrative, and transfer of public services are already funded before the first outage.",
+    notification:
+      "The next target is known before the attack begins. Port Prosper has forty-eight hours—and the Benefactors do not know their vote was recorded.",
+    requiredDeductions: ["orpheus_command_center"],
+    requiredEvidence: [
+      "first_circle_invitation",
+      "adrian_moss_statement",
+      "orpheus_security_wall_photo",
+      "benefactor_clinic_transfer_order",
+      "first_circle_vote_recording",
+      "first_circle_seating_registry_photo",
+      "port_prosper_conversion_portfolio",
+      "crisis_investment_escrow",
+    ],
+    requiredConnections: [
+      {
+        a: "first_circle_invitation",
+        b: "first_circle_seating_registry_photo",
+        type: "confirmed",
+      },
+      {
+        a: "adrian_moss_statement",
+        b: "first_circle_vote_recording",
+        type: "confirmed",
+      },
+      {
+        a: "orpheus_security_wall_photo",
+        b: "port_prosper_conversion_portfolio",
+        type: "confirmed",
+      },
+      {
+        a: "benefactor_clinic_transfer_order",
+        b: "crisis_investment_escrow",
+        type: "financial",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "provedBenefactorsSelectCrises", value: true },
+      { type: "collectEvidence", id: "port_prosper_warning_file" },
+      { type: "setPath", path: "progress.chapter", value: 7 },
+      { type: "setPath", path: "progress.officeState", value: 14 },
     ],
   },
 });
@@ -5102,6 +5242,139 @@ export const GAME_CONTENT = Object.freeze({
           title: "Warm lights above the machinery",
           text:
             "Beyond the elevator shaft, an illuminated stair climbs toward gardens and a residence built above the hidden dock.",
+        },
+      ],
+    },
+    orpheus_first_circle: {
+      id: "orpheus_first_circle",
+      name: "First Circle Assembly",
+      eyebrow: "Orpheus Level 07 · Tuesday · 5:41 AM",
+      mapX: 98,
+      mapY: 2,
+      description:
+        "A luxurious chamber above the island where Meridian's principals turn manufactured suffering into votes, portfolios, and private returns.",
+      sceneClass: "scene-orpheus-first-circle",
+      sceneArt: "./assets/scenes/orpheus-first-circle.webp",
+      hotspots: [
+        {
+          id: "first_circle_live_vote",
+          label: "Live assembly vote",
+          x: 31,
+          y: 31,
+          width: 48,
+          height: 35,
+          title: "The next city decided over breakfast",
+          text:
+            "The chair accepts Bellwether's conversion results and calls a vote on a coastal city displayed across the operations wall.",
+          actionLabel: "Record the First Circle vote",
+          toolId: "recorder",
+          resultText:
+            "Your recorder captures the Benefactors accepting Bellwether and approving Port Prosper as the next governance-conversion site.",
+          effects: [
+            { type: "setFlag", key: "recordedFirstCircleVote", value: true },
+            { type: "collectEvidence", id: "first_circle_vote_recording" },
+          ],
+          actionWhen: {
+            type: "flag",
+            key: "recordedFirstCircleVote",
+            equals: false,
+          },
+        },
+        {
+          id: "first_circle_seating_registry",
+          label: "Seating registry",
+          x: 22,
+          y: 73,
+          width: 27,
+          height: 20,
+          title: "The people behind the respectable titles",
+          text:
+            "An unattended leather registry maps permanent voting seats to donors, public officials, contractors, and media owners.",
+          actionLabel: "Photograph the First Circle registry",
+          toolId: "smartphone",
+          resultText:
+            "The registry identifies Wren, Rook, Meridian's donor principals, and the public figures who protect the network in plain sight.",
+          effects: [
+            { type: "setFlag", key: "photographedFirstCircleRegistry", value: true },
+            { type: "collectEvidence", id: "first_circle_seating_registry_photo" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "recordedFirstCircleVote" },
+              { type: "flag", key: "photographedFirstCircleRegistry", equals: false },
+            ],
+          },
+        },
+        {
+          id: "port_prosper_portfolio",
+          label: "Conversion portfolio",
+          x: 44,
+          y: 72,
+          width: 22,
+          height: 20,
+          title: "Port Prosper before the lights go out",
+          text:
+            "The open portfolio schedules grid failure, water interruption, response saturation, and Meridian's pre-positioned rescue.",
+          actionLabel: "Copy the Port Prosper portfolio",
+          toolId: "smartphone",
+          resultText:
+            "The First Circle expects private-service adoption above seventy-eight percent within forty-eight hours of the planned outage.",
+          effects: [
+            { type: "setFlag", key: "foundPortProsperPortfolio", value: true },
+            { type: "collectEvidence", id: "port_prosper_conversion_portfolio" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedFirstCircleRegistry" },
+              { type: "flag", key: "foundPortProsperPortfolio", equals: false },
+            ],
+          },
+        },
+        {
+          id: "crisis_investment_escrow",
+          label: "Sealed escrow schedule",
+          x: 69,
+          y: 68,
+          width: 18,
+          height: 22,
+          title: "Profit waits beside the catastrophe",
+          text:
+            "A sealed schedule divides money between infrastructure disruption, relief acquisition, media control, and municipal concessions.",
+          actionLabel: "Recover the crisis-investment escrow",
+          resultText:
+            "The same principals fund the collapse and the private companies contracted to replace Port Prosper's public services.",
+          effects: [
+            { type: "setFlag", key: "foundCrisisInvestmentEscrow", value: true },
+            { type: "collectEvidence", id: "crisis_investment_escrow" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "foundPortProsperPortfolio" },
+              { type: "flag", key: "foundCrisisInvestmentEscrow", equals: false },
+            ],
+          },
+        },
+        {
+          id: "port_prosper_operations_wall",
+          label: "Operations wall",
+          x: 77,
+          y: 14,
+          width: 22,
+          height: 45,
+          title: "A living city reduced to conversion metrics",
+          text:
+            "Power substations, water mains, hospitals, newsrooms, and public fears are arranged as controllable inputs around one coastal city.",
+        },
+        {
+          id: "first_circle_gallery",
+          label: "Service gallery",
+          x: 1,
+          y: 18,
+          width: 25,
+          height: 50,
+          title: "Close enough to hear everything",
+          text:
+            "A dark curtain and the low hum of camera equipment conceal your borrowed maintenance uniform from the table.",
         },
       ],
     },

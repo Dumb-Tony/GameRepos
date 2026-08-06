@@ -118,6 +118,11 @@ function renderTranscript(artifact) {
     <article class="artifact artifact-transcript">
       <header><h2>${escapeHtml(artifact.heading)}</h2><p>${escapeHtml(artifact.timestamp)}</p></header>
       <div class="transcript-tape" aria-hidden="true"><i></i><i></i></div>
+      ${
+        artifact.audio
+          ? `<audio class="recording-audio recording-audio-restored" data-recording-audio="evidence" controls preload="metadata" src="${escapeHtml(artifact.audio)}" aria-label="Play covert recording">Your browser cannot play this recording.</audio>`
+          : ""
+      }
       <ol>
         ${artifact.lines
           .map(

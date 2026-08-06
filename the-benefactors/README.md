@@ -196,6 +196,15 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Recovered a First Circle invitation showing the society is selecting its next target on Level 07
 - Extended save migration, casebook guidance, office progression, and the full leak-to-Orpheus automated playthrough
 
+**Milestone 20 — The First Circle (complete)**
+
+- Infiltrated the Benefactors' live assembly on Orpheus Level 07
+- Added a painterly oceanfront council chamber and four sequential stealth discoveries
+- Made the audio recorder essential for capturing a fully playable recording of the First Circle vote
+- Exposed Port Prosper as the next selected crisis site, with its infrastructure failure, relief takeover, media strategy, and investment returns funded in advance
+- Added a four-connection deduction proving the Benefactors select, finance, and profit from manufactured crises
+- Extended save migration, casebook guidance, office progression, and the full playthrough through the First Circle vote
+
 **Prologue content now playable**
 
 - Photograph the missing west wing

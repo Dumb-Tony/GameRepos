@@ -423,3 +423,24 @@ test("unlocks the Orpheus harbor for completed Blackwater saves", () => {
     true,
   );
 });
+
+test("unlocks the First Circle for completed Orpheus harbor saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Robin" });
+  previous.version = 20;
+  previous.flags.provedOrpheusCommandCenter = true;
+  previous.progress.unlockedLocations =
+    previous.progress.unlockedLocations.filter(
+      (locationId) => locationId !== "orpheus_first_circle",
+    );
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(
+    migrated.progress.unlockedLocations.includes("orpheus_first_circle"),
+    true,
+  );
+});

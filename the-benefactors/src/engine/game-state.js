@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 20;
+export const GAME_STATE_VERSION = 21;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -132,6 +132,11 @@ export function createInitialState(player = {}, settings = {}) {
       photographedOrpheusSecurityWall: false,
       foundSublevelElevatorDirectory: false,
       provedOrpheusCommandCenter: false,
+      recordedFirstCircleVote: false,
+      photographedFirstCircleRegistry: false,
+      foundPortProsperPortfolio: false,
+      foundCrisisInvestmentEscrow: false,
+      provedBenefactorsSelectCrises: false,
     },
     inventory: ["press_credentials", "smartphone", "recorder", "notebook"],
     evidence: {
@@ -196,6 +201,7 @@ export function createInitialState(player = {}, settings = {}) {
       greyhaven_executive_airfield: 0,
       blackwater_point: 0,
       orpheus_sublevel_harbor: 0,
+      orpheus_first_circle: 0,
     },
     settings: {
       ...DEFAULT_SETTINGS,

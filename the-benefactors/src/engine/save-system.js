@@ -3,7 +3,7 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js?v=orpheus-harbor-20260806a";
+} from "./game-state.js?v=first-circle-20260806a";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
@@ -281,6 +281,14 @@ export class SaveSystem {
       !migrated.progress.unlockedLocations.includes("orpheus_sublevel_harbor")
     ) {
       migrated.progress.unlockedLocations.push("orpheus_sublevel_harbor");
+    }
+
+    if (
+      legacyVersion < 21 &&
+      migrated.flags.provedOrpheusCommandCenter &&
+      !migrated.progress.unlockedLocations.includes("orpheus_first_circle")
+    ) {
+      migrated.progress.unlockedLocations.push("orpheus_first_circle");
     }
 
     return migrated;

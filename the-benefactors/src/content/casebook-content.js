@@ -689,11 +689,57 @@ export const CASEBOOK_STAGES = Object.freeze([
     id: "reach_first_circle",
     title: "The First Circle",
     objective: "Reach the Level 07 assembly before the Benefactors choose their next city.",
-    activeWhen: null,
+    activeWhen: {
+      not: { type: "visited", location: "orpheus_first_circle" },
+    },
     hints: [
       "Review the First Circle invitation in the case file.",
       "The freight elevator connects the sublevel harbor directly to Level 07.",
       "The next chapter enters the assembly hall while the governance-conversion vote is in progress.",
+    ],
+  },
+  {
+    id: "record_first_circle",
+    title: "The vote",
+    objective: "Record the First Circle and recover its Port Prosper crisis portfolio before you are discovered.",
+    activeWhen: {
+      any: [
+        { type: "flag", key: "recordedFirstCircleVote", equals: false },
+        { type: "flag", key: "photographedFirstCircleRegistry", equals: false },
+        { type: "flag", key: "foundPortProsperPortfolio", equals: false },
+        { type: "flag", key: "foundCrisisInvestmentEscrow", equals: false },
+      ],
+    },
+    hints: [
+      "Use the audio recorder from the service gallery while the vote is in progress.",
+      "After recording the vote, photograph the seating registry and copy the open Port Prosper portfolio.",
+      "The sealed escrow schedule beside the portfolio proves who profits from the planned collapse.",
+    ],
+  },
+  {
+    id: "connect_benefactor_vote",
+    title: "The owners",
+    objective: "Use the evidence board to prove the Benefactors select, finance, and profit from manufactured crises.",
+    activeWhen: {
+      type: "flag",
+      key: "provedBenefactorsSelectCrises",
+      equals: false,
+    },
+    hints: [
+      "Link the invitation to the registry, Adrian's warning to the recording, Orpheus security to the portfolio, and clinic cargo to the escrow.",
+      "Use Red · Confirmed for invitation / registry, statement / vote recording, and security wall / Port Prosper portfolio.",
+      "Use Blue · Financial for clinic transfer order / crisis-investment escrow.",
+    ],
+  },
+  {
+    id: "warn_port_prosper",
+    title: "Forty-eight hours",
+    objective: "Escape Orpheus and warn Port Prosper before the First Circle triggers the planned infrastructure failure.",
+    activeWhen: null,
+    hints: [
+      "Review the Port Prosper warning file and preserve multiple copies of the First Circle recording.",
+      "The city can be warned before Meridian's pre-positioned relief operation controls the narrative.",
+      "The next chapter begins with a choice: publish immediately, warn the city quietly, or stay on Orpheus for more proof.",
     ],
   },
 ]);
@@ -768,4 +814,10 @@ export const CASEBOOK_PROGRESS = Object.freeze([
   { label: "Orpheus security wall photographed", when: { type: "flag", key: "photographedOrpheusSecurityWall" } },
   { label: "Sublevel elevator directory recovered", when: { type: "flag", key: "foundSublevelElevatorDirectory" } },
   { label: "Orpheus command center proven", when: { type: "flag", key: "provedOrpheusCommandCenter" } },
+  { label: "First Circle assembly entered", when: { type: "visited", location: "orpheus_first_circle" } },
+  { label: "First Circle vote recorded", when: { type: "flag", key: "recordedFirstCircleVote" } },
+  { label: "First Circle registry photographed", when: { type: "flag", key: "photographedFirstCircleRegistry" } },
+  { label: "Port Prosper portfolio recovered", when: { type: "flag", key: "foundPortProsperPortfolio" } },
+  { label: "Crisis-investment escrow recovered", when: { type: "flag", key: "foundCrisisInvestmentEscrow" } },
+  { label: "Benefactors' crisis-selection model proven", when: { type: "flag", key: "provedBenefactorsSelectCrises" } },
 ]);

@@ -12,6 +12,7 @@ $clips = [ordered]@{
   "vale-fragment-freight.wav" = "Not a west wing. Beneath it. Meridian arrives Thursday."
   "vale-fragment-rain.wav" = "Do not trust the guest list. The names are the invitation, not the guests. Follow Northstar. If I am gone, I did not run."
   "vale-restored-message.wav" = "If someone found the invoice, then the irregularity worked. I needed the payment to look wrong. Not a west wing. Beneath it. Meridian arrives Thursday. Do not trust the guest list. The names are the invitation, not the guests. Follow Northstar. If I am gone, I did not run."
+  "first-circle-vote.wav" = "The Bellwether conversion is accepted. Meridian service adoption exceeded target. Archive the mortality series for the Orpheus clinic and retain the municipal leverage files. Port Prosper is approved as the next governance site. Preposition relief assets before the first infrastructure failure. The motion carries."
 }
 
 foreach ($clip in $clips.GetEnumerator()) {
@@ -38,5 +39,5 @@ foreach ($clip in $clips.GetEnumerator()) {
   }
 }
 
-Get-ChildItem -LiteralPath $resolvedOutput -Filter "vale-*.wav" |
+Get-ChildItem -LiteralPath $resolvedOutput -Filter "*.wav" |
   Select-Object Name, Length

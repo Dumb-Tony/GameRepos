@@ -37,6 +37,7 @@ const imageAssetFiles = [
   "assets/scenes/greyhaven-executive-airfield.webp",
   "assets/scenes/blackwater-point.webp",
   "assets/scenes/orpheus-sublevel-harbor.webp",
+  "assets/scenes/orpheus-first-circle.webp",
   "assets/social/benefactors-social.webp",
   "assets/evidence/gala-photograph-v2.webp",
   "assets/evidence/photo-west-wall.webp",
@@ -50,6 +51,7 @@ const audioAssetFiles = [
   "assets/audio/vale-fragment-freight.wav",
   "assets/audio/vale-fragment-rain.wav",
   "assets/audio/vale-restored-message.wav",
+  "assets/audio/first-circle-vote.wav",
 ];
 const requiredFiles = [
   "index.html",

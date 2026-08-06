@@ -20,7 +20,7 @@ test("every casebook stage has a three-level hint path", () => {
     assert.equal(stage.hints.length, 3, stage.id);
     assert.equal(stage.hints.every(Boolean), true, stage.id);
   }
-  assert.equal(CASEBOOK_PROGRESS.length, 69);
+  assert.equal(CASEBOOK_PROGRESS.length, 75);
 });
 
 test("casebook objective advances with investigation state", () => {
@@ -198,4 +198,16 @@ test("casebook objective advances with investigation state", () => {
 
   state.flags.provedOrpheusCommandCenter = true;
   assert.equal(activeStage(state).id, "reach_first_circle");
+
+  state.locationVisits.orpheus_first_circle = 1;
+  assert.equal(activeStage(state).id, "record_first_circle");
+
+  state.flags.recordedFirstCircleVote = true;
+  state.flags.photographedFirstCircleRegistry = true;
+  state.flags.foundPortProsperPortfolio = true;
+  state.flags.foundCrisisInvestmentEscrow = true;
+  assert.equal(activeStage(state).id, "connect_benefactor_vote");
+
+  state.flags.provedBenefactorsSelectCrises = true;
+  assert.equal(activeStage(state).id, "warn_port_prosper");
 });

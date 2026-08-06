@@ -4,11 +4,11 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=orpheus-harbor-20260806a";
+} from "../content/game-content.js?v=first-circle-20260806a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=orpheus-harbor-20260806a";
+} from "../content/casebook-content.js?v=first-circle-20260806a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
@@ -22,7 +22,7 @@ import {
 } from "../content/prologue-content.js?v=field-tools-20260731a";
 import { evaluateCondition } from "../engine/conditions.js?v=visual-polish-20260730a";
 import { applyEffects } from "../engine/events.js?v=visual-polish-20260730a";
-import { createInitialState } from "../engine/game-state.js?v=orpheus-harbor-20260806a";
+import { createInitialState } from "../engine/game-state.js?v=first-circle-20260806a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
@@ -46,7 +46,7 @@ import {
   removeConnection,
   unpinEvidence,
 } from "../systems/evidence-board/evidence-board.js?v=visual-polish-20260730a";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=field-tools-20260731a";
+import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=first-circle-20260806a";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
@@ -770,7 +770,28 @@ export class GameApp {
   renderHome() {
     const state = this.store.getState();
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
-    const caseUpdate = state.flags.provedOrpheusCommandCenter
+    const caseUpdate = state.flags.provedBenefactorsSelectCrises
+      ? {
+          title: "Forty-eight hours",
+          text:
+            "The First Circle selected Port Prosper and funded its collapse. You have their vote, their names, their plan, and a narrow chance to warn the city first.",
+        }
+      : state.flags.recordedFirstCircleVote &&
+          state.flags.photographedFirstCircleRegistry &&
+          state.flags.foundPortProsperPortfolio &&
+          state.flags.foundCrisisInvestmentEscrow
+        ? {
+            title: "The owners",
+            text:
+              "The vote recording, seating registry, conversion portfolio, and escrow can prove the Benefactors select and profit from every manufactured crisis.",
+          }
+        : (state.locationVisits.orpheus_first_circle || 0) > 0
+          ? {
+              title: "The vote",
+              text:
+                "Record the live First Circle session, photograph its registry, copy the Port Prosper portfolio, and recover the sealed investment escrow.",
+            }
+          : state.flags.provedOrpheusCommandCenter
       ? {
           title: "The First Circle",
           text:
@@ -2246,7 +2267,19 @@ export class GameApp {
     );
     const yarnAnchorX = boardDensity.cardWidth / 2;
     const yarnAnchorY = (14 / corkboardHeight) * 100;
-    const boardCase = state.flags.provedOrpheusCommandCenter
+    const boardCase = state.flags.provedBenefactorsSelectCrises
+      ? {
+          number: "10",
+          title: "PORT PROSPER / FORTY-EIGHT HOURS",
+          phase: "Warn the next city before the trigger",
+        }
+      : (state.locationVisits.orpheus_first_circle || 0) > 0
+        ? {
+            number: "09",
+            title: "FIRST CIRCLE / CRISIS VOTE",
+            phase: "Prove who selects and profits",
+          }
+        : state.flags.provedOrpheusCommandCenter
       ? {
           number: "09",
           title: "THE BENEFECTORS / FIRST CIRCLE",
@@ -3345,6 +3378,12 @@ export class GameApp {
   }
 
   chapterLabel(state = this.store.getState()) {
+    if (
+      state.progress.unlockedLocations.includes("orpheus_first_circle") ||
+      (state.locationVisits.orpheus_first_circle || 0) > 0
+    ) {
+      return "Chapter 7 · The First Circle";
+    }
     if (
       state.progress.unlockedLocations.includes("orpheus_sublevel_harbor") ||
       (state.locationVisits.orpheus_sublevel_harbor || 0) > 0
