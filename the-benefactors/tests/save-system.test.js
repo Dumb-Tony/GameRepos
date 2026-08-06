@@ -402,3 +402,24 @@ test("unlocks Blackwater Point for completed Hangar 4 saves", () => {
     true,
   );
 });
+
+test("unlocks the Orpheus harbor for completed Blackwater saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Robin" });
+  previous.version = 19;
+  previous.flags.provedOrpheusSupplyRoute = true;
+  previous.progress.unlockedLocations =
+    previous.progress.unlockedLocations.filter(
+      (locationId) => locationId !== "orpheus_sublevel_harbor",
+    );
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(
+    migrated.progress.unlockedLocations.includes("orpheus_sublevel_harbor"),
+    true,
+  );
+});

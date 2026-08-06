@@ -4,11 +4,11 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=blackwater-20260806a";
+} from "../content/game-content.js?v=orpheus-harbor-20260806a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=blackwater-20260806a";
+} from "../content/casebook-content.js?v=orpheus-harbor-20260806a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
@@ -22,7 +22,7 @@ import {
 } from "../content/prologue-content.js?v=field-tools-20260731a";
 import { evaluateCondition } from "../engine/conditions.js?v=visual-polish-20260730a";
 import { applyEffects } from "../engine/events.js?v=visual-polish-20260730a";
-import { createInitialState } from "../engine/game-state.js?v=blackwater-20260806a";
+import { createInitialState } from "../engine/game-state.js?v=orpheus-harbor-20260806a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
@@ -770,7 +770,29 @@ export class GameApp {
   renderHome() {
     const state = this.store.getState();
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
-    const caseUpdate = state.flags.provedOrpheusSupplyRoute
+    const caseUpdate = state.flags.provedOrpheusCommandCenter
+      ? {
+          title: "The First Circle",
+          text:
+            "Orpheus is the Benefactors' command center. Their principals are meeting on Level 07 now to select and pre-position the next manufactured crisis.",
+        }
+      : state.flags.questionedAdrianMoss &&
+          state.flags.photographedOrpheusArrivalRegistry &&
+          state.flags.foundBenefactorClinicTransferOrder &&
+          state.flags.photographedOrpheusSecurityWall &&
+          state.flags.foundSublevelElevatorDirectory
+        ? {
+            title: "The people upstairs",
+            text:
+              "The arrival registry, clinic order, security wall, and elevator directory can prove Orpheus is a private command center rather than a refuge.",
+          }
+        : (state.locationVisits.orpheus_sublevel_harbor || 0) > 0
+          ? {
+              title: "The refuge beneath the island",
+              text:
+                "Show Adrian the maintenance badge and cold-chain manifest, then document the registry, clinic case, security wall, and elevator directory.",
+            }
+          : state.flags.provedOrpheusSupplyRoute
       ? {
           title: "Nineteen minutes to the island",
           text:
@@ -2224,7 +2246,19 @@ export class GameApp {
     );
     const yarnAnchorX = boardDensity.cardWidth / 2;
     const yarnAnchorY = (14 / corkboardHeight) * 100;
-    const boardCase = state.flags.provedOrpheusSupplyRoute
+    const boardCase = state.flags.provedOrpheusCommandCenter
+      ? {
+          number: "09",
+          title: "THE BENEFECTORS / FIRST CIRCLE",
+          phase: "Next lead: Level 07 assembly hall",
+        }
+      : (state.locationVisits.orpheus_sublevel_harbor || 0) > 0
+        ? {
+            number: "08",
+            title: "ORPHEUS / COMMAND CENTER",
+            phase: "Expose what the island protects",
+          }
+        : state.flags.provedOrpheusSupplyRoute
       ? {
           number: "08",
           title: "ORPHEUS / ISLAND ACCESS",
@@ -3311,6 +3345,12 @@ export class GameApp {
   }
 
   chapterLabel(state = this.store.getState()) {
+    if (
+      state.progress.unlockedLocations.includes("orpheus_sublevel_harbor") ||
+      (state.locationVisits.orpheus_sublevel_harbor || 0) > 0
+    ) {
+      return "Chapter 6 · The Island";
+    }
     if (
       state.progress.unlockedLocations.includes("blackwater_point") ||
       (state.locationVisits.blackwater_point || 0) > 0

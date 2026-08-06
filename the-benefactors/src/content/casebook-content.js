@@ -642,11 +642,58 @@ export const CASEBOOK_STAGES = Object.freeze([
     id: "enter_orpheus",
     title: "Nineteen minutes to the island",
     objective: "Use the maintenance credential to enter Orpheus through its submerged service harbor.",
-    activeWhen: null,
+    activeWhen: {
+      not: { type: "visited", location: "orpheus_sublevel_harbor" },
+    },
     hints: [
       "Review the Orpheus maintenance credential in the case file.",
       "Window 04 waives an escort for cold-chain technicians.",
       "The next chapter begins beneath North Reef, inside the island's sublevel harbor.",
+    ],
+  },
+  {
+    id: "investigate_orpheus_harbor",
+    title: "The refuge beneath the island",
+    objective: "Question Adrian Moss and expose what Orpheus protects below the compound.",
+    activeWhen: {
+      any: [
+        { type: "flag", key: "questionedAdrianMoss", equals: false },
+        { type: "flag", key: "photographedOrpheusArrivalRegistry", equals: false },
+        { type: "flag", key: "foundBenefactorClinicTransferOrder", equals: false },
+        { type: "flag", key: "photographedOrpheusSecurityWall", equals: false },
+        { type: "flag", key: "foundSublevelElevatorDirectory", equals: false },
+      ],
+    },
+    hints: [
+      "Show Adrian the Orpheus maintenance badge, then the Blackwater cold-chain manifest.",
+      "Photograph the arrival registry before inspecting the silver clinic case.",
+      "Document the security wall, then copy the freight-elevator directory.",
+    ],
+  },
+  {
+    id: "connect_orpheus_command_center",
+    title: "The people upstairs",
+    objective: "Use the evidence board to prove Orpheus is the Benefactors' command center.",
+    activeWhen: {
+      type: "flag",
+      key: "provedOrpheusCommandCenter",
+      equals: false,
+    },
+    hints: [
+      "Verify the badge against the registry, follow the medical cargo to the clinic, and trace the launch and tide window into the island's internal network.",
+      "Use Red · Confirmed for badge / registry, launch / security wall, and tide window / elevator directory.",
+      "Use Blue · Financial for cold-chain manifest / clinic transfer order.",
+    ],
+  },
+  {
+    id: "reach_first_circle",
+    title: "The First Circle",
+    objective: "Reach the Level 07 assembly before the Benefactors choose their next city.",
+    activeWhen: null,
+    hints: [
+      "Review the First Circle invitation in the case file.",
+      "The freight elevator connects the sublevel harbor directly to Level 07.",
+      "The next chapter enters the assembly hall while the governance-conversion vote is in progress.",
     ],
   },
 ]);
@@ -714,4 +761,11 @@ export const CASEBOOK_PROGRESS = Object.freeze([
   { label: "Orpheus service launch photographed", when: { type: "flag", key: "photographedIslandServiceLaunch" } },
   { label: "Blackwater tide window recovered", when: { type: "flag", key: "foundBlackwaterTideWindow" } },
   { label: "Orpheus supply route proven", when: { type: "flag", key: "provedOrpheusSupplyRoute" } },
+  { label: "Orpheus sublevel harbor entered", when: { type: "visited", location: "orpheus_sublevel_harbor" } },
+  { label: "Adrian Moss interviewed", when: { type: "flag", key: "questionedAdrianMoss" } },
+  { label: "Orpheus arrival registry photographed", when: { type: "flag", key: "photographedOrpheusArrivalRegistry" } },
+  { label: "Benefactor clinic transfer order recovered", when: { type: "flag", key: "foundBenefactorClinicTransferOrder" } },
+  { label: "Orpheus security wall photographed", when: { type: "flag", key: "photographedOrpheusSecurityWall" } },
+  { label: "Sublevel elevator directory recovered", when: { type: "flag", key: "foundSublevelElevatorDirectory" } },
+  { label: "Orpheus command center proven", when: { type: "flag", key: "provedOrpheusCommandCenter" } },
 ]);

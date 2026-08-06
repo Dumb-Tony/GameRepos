@@ -20,7 +20,7 @@ test("every casebook stage has a three-level hint path", () => {
     assert.equal(stage.hints.length, 3, stage.id);
     assert.equal(stage.hints.every(Boolean), true, stage.id);
   }
-  assert.equal(CASEBOOK_PROGRESS.length, 62);
+  assert.equal(CASEBOOK_PROGRESS.length, 69);
 });
 
 test("casebook objective advances with investigation state", () => {
@@ -185,4 +185,17 @@ test("casebook objective advances with investigation state", () => {
 
   state.flags.provedOrpheusSupplyRoute = true;
   assert.equal(activeStage(state).id, "enter_orpheus");
+
+  state.locationVisits.orpheus_sublevel_harbor = 1;
+  assert.equal(activeStage(state).id, "investigate_orpheus_harbor");
+
+  state.flags.questionedAdrianMoss = true;
+  state.flags.photographedOrpheusArrivalRegistry = true;
+  state.flags.foundBenefactorClinicTransferOrder = true;
+  state.flags.photographedOrpheusSecurityWall = true;
+  state.flags.foundSublevelElevatorDirectory = true;
+  assert.equal(activeStage(state).id, "connect_orpheus_command_center");
+
+  state.flags.provedOrpheusCommandCenter = true;
+  assert.equal(activeStage(state).id, "reach_first_circle");
 });

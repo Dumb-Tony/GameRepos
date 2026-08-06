@@ -1366,6 +1366,115 @@ export const EVIDENCE = Object.freeze({
       handwritten: "A borrowed uniform and nineteen minutes to enter the island.",
     },
   },
+  adrian_moss_statement: {
+    id: "adrian_moss_statement",
+    title: "Adrian Moss's harbor statement",
+    category: "witness",
+    summary:
+      "An Orpheus logistics steward says the island shelters Meridian's decision-makers, archives, and private clinic—not disaster survivors.",
+    artifact: {
+      type: "transcript",
+      heading: "COVERT INTERVIEW · ADRIAN MOSS",
+      timestamp: "05:17 AM · ORPHEUS SUBLEVEL HARBOR",
+      lines: [
+        ["MOSS", "No evacuee has ever arrived through this harbor unless their name owns part of Meridian."],
+        ["MOSS", "The clinic studies what the field trials collect. The archive keeps the leverage. The Assembly decides where the next crisis begins."],
+        ["MOSS", "They call themselves the Benefactors because it sounds better than owners."],
+      ],
+    },
+  },
+  orpheus_arrival_registry_photo: {
+    id: "orpheus_arrival_registry_photo",
+    title: "Photograph of the Orpheus arrival registry",
+    category: "photograph",
+    summary:
+      "The island registry admits Meridian principals, protected archives, and private clinic cargo while listing no civilian survivors.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/orpheus-sublevel-harbor.webp",
+      alt:
+        "Hidden sea-cave harbor with a security desk, sealed priority crates, service launch, glass control booth, and guarded elevator",
+      caption: "Site Orpheus · Sublevel arrival control",
+      annotations: [
+        "Every passenger is marked Benefactor or continuity principal",
+        "No public evacuees appear in years of arrivals",
+        "Crisis archives enter under permanent-retention orders",
+      ],
+    },
+  },
+  benefactor_clinic_transfer_order: {
+    id: "benefactor_clinic_transfer_order",
+    title: "Benefactor clinic transfer order",
+    category: "financial",
+    summary:
+      "The island clinic receives Bellwether and Verdant biological material for private longevity research funded by the same donors behind the crises.",
+    artifact: {
+      type: "memo",
+      heading: "ORPHEUS CLINIC · ARCHIVE INTAKE 47",
+      body: [
+        "SOURCE: BELLWETHER / VERDANT FIELD SERIES",
+        "PROGRAM: BENEFACTOR LONGEVITY COHORT",
+        "PUBLIC-HEALTH RELEASE: PROHIBITED",
+        "SPONSOR: MERIDIAN FIRST CIRCLE",
+      ],
+      handwritten: "They manufacture public suffering to finance private immortality.",
+    },
+  },
+  orpheus_security_wall_photo: {
+    id: "orpheus_security_wall_photo",
+    title: "Photograph of Orpheus arrival surveillance",
+    category: "photograph",
+    summary:
+      "The harbor security wall links arriving Redoubt principals to private suites, clinic access, and sealed crisis archives.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/orpheus-sublevel-harbor.webp",
+      alt:
+        "Surveillance desk inside an opulent hidden island harbor, facing priority cargo and a launch in a sea cavern",
+      caption: "Orpheus security desk · Arrival matrix",
+      annotations: [
+        "Hangar 4 passengers assigned private compound suites",
+        "Redoubt cargo routed to the clinic and leverage archive",
+        "Upper elevator reserved for First Circle assembly",
+      ],
+    },
+  },
+  sublevel_elevator_directory: {
+    id: "sublevel_elevator_directory",
+    title: "Orpheus concealed elevator directory",
+    category: "location",
+    summary:
+      "The freight elevator connects the submerged harbor to the clinic, leverage archive, private residences, and First Circle assembly hall.",
+    artifact: {
+      type: "memo",
+      heading: "ORPHEUS INTERNAL TRANSIT · SERVICE DIRECTORY",
+      body: [
+        "S1: SUBLEVEL HARBOR / COLD CHAIN",
+        "01: BENEFECTOR CLINIC / ARCHIVE LAB",
+        "03: LEVERAGE ARCHIVE / PRIVATE CUSTODY",
+        "07: FIRST CIRCLE ASSEMBLY / RESIDENCES",
+      ],
+      handwritten: "The island is a boardroom, a laboratory, and a vault stacked on top of one another.",
+    },
+  },
+  first_circle_invitation: {
+    id: "first_circle_invitation",
+    title: "First Circle assembly invitation",
+    category: "lead",
+    summary:
+      "An invitation places the Meridian First Circle in Orpheus's upper assembly hall for a vote on the next governance-conversion site.",
+    artifact: {
+      type: "memo",
+      heading: "THE BENEFECTORS · FIRST CIRCLE",
+      body: [
+        "SESSION: GOVERNANCE CONVERSION PORTFOLIO",
+        "VENUE: ORPHEUS ASSEMBLY HALL · LEVEL 07",
+        "AGENDA: NEXT-CITY SELECTION / ASSET PREPOSITIONING",
+        "ATTENDANCE: PRINCIPALS ONLY",
+      ],
+      handwritten: "The people behind every clue are meeting upstairs right now.",
+    },
+  },
 });
 
 export const INVENTORY_ITEMS = Object.freeze({
@@ -2328,6 +2437,72 @@ export const DIALOGUES = Object.freeze({
       },
     },
   },
+  adrian_moss: {
+    id: "adrian_moss",
+    character: "Adrian Moss",
+    portrait: "AM",
+    start: "intro",
+    nodes: {
+      intro: {
+        id: "intro",
+        speaker: "Adrian Moss",
+        text:
+          "Cold-chain technicians report to the container first. You are standing at arrival control without an escort, a work order, or enough fear.",
+        choices: [
+          {
+            id: "show-badge",
+            text: "Window 04 waives the escort for this maintenance credential.",
+            evidenceId: "orpheus_maintenance_badge",
+            requires: { type: "hasEvidence", id: "orpheus_maintenance_badge" },
+            next: "badge",
+          },
+          { id: "leave", text: "I will return to the launch.", end: true },
+        ],
+      },
+      badge: {
+        id: "badge",
+        speaker: "Adrian Moss",
+        text:
+          "That credential belonged to a contractor who asked why the clinic needed Bellwether samples. He did not use it twice.",
+        choices: [
+          {
+            id: "show-manifest",
+            text: "The Blackwater manifest sends those samples to a private donor clinic.",
+            evidenceId: "orpheus_cold_chain_manifest",
+            requires: { type: "hasEvidence", id: "orpheus_cold_chain_manifest" },
+            next: "truth",
+          },
+          { id: "leave", text: "Then I know what to look for.", end: true },
+        ],
+      },
+      truth: {
+        id: "truth",
+        speaker: "Adrian Moss",
+        text:
+          "This is not a refuge. The clinic studies what their field crises collect. The archive keeps leverage on governments. The Assembly chooses the next city. They call themselves the Benefactors because it sounds better than owners.",
+        onEnter: [
+          { type: "setFlag", key: "questionedAdrianMoss", value: true },
+          { type: "collectEvidence", id: "adrian_moss_statement" },
+        ],
+        choices: [
+          {
+            id: "ask-proof",
+            text: "Where is the Assembly?",
+            next: "proof",
+          },
+        ],
+      },
+      proof: {
+        id: "proof",
+        speaker: "Adrian Moss",
+        text:
+          "Level seven. First photograph the arrival ledger and security wall. The clinic order is clipped to the silver case. The freight-elevator directory proves everything this harbor feeds.",
+        choices: [
+          { id: "finish", text: "Keep my badge green for five more minutes.", end: true },
+        ],
+      },
+    },
+  },
 });
 
 export const DEDUCTIONS = Object.freeze({
@@ -2791,6 +2966,55 @@ export const DEDUCTIONS = Object.freeze({
       { type: "collectEvidence", id: "orpheus_maintenance_badge" },
       { type: "setPath", path: "progress.chapter", value: 5 },
       { type: "setPath", path: "progress.officeState", value: 12 },
+      { type: "unlockLocation", id: "orpheus_sublevel_harbor" },
+    ],
+  },
+  orpheus_command_center: {
+    id: "orpheus_command_center",
+    title: "Orpheus is the Benefactors' command center",
+    journalText:
+      "Orpheus is not a humanitarian refuge. It shelters Meridian's principals, private longevity clinic, leverage archive, and First Circle assembly. The same people who finance each manufactured crisis meet above the hidden harbor to select the next city.",
+    notification:
+      "The secret society has a name and a meeting place. The Benefactors' First Circle is voting upstairs on its next target.",
+    requiredDeductions: ["orpheus_supply_route"],
+    requiredEvidence: [
+      "orpheus_maintenance_badge",
+      "orpheus_cold_chain_manifest",
+      "island_service_launch_photo",
+      "blackwater_tide_window",
+      "adrian_moss_statement",
+      "orpheus_arrival_registry_photo",
+      "benefactor_clinic_transfer_order",
+      "orpheus_security_wall_photo",
+      "sublevel_elevator_directory",
+    ],
+    requiredConnections: [
+      {
+        a: "orpheus_maintenance_badge",
+        b: "orpheus_arrival_registry_photo",
+        type: "confirmed",
+      },
+      {
+        a: "orpheus_cold_chain_manifest",
+        b: "benefactor_clinic_transfer_order",
+        type: "financial",
+      },
+      {
+        a: "island_service_launch_photo",
+        b: "orpheus_security_wall_photo",
+        type: "confirmed",
+      },
+      {
+        a: "blackwater_tide_window",
+        b: "sublevel_elevator_directory",
+        type: "confirmed",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "provedOrpheusCommandCenter", value: true },
+      { type: "collectEvidence", id: "first_circle_invitation" },
+      { type: "setPath", path: "progress.chapter", value: 6 },
+      { type: "setPath", path: "progress.officeState", value: 13 },
     ],
   },
 });
@@ -4732,6 +4956,152 @@ export const GAME_CONTENT = Object.freeze({
           title: "The disguise moored beside the truth",
           text:
             "The real workboats smell of fuel and fish. None has the enclosed cabin or speed of the Orpheus launch.",
+        },
+      ],
+    },
+    orpheus_sublevel_harbor: {
+      id: "orpheus_sublevel_harbor",
+      name: "Orpheus Sublevel Harbor",
+      eyebrow: "Site Orpheus · Tuesday · 5:12 AM",
+      mapX: 98,
+      mapY: 5,
+      description:
+        "A fortified sea cavern beneath the island where Redoubt passengers, private medical cargo, and crisis archives disappear from the public world.",
+      sceneClass: "scene-orpheus-sublevel",
+      sceneArt: "./assets/scenes/orpheus-sublevel-harbor.webp",
+      hotspots: [
+        {
+          id: "adrian_moss",
+          label: "Adrian Moss",
+          x: 1,
+          y: 31,
+          width: 22,
+          height: 38,
+          title: "The steward who knows what the island protects",
+          text:
+            "A gray-haired logistics steward watches your maintenance badge from a glass booth built to survive both storms and questions.",
+          dialogueId: "adrian_moss",
+        },
+        {
+          id: "orpheus_arrival_desk",
+          label: "Arrival registry",
+          x: 45,
+          y: 61,
+          width: 28,
+          height: 24,
+          title: "A refuge with no survivors",
+          text:
+            "The open registry lists years of benefactors, archives, and clinic cargo—but not one civilian evacuee.",
+          actionLabel: "Photograph the arrival registry",
+          toolId: "smartphone",
+          resultText:
+            "Every Redoubt passenger is marked as a Meridian principal, and each crisis archive receives permanent retention.",
+          effects: [
+            { type: "setFlag", key: "photographedOrpheusArrivalRegistry", value: true },
+            { type: "collectEvidence", id: "orpheus_arrival_registry_photo" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "questionedAdrianMoss" },
+              { type: "flag", key: "photographedOrpheusArrivalRegistry", equals: false },
+            ],
+          },
+        },
+        {
+          id: "benefactor_clinic_case",
+          label: "Silver clinic case",
+          x: 43,
+          y: 42,
+          width: 20,
+          height: 22,
+          title: "Public experiments, private medicine",
+          text:
+            "A transfer order is clipped beneath a gold priority marker on a refrigerated case from the Blackwater launch.",
+          actionLabel: "Recover the clinic transfer order",
+          resultText:
+            "Bellwether and Verdant samples feed a private longevity cohort sponsored by Meridian's First Circle.",
+          effects: [
+            { type: "setFlag", key: "foundBenefactorClinicTransferOrder", value: true },
+            { type: "collectEvidence", id: "benefactor_clinic_transfer_order" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedOrpheusArrivalRegistry" },
+              { type: "flag", key: "foundBenefactorClinicTransferOrder", equals: false },
+            ],
+          },
+        },
+        {
+          id: "orpheus_security_console",
+          label: "Security wall",
+          x: 51,
+          y: 66,
+          width: 20,
+          height: 20,
+          title: "Every arrival already has a room upstairs",
+          text:
+            "The surveillance matrix routes passengers to private suites and cargo to the clinic, archive, or financial vault.",
+          actionLabel: "Photograph the arrival matrix",
+          toolId: "smartphone",
+          resultText:
+            "Hangar 4's passengers are assigned First Circle suites while their sealed records move into a leverage archive.",
+          effects: [
+            { type: "setFlag", key: "photographedOrpheusSecurityWall", value: true },
+            { type: "collectEvidence", id: "orpheus_security_wall_photo" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "foundBenefactorClinicTransferOrder" },
+              { type: "flag", key: "photographedOrpheusSecurityWall", equals: false },
+            ],
+          },
+        },
+        {
+          id: "orpheus_freight_elevator",
+          label: "Freight elevator",
+          x: 67,
+          y: 28,
+          width: 18,
+          height: 44,
+          title: "The island stacked above the harbor",
+          text:
+            "A brass directory beside the elevator maps the clinic, leverage archive, private residences, and First Circle assembly hall.",
+          actionLabel: "Copy the concealed elevator directory",
+          toolId: "smartphone",
+          resultText:
+            "Level seven houses the First Circle assembly where Meridian principals select the next governance-conversion site.",
+          effects: [
+            { type: "setFlag", key: "foundSublevelElevatorDirectory", value: true },
+            { type: "collectEvidence", id: "sublevel_elevator_directory" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedOrpheusSecurityWall" },
+              { type: "flag", key: "foundSublevelElevatorDirectory", equals: false },
+            ],
+          },
+        },
+        {
+          id: "orpheus_launch_berth",
+          label: "Sublevel berth",
+          x: 20,
+          y: 49,
+          width: 29,
+          height: 32,
+          title: "The Blackwater route ends underground",
+          text:
+            "Saltwater drains from the launch beneath a cavern ceiling invisible to satellites and civil navigation.",
+        },
+        {
+          id: "first_circle_stair",
+          label: "Upper compound",
+          x: 69,
+          y: 4,
+          width: 21,
+          height: 24,
+          title: "Warm lights above the machinery",
+          text:
+            "Beyond the elevator shaft, an illuminated stair climbs toward gardens and a residence built above the hidden dock.",
         },
       ],
     },

@@ -3,7 +3,7 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js?v=blackwater-20260806a";
+} from "./game-state.js?v=orpheus-harbor-20260806a";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
@@ -273,6 +273,14 @@ export class SaveSystem {
       !migrated.progress.unlockedLocations.includes("blackwater_point")
     ) {
       migrated.progress.unlockedLocations.push("blackwater_point");
+    }
+
+    if (
+      legacyVersion < 20 &&
+      migrated.flags.provedOrpheusSupplyRoute &&
+      !migrated.progress.unlockedLocations.includes("orpheus_sublevel_harbor")
+    ) {
+      migrated.progress.unlockedLocations.push("orpheus_sublevel_harbor");
     }
 
     return migrated;

@@ -187,6 +187,15 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Recovered a nineteen-minute radar gap and maintenance credential for entering the island's submerged harbor
 - Extended casebook guidance, office progression, save migration, and the complete automated playthrough to the Orpheus approach
 
+**Milestone 19 — Orpheus Sublevel Harbor (complete)**
+
+- Entered Site Orpheus through its concealed sea-cavern harbor beneath North Reef
+- Added a painterly island command-center scene, Adrian Moss interrogation, and four sequential harbor discoveries
+- Revealed the private longevity clinic, leverage archive, protected residences, and First Circle assembly above the dock
+- Added a four-connection deduction proving Orpheus is the Benefactors' operational headquarters rather than a humanitarian refuge
+- Recovered a First Circle invitation showing the society is selecting its next target on Level 07
+- Extended save migration, casebook guidance, office progression, and the full leak-to-Orpheus automated playthrough
+
 **Prologue content now playable**
 
 - Photograph the missing west wing
