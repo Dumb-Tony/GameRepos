@@ -851,7 +851,35 @@ tidebound-unity/
       UI hook that actually OFFERS the keepsake scene at run's end
       (the scene exists and is tested; the run card still ends on
       "press Enter"). Knowledge banking is live regardless — a life
-      that ends today already feeds the next one.*
+      that ends today already feeds the next one.
+      NG+ session 2: THE LOOPS MENU AND THE CONDITIONS. `loops_menu`
+      lives in the PROLOGUE script (the crossing precedes the crash),
+      and PrologueScript.StartFor(state) now routes every entry point
+      — GameManager and both PrologueStageDirector paths — so a first
+      life falls straight out of the sky while a remembered one
+      crosses through the menu and gets to name its conditions;
+      GameState grew LoopsLived (stamped by ApplyNew) so the menu can
+      count the lives without touching disk. Three modifiers ship,
+      each with teeth that were ALREADY half-built in GameState:
+      KIND TIDE (×0.6 on every drain — TickSegment had it), HARD
+      SEASON (IsMonsoon already read `mod == hard && chapter >= 4`;
+      this session made the VISUAL monsoon agree, because a run whose
+      meters are taxed for rain must look wet — Monsoon.Intensity now
+      takes the run, not just the day, and still stops dead on the
+      71st morning), and SILENT ISLAND (the Clearing's six wild lives
+      all gate on !ClearingIsSoloOnly, leaving only the solo road).
+      CHAOS IS DELIBERATELY NOT OFFERED: its teeth are the VN's
+      random-event roll, which this port has never had — a menu
+      option that changes nothing is a lie, so it waits for the
+      system it modifies (there is a test asserting it stays out).
+      11 new tests (396 total, all green via the CLI fallback).
+      Field note: a perl one-liner with a non-capturing group emptied
+      all six companion ids in the Clearing (TryGetValue("")); caught
+      it by grepping the result immediately. Prefer explicit Edits
+      over clever regex on structured code.
+      STILL DEFERRED: the NG+-only grotto journal (ev_loop →
+      LOOP_KNOWN) and ending X3 THE LOOP, the keepsake UI hook at
+      run's end, and chaos + the random-event system it needs.*
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day
 loop, Kavi only, chapters 1–2, the Boar King, five endings.

@@ -151,6 +151,7 @@ namespace Tidebound
         {
             if (s == null || data == null || data.Loops <= 0) return;
             s.SetFlag("NGPLUS");
+            s.LoopsLived = data.Loops;
             foreach (var pair in data.Know)
                 if (pair.Value) s.SetFlag(pair.Key);
             var keepsake = KeepsakeById(data.Keepsake);

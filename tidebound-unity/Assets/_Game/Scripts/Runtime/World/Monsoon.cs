@@ -32,7 +32,21 @@ namespace Tidebound
             return Mathf.Lerp(0.75f, 0.4f, (day - 66) / (float)(SeasonEnd - 66)); // the season letting go
         }
 
-        public static float Intensity(GameState s) => s == null ? 0f : IntensityOnDay(s.Day);
+        /// <summary>
+        /// What the sky is doing for THIS run. The day's own curve, unless
+        /// the loops asked for a Hard Season — then the Long Rain arrives a
+        /// chapter early and stays, exactly as GameState.IsMonsoon already
+        /// rules for the drains. The two must never disagree: a run whose
+        /// meters are being taxed for monsoon should be visibly wet.
+        /// </summary>
+        public static float Intensity(GameState s)
+        {
+            if (s == null) return 0f;
+            float byDay = IntensityOnDay(s.Day);
+            if (s.RunModifier == RunModifiers.Hard && s.Chapter >= 4 && s.Day <= SeasonEnd)
+                byDay = Mathf.Max(byDay, 0.6f);
+            return byDay;
+        }
 
         public static bool Raining(GameState s) => Intensity(s) > 0.01f;
     }

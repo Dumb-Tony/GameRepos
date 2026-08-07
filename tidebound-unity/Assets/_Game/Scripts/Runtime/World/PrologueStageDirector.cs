@@ -49,7 +49,7 @@ namespace Tidebound
             if (_camera == null)
             {
                 // no camera to stage with — fall back to plain prose
-                _gm.Dialogue.Play(PrologueScript.Build(), PrologueScript.Start, onComplete);
+                _gm.Dialogue.Play(PrologueScript.Build(), PrologueScript.StartFor(_gm.State), onComplete);
                 return;
             }
 
@@ -58,7 +58,7 @@ namespace Tidebound
             _gm.Dialogue.SceneEntered += OnSceneEntered;
             _gm.Dialogue.FadeCut(1f);
             EnterSkyStage();
-            _gm.Dialogue.Play(PrologueScript.Build(), PrologueScript.Start, () =>
+            _gm.Dialogue.Play(PrologueScript.Build(), PrologueScript.StartFor(_gm.State), () =>
             {
                 Cleanup();
                 onComplete?.Invoke();

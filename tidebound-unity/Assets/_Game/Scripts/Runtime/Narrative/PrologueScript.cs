@@ -15,6 +15,12 @@ namespace Tidebound.Narrative
     {
         public const string Start = "falling";
 
+        /// <summary>Where a run begins: a first life falls straight out of
+        /// the sky; a life the island already remembers crosses first, and
+        /// gets to name the conditions on the way in.</summary>
+        public static string StartFor(GameState s) =>
+            s != null && s.Is("NGPLUS") ? "loops_menu" : Start;
+
         // the five salvage bundles — VN BUNDLES verbatim, emoji dropped
         // (the runtime font has no glyphs for them)
         static readonly (string Key, string Label, string Sub)[] Bundles =

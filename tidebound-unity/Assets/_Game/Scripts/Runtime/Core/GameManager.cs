@@ -114,7 +114,7 @@ namespace Tidebound
                         Toast("WASD to move · Shift to run · E/F/C to act · J opens the Ledger · Esc frees the mouse.", ToastKind.Info);
                     };
                     if (prologueDirector != null) prologueDirector.PlayPrologue(this, onPrologueDone);
-                    else Dialogue.Play(PrologueScript.Build(), PrologueScript.Start, onPrologueDone);
+                    else Dialogue.Play(PrologueScript.Build(), PrologueScript.StartFor(State), onPrologueDone);
                 }
                 else
                 {

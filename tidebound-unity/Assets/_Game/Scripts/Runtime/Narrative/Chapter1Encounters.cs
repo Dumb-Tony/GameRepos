@@ -594,7 +594,7 @@ namespace Tidebound.Narrative
                     {
                         Label = "The grey dog",
                         Sub = "Watchful. Burn-scarred. Cast out of his own pack — and choosing, maybe, to be near yours.",
-                        When = s => s.Met.TryGetValue("kavi", out var m) && m,
+                        When = s => !RunModifiers.ClearingIsSoloOnly(s) && s.Met.TryGetValue("kavi", out var m) && m,
                         Do = s => { s.Companion = "kavi"; s.SetFlag("CLEARING_DONE"); },
                         Go = "court_kavi",
                     },
@@ -602,7 +602,7 @@ namespace Tidebound.Narrative
                     {
                         Label = "The bearded pig",
                         Sub = "Young, enormous, and openly delighted by you. He knows where you sleep, and approves.",
-                        When = s => s.Met.TryGetValue("buri", out var m) && m,
+                        When = s => !RunModifiers.ClearingIsSoloOnly(s) && s.Met.TryGetValue("buri", out var m) && m,
                         Do = s => { s.Companion = "buri"; s.SetFlag("CLEARING_DONE"); },
                         Go = "court_buri",
                     },
@@ -610,7 +610,7 @@ namespace Tidebound.Narrative
                     {
                         Label = "The copper hen",
                         Sub = "Two pounds of terror and refusal. Everything frightens her; nothing stops her.",
-                        When = s => s.Met.TryGetValue("moa", out var m) && m,
+                        When = s => !RunModifiers.ClearingIsSoloOnly(s) && s.Met.TryGetValue("moa", out var m) && m,
                         Do = s => { s.Companion = "moa"; s.SetFlag("CLEARING_DONE"); },
                         Go = "court_moa",
                     },
@@ -618,7 +618,7 @@ namespace Tidebound.Narrative
                     {
                         Label = "The sea eagle",
                         Sub = "One blind eye, one open ledger. The hardest to win, and the only one who starts as your equal.",
-                        When = s => s.Met.TryGetValue("vela", out var m) && m,
+                        When = s => !RunModifiers.ClearingIsSoloOnly(s) && s.Met.TryGetValue("vela", out var m) && m,
                         Do = s => { s.Companion = "vela"; s.SetFlag("CLEARING_DONE"); },
                         Go = "court_vela",
                     },
@@ -626,7 +626,7 @@ namespace Tidebound.Narrative
                     {
                         Label = "The macaque",
                         Sub = "Mischievous, vain, brilliant, exhausting — and, quietly, the loneliest performer on the island.",
-                        When = s => s.Met.TryGetValue("ipo", out var m) && m,
+                        When = s => !RunModifiers.ClearingIsSoloOnly(s) && s.Met.TryGetValue("ipo", out var m) && m,
                         Do = s => { s.Companion = "ipo"; s.SetFlag("CLEARING_DONE"); },
                         Go = "court_ipo",
                     },
@@ -634,7 +634,7 @@ namespace Tidebound.Narrative
                     {
                         Label = "The octopus",
                         Sub = "The tide pools' oldest question. She watches you with one slotted eye, and copies what you do.",
-                        When = s => s.Met.TryGetValue("nine", out var m) && m,
+                        When = s => !RunModifiers.ClearingIsSoloOnly(s) && s.Met.TryGetValue("nine", out var m) && m,
                         Do = s => { s.Companion = "nine"; s.SetFlag("CLEARING_DONE"); },
                         Go = "court_nine",
                     },

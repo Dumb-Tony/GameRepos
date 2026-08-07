@@ -15,9 +15,29 @@ namespace Tidebound.Narrative
     /// </summary>
     public static class LoopScenes
     {
-        /// <summary>WHAT CARRIES — the crossing, ahead of the fall.</summary>
+        /// <summary>WHAT CARRIES — the crossing, ahead of the fall — and the
+        /// DRIFTWOOD LOOPS menu that precedes it once a life has been lived.</summary>
         public static void AddArrivalTo(StoryScript prologue)
         {
+            prologue.Add(new StoryScene
+            {
+                Id = "loops_menu",
+                Text = s =>
+                {
+                    int lives = s.LoopsLived;
+                    var t = new List<string>
+                    {
+                        "<i>🌀 DRIFTWOOD LOOPS</i>",
+                        "The island remembers " + lives + (lives == 1 ? " life" : " lives")
+                            + " of yours. And you — in the way of dreams, and water, and songs you know before the second verse — are starting to remember it back.",
+                        "Knowledge carries. Names, paths, terms, the shape of the dark under the mountain — whatever you have truly learned arrives with you, humming under the skin of a stranger who has never seen this island before.",
+                        "Begin again — or begin again <i>differently</i>. The loops permit conditions.",
+                    };
+                    return t;
+                },
+                Choices = BuildLoopsMenuChoices(),
+            });
+
             prologue.Add(new StoryScene
             {
                 Id = "loop_arrival",
@@ -40,6 +60,9 @@ namespace Tidebound.Narrative
                                 + "</i> — soaked in enough of a life you can't remember to have become part of you.");
                             break;
                         }
+
+                    var condition = RunModifiers.CrossingLineFor(s);
+                    if (condition != null) t.Add(condition);
                     return t;
                 },
                 Next = PrologueScript.Start,
@@ -60,6 +83,32 @@ namespace Tidebound.Narrative
                 },
                 Choices = BuildKeepsakeChoices(),
             });
+        }
+
+        static List<StoryChoice> BuildLoopsMenuChoices()
+        {
+            var choices = new List<StoryChoice>
+            {
+                new StoryChoice
+                {
+                    Label = "🌀 Begin the next loop",
+                    Sub = "Everything you know, nothing you owned. The standard crossing.",
+                    Do = s => s.RunModifier = null,
+                    Go = "loop_arrival",
+                },
+            };
+            foreach (var modifier in RunModifiers.All)
+            {
+                var m = modifier; // capture per iteration
+                choices.Add(new StoryChoice
+                {
+                    Label = m.Name,
+                    Sub = m.Sub,
+                    Do = s => s.RunModifier = m.Id,
+                    Go = "loop_arrival",
+                });
+            }
+            return choices;
         }
 
         static List<StoryChoice> BuildKeepsakeChoices()

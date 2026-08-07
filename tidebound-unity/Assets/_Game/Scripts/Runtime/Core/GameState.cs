@@ -75,6 +75,10 @@ namespace Tidebound
         /// <summary>Run modifier: "hard" | "silent" | "kind" | "chaos" — or null.</summary>
         [JsonProperty("mod")] public string RunModifier;
 
+        /// <summary>How many lives the island remembers before this one
+        /// (stamped by DriftwoodLoops.ApplyNew, for the crossing's prose).</summary>
+        [JsonProperty("lives")] public int LoopsLived;
+
         /// <summary>Save-format version (VN calendar v2 = the 100-day calendar).</summary>
         [JsonProperty("_cal")] public int CalendarVersion = 2;
 
