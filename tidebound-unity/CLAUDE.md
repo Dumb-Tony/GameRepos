@@ -877,9 +877,28 @@ tidebound-unity/
       all six companion ids in the Clearing (TryGetValue("")); caught
       it by grepping the result immediately. Prefer explicit Edits
       over clever regex on structured code.
-      STILL DEFERRED: the NG+-only grotto journal (ev_loop →
-      LOOP_KNOWN) and ending X3 THE LOOP, the keepsake UI hook at
-      run's end, and chaos + the random-event system it needs.*
+      NG+ session 3: ENDING X3 — THE LOOP, the NG+ payoff. `ev_loop`
+      ported verbatim (the grotto behind the third fall of vines; the
+      tin box; the journal in YOUR OWN HANDWRITING, whose last entry
+      tells you to ask the pool who is counting with you; and the
+      line that lands hardest — you put it back, because you have put
+      it back before), scheduled on day 30 Day-segment behind
+      NGPLUS && !LOOP_KNOWN, paying depth 3 and taking hope 4, once.
+      The convergence grows its door (NGPLUS && LOOP_KNOWN), and the
+      LOOP core lands in Endings: the seventh beat reheard not as a
+      door closing but as a STROKE OF A TALLY — "It isn't a loop.
+      It's a ledger. We are being kept — carefully. Find out what
+      for. I'll start." — and the Hum, for the first time in any of
+      your lives, sounds glad. It is a STAYING ending (not in the
+      Leaving list, not companionCovered), so the companion epilogue
+      still runs; a Loop run banks like any other life, because the
+      count is not finished. 7 new tests (403 total, all green via
+      the CLI fallback). The whole cross-run arc now closes: bank a
+      life → carry the knowing → cross with conditions → find your
+      own journal → ask the pool.
+      STILL DEFERRED: the keepsake UI hook at run's end (the scene
+      exists and is tested; the run card still ends on "press
+      Enter"), and chaos + the random-event system it needs.*
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day
 loop, Kavi only, chapters 1–2, the Boar King, five endings.

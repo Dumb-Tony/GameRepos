@@ -119,6 +119,9 @@ namespace Tidebound.Narrative
             new ScheduledEvent { Day = 69, Seg = Segment.Dusk, SceneId = "ch5_finale" },
             // ---- the long game (scenes-chapter5.js, the shared events) ----
             new ScheduledEvent { Day = 58, Seg = Segment.Night, SceneId = "ev5_cyclone" },
+            // ---- NG+ only (loops.js): the journal in your own handwriting ----
+            new ScheduledEvent { Day = 30, Seg = Segment.Day, SceneId = "ev_loop",
+                When = s => s.Is("NGPLUS") && !s.Is("LOOP_KNOWN") },
         };
     }
 }

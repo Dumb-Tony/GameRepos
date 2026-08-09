@@ -72,6 +72,26 @@ namespace Tidebound.Narrative
 
         public static void AddTo(StoryScript script)
         {
+            // ---- NG+ only: the grotto journal, in your own handwriting ----
+            script.Add(new StoryScene
+            {
+                Id = "ev_loop",
+                OnEnter = s =>
+                {
+                    if (s.Is("LOOP_KNOWN")) return;
+                    s.SetFlag("LOOP_KNOWN");
+                    s.AddRoute(RouteAxis.Depth, 3);
+                    s.Stat(Meter.Hope, -4);
+                },
+                Text = _ => new List<string>
+                {
+                    "You find the grotto because you were sure — sure the way you are sure of your own name — that it would be behind the third fall of vines past the tide pools, and it is, and you stand in its blue-green light with your certainty curdling into something colder.",
+                    "There is a dry shelf above the waterline. There is a tin box on the shelf. There is a journal in the box, swollen with salt and years, and the handwriting in it is <i>yours</i>.",
+                    "Not similar. Yours. The loops of the g's, the crossed-out second thoughts, the little ledger columns you have kept since Day 1 — kept since Day 1 of <i>which life?</i> — and the last entry, dated no date, reads: <i>\"The island remembers. I keep arriving. If you are reading this — and you are; I remember reading it — then listen: the seventh beat is a door closing so gently it sounds like a heart. Count the lives. Ask the pool who is counting WITH you.\"</i>",
+                    "You put the journal back, because — you understand this with the deep, terrible calm of the water finding its level — you have put it back before.",
+                },
+            });
+
             script.Add(new StoryScene
             {
                 Id = "keepsake",
