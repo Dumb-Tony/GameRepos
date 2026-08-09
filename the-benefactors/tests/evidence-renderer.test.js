@@ -2,7 +2,10 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { EVIDENCE } from "../src/content/game-content.js";
-import { renderEvidenceArtifact } from "../src/systems/evidence/evidence-renderer.js";
+import {
+  getEvidencePresentation,
+  renderEvidenceArtifact,
+} from "../src/systems/evidence/evidence-renderer.js";
 
 test("renders the full Northstar invoice artifact", () => {
   const html = renderEvidenceArtifact(EVIDENCE.invoice_northstar);
@@ -18,6 +21,32 @@ test("renders every collected evidence type as a substantive artifact", () => {
     const html = renderEvidenceArtifact(evidence);
     assert.equal(html.includes("No visual record is available"), false, evidence.id);
     assert.equal(html.length > 300, true, evidence.id);
+    const presentation = getEvidencePresentation(evidence);
+    assert.match(html, new RegExp(`evidence-presentation-${presentation.motif}`), evidence.id);
+    assert.match(html, new RegExp(presentation.stamp), evidence.id);
+    assert.match(html, new RegExp(presentation.fileNumber), evidence.id);
+  }
+});
+
+test("memo evidence uses distinct, non-color-only case-file families", () => {
+  const memoFamilies = new Set(
+    Object.values(EVIDENCE)
+      .filter((evidence) => evidence.artifact?.type === "memo")
+      .map((evidence) => getEvidencePresentation(evidence).motif),
+  );
+
+  assert.deepEqual(
+    [...memoFamilies].sort(),
+    ["access", "document", "event", "financial", "lead", "location", "organization"],
+  );
+
+  for (const evidence of Object.values(EVIDENCE).filter(
+    (item) => item.artifact?.type === "memo",
+  )) {
+    const presentation = getEvidencePresentation(evidence);
+    const html = renderEvidenceArtifact(evidence);
+    assert.match(html, new RegExp(`artifact-memo--${presentation.motif}`), evidence.id);
+    assert.match(html, new RegExp(presentation.label), evidence.id);
   }
 });
 

@@ -51,7 +51,10 @@ import {
   removeConnection,
   unpinEvidence,
 } from "../systems/evidence-board/evidence-board.js?v=visual-polish-20260730a";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=first-circle-20260806a";
+import {
+  getEvidencePresentation,
+  renderEvidenceArtifact,
+} from "../systems/evidence/evidence-renderer.js?v=casefile-20260809a";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
@@ -2540,14 +2543,6 @@ export class GameApp {
             title: "VALE / ACCESSIBILITY FUND",
             phase: "Follow the Northstar paper trail",
           };
-    const evidenceTypeStamps = {
-      document: "DOC",
-      photograph: "PHOTO",
-      recording: "REC",
-      financial: "$",
-      location: "MAP",
-      event: "DATE",
-    };
     const selectedConnection =
       this.selectedBoardCards.length === 2
         ? state.board.connections.find(
@@ -2708,7 +2703,7 @@ export class GameApp {
                           : "Two clues selected";
                       return `
                         <article
-                          class="evidence-card evidence-card--${item.artifact?.type || "document"} evidence-category-${item.category} ${selected ? "is-selected" : ""} ${filterClass}"
+                          class="evidence-card evidence-card--${item.artifact?.type || "document"} evidence-category-${item.category} evidence-presentation-${getEvidencePresentation(item).motif} ${selected ? "is-selected" : ""} ${filterClass}"
                           style="left:${position.x}%;top:${position.y}%"
                           data-evidence-card-shell="${item.id}"
                           data-category="${item.category}"
@@ -2728,9 +2723,9 @@ export class GameApp {
                               class="evidence-card-thumbnail"
                               aria-hidden="true"
                               ${item.artifact?.image ? `style="background-image:linear-gradient(rgba(12,18,16,.08),rgba(12,18,16,.2)),url('${item.artifact.image}')"` : ""}
-                            ></span>
-                            <span class="evidence-type-stamp" aria-hidden="true">${escapeHtml(evidenceTypeStamps[item.category] || "CLUE")}</span>
-                            <span class="evidence-category">${escapeHtml(item.category)}</span>
+                            ><i></i><i></i><i></i></span>
+                            <span class="evidence-type-stamp" aria-hidden="true">${escapeHtml(getEvidencePresentation(item).stamp)}</span>
+                            <span class="evidence-category">${escapeHtml(getEvidencePresentation(item).label)}</span>
                             <strong>${escapeHtml(item.title)}</strong>
                             <small>${escapeHtml(item.summary)}</small>
                             <span class="evidence-select-prompt">${escapeHtml(selectionPrompt)}</span>
@@ -3861,13 +3856,14 @@ export class GameApp {
   renderEvidenceViewer() {
     const evidence = EVIDENCE[this.activeEvidenceId];
     if (!evidence) return "";
+    const presentation = getEvidencePresentation(evidence);
 
     return `
       <div class="evidence-viewer-scrim">
         <section class="evidence-viewer" role="dialog" aria-modal="true" aria-labelledby="evidence-viewer-title">
           <header class="evidence-viewer-header">
             <div>
-              <p class="kicker">${escapeHtml(evidence.category)}</p>
+              <p class="kicker">${escapeHtml(presentation.label)} <span aria-hidden="true">/</span> ${escapeHtml(presentation.fileNumber)}</p>
               <h1 id="evidence-viewer-title">${escapeHtml(evidence.title)}</h1>
             </div>
             <button data-close-evidence aria-label="Close evidence viewer">×</button>
