@@ -6390,6 +6390,30 @@ ol.recording-timeline,
   max-width: 760px;
 }
 
+.decision-aftermath {
+  margin: 28px 0 24px;
+  border-left: 3px solid var(--rust);
+  padding: 20px 22px;
+  background:
+    linear-gradient(90deg, rgba(128, 54, 44, 0.13), transparent),
+    rgba(255, 255, 255, 0.018);
+}
+
+.decision-aftermath.is-complete {
+  border-left-color: var(--gold);
+}
+
+.decision-aftermath h3 {
+  margin: 7px 0 9px;
+  font: 600 clamp(1.35rem, 3vw, 2rem) / 1.05 Georgia, "Times New Roman", serif;
+}
+
+.decision-aftermath > p:last-child {
+  margin-bottom: 0;
+  color: var(--ink-dim);
+  line-height: 1.62;
+}
+
 .decision-back {
   margin-top: 24px;
 }
