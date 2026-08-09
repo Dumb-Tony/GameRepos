@@ -68,6 +68,7 @@ namespace Tidebound
         readonly WarningSystem _warnings = new WarningSystem();
         bool _sleeping;
         bool _collapsing;
+        bool _keepsakeOffered; // the crossing's question is asked once per life
 
         // ---- the story calendar ------------------------------------------
         readonly List<ScheduledEvent> _schedule = Chapter1Schedule.Build();
@@ -148,6 +149,14 @@ namespace Tidebound
                 {
                     ApplyFreeze();
                     TryDeleteSave();
+                    // the island's last question, once the card has shown and
+                    // the life is banked: what crosses the water with you?
+                    if (!_keepsakeOffered && State.Is("LOOP_BANKED") && !State.Is("KEEPSAKE_CHOSEN"))
+                    {
+                        _keepsakeOffered = true;
+                        Dialogue.Play(Encounters, "keepsake", null);
+                        return;
+                    }
                     if (GameInput.ConfirmPressed) Restart();
                 }
                 return;

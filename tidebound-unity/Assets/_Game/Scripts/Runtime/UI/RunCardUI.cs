@@ -99,6 +99,11 @@ namespace Tidebound
                 _shown = false;
                 _root.SetActive(false);
             }
+
+            // the card outranks every other canvas, so it stands aside while
+            // the island asks its last question (the keepsake) and returns
+            // when the answer is given
+            if (_shown) _root.SetActive(!_gm.DialogueActive);
         }
 
         void Show()

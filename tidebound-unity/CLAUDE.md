@@ -896,9 +896,25 @@ tidebound-unity/
       the CLI fallback). The whole cross-run arc now closes: bank a
       life → carry the knowing → cross with conditions → find your
       own journal → ask the pool.
-      STILL DEFERRED: the keepsake UI hook at run's end (the scene
-      exists and is tested; the run card still ends on "press
-      Enter"), and chaos + the random-event system it needs.*
+      NG+ session 4: THE KEEPSAKE, ASKED. The run card no longer ends
+      on a bare "press Enter": once it has rendered its verdict AND
+      banked the life (LOOP_BANKED), GameManager plays the `keepsake`
+      scene once (guarded by _keepsakeOffered + the KEEPSAKE_CHOSEN
+      flag every option sets), and only then does Enter start another
+      tide. Deaths are asked the same question — a life is a life,
+      and it still leaves something. Sequencing note worth keeping:
+      the card's canvas outranks every other (sortingOrder 25 vs
+      dialogue's 20), so it would have covered its own question;
+      RunCardUI now stands aside while a dialogue is active at run's
+      end and returns when the answer is given. Requiring LOOP_BANKED
+      also self-sequences the two Updates — the verdict is always
+      read before the question is asked, whatever order they tick in.
+      5 new tests (408 total, all green via the CLI fallback).
+      NG+ IS NOW COMPLETE END TO END: end a life → see the card →
+      choose what crosses → begin the next loop under conditions →
+      arrive knowing → find your own journal → ask the pool.
+      STILL DEFERRED: chaos + the random-event system it modifies
+      (the only NG+ piece left), then the Phase 6 depth passes.*
 
 V1 scope (bible §8): crash → Bay/Tide Pools/Fringe/Green Deep, full day
 loop, Kavi only, chapters 1–2, the Boar King, five endings.
