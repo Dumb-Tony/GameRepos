@@ -750,7 +750,12 @@ export const CASEBOOK_STAGES = Object.freeze([
     id: "quiet_warning_consequence",
     title: "The silent warning",
     objective: "Help Port Prosper harden its systems while the First Circle still believes its plan is secret.",
-    activeWhen: { type: "flag", key: "warnedPortProsperQuietly" },
+    activeWhen: {
+      all: [
+        { type: "flag", key: "warnedPortProsperQuietly" },
+        { type: "flag", key: "identifiedAsterHouse", equals: false },
+      ],
+    },
     hints: [
       "Review the encrypted Port Prosper warning receipt.",
       "Utility crews are isolating the exact systems named in the conversion portfolio.",
@@ -761,7 +766,12 @@ export const CASEBOOK_STAGES = Object.freeze([
     id: "publication_consequence",
     title: "The story detonates",
     objective: "Track the exposed principals as Meridian destroys records and launches a global denial campaign.",
-    activeWhen: { type: "flag", key: "publishedFirstCircleEvidence" },
+    activeWhen: {
+      all: [
+        { type: "flag", key: "publishedFirstCircleEvidence" },
+        { type: "flag", key: "identifiedAsterHouse", equals: false },
+      ],
+    },
     hints: [
       "Review the First Circle publication record.",
       "The evidence is mirrored worldwide, but the network is evacuating and purging files.",
@@ -772,11 +782,59 @@ export const CASEBOOK_STAGES = Object.freeze([
     id: "deep_cover_consequence",
     title: "Upstairs among the owners",
     objective: "Use the residential service pass to recover the First Circle's personal leverage files before Port Prosper's clock expires.",
-    activeWhen: { type: "flag", key: "remainedUndercoverOnOrpheus" },
+    activeWhen: {
+      all: [
+        { type: "flag", key: "remainedUndercoverOnOrpheus" },
+        { type: "flag", key: "identifiedAsterHouse", equals: false },
+      ],
+    },
     hints: [
       "Review the Orpheus residential-wing service pass.",
       "The principals keep personal records above the assembly hall where staff access is lightly supervised before 07:00.",
       "The next move is the residential wing—but Port Prosper is still in danger.",
+    ],
+  },
+  {
+    id: "investigate_aster_house",
+    title: "The hand on the switch",
+    objective: "Enter Aster House and recover the local trigger cell's live Port Prosper operation.",
+    activeWhen: {
+      all: [
+        { type: "flag", key: "identifiedAsterHouse" },
+        { type: "flag", key: "foundTriggerTeamDisbursementLedger", equals: false },
+      ],
+    },
+    hints: [
+      "Aster House is now marked on the Greyhaven map at 11 Aldermere Row.",
+      "Photograph the illuminated operations board before searching the switchboard and archive cabinet.",
+      "The disbursement ledger lies beneath the maps on the operations table after the purge order is recovered.",
+    ],
+  },
+  {
+    id: "connect_aster_house",
+    title: "The trigger cell",
+    objective: "Use the evidence board to connect Aster House's operators, schedule, purge order, and money to the First Circle.",
+    activeWhen: {
+      all: [
+        { type: "flag", key: "foundTriggerTeamDisbursementLedger" },
+        { type: "flag", key: "provedAsterHouseTriggerCell", equals: false },
+      ],
+    },
+    hints: [
+      "Connect the Aster trace to the call sheet, the First Circle vote to the operations-board photo, and the portfolio to the purge order.",
+      "Use Red Â· Confirmed for trace / call sheet, vote / operations board, and portfolio / purge authorization.",
+      "Use Blue Â· Financial for crisis-investment escrow / trigger-team disbursement ledger.",
+    ],
+  },
+  {
+    id: "stop_port_prosper_trigger",
+    title: "Before 02:10",
+    objective: "Deliver the countermeasure packet before Aster House can trigger Port Prosper's collapse.",
+    activeWhen: { type: "flag", key: "provedAsterHouseTriggerCell" },
+    hints: [
+      "Review the Port Prosper countermeasure packet in the case file.",
+      "It identifies the operators, remote access paths, timetable, and accounts needed to stop the attack.",
+      "The next chapter begins with the race to Port Prosper before the 02:10 trigger.",
     ],
   },
 ]);
@@ -861,4 +919,10 @@ export const CASEBOOK_PROGRESS = Object.freeze([
   { label: "Port Prosper warned quietly", when: { type: "flag", key: "warnedPortProsperQuietly" } },
   { label: "First Circle evidence published", when: { type: "flag", key: "publishedFirstCircleEvidence" } },
   { label: "Orpheus deep cover maintained", when: { type: "flag", key: "remainedUndercoverOnOrpheus" } },
+  { label: "Aster House trigger trace recovered", when: { type: "flag", key: "identifiedAsterHouse" } },
+  { label: "Aster House operations board photographed", when: { type: "flag", key: "photographedAsterOperationsBoard" } },
+  { label: "Port Prosper trigger call sheet recovered", when: { type: "flag", key: "foundPortProsperTriggerCallSheet" } },
+  { label: "First Circle purge order recovered", when: { type: "flag", key: "foundAsterPurgeAuthorization" } },
+  { label: "Trigger-team disbursement ledger recovered", when: { type: "flag", key: "foundTriggerTeamDisbursementLedger" } },
+  { label: "Aster House trigger cell proven", when: { type: "flag", key: "provedAsterHouseTriggerCell" } },
 ]);

@@ -20,7 +20,7 @@ test("every casebook stage has a three-level hint path", () => {
     assert.equal(stage.hints.length, 3, stage.id);
     assert.equal(stage.hints.every(Boolean), true, stage.id);
   }
-  assert.equal(CASEBOOK_PROGRESS.length, 79);
+  assert.equal(CASEBOOK_PROGRESS.length, 85);
 });
 
 test("casebook objective advances with investigation state", () => {
