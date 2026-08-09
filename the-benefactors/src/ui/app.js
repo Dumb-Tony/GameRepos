@@ -4,11 +4,11 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=port-prosper-choice-20260806a";
+} from "../content/game-content.js?v=aster-house-20260809a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=port-prosper-choice-20260806a";
+} from "../content/casebook-content.js?v=aster-house-20260809a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
@@ -22,18 +22,19 @@ import {
 } from "../content/prologue-content.js?v=field-tools-20260731a";
 import { evaluateCondition } from "../engine/conditions.js?v=visual-polish-20260730a";
 import { applyEffects } from "../engine/events.js?v=visual-polish-20260730a";
-import { createInitialState } from "../engine/game-state.js?v=port-prosper-choice-20260806a";
+import { createInitialState } from "../engine/game-state.js?v=aster-house-20260809a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
 } from "../engine/player-language.js?v=visual-polish-20260730a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=port-prosper-choice-20260806a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=aster-house-20260809a";
 import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=field-tools-20260731a";
 import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=field-tools-20260731a";
 import {
   PORT_PROSPER_RESPONSES,
+  advancePortProsperAftermath,
   applyPortProsperResponse,
-} from "../systems/decisions/port-prosper-response.js?v=port-prosper-choice-20260806a";
+} from "../systems/decisions/port-prosper-response.js?v=aster-house-20260809a";
 import {
   advanceDialogue,
   closeDialogue,
@@ -775,7 +776,31 @@ export class GameApp {
   renderHome() {
     const state = this.store.getState();
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
-    const caseUpdate = state.flags.warnedPortProsperQuietly
+    const caseUpdate = state.flags.provedAsterHouseTriggerCell
+      ? {
+          title: "Before 02:10",
+          text:
+            "Aster House's operators, credentials, timetable, and accounts are exposed. The countermeasure packet can stop Port Prosper from becoming the Benefactors' next case study.",
+        }
+      : state.flags.foundTriggerTeamDisbursementLedger
+        ? {
+            title: "The local hand",
+            text:
+              "Aster House's operations board, call sheet, purge order, and disbursement ledger can prove who will trigger the Port Prosper attack and who already paid them.",
+          }
+        : (state.locationVisits.aster_house || 0) > 0
+          ? {
+              title: "Aster House after midnight",
+              text:
+                "Document the illuminated operations board, copy the switchboard call sheet, search the open archive cabinet, and recover the disbursement ledger before the trigger team returns.",
+            }
+          : state.flags.identifiedAsterHouse
+            ? {
+                title: "The hand on the switch",
+                text:
+                  "The Port Prosper operation routes through Aster House, a Greyhaven crisis consultancy whose townhouse command cell is still active on Aldermere Row.",
+              }
+            : state.flags.warnedPortProsperQuietly
       ? {
           title: "The silent warning",
           text:
@@ -1188,7 +1213,10 @@ export class GameApp {
               state.flags.provedBenefactorsSelectCrises &&
               !state.flags.portProsperDecisionMade
                 ? '<button class="button button-primary" data-action="port-prosper-decision">Choose how to respond</button>'
-                : ""
+                : state.flags.portProsperDecisionMade &&
+                    !state.flags.portProsperFalloutSeen
+                  ? '<button class="button button-primary" data-action="port-prosper-decision">Follow the consequences</button>'
+                  : ""
             }
           </aside>
         </section>
@@ -1269,6 +1297,8 @@ export class GameApp {
     const selected = state.progress.portProsperResponse
       ? PORT_PROSPER_RESPONSES[state.progress.portProsperResponse]
       : null;
+    const aftermathStep = Number(state.progress.portProsperFalloutStep) || 0;
+    const aftermathBeat = selected?.aftermath[aftermathStep] || null;
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
 
     this.root.innerHTML = `
@@ -1293,7 +1323,25 @@ export class GameApp {
                   <p class="speaker">Decision recorded · ${playerName}</p>
                   <h2>${escapeHtml(selected.title)}</h2>
                   <p>${escapeHtml(selected.consequence)}</p>
-                  <button class="button button-primary" data-action="decision-home">Return to the evidence board</button>
+                  ${
+                    aftermathBeat
+                      ? `
+                        <div class="decision-aftermath">
+                          <p class="kicker">${escapeHtml(aftermathBeat.label)}</p>
+                          <h3>${escapeHtml(aftermathBeat.title)}</h3>
+                          <p>${escapeHtml(aftermathBeat.text)}</p>
+                        </div>
+                        <button class="button button-primary" data-action="decision-aftermath">Continue</button>
+                      `
+                      : `
+                        <div class="decision-aftermath is-complete">
+                          <p class="kicker">New lead Â· Greyhaven</p>
+                          <h3>Aster House</h3>
+                          <p>The local trigger cell is exposed before Port Prosper's clock runs out. Its townhouse command post is now marked on the city map.</p>
+                        </div>
+                        <button class="button button-primary" data-action="decision-home">Return to the evidence board</button>
+                      `
+                  }
                 </article>
               `
               : `
@@ -1332,6 +1380,12 @@ export class GameApp {
 
     this.bindActions({
       "decision-back": () => this.router.navigate("home"),
+      "decision-aftermath": () => {
+        const next = advancePortProsperAftermath(this.store.getState());
+        this.store.replace(next, "port-prosper-aftermath");
+        this.saves.save(this.store.getState(), "port-prosper-aftermath");
+        this.renderPortProsperDecision();
+      },
       "decision-home": () => {
         this.store.update((draft) => {
           draft.progress.currentScreen = "board";
@@ -2381,7 +2435,19 @@ export class GameApp {
     );
     const yarnAnchorX = boardDensity.cardWidth / 2;
     const yarnAnchorY = (14 / corkboardHeight) * 100;
-    const boardCase = state.flags.portProsperDecisionMade
+    const boardCase = state.flags.provedAsterHouseTriggerCell
+      ? {
+          number: "13",
+          title: "PORT PROSPER / COUNTERMEASURE",
+          phase: "Trigger cell exposed Â· Stop the 02:10 attack",
+        }
+      : state.flags.identifiedAsterHouse
+        ? {
+            number: "12",
+            title: "ASTER HOUSE / TRIGGER CELL",
+            phase: "Connect the local operators to the First Circle",
+          }
+        : state.flags.portProsperDecisionMade
       ? {
           number: "11",
           title: "PORT PROSPER / RESPONSE",
@@ -3502,6 +3568,13 @@ export class GameApp {
   }
 
   chapterLabel(state = this.store.getState()) {
+    if (
+      state.flags.identifiedAsterHouse ||
+      state.progress.unlockedLocations.includes("aster_house") ||
+      (state.locationVisits.aster_house || 0) > 0
+    ) {
+      return "Chapter 9 Â· The Trigger Cell";
+    }
     if (state.flags.portProsperDecisionMade) {
       return "Chapter 8 · Consequences";
     }

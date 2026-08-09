@@ -5,7 +5,10 @@ import { DEDUCTIONS } from "../src/content/game-content.js";
 import { applyEffects } from "../src/engine/events.js";
 import { createInitialState } from "../src/engine/game-state.js";
 import { SaveSystem } from "../src/engine/save-system.js";
-import { applyPortProsperResponse } from "../src/systems/decisions/port-prosper-response.js";
+import {
+  advancePortProsperAftermath,
+  applyPortProsperResponse,
+} from "../src/systems/decisions/port-prosper-response.js";
 import {
   connectEvidence,
   evaluateBoardDeductions,
@@ -33,7 +36,9 @@ test("the complete authored investigation can progress from the leak through the
   const saves = new SaveSystem(new MemoryStorage());
   let state = createInitialState({ firstName: "Alex" });
 
-  for (const deductionId of deductionOrder) {
+  for (const deductionId of deductionOrder.filter(
+    (id) => id !== "aster_house_trigger_cell",
+  )) {
     const deduction = DEDUCTIONS[deductionId];
 
     state = applyEffects(
@@ -71,6 +76,28 @@ test("the complete authored investigation can progress from the leak through the
   }
 
   state = applyPortProsperResponse(state, "warn");
+  for (let step = 0; step < 3; step += 1) {
+    state = advancePortProsperAftermath(state);
+  }
+
+  const asterDeduction = DEDUCTIONS.aster_house_trigger_cell;
+  state = applyEffects(
+    state,
+    asterDeduction.requiredEvidence.map((id) => ({ type: "collectEvidence", id })),
+  );
+  for (const evidenceId of asterDeduction.requiredEvidence) {
+    state = pinEvidence(state, evidenceId);
+  }
+  for (const connection of asterDeduction.requiredConnections) {
+    state = connectEvidence(
+      state,
+      connection.a,
+      connection.b,
+      connection.type,
+    );
+  }
+  state = evaluateBoardDeductions(state, DEDUCTIONS).state;
+
   saves.save(state, "playthrough-port-prosper-response");
   state = saves.load();
 
@@ -81,6 +108,8 @@ test("the complete authored investigation can progress from the leak through the
   assert.equal(state.flags.provedOrpheusCommandCenter, true);
   assert.equal(state.flags.provedBenefactorsSelectCrises, true);
   assert.equal(state.flags.warnedPortProsperQuietly, true);
+  assert.equal(state.flags.identifiedAsterHouse, true);
+  assert.equal(state.flags.provedAsterHouseTriggerCell, true);
   assert.equal(
     state.evidence.collected.includes("port_prosper_warning_receipt"),
     true,

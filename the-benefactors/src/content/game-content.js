@@ -1621,6 +1621,114 @@ export const EVIDENCE = Object.freeze({
       handwritten: "More proof upstairs, and less time for Port Prosper.",
     },
   },
+  aster_house_trace: {
+    id: "aster_house_trace",
+    title: "Aster House connection trace",
+    category: "lead",
+    summary:
+      "A preserved operations trace links the planned Port Prosper failure to a Greyhaven crisis consultancy called Aster House.",
+    artifact: {
+      type: "memo",
+      heading: "LIVE OPERATIONS TRACE Â· ASTER HOUSE",
+      body: [
+        "ORIGIN: 11 ALDERMERE ROW, GREYHAVEN",
+        "TARGET: PORT PROSPER MUNICIPAL CONTROL NETWORK",
+        "ACCESS CLASS: EMERGENCY MAINTENANCE",
+        "STATUS: TRIGGER SCHEDULE ACTIVE",
+      ],
+      handwritten: "Different choices. Same hand on the switch.",
+    },
+  },
+  aster_operations_board_photo: {
+    id: "aster_operations_board_photo",
+    title: "Photograph of Aster House operations board",
+    category: "photograph",
+    summary:
+      "A concealed wall map assigns Port Prosper substations, water controls, hospitals, and newsrooms to timed disruption teams.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/aster-house.webp",
+      alt: "A dark walnut operations room with a large illuminated city network map, communications equipment, folders, and an open archive cabinet",
+      caption: "ASTER HOUSE Â· OPERATIONS ROOM Â· 11 ALDERMERE ROW",
+      annotations: [
+        "Red markers match the First Circle portfolio's first-hour failures",
+        "Response assets are positioned beside the systems they will replace",
+        "Greyhaven operators control the Port Prosper trigger remotely",
+      ],
+    },
+  },
+  port_prosper_trigger_call_sheet: {
+    id: "port_prosper_trigger_call_sheet",
+    title: "Port Prosper trigger call sheet",
+    category: "document",
+    summary:
+      "Aster House's switchboard schedule names the operators assigned to each stage of the planned outage.",
+    artifact: {
+      type: "memo",
+      heading: "ASTER HOUSE Â· CONTROL ROTATION",
+      body: [
+        "PHASE 1: GRID TELEMETRY SPOOF / 02:10",
+        "PHASE 2: WATER SAFETY LOCKOUT / 02:17",
+        "PHASE 3: EMERGENCY CHANNEL SATURATION / 02:26",
+        "SUPERVISOR: ELIAS MORROW / FIRST CIRCLE LIAISON",
+      ],
+      handwritten: "The catastrophe has a shift schedule.",
+    },
+  },
+  aster_purge_authorization: {
+    id: "aster_purge_authorization",
+    title: "Aster House purge authorization",
+    category: "document",
+    summary:
+      "A First Circle authorization orders Aster House to destroy its Port Prosper files while keeping the trigger schedule active.",
+    artifact: {
+      type: "memo",
+      heading: "MERIDIAN CONTINUITY ORDER Â· LOCAL CELL 04",
+      body: [
+        "DESTROY: PORTFOLIO WORKING COPIES",
+        "PRESERVE: TRIGGER AUTOMATION / LOCAL ACCESS",
+        "PUBLIC COVER: INFRASTRUCTURE RESILIENCE CONSULTING",
+        "FINAL AUTHORITY: FIRST CIRCLE QUORUM",
+      ],
+      handwritten: "Erase the plan. Commit the act.",
+    },
+  },
+  trigger_team_disbursement_ledger: {
+    id: "trigger_team_disbursement_ledger",
+    title: "Trigger-team disbursement ledger",
+    category: "document",
+    summary:
+      "Aster House paid the operators, media contractors, and acquisition lawyers scheduled to profit from Port Prosper's failure.",
+    artifact: {
+      type: "memo",
+      heading: "ASTER HOUSE Â· PORT PROSPER DISBURSEMENTS",
+      body: [
+        "INFRASTRUCTURE ACCESS TEAM / $420,000 / CLEARED",
+        "EMERGENCY NARRATIVE DESK / $275,000 / CLEARED",
+        "RELIEF ACQUISITION COUNSEL / $610,000 / ESCROW",
+        "LOCAL CELL CONTINGENCY / $180,000 / ACTIVE",
+      ],
+      handwritten: "Funding source: Meridian First Circle crisis-investment escrow.",
+    },
+  },
+  port_prosper_countermeasure_packet: {
+    id: "port_prosper_countermeasure_packet",
+    title: "Port Prosper countermeasure packet",
+    category: "event",
+    summary:
+      "The Aster House evidence identifies the exact trigger operators, times, access routes, and accounts needed to stop the planned collapse.",
+    artifact: {
+      type: "memo",
+      heading: "PORT PROSPER Â· ACTIONABLE COUNTERMEASURES",
+      body: [
+        "REVOKE ASTER HOUSE MAINTENANCE CERTIFICATES",
+        "ISOLATE REMOTE GRID AND WATER CONTROL PATHS",
+        "DETAIN LOCAL CELL BEFORE 02:10 TRIGGER",
+        "FREEZE FIRST CIRCLE DISBURSEMENT ACCOUNTS",
+      ],
+      handwritten: "A city does not have to become their next case study.",
+    },
+  },
 });
 
 export const INVENTORY_ITEMS = Object.freeze({
@@ -3209,6 +3317,52 @@ export const DEDUCTIONS = Object.freeze({
       { type: "collectEvidence", id: "port_prosper_warning_file" },
       { type: "setPath", path: "progress.chapter", value: 7 },
       { type: "setPath", path: "progress.officeState", value: 14 },
+    ],
+  },
+  aster_house_trigger_cell: {
+    id: "aster_house_trigger_cell",
+    title: "Aster House is the First Circle's Port Prosper trigger cell",
+    journalText:
+      "Aster House is not an outside consultant. Its Greyhaven operators hold the remote credentials, timing sheets, purge orders, and First Circle money required to manufacture Port Prosper's collapse while Meridian's public relief partners wait to acquire the aftermath.",
+    notification:
+      "The attack is now actionable rather than theoretical. The trigger operators, control paths, timetable, and funding accounts can all be stopped before 02:10.",
+    requiredDeductions: ["benefactors_select_crises"],
+    requiredEvidence: [
+      "aster_house_trace",
+      "first_circle_vote_recording",
+      "port_prosper_conversion_portfolio",
+      "crisis_investment_escrow",
+      "aster_operations_board_photo",
+      "port_prosper_trigger_call_sheet",
+      "aster_purge_authorization",
+      "trigger_team_disbursement_ledger",
+    ],
+    requiredConnections: [
+      {
+        a: "aster_house_trace",
+        b: "port_prosper_trigger_call_sheet",
+        type: "confirmed",
+      },
+      {
+        a: "first_circle_vote_recording",
+        b: "aster_operations_board_photo",
+        type: "confirmed",
+      },
+      {
+        a: "port_prosper_conversion_portfolio",
+        b: "aster_purge_authorization",
+        type: "confirmed",
+      },
+      {
+        a: "crisis_investment_escrow",
+        b: "trigger_team_disbursement_ledger",
+        type: "financial",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "provedAsterHouseTriggerCell", value: true },
+      { type: "collectEvidence", id: "port_prosper_countermeasure_packet" },
+      { type: "setPath", path: "progress.officeState", value: 17 },
     ],
   },
 });
@@ -5429,6 +5583,127 @@ export const GAME_CONTENT = Object.freeze({
           title: "Close enough to hear everything",
           text:
             "A dark curtain and the low hum of camera equipment conceal your borrowed maintenance uniform from the table.",
+        },
+      ],
+    },
+    aster_house: {
+      id: "aster_house",
+      name: "Aster House",
+      eyebrow: "11 Aldermere Row Â· Thursday Â· 12:48 AM",
+      mapX: 47,
+      mapY: 18,
+      description:
+        "A discreet crisis consultancy inside a restored townhouse, abandoned in such a hurry that Port Prosper's live operation still glows behind the respectable paneling.",
+      sceneClass: "scene-aster-house",
+      sceneArt: "./assets/scenes/aster-house.webp",
+      hotspots: [
+        {
+          id: "aster_operations_board",
+          label: "Illuminated operations board",
+          x: 49,
+          y: 8,
+          width: 31,
+          height: 42,
+          title: "Port Prosper divided into timed failures",
+          text:
+            "The map assigns substations, water controls, hospitals, and newsrooms to teams whose color codes match the First Circle portfolio.",
+          actionLabel: "Photograph the operations board",
+          toolId: "smartphone",
+          resultText:
+            "The wall map matches the First Circle's approved sequence down to the first-hour hospital and media disruptions.",
+          effects: [
+            { type: "setFlag", key: "photographedAsterOperationsBoard", value: true },
+            { type: "collectEvidence", id: "aster_operations_board_photo" },
+          ],
+          actionWhen: {
+            type: "flag",
+            key: "photographedAsterOperationsBoard",
+            equals: false,
+          },
+        },
+        {
+          id: "aster_switchboard",
+          label: "Secure switchboard",
+          x: 1,
+          y: 27,
+          width: 30,
+          height: 35,
+          title: "The catastrophe has a night shift",
+          text:
+            "A live rotation sheet beside the switchboard lists the operators who will spoof telemetry, lock water controls, and saturate emergency channels.",
+          actionLabel: "Copy the trigger call sheet",
+          toolId: "smartphone",
+          resultText:
+            "The call sheet names Elias Morrow as First Circle liaison and schedules the first remote trigger for 02:10.",
+          effects: [
+            { type: "setFlag", key: "foundPortProsperTriggerCallSheet", value: true },
+            { type: "collectEvidence", id: "port_prosper_trigger_call_sheet" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedAsterOperationsBoard" },
+              { type: "flag", key: "foundPortProsperTriggerCallSheet", equals: false },
+            ],
+          },
+        },
+        {
+          id: "aster_archive_cabinet",
+          label: "Open archive cabinet",
+          x: 80,
+          y: 18,
+          width: 19,
+          height: 55,
+          title: "Destroy the proof. Preserve the attack.",
+          text:
+            "A half-emptied cabinet contains one missed continuity order: purge the working files, keep the trigger automation live.",
+          actionLabel: "Recover the purge authorization",
+          resultText:
+            "The order carries First Circle authority and confirms that publication changed the cover-up, not the planned attack.",
+          effects: [
+            { type: "setFlag", key: "foundAsterPurgeAuthorization", value: true },
+            { type: "collectEvidence", id: "aster_purge_authorization" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "foundPortProsperTriggerCallSheet" },
+              { type: "flag", key: "foundAsterPurgeAuthorization", equals: false },
+            ],
+          },
+        },
+        {
+          id: "aster_operations_table",
+          label: "Operations table",
+          x: 6,
+          y: 59,
+          width: 63,
+          height: 39,
+          title: "Everyone is paid before the city fails",
+          text:
+            "Beneath the maps, a disbursement ledger pays infrastructure operators, narrative contractors, and acquisition lawyers from the crisis escrow.",
+          actionLabel: "Recover the disbursement ledger",
+          resultText:
+            "The ledger connects the local trigger team directly to the First Circle fund that profits from Port Prosper's replacement contracts.",
+          effects: [
+            { type: "setFlag", key: "foundTriggerTeamDisbursementLedger", value: true },
+            { type: "collectEvidence", id: "trigger_team_disbursement_ledger" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "foundAsterPurgeAuthorization" },
+              { type: "flag", key: "foundTriggerTeamDisbursementLedger", equals: false },
+            ],
+          },
+        },
+        {
+          id: "aster_rain_windows",
+          label: "Rain-streaked windows",
+          x: 20,
+          y: 3,
+          width: 27,
+          height: 47,
+          title: "A respectable address after midnight",
+          text:
+            "Across Aldermere Row, the city sleeps beneath Aster House's warm lamps. Nothing outside suggests a foreign city is being dismantled from this room.",
         },
       ],
     },

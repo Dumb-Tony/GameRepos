@@ -213,6 +213,15 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Added a dedicated responsive decision screen plus automated coverage for every branch and save round trip
 - Extended the full leak-to-First-Circle playthrough through the quiet-warning route
 
+**Milestone 22 - Aster House trigger cell (complete)**
+
+- Added three distinct aftermath sequences for the quiet warning, immediate publication, and deep-cover decisions
+- Converged every response on a preserved operations trace leading to Aster House on Aldermere Row
+- Added a finished painterly noir command-cell scene with four sequential, tool-driven discoveries
+- Added six substantive evidence artifacts covering the operations map, trigger schedule, purge order, payments, and countermeasures
+- Added a four-connection board deduction proving Aster House is the First Circle's local Port Prosper trigger cell
+- Extended casebook guidance, office and board progression, save migration, and the full automated playthrough through the countermeasure packet
+
 **Prologue content now playable**
 
 - Photograph the missing west wing
