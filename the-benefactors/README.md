@@ -1,5 +1,12 @@
 # The Benefactors
 
+**Milestone 28 — Investigative pressure (complete)**
+
+- Added an eleven-beat threat arc that escalates from a parked surveillance car to a compromised newsroom cipher
+- Added a persistent exposure meter, narrative deadline, and compact status readout throughout the investigation
+- Added five optional countermeasures with meaningful tradeoffs between the reporter's visibility and source safety
+- Pressure remains deliberately soft: it changes atmosphere and choices without locking exploration or causing surprise failure
+
 **Milestone 27 — Persistent source relationships (complete)**
 
 - Added persistent trust, exposure, promises, and relationship histories for sixteen allies, sources, gatekeepers, and adversaries
