@@ -701,8 +701,8 @@ export const EVIDENCE = Object.freeze({
       "Bellwether organizer Rina Mercer saw Deepwell equipment arrive two nights before residents reported metallic water.",
     artifact: {
       type: "transcript",
-      heading: "FIELD INTERVIEW 14 Â· RINA MERCER",
-      timestamp: "06:51 AM Â· BELLWETHER RIVERSIDE",
+      heading: "FIELD INTERVIEW 14 · RINA MERCER",
+      timestamp: "06:51 AM · BELLWETHER RIVERSIDE",
       lines: [
         ["MERCER", "The trucks arrived Tuesday night. No city markings."],
         ["MERCER", "Thursday morning, the school taps smelled like pennies."],
@@ -718,7 +718,7 @@ export const EVIDENCE = Object.freeze({
       "A fresh public-tap sample shows an industrial tracer used during treatment-system bypass maintenance.",
     artifact: {
       type: "memo",
-      heading: "FIELD TEST Â· PUBLIC TAP B-17",
+      heading: "FIELD TEST · PUBLIC TAP B-17",
       body: [
         "IRON: ELEVATED",
         "CHLORIDE: ELEVATED",
@@ -739,10 +739,10 @@ export const EVIDENCE = Object.freeze({
       image: "./assets/scenes/bellwether-relief-station.webp",
       alt:
         "Rainy relief station with stacks of Brighter Horizon freight crates positioned before the public water emergency",
-      caption: "Bellwether Relief Station Â· Freight Stack",
+      caption: "Bellwether Relief Station · Freight Stack",
       annotations: [
-        "Freight intake: Monday Â· 22:14",
-        "First public complaint: Thursday Â· 07:30",
+        "Freight intake: Monday · 22:14",
+        "First public complaint: Thursday · 07:30",
         "Deepwell testing van parked behind foundation awning",
       ],
     },
@@ -755,14 +755,14 @@ export const EVIDENCE = Object.freeze({
       "Deepwell billed a 'controlled bypass rehearsal' at Bellwether before the public emergency began.",
     artifact: {
       type: "memo",
-      heading: "DEEPWELL RESPONSE Â· SERVICE LOG 44-B",
+      heading: "DEEPWELL RESPONSE · SERVICE LOG 44-B",
       body: [
         "SITE: BELLWETHER MUNICIPAL PUMP HOUSE",
         "WORK: CONTROLLED BYPASS REHEARSAL",
         "TRACER: DW-4",
-        "BILL TO: BRIGHTER HORIZON Â· PROGRAM ADVANCE",
+        "BILL TO: BRIGHTER HORIZON · PROGRAM ADVANCE",
       ],
-      handwritten: "A rehearsal for the failureâ€”or the cause of it?",
+      handwritten: "A rehearsal for the failure—or the cause of it?",
     },
   },
   university_lab_rejection: {
@@ -773,12 +773,12 @@ export const EVIDENCE = Object.freeze({
       "A university lab rejected Bellwether samples after a Meridian counsel threatened its emergency-response funding.",
     artifact: {
       type: "memo",
-      heading: "GREYHAVEN UNIVERSITY Â· ENVIRONMENTAL LAB",
+      heading: "GREYHAVEN UNIVERSITY · ENVIRONMENTAL LAB",
       body: [
         "REQUEST B-17: DECLINED",
         "REASON: EXTERNAL FUNDING CONFLICT",
         "COUNSEL NOTICE ATTACHED: MERIDIAN CIVIC PARTNERS",
-        "CONTACT: DR. ELIAN VOSS Â· AFTER HOURS",
+        "CONTACT: DR. ELIAN VOSS · AFTER HOURS",
       ],
       handwritten: "The lab kept a duplicate sample.",
     },
@@ -794,10 +794,10 @@ export const EVIDENCE = Object.freeze({
       heading: "AFTER-HOURS REFERRAL",
       body: [
         "DR. ELIAN VOSS",
-        "RIVER ANNEX Â· GREYHAVEN UNIVERSITY",
+        "RIVER ANNEX · GREYHAVEN UNIVERSITY",
         "ASK FOR SAMPLE B-17 DUPLICATE",
         "SERVICE ENTRANCE: SOUTH FLOODGATE",
-        "ACCESS WINDOW: 23:00â€“02:00",
+        "ACCESS WINDOW: 23:00–02:00",
         "REFERENCE: ENVIRONMENTAL HOLD 6A",
       ],
       handwritten: "Do not call from campus.",
@@ -811,8 +811,8 @@ export const EVIDENCE = Object.freeze({
       "Dr. Elian Voss says DW-4 carried an engineered biofilm that could not have entered Bellwether's system by accident.",
     artifact: {
       type: "transcript",
-      heading: "RIVER ANNEX INTERVIEW Â· DR. ELIAN VOSS",
-      timestamp: "12:18 AM Â· ENVIRONMENTAL HOLD 6A",
+      heading: "RIVER ANNEX INTERVIEW · DR. ELIAN VOSS",
+      timestamp: "12:18 AM · ENVIRONMENTAL HOLD 6A",
       lines: [
         ["VOSS", "DW-4 was the carrier. The contaminant attached to it by design."],
         ["ROWAN", "Could a treatment failure create that combination?"],
@@ -829,9 +829,9 @@ export const EVIDENCE = Object.freeze({
       "The preserved Bellwether sample contains DW-4 and an engineered biofilm tagged with Verdant trial marker VA-9.",
     artifact: {
       type: "memo",
-      heading: "GREYHAVEN UNIVERSITY Â· SAMPLE B-17 DUPLICATE",
+      heading: "GREYHAVEN UNIVERSITY · SAMPLE B-17 DUPLICATE",
       body: [
-        "INDUSTRIAL TRACER: DW-4 Â· CONFIRMED",
+        "INDUSTRIAL TRACER: DW-4 · CONFIRMED",
         "BIOFILM CULTURE: ENGINEERED",
         "PROTEIN MARKER: VA-9",
         "REFERENCE TRIAL: VERDANT WATERSHED ADAPTATION",
@@ -847,8 +847,8 @@ export const EVIDENCE = Object.freeze({
       "A Meridian counsel warned Voss that testing Bellwether's water would end the university's emergency grants.",
     artifact: {
       type: "transcript",
-      heading: "SAVED VOICEMAIL Â· RIVER ANNEX LINE 2",
-      timestamp: "THURSDAY Â· 08:03 AM",
+      heading: "SAVED VOICEMAIL · RIVER ANNEX LINE 2",
+      timestamp: "THURSDAY · 08:03 AM",
       lines: [
         ["CALLER", "This is a courtesy before the formal conflict notice."],
         ["CALLER", "Analysis of Bellwether material falls outside your funded remit."],
@@ -868,7 +868,7 @@ export const EVIDENCE = Object.freeze({
       image: "./assets/scenes/university-river-annex.webp",
       alt:
         "Rain-darkened environmental laboratory with an illuminated watershed map above a filing cabinet",
-      caption: "River Annex Â· Watershed Trial Map",
+      caption: "River Annex · Watershed Trial Map",
       annotations: [
         "VA-9 trial point inside Verdant conservation parcel",
         "Floodgate release reaches Bellwether intake in ninety minutes",
@@ -884,7 +884,7 @@ export const EVIDENCE = Object.freeze({
       "A transfer log shows Deepwell collected VA-9 cultures from Meridian's restricted conservation project.",
     artifact: {
       type: "memo",
-      heading: "COLD STORAGE TRANSFER Â· VA-9",
+      heading: "COLD STORAGE TRANSFER · VA-9",
       body: [
         "ORIGIN: VERDANT CONSERVATION PARCEL 6",
         "RECIPIENT: DEEPWELL RESPONSE",
@@ -902,9 +902,9 @@ export const EVIDENCE = Object.freeze({
       "Voss kept a contractor access pass for the conservation parcel where VA-9 was cultivated.",
     artifact: {
       type: "memo",
-      heading: "VERDANT CONSERVATION TRUST Â· FIELD ACCESS",
+      heading: "VERDANT CONSERVATION TRUST · FIELD ACCESS",
       body: [
-        "PARCEL 6 Â· SOUTH SERVICE GATE",
+        "PARCEL 6 · SOUTH SERVICE GATE",
         "AUTHORIZED PROGRAM: WATERSHED ADAPTATION",
         "CONTRACTOR ACCESS: DEEPWELL RESPONSE",
         "OVERSIGHT: MERIDIAN CIVIC PARTNERS",
@@ -920,7 +920,7 @@ export const EVIDENCE = Object.freeze({
       "Meridian presents Parcel 6 as a wildlife-restoration success with no mention of watershed adaptation trials.",
     artifact: {
       type: "memo",
-      heading: "VERDANT CONSERVATION TRUST Â· PARCEL 6",
+      heading: "VERDANT CONSERVATION TRUST · PARCEL 6",
       body: [
         "A MODEL WETLAND FOR A RESILIENT REGION",
         "BIRD POPULATIONS: THRIVING",
@@ -938,8 +938,8 @@ export const EVIDENCE = Object.freeze({
       "Verdant ecologist Tess Arlen says Meridian ordered her to record animal deaths as storm migration.",
     artifact: {
       type: "transcript",
-      heading: "FIELD INTERVIEW Â· TESS ARLEN",
-      timestamp: "04:36 PM Â· VERDANT PARCEL 6",
+      heading: "FIELD INTERVIEW · TESS ARLEN",
+      timestamp: "04:36 PM · VERDANT PARCEL 6",
       lines: [
         ["ARLEN", "The marsh was healthy until the VA-9 releases began."],
         ["ARLEN", "Birds stopped nesting. Fish surfaced after every injection."],
@@ -956,11 +956,11 @@ export const EVIDENCE = Object.freeze({
       "The original field log records animal deaths after each VA-9 release, contradicting Verdant's public restoration claims.",
     artifact: {
       type: "memo",
-      heading: "PARCEL 6 Â· UNEDITED FIELD LOG",
+      heading: "PARCEL 6 · UNEDITED FIELD LOG",
       body: [
-        "RELEASE VA-9.1 Â· 14 FISH / 3 WADERS",
-        "RELEASE VA-9.2 Â· 31 FISH / 8 WADERS",
-        "RELEASE VA-9.3 Â· NESTING CHANNEL ABANDONED",
+        "RELEASE VA-9.1 · 14 FISH / 3 WADERS",
+        "RELEASE VA-9.2 · 31 FISH / 8 WADERS",
+        "RELEASE VA-9.3 · NESTING CHANNEL ABANDONED",
         "PUBLIC REVISION: SEASONAL STORM MIGRATION",
       ],
       handwritten: "The deaths follow the injections, not the weather.",
@@ -977,7 +977,7 @@ export const EVIDENCE = Object.freeze({
       image: "./assets/scenes/verdant-conservation-parcel.webp",
       alt:
         "Wetland conservation station with a concealed injection rig, telemetry cabinet, and damaged marsh channel",
-      caption: "Verdant Parcel 6 Â· South Channel",
+      caption: "Verdant Parcel 6 · South Channel",
       annotations: [
         "Injection manifold calibrated for VA-9 cultures",
         "Deepwell service fittings",
@@ -993,7 +993,7 @@ export const EVIDENCE = Object.freeze({
       "Parcel 6 streamed contamination, mortality, and public-response data to Crownline Regional Data Center.",
     artifact: {
       type: "memo",
-      heading: "REMOTE TELEMETRY ROUTING Â· PARCEL 6",
+      heading: "REMOTE TELEMETRY ROUTING · PARCEL 6",
       body: [
         "DESTINATION: CROWNLINE REGIONAL DATA CENTER",
         "STREAMS: WATER / WILDLIFE / PUBLIC SENTIMENT",
@@ -1011,11 +1011,11 @@ export const EVIDENCE = Object.freeze({
       "A telemetry contractor badge provides after-hours access to Crownline Regional Data Center.",
     artifact: {
       type: "memo",
-      heading: "CROWNLINE REGIONAL DATA Â· SERVICE ACCESS",
+      heading: "CROWNLINE REGIONAL DATA · SERVICE ACCESS",
       body: [
         "LEVEL: TELEMETRY MAINTENANCE",
         "ENTRY: COOLING PLANT GATE",
-        "WINDOW: 01:00â€“04:00",
+        "WINDOW: 01:00–04:00",
         "SPONSOR: MERIDIAN CIVIC PARTNERS",
       ],
       handwritten: "The data center knows what the preserve was built to learn.",
@@ -1629,7 +1629,7 @@ export const EVIDENCE = Object.freeze({
       "A preserved operations trace links the planned Port Prosper failure to a Greyhaven crisis consultancy called Aster House.",
     artifact: {
       type: "memo",
-      heading: "LIVE OPERATIONS TRACE Â· ASTER HOUSE",
+      heading: "LIVE OPERATIONS TRACE · ASTER HOUSE",
       body: [
         "ORIGIN: 11 ALDERMERE ROW, GREYHAVEN",
         "TARGET: PORT PROSPER MUNICIPAL CONTROL NETWORK",
@@ -1649,7 +1649,7 @@ export const EVIDENCE = Object.freeze({
       type: "photo",
       image: "./assets/scenes/aster-house.webp",
       alt: "A dark walnut operations room with a large illuminated city network map, communications equipment, folders, and an open archive cabinet",
-      caption: "ASTER HOUSE Â· OPERATIONS ROOM Â· 11 ALDERMERE ROW",
+      caption: "ASTER HOUSE · OPERATIONS ROOM · 11 ALDERMERE ROW",
       annotations: [
         "Red markers match the First Circle portfolio's first-hour failures",
         "Response assets are positioned beside the systems they will replace",
@@ -1665,7 +1665,7 @@ export const EVIDENCE = Object.freeze({
       "Aster House's switchboard schedule names the operators assigned to each stage of the planned outage.",
     artifact: {
       type: "memo",
-      heading: "ASTER HOUSE Â· CONTROL ROTATION",
+      heading: "ASTER HOUSE · CONTROL ROTATION",
       body: [
         "PHASE 1: GRID TELEMETRY SPOOF / 02:10",
         "PHASE 2: WATER SAFETY LOCKOUT / 02:17",
@@ -1683,7 +1683,7 @@ export const EVIDENCE = Object.freeze({
       "A First Circle authorization orders Aster House to destroy its Port Prosper files while keeping the trigger schedule active.",
     artifact: {
       type: "memo",
-      heading: "MERIDIAN CONTINUITY ORDER Â· LOCAL CELL 04",
+      heading: "MERIDIAN CONTINUITY ORDER · LOCAL CELL 04",
       body: [
         "DESTROY: PORTFOLIO WORKING COPIES",
         "PRESERVE: TRIGGER AUTOMATION / LOCAL ACCESS",
@@ -1701,7 +1701,7 @@ export const EVIDENCE = Object.freeze({
       "Aster House paid the operators, media contractors, and acquisition lawyers scheduled to profit from Port Prosper's failure.",
     artifact: {
       type: "memo",
-      heading: "ASTER HOUSE Â· PORT PROSPER DISBURSEMENTS",
+      heading: "ASTER HOUSE · PORT PROSPER DISBURSEMENTS",
       body: [
         "INFRASTRUCTURE ACCESS TEAM / $420,000 / CLEARED",
         "EMERGENCY NARRATIVE DESK / $275,000 / CLEARED",
@@ -1719,7 +1719,7 @@ export const EVIDENCE = Object.freeze({
       "The Aster House evidence identifies the exact trigger operators, times, access routes, and accounts needed to stop the planned collapse.",
     artifact: {
       type: "memo",
-      heading: "PORT PROSPER Â· ACTIONABLE COUNTERMEASURES",
+      heading: "PORT PROSPER · ACTIONABLE COUNTERMEASURES",
       body: [
         "REVOKE ASTER HOUSE MAINTENANCE CERTIFICATES",
         "ISOLATE REMOTE GRID AND WATER CONTROL PATHS",
@@ -3219,7 +3219,7 @@ export const DEDUCTIONS = Object.freeze({
     id: "bellwether_response_preplanned",
     title: "Bellwether's rescue was staged before the crisis",
     journalText:
-      "Deepwell rehearsed the bypass with Brighter Horizon funding, relief freight arrived before the first complaint, and the same industrial tracer remains in Bellwether's water. Meridian did not merely exploit the emergencyâ€”its network prepared it.",
+      "Deepwell rehearsed the bypass with Brighter Horizon funding, relief freight arrived before the first complaint, and the same industrial tracer remains in Bellwether's water. Meridian did not merely exploit the emergency—its network prepared it.",
     notification:
       "The relief operation was waiting for the crisis. A suppressed university sample may prove who contaminated the system.",
     requiredDeductions: ["continuity_site_network"],
@@ -4674,7 +4674,7 @@ export const GAME_CONTENT = Object.freeze({
     bellwether_relief_station: {
       id: "bellwether_relief_station",
       name: "Bellwether Relief Station",
-      eyebrow: "Riverside Ward Â· Saturday Â· 6:42 AM",
+      eyebrow: "Riverside Ward · Saturday · 6:42 AM",
       mapX: 20,
       mapY: 78,
       description:
@@ -4809,7 +4809,7 @@ export const GAME_CONTENT = Object.freeze({
     university_lab_annex: {
       id: "university_lab_annex",
       name: "University River Annex",
-      eyebrow: "South Floodgate Â· Sunday Â· 12:07 AM",
+      eyebrow: "South Floodgate · Sunday · 12:07 AM",
       mapX: 29,
       mapY: 82,
       description:
@@ -5885,7 +5885,7 @@ export const GAME_CONTENT = Object.freeze({
     aster_house: {
       id: "aster_house",
       name: "Aster House",
-      eyebrow: "11 Aldermere Row Â· Thursday Â· 12:48 AM",
+      eyebrow: "11 Aldermere Row · Thursday · 12:48 AM",
       mapX: 47,
       mapY: 18,
       description:
