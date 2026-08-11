@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { DEDUCTIONS } from "../src/content/game-content.js";
+import { CHAPTER_INTERLUDES } from "../src/content/cinematic-content.js";
 import { applyEffects } from "../src/engine/events.js";
 import { createInitialState } from "../src/engine/game-state.js";
 import { SaveSystem } from "../src/engine/save-system.js";
@@ -15,6 +16,10 @@ import {
   pinEvidence,
   saveEvidenceNote,
 } from "../src/systems/evidence-board/evidence-board.js";
+import {
+  advanceInterlude,
+  beginInterlude,
+} from "../src/systems/cinematics/chapter-interludes.js";
 
 class MemoryStorage {
   values = new Map();
@@ -123,6 +128,15 @@ test("the complete authored investigation can progress from the leak through the
   }
   state = evaluateBoardDeductions(state, DEDUCTIONS).state;
 
+  for (const interlude of CHAPTER_INTERLUDES) {
+    state = beginInterlude(state, interlude.id);
+    for (let beat = 0; beat < interlude.beats.length; beat += 1) {
+      state = advanceInterlude(state, CHAPTER_INTERLUDES);
+    }
+    saves.save(state, `playthrough-interlude-${interlude.id}`);
+    state = saves.load();
+  }
+
   saves.save(state, "playthrough-port-prosper-response");
   state = saves.load();
 
@@ -136,6 +150,10 @@ test("the complete authored investigation can progress from the leak through the
   assert.equal(state.flags.identifiedAsterHouse, true);
   assert.equal(state.flags.provedAsterHouseTriggerCell, true);
   assert.equal(state.flags.provedSanctuaryChain, true);
+  assert.deepEqual(
+    state.cinematics.seen,
+    CHAPTER_INTERLUDES.map((entry) => entry.id),
+  );
   assert.equal(
     state.evidence.collected.includes("port_prosper_warning_receipt"),
     true,

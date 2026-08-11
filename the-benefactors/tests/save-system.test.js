@@ -523,7 +523,7 @@ test("adds persistent exploration records to version 25 saves", () => {
   storage.setItem(SAVE_KEY, JSON.stringify(legacy));
 
   const migrated = saves.load();
-  assert.equal(migrated.version, 27);
+  assert.equal(migrated.version, 28);
   assert.deepEqual(migrated.exploration, {
     observedHotspots: [],
     completedInteractions: [],
@@ -543,7 +543,7 @@ test("adds persistent board notes and organization preferences to version 26 sav
   storage.setItem(SAVE_KEY, JSON.stringify(legacy));
 
   const migrated = saves.load();
-  assert.equal(migrated.version, 27);
+  assert.equal(migrated.version, 28);
   assert.deepEqual(migrated.board.notes, {});
   assert.equal(migrated.board.lastFeedback, null);
   assert.deepEqual(migrated.board.view, {
@@ -552,4 +552,17 @@ test("adds persistent board notes and organization preferences to version 26 sav
     lens: "all",
     arrangement: "chronology",
   });
+});
+
+test("adds a persistent cinematic reel archive to version 27 saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const legacy = createInitialState();
+  legacy.version = 27;
+  delete legacy.cinematics;
+  storage.setItem(SAVE_KEY, JSON.stringify(legacy));
+
+  const migrated = saves.load();
+  assert.equal(migrated.version, 28);
+  assert.deepEqual(migrated.cinematics, { seen: [], activeId: null, step: 0 });
 });

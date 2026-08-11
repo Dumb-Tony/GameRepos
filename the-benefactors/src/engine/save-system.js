@@ -3,7 +3,7 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js?v=casewall-20260811b";
+} from "./game-state.js?v=cinematic-20260811a";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
@@ -161,6 +161,11 @@ export class SaveSystem {
           ...fallback.journal.revealedHints,
           ...candidate.journal?.revealedHints,
         },
+      },
+      cinematics: {
+        ...fallback.cinematics,
+        ...candidate.cinematics,
+        seen: [...new Set(candidate.cinematics?.seen || [])],
       },
       puzzles: {
         ...fallback.puzzles,

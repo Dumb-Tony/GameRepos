@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 27;
+export const GAME_STATE_VERSION = 28;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -197,6 +197,11 @@ export function createInitialState(player = {}, settings = {}) {
     journal: {
       revealedHints: {},
     },
+    cinematics: {
+      seen: [],
+      activeId: null,
+      step: 0,
+    },
     puzzles: {
       study_plan_alignment: {
         rotation: 90,
@@ -277,6 +282,9 @@ export function isGameState(value) {
       Array.isArray(value.exploration.fieldNotes) &&
       value.journal &&
       value.journal.revealedHints &&
+      value.cinematics &&
+      Array.isArray(value.cinematics.seen) &&
+      Number.isInteger(value.cinematics.step) &&
       value.puzzles &&
       value.puzzles.study_plan_alignment &&
       value.puzzles.vale_recording_reconstruction &&

@@ -11,6 +11,7 @@ const SCENE_TONES = Object.freeze({
   alignment: { music: 45, ambience: 63 },
   recording: { music: 43, ambience: 60 },
   "prologue-ending": { music: 41, ambience: 57 },
+  cinematic: { music: 38, ambience: 54 },
   location: { music: 50, ambience: 76 },
 });
 
@@ -79,6 +80,8 @@ export class AudioEngine {
       pin: [880, 620],
       camera: [180, 90],
       message: [660, 440],
+      radio: [1180, 260],
+      chapter: [196, 98],
     };
     const [start, end] = frequencies[kind] || frequencies.paper;
     const oscillator = this.context.createOscillator();

@@ -95,6 +95,12 @@ test("audio unlocks on demand and responds to scene and mute settings", async ()
   assert.equal(audio.playEffect("pin"), true);
   assert.equal(audio.context.oscillators.length, 3);
 
+  audio.setScene("cinematic");
+  assert.equal(audio.nodes.musicOscillator.frequency.value, 38);
+  assert.equal(audio.playEffect("radio"), true);
+  assert.equal(audio.playEffect("chapter"), true);
+  assert.equal(audio.context.oscillators.length, 5);
+
   audio.setSettings({ muted: true });
   assert.equal(audio.playEffect("pin"), false);
 });
