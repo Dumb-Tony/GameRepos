@@ -1,5 +1,35 @@
 # Working agreements for this repo
 
+## Brainrot (brainrot/)
+
+- **After every update, post the fresh playable link in chat** so the owner never
+  has to look for it: https://dumb-tony.github.io/GameRepos/brainrot/
+- Development happens on branch `claude/quirky-ride-wkwf19`, and changes are
+  pushed to **both** that branch **and `main`** (GitHub Pages serves `main`, and
+  the owner has given standing permission to push there directly). `main` also
+  carries other projects' work, so merge onto the current `origin/main` rather
+  than force-pushing.
+- **Mobile is the primary platform** — most players are on a phone. Both
+  orientations are first-class: portrait uses bottom-sheet panels, landscape
+  uses slim side docks. Verify changes at phone sizes, not just desktop.
+- **Bump the `?v=N` cache-bust on every release** (`sed -i 's/?v=N/?v=N+1/g'
+  brainrot/index.html`) or players keep the stale cached build.
+- House style: plain HTML/CSS/JS, no build step, no dependencies, `BR` global
+  namespace, one concern per module. `build.js` bundles everything into a single
+  shareable `brainrot.html` — keep its FILES list in sync with index.html's
+  `<script>` tags (the build fails loudly if you don't).
+- Generated art (Higgsfield) is optional and always behind a fallback: the
+  sandbox cannot reach the CDN, so never assume an image loaded. The vector
+  sprite atlas in `sprites.js` is the reliable default; HD art is opt-in.
+- Verify with the headless harnesses in `scratchpad/` (they are gitignored, so
+  recreate them if a container restart wipes them):
+  `except.js` (640-run exception/stall sweep), `mobmatrix.js` (9-viewport
+  layout), `pacing.js` / `variance.js` (balance), `eventcov.js` (event coverage).
+  Screenshot with playwright-core + `/opt/pw-browsers/chromium-1194/...`.
+- Accessibility is supported and should not regress: colour-blind palette,
+  reduced motion, bigger text, focus rings, aria labels, a screen-reader live
+  region. Settings live in `save.js` `settings` and persist.
+
 ## Tidebound (tidebound/)
 
 - **After every work session on the game, post the fresh playable link in chat**
