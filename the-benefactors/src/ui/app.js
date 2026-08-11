@@ -11,6 +11,7 @@ import {
 } from "../content/casebook-content.js?v=fieldwork-20260811a";
 import { CHAPTER_INTERLUDES } from "../content/cinematic-content.js?v=cinematic-20260811a";
 import { CHARACTER_PROFILES } from "../content/relationship-content.js?v=relationships-20260811a";
+import { COUNTERMEASURES, PRESSURE_EVENTS } from "../content/pressure-content.js?v=pressure-20260811a";
 import { getInteractiveLocation } from "../content/exploration-content.js?v=fieldwork-20260811a";
 import {
   CUTSCENE_BEATS,
@@ -25,7 +26,7 @@ import {
 } from "../content/prologue-content.js?v=field-tools-20260731a";
 import { evaluateCondition } from "../engine/conditions.js?v=fieldwork-20260811a";
 import { applyEffects } from "../engine/events.js?v=visual-polish-20260730a";
-import { createInitialState } from "../engine/game-state.js?v=relationships-20260811a";
+import { createInitialState } from "../engine/game-state.js?v=pressure-20260811a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
@@ -95,6 +96,12 @@ import {
   relationshipStatus,
   requestSourceHelp,
 } from "../systems/relationships/relationships.js?v=relationships-20260811a";
+import {
+  applyCountermeasure,
+  availableCountermeasures,
+  pressureStatus,
+  syncPressure,
+} from "../systems/pressure/investigative-pressure.js?v=pressure-20260811a";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -163,10 +170,23 @@ export class GameApp {
   }
 
   start() {
-    this.store.subscribe((state) => {
+    this.store.subscribe((state, reason) => {
       this.applyPreferences(state.settings);
       this.audio?.setSettings(state.settings);
+      if (reason !== "pressure-sync") {
+        const synchronized = syncPressure(state, PRESSURE_EVENTS);
+        if (synchronized.newlyTriggered.length) {
+          this.store.replace(synchronized.state, "pressure-sync");
+          this.saves.save(this.store.getState(), "pressure-sync");
+          this.notice.show(synchronized.newlyTriggered.at(-1).title);
+        }
+      }
     });
+    const initialPressure = syncPressure(this.store.getState(), PRESSURE_EVENTS);
+    if (initialPressure.newlyTriggered.length) {
+      this.store.replace(initialPressure.state, "pressure-sync");
+      this.saves.save(this.store.getState(), "pressure-sync");
+    }
     this.applyPreferences(this.store.getState().settings);
     this.audio?.setSettings(this.store.getState().settings);
     this.root.addEventListener(
@@ -1376,6 +1396,7 @@ export class GameApp {
             }
           </aside>
         </section>
+        ${this.renderPressureDesk(state)}
         <footer class="game-toolbar">
           <div>
             <span class="toolbar-label">Journalist</span>
@@ -1441,6 +1462,48 @@ export class GameApp {
       title: () => this.router.navigate("title"),
       "port-prosper-decision": () => this.router.navigate("port-prosper-decision"),
     });
+    this.root.querySelectorAll("[data-countermeasure]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const countermeasure = COUNTERMEASURES.find(
+          (entry) => entry.id === button.dataset.countermeasure,
+        );
+        const next = applyCountermeasure(this.store.getState(), countermeasure);
+        this.store.replace(next, `countermeasure-${countermeasure?.id || "unknown"}`);
+        this.saves.save(this.store.getState(), `countermeasure-${countermeasure?.id || "unknown"}`);
+        this.notice.show(`${countermeasure?.title || "Countermeasure"} completed.`);
+        this.renderHome();
+      });
+    });
+  }
+
+  renderPressureDesk(state) {
+    if (!state.pressure.events.length) return "";
+    const status = pressureStatus(state.pressure.heat);
+    const latestEvents = state.pressure.events
+      .map((id) => PRESSURE_EVENTS.find((entry) => entry.id === id))
+      .filter(Boolean)
+      .slice(-3)
+      .reverse();
+    const measures = availableCountermeasures(state, COUNTERMEASURES);
+    return `
+      <section class="pressure-desk is-${status.className}" aria-labelledby="pressure-desk-title">
+        <header>
+          <div><p class="kicker">Threat desk · Soft pressure</p><h2 id="pressure-desk-title">${escapeHtml(status.label)}</h2></div>
+          <div class="pressure-gauge"><span>Exposure</span><div><i style="width:${state.pressure.heat}%"></i></div><strong>${state.pressure.heat}</strong></div>
+        </header>
+        <p class="pressure-deadline"><span aria-hidden="true">◷</span>${escapeHtml(state.pressure.deadline)}</p>
+        <div class="pressure-desk-grid">
+          <div class="threat-feed">
+            ${latestEvents.map((event) => `<article><span>${escapeHtml(event.title)}</span><p>${escapeHtml(event.text)}</p></article>`).join("")}
+          </div>
+          <div class="countermeasure-list">
+            <p class="kicker">Available precautions</p>
+            ${measures.length ? measures.map((entry) => `<button data-countermeasure="${entry.id}"><strong>${escapeHtml(entry.title)}</strong><span>${escapeHtml(entry.text)}</span><em>${entry.heat > 0 ? `Exposure +${entry.heat}` : `Exposure ${entry.heat}`}${entry.sourceRisk ? " · protects sources" : ""}</em></button>`).join("") : '<p class="pressure-clear">Every available precaution is already in place.</p>'}
+          </div>
+        </div>
+        <footer>This meter changes story atmosphere and available precautions. It never locks exploration or creates a surprise game over.</footer>
+      </section>
+    `;
   }
 
   renderPortProsperDecision() {
@@ -4264,10 +4327,13 @@ export class GameApp {
   }
 
   renderGameHeader(chapter, place) {
+    const pressure = this.store.getState().pressure;
+    const status = pressureStatus(pressure.heat);
     return `
       <header class="game-header">
         <div class="wordmark"><span>The</span> Benefactors</div>
         <div class="case-line"><span>${escapeHtml(chapter)}</span><strong>${escapeHtml(place)}</strong></div>
+        ${pressure.events.length ? `<div class="header-pressure is-${status.className}" title="Investigative exposure: ${pressure.heat} out of 100"><span>${escapeHtml(status.label)}</span><i><b style="width:${pressure.heat}%"></b></i></div>` : ""}
       </header>
     `;
   }

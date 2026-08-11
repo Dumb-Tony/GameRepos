@@ -8727,3 +8727,77 @@ ol.recording-timeline,
 [data-high-contrast="true"] .dialogue-relationship strong { color: #000; background: #fff; }
 [data-high-contrast="true"] .source-network { color: #000; background: #fff; border-color: #000; }
 [data-high-contrast="true"] .source-card { color: #000; background: #fff; border-color: #000; }
+
+/* Investigative pressure */
+.header-pressure {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 125px;
+  color: #aaa28f;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.header-pressure i { flex: 1; height: 3px; overflow: hidden; background: rgba(255,255,255,0.14); }
+.header-pressure b { display: block; height: 100%; background: #8aa077; transition: width 420ms ease; }
+.header-pressure.is-watched b { background: #c7a05d; }
+.header-pressure.is-pressured b { background: #cf794f; }
+.header-pressure.is-hunted b,
+.header-pressure.is-exposed b { background: #d14d42; box-shadow: 0 0 0.7rem #d14d42; }
+
+.pressure-desk {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 1rem auto 0;
+  padding: clamp(1rem, 2.5vw, 1.7rem);
+  color: #dcd6c8;
+  background:
+    linear-gradient(110deg, rgba(116, 33, 26, 0.12), transparent 42%),
+    #151918;
+  border: 1px solid rgba(196, 164, 102, 0.28);
+  box-shadow: 0 1rem 3rem rgba(0,0,0,0.22);
+}
+
+.pressure-desk > header { display: flex; align-items: end; justify-content: space-between; gap: 1.4rem; }
+.pressure-desk h2 { margin: 0.15rem 0 0; font: 500 clamp(1.7rem, 4vw, 2.8rem)/1 Georgia, serif; }
+.pressure-desk.is-hunted h2, .pressure-desk.is-exposed h2 { color: #e18073; }
+
+.pressure-gauge { display: grid; grid-template-columns: auto minmax(100px, 220px) 2rem; align-items: center; gap: 0.55rem; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+.pressure-gauge > div { height: 6px; overflow: hidden; background: rgba(255,255,255,0.12); }
+.pressure-gauge i { display: block; height: 100%; background: #c46a54; }
+.pressure-gauge strong { color: #e7d29d; text-align: right; }
+
+.pressure-deadline { display: flex; align-items: center; gap: 0.7rem; margin: 1rem 0; padding: 0.7rem 0.9rem; color: #e7d29d; background: rgba(196, 164, 102, 0.08); border-left: 3px solid #c4a466; font: italic 1rem/1.4 Georgia, serif; }
+.pressure-deadline span { font-style: normal; }
+.pressure-desk-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 1rem; }
+.threat-feed { display: grid; gap: 0.55rem; }
+.threat-feed article { padding: 0.75rem 0.85rem; background: rgba(0,0,0,0.2); border-left: 2px solid rgba(205, 91, 72, 0.58); }
+.threat-feed span { color: #e4d7ba; font-weight: 750; }
+.threat-feed p { margin: 0.25rem 0 0; color: #aaa395; font-size: 0.82rem; line-height: 1.45; }
+.countermeasure-list { display: grid; gap: 0.45rem; }
+.countermeasure-list > .kicker { margin-bottom: 0.1rem; }
+.countermeasure-list button { display: grid; grid-template-columns: 1fr auto; gap: 0.2rem 0.7rem; width: 100%; padding: 0.75rem; color: #ddd5c5; text-align: left; background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
+.countermeasure-list button:hover { background: rgba(196,164,102,0.1); border-color: rgba(196,164,102,0.46); }
+.countermeasure-list button span { grid-column: 1; color: #aaa395; font-size: 0.78rem; }
+.countermeasure-list button em { grid-column: 2; grid-row: 1 / span 2; align-self: center; color: #c6ab72; font-size: 0.68rem; font-style: normal; font-weight: 800; text-transform: uppercase; }
+.pressure-clear { color: #89958a; font-style: italic; }
+.pressure-desk > footer { margin-top: 1rem; padding-top: 0.8rem; color: #817c71; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.72rem; }
+
+@media (max-width: 780px) {
+  .game-header { flex-wrap: wrap; }
+  .header-pressure { order: 3; width: 100%; }
+  .pressure-desk-grid { grid-template-columns: 1fr; }
+  .pressure-desk > header { align-items: stretch; flex-direction: column; }
+  .pressure-gauge { grid-template-columns: auto 1fr 2rem; }
+}
+
+@media (max-width: 480px) {
+  .countermeasure-list button { grid-template-columns: 1fr; }
+  .countermeasure-list button em { grid-column: 1; grid-row: auto; }
+}
+
+[data-reduced-motion="true"] .header-pressure b { transition: none; }
+[data-high-contrast="true"] .pressure-desk { color: #fff; background: #000; border-color: #fff; }
+[data-high-contrast="true"] .pressure-deadline { color: #fff; }

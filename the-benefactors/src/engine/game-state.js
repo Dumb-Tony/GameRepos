@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 29;
+export const GAME_STATE_VERSION = 30;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -202,6 +202,14 @@ export function createInitialState(player = {}, settings = {}) {
       activeId: null,
       step: 0,
     },
+    pressure: {
+      heat: 0,
+      events: [],
+      countermeasures: [],
+      deadline: "Tonight's city-desk deadline",
+      lastEvent: null,
+      lastCountermeasure: null,
+    },
     puzzles: {
       study_plan_alignment: {
         rotation: 90,
@@ -287,6 +295,9 @@ export function isGameState(value) {
       value.cinematics &&
       Array.isArray(value.cinematics.seen) &&
       Number.isInteger(value.cinematics.step) &&
+      value.pressure &&
+      Array.isArray(value.pressure.events) &&
+      Array.isArray(value.pressure.countermeasures) &&
       value.puzzles &&
       value.puzzles.study_plan_alignment &&
       value.puzzles.vale_recording_reconstruction &&

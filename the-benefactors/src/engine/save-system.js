@@ -3,7 +3,7 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js?v=relationships-20260811a";
+} from "./game-state.js?v=pressure-20260811a";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
@@ -180,6 +180,12 @@ export class SaveSystem {
         ...fallback.cinematics,
         ...candidate.cinematics,
         seen: [...new Set(candidate.cinematics?.seen || [])],
+      },
+      pressure: {
+        ...fallback.pressure,
+        ...candidate.pressure,
+        events: [...new Set(candidate.pressure?.events || [])],
+        countermeasures: [...new Set(candidate.pressure?.countermeasures || [])],
       },
       puzzles: {
         ...fallback.puzzles,
