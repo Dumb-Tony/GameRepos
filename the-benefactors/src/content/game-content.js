@@ -1621,6 +1621,240 @@ export const EVIDENCE = Object.freeze({
       handwritten: "More proof upstairs, and less time for Port Prosper.",
     },
   },
+  aster_house_trace: {
+    id: "aster_house_trace",
+    title: "Aster House connection trace",
+    category: "lead",
+    summary:
+      "A preserved operations trace links the planned Port Prosper failure to a Greyhaven crisis consultancy called Aster House.",
+    artifact: {
+      type: "memo",
+      heading: "LIVE OPERATIONS TRACE Â· ASTER HOUSE",
+      body: [
+        "ORIGIN: 11 ALDERMERE ROW, GREYHAVEN",
+        "TARGET: PORT PROSPER MUNICIPAL CONTROL NETWORK",
+        "ACCESS CLASS: EMERGENCY MAINTENANCE",
+        "STATUS: TRIGGER SCHEDULE ACTIVE",
+      ],
+      handwritten: "Different choices. Same hand on the switch.",
+    },
+  },
+  aster_operations_board_photo: {
+    id: "aster_operations_board_photo",
+    title: "Photograph of Aster House operations board",
+    category: "photograph",
+    summary:
+      "A concealed wall map assigns Port Prosper substations, water controls, hospitals, and newsrooms to timed disruption teams.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/aster-house.webp",
+      alt: "A dark walnut operations room with a large illuminated city network map, communications equipment, folders, and an open archive cabinet",
+      caption: "ASTER HOUSE Â· OPERATIONS ROOM Â· 11 ALDERMERE ROW",
+      annotations: [
+        "Red markers match the First Circle portfolio's first-hour failures",
+        "Response assets are positioned beside the systems they will replace",
+        "Greyhaven operators control the Port Prosper trigger remotely",
+      ],
+    },
+  },
+  port_prosper_trigger_call_sheet: {
+    id: "port_prosper_trigger_call_sheet",
+    title: "Port Prosper trigger call sheet",
+    category: "document",
+    summary:
+      "Aster House's switchboard schedule names the operators assigned to each stage of the planned outage.",
+    artifact: {
+      type: "memo",
+      heading: "ASTER HOUSE Â· CONTROL ROTATION",
+      body: [
+        "PHASE 1: GRID TELEMETRY SPOOF / 02:10",
+        "PHASE 2: WATER SAFETY LOCKOUT / 02:17",
+        "PHASE 3: EMERGENCY CHANNEL SATURATION / 02:26",
+        "SUPERVISOR: ELIAS MORROW / FIRST CIRCLE LIAISON",
+      ],
+      handwritten: "The catastrophe has a shift schedule.",
+    },
+  },
+  aster_purge_authorization: {
+    id: "aster_purge_authorization",
+    title: "Aster House purge authorization",
+    category: "document",
+    summary:
+      "A First Circle authorization orders Aster House to destroy its Port Prosper files while keeping the trigger schedule active.",
+    artifact: {
+      type: "memo",
+      heading: "MERIDIAN CONTINUITY ORDER Â· LOCAL CELL 04",
+      body: [
+        "DESTROY: PORTFOLIO WORKING COPIES",
+        "PRESERVE: TRIGGER AUTOMATION / LOCAL ACCESS",
+        "PUBLIC COVER: INFRASTRUCTURE RESILIENCE CONSULTING",
+        "FINAL AUTHORITY: FIRST CIRCLE QUORUM",
+      ],
+      handwritten: "Erase the plan. Commit the act.",
+    },
+  },
+  trigger_team_disbursement_ledger: {
+    id: "trigger_team_disbursement_ledger",
+    title: "Trigger-team disbursement ledger",
+    category: "document",
+    summary:
+      "Aster House paid the operators, media contractors, and acquisition lawyers scheduled to profit from Port Prosper's failure.",
+    artifact: {
+      type: "memo",
+      heading: "ASTER HOUSE Â· PORT PROSPER DISBURSEMENTS",
+      body: [
+        "INFRASTRUCTURE ACCESS TEAM / $420,000 / CLEARED",
+        "EMERGENCY NARRATIVE DESK / $275,000 / CLEARED",
+        "RELIEF ACQUISITION COUNSEL / $610,000 / ESCROW",
+        "LOCAL CELL CONTINGENCY / $180,000 / ACTIVE",
+      ],
+      handwritten: "Funding source: Meridian First Circle crisis-investment escrow.",
+    },
+  },
+  port_prosper_countermeasure_packet: {
+    id: "port_prosper_countermeasure_packet",
+    title: "Port Prosper countermeasure packet",
+    category: "event",
+    summary:
+      "The Aster House evidence identifies the exact trigger operators, times, access routes, and accounts needed to stop the planned collapse.",
+    artifact: {
+      type: "memo",
+      heading: "PORT PROSPER Â· ACTIONABLE COUNTERMEASURES",
+      body: [
+        "REVOKE ASTER HOUSE MAINTENANCE CERTIFICATES",
+        "ISOLATE REMOTE GRID AND WATER CONTROL PATHS",
+        "DETAIN LOCAL CELL BEFORE 02:10 TRIGGER",
+        "FREEZE FIRST CIRCLE DISBURSEMENT ACCOUNTS",
+      ],
+      handwritten: "A city does not have to become their next case study.",
+    },
+  },
+  port_prosper_survival_status: {
+    id: "port_prosper_survival_status",
+    title: "Port Prosper survival status",
+    category: "event",
+    summary:
+      "The countermeasure packet stopped the coordinated collapse, but a single harbor relay executed for six minutes before isolation.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/port-prosper-signal-exchange.webp",
+      alt: "A rain-dark municipal signal exchange with isolated grid monitors, an operations table, an open relay cabinet, and a harbor beyond the windows",
+      caption: "PORT PROSPER SIGNAL EXCHANGE / 02:16 / INCIDENT STATUS",
+      annotations: [
+        "Grid, water, hospital, and emergency channels isolated before the 02:10 trigger",
+        "Harbor Relay 7 accepted one unlisted maintenance command",
+        "The six-minute blackout was contained before Meridian's relief contracts activated",
+      ],
+    },
+  },
+  ghost_relay_execution_log: {
+    id: "ghost_relay_execution_log",
+    title: "Harbor Relay 7 execution log",
+    category: "document",
+    summary:
+      "A hidden contingency credential bypassed Aster House and briefly opened Port Prosper's harbor data relay.",
+    artifact: {
+      type: "memo",
+      heading: "PORT PROSPER / RELAY 7 / EXCEPTION TRACE",
+      body: [
+        "02:09:58 / ASTER MAINTENANCE CERTIFICATES REVOKED",
+        "02:10:04 / CONTINGENCY CREDENTIAL ACCEPTED",
+        "02:10:05 / HARBOR DATA MIRROR OPENED",
+        "02:16:31 / PHYSICAL ISOLATION COMPLETE",
+      ],
+      handwritten: "Aster House was the first trigger. Someone planned for it to fail.",
+    },
+  },
+  wren_retaliation_transcript: {
+    id: "wren_retaliation_transcript",
+    title: "Intercepted retaliation call",
+    category: "recording",
+    summary:
+      "Silas Wren orders the Archipelago Protocol and identifies the Greyhaven Ledger as the source of the breach.",
+    artifact: {
+      type: "transcript",
+      heading: "SECURE MUNICIPAL LINE / INBOUND INTERCEPT",
+      timestamp: "02:18:12 / 00:41 preserved",
+      lines: [
+        ["UNKNOWN OPERATOR", "Relay 7 failed. Aster is dark. The city held."],
+        ["SILAS WREN", "Then the demonstration becomes a containment exercise."],
+        ["UNKNOWN OPERATOR", "And the Greyhaven journalist?"],
+        ["SILAS WREN", "Trace the newsroom cipher. Move Shepherd under Archipelago Protocol before dawn."],
+      ],
+    },
+  },
+  newsroom_cipher_clone: {
+    id: "newsroom_cipher_clone",
+    title: "Cloned Ledger newsroom cipher",
+    category: "access",
+    summary:
+      "The contingency credential was signed with a copy of the Greyhaven Ledger's protected source channel.",
+    artifact: {
+      type: "memo",
+      heading: "RELAY 7 / CREDENTIAL FORENSICS",
+      body: [
+        "SIGNATURE FAMILY: GREYHAVEN LEDGER / SOURCE DESK",
+        "ORIGINAL TERMINAL: MARA VENN / NIGHT EDITOR",
+        "CLONE CREATED: BEFORE FIRST CIRCLE PUBLICATION",
+        "USE: HARBOR MIRROR / JOURNALIST LOCATION TRACE",
+      ],
+      handwritten: "Mara's key was copied before the choice at Orpheus. The newsroom was already inside the case.",
+    },
+  },
+  sanctuary_chain_chart: {
+    id: "sanctuary_chain_chart",
+    title: "Sanctuary Chain nautical chart",
+    category: "location",
+    summary:
+      "A Meridian continuity chart marks Orpheus as one of seven private island nodes linked by concealed service routes.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/port-prosper-signal-exchange.webp",
+      alt: "A municipal records cart beside a rain-dark control room holds a nautical chart marked with a network of island routes",
+      caption: "RECOVERED RECORDS CART / SANCTUARY CHAIN REVISION 12",
+      annotations: [
+        "Orpheus is marked as Assembly, not headquarters",
+        "Six additional nodes are labeled Vesper, Cinder, Aurelia, Northglass, Pelagos, and Quietus",
+        "Every island connects to a different crisis region and civilian cover route",
+      ],
+    },
+  },
+  archipelago_transfer_order: {
+    id: "archipelago_transfer_order",
+    title: "Archipelago transfer order",
+    category: "lead",
+    summary:
+      "The failed Port Prosper operation triggered an emergency transfer of Shepherd archives from Orpheus to Vesper Key.",
+    artifact: {
+      type: "memo",
+      heading: "MERIDIAN / ARCHIPELAGO PROTOCOL",
+      body: [
+        "BREACH STATUS: ORPHEUS ASSEMBLY AND ASTER CELL EXPOSED",
+        "TRANSFER: SHEPHERD FORECAST ARCHIVE / NODE VESPER",
+        "PERSONNEL: FIRST CIRCLE CONTINUITY QUORUM",
+        "DEAD DROP: EASTERN PACKET TERMINAL / LOCKER 44 / 05:30",
+      ],
+      handwritten: "The island was a meeting place. The system lives somewhere else.",
+    },
+  },
+  vesper_key_dead_drop: {
+    id: "vesper_key_dead_drop",
+    title: "Vesper Key dead-drop lead",
+    category: "lead",
+    summary:
+      "A courier packet for the next sanctuary island will pass through Port Prosper's eastern terminal before dawn.",
+    artifact: {
+      type: "memo",
+      heading: "NEXT LEAD / EASTERN PACKET TERMINAL",
+      body: [
+        "DESTINATION: VESPER KEY / SANCTUARY NODE 02",
+        "LOCKER: 44 / LOWER FERRY CONCOURSE",
+        "EXCHANGE WINDOW: 05:30-05:37",
+        "COURIER COVER: DISASTER RECOVERY AUDITOR",
+      ],
+      handwritten: "Seven minutes to intercept the map they never meant anyone to see.",
+    },
+  },
 });
 
 export const INVENTORY_ITEMS = Object.freeze({
@@ -3209,6 +3443,106 @@ export const DEDUCTIONS = Object.freeze({
       { type: "collectEvidence", id: "port_prosper_warning_file" },
       { type: "setPath", path: "progress.chapter", value: 7 },
       { type: "setPath", path: "progress.officeState", value: 14 },
+    ],
+  },
+  aster_house_trigger_cell: {
+    id: "aster_house_trigger_cell",
+    title: "Aster House is the First Circle's Port Prosper trigger cell",
+    journalText:
+      "Aster House is not an outside consultant. Its Greyhaven operators hold the remote credentials, timing sheets, purge orders, and First Circle money required to manufacture Port Prosper's collapse while Meridian's public relief partners wait to acquire the aftermath.",
+    notification:
+      "The attack is now actionable rather than theoretical. The trigger operators, control paths, timetable, and funding accounts can all be stopped before 02:10.",
+    requiredDeductions: ["benefactors_select_crises"],
+    requiredEvidence: [
+      "aster_house_trace",
+      "first_circle_vote_recording",
+      "port_prosper_conversion_portfolio",
+      "crisis_investment_escrow",
+      "aster_operations_board_photo",
+      "port_prosper_trigger_call_sheet",
+      "aster_purge_authorization",
+      "trigger_team_disbursement_ledger",
+    ],
+    requiredConnections: [
+      {
+        a: "aster_house_trace",
+        b: "port_prosper_trigger_call_sheet",
+        type: "confirmed",
+      },
+      {
+        a: "first_circle_vote_recording",
+        b: "aster_operations_board_photo",
+        type: "confirmed",
+      },
+      {
+        a: "port_prosper_conversion_portfolio",
+        b: "aster_purge_authorization",
+        type: "confirmed",
+      },
+      {
+        a: "crisis_investment_escrow",
+        b: "trigger_team_disbursement_ledger",
+        type: "financial",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "provedAsterHouseTriggerCell", value: true },
+      { type: "collectEvidence", id: "port_prosper_countermeasure_packet" },
+      { type: "setPath", path: "progress.chapter", value: 10 },
+      { type: "setPath", path: "progress.officeState", value: 17 },
+      { type: "unlockLocation", id: "port_prosper_signal_exchange" },
+    ],
+  },
+  sanctuary_chain_protocol: {
+    id: "sanctuary_chain_protocol",
+    title: "Meridian activated a distributed sanctuary network",
+    journalText:
+      "Port Prosper survived because the Aster countermeasures reached it before 02:10. Meridian's contingency relay still opened long enough to clone the breach, trace the Greyhaven Ledger, and invoke Archipelago Protocol. Orpheus is only the Assembly node in a seven-island network now moving Shepherd's forecast archive to Vesper Key.",
+    notification:
+      "The secret island was never the whole system. A Vesper Key courier packet will cross Port Prosper's eastern terminal at 05:30.",
+    requiredDeductions: ["aster_house_trigger_cell"],
+    requiredEvidence: [
+      "port_prosper_countermeasure_packet",
+      "port_prosper_survival_status",
+      "port_prosper_trigger_call_sheet",
+      "ghost_relay_execution_log",
+      "wren_retaliation_transcript",
+      "newsroom_cipher_clone",
+      "orpheus_service_chart",
+      "sanctuary_chain_chart",
+      "archipelago_transfer_order",
+    ],
+    requiredConnections: [
+      {
+        a: "port_prosper_countermeasure_packet",
+        b: "port_prosper_survival_status",
+        type: "confirmed",
+      },
+      {
+        a: "port_prosper_trigger_call_sheet",
+        b: "ghost_relay_execution_log",
+        type: "contradiction",
+      },
+      {
+        a: "wren_retaliation_transcript",
+        b: "newsroom_cipher_clone",
+        type: "coverup",
+      },
+      {
+        a: "orpheus_service_chart",
+        b: "sanctuary_chain_chart",
+        type: "confirmed",
+      },
+      {
+        a: "sanctuary_chain_chart",
+        b: "archipelago_transfer_order",
+        type: "confirmed",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "provedSanctuaryChain", value: true },
+      { type: "collectEvidence", id: "vesper_key_dead_drop" },
+      { type: "setPath", path: "progress.officeState", value: 18 },
     ],
   },
 });
@@ -5429,6 +5763,334 @@ export const GAME_CONTENT = Object.freeze({
           title: "Close enough to hear everything",
           text:
             "A dark curtain and the low hum of camera equipment conceal your borrowed maintenance uniform from the table.",
+        },
+      ],
+    },
+    aster_house: {
+      id: "aster_house",
+      name: "Aster House",
+      eyebrow: "11 Aldermere Row Â· Thursday Â· 12:48 AM",
+      mapX: 47,
+      mapY: 18,
+      description:
+        "A discreet crisis consultancy inside a restored townhouse, abandoned in such a hurry that Port Prosper's live operation still glows behind the respectable paneling.",
+      sceneClass: "scene-aster-house",
+      sceneArt: "./assets/scenes/aster-house.webp",
+      hotspots: [
+        {
+          id: "aster_operations_board",
+          label: "Illuminated operations board",
+          x: 49,
+          y: 8,
+          width: 31,
+          height: 42,
+          title: "Port Prosper divided into timed failures",
+          text:
+            "The map assigns substations, water controls, hospitals, and newsrooms to teams whose color codes match the First Circle portfolio.",
+          actionLabel: "Photograph the operations board",
+          toolId: "smartphone",
+          resultText:
+            "The wall map matches the First Circle's approved sequence down to the first-hour hospital and media disruptions.",
+          effects: [
+            { type: "setFlag", key: "photographedAsterOperationsBoard", value: true },
+            { type: "collectEvidence", id: "aster_operations_board_photo" },
+          ],
+          actionWhen: {
+            type: "flag",
+            key: "photographedAsterOperationsBoard",
+            equals: false,
+          },
+        },
+        {
+          id: "aster_switchboard",
+          label: "Secure switchboard",
+          x: 1,
+          y: 27,
+          width: 30,
+          height: 35,
+          title: "The catastrophe has a night shift",
+          text:
+            "A live rotation sheet beside the switchboard lists the operators who will spoof telemetry, lock water controls, and saturate emergency channels.",
+          actionLabel: "Copy the trigger call sheet",
+          toolId: "smartphone",
+          resultText:
+            "The call sheet names Elias Morrow as First Circle liaison and schedules the first remote trigger for 02:10.",
+          effects: [
+            { type: "setFlag", key: "foundPortProsperTriggerCallSheet", value: true },
+            { type: "collectEvidence", id: "port_prosper_trigger_call_sheet" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedAsterOperationsBoard" },
+              { type: "flag", key: "foundPortProsperTriggerCallSheet", equals: false },
+            ],
+          },
+        },
+        {
+          id: "aster_archive_cabinet",
+          label: "Open archive cabinet",
+          x: 80,
+          y: 18,
+          width: 19,
+          height: 55,
+          title: "Destroy the proof. Preserve the attack.",
+          text:
+            "A half-emptied cabinet contains one missed continuity order: purge the working files, keep the trigger automation live.",
+          actionLabel: "Recover the purge authorization",
+          resultText:
+            "The order carries First Circle authority and confirms that publication changed the cover-up, not the planned attack.",
+          effects: [
+            { type: "setFlag", key: "foundAsterPurgeAuthorization", value: true },
+            { type: "collectEvidence", id: "aster_purge_authorization" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "foundPortProsperTriggerCallSheet" },
+              { type: "flag", key: "foundAsterPurgeAuthorization", equals: false },
+            ],
+          },
+        },
+        {
+          id: "aster_operations_table",
+          label: "Operations table",
+          x: 6,
+          y: 59,
+          width: 63,
+          height: 39,
+          title: "Everyone is paid before the city fails",
+          text:
+            "Beneath the maps, a disbursement ledger pays infrastructure operators, narrative contractors, and acquisition lawyers from the crisis escrow.",
+          actionLabel: "Recover the disbursement ledger",
+          resultText:
+            "The ledger connects the local trigger team directly to the First Circle fund that profits from Port Prosper's replacement contracts.",
+          effects: [
+            { type: "setFlag", key: "foundTriggerTeamDisbursementLedger", value: true },
+            { type: "collectEvidence", id: "trigger_team_disbursement_ledger" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "foundAsterPurgeAuthorization" },
+              { type: "flag", key: "foundTriggerTeamDisbursementLedger", equals: false },
+            ],
+          },
+        },
+        {
+          id: "aster_rain_windows",
+          label: "Rain-streaked windows",
+          x: 20,
+          y: 3,
+          width: 27,
+          height: 47,
+          title: "A respectable address after midnight",
+          text:
+            "Across Aldermere Row, the city sleeps beneath Aster House's warm lamps. Nothing outside suggests a foreign city is being dismantled from this room.",
+        },
+      ],
+    },
+    port_prosper_signal_exchange: {
+      id: "port_prosper_signal_exchange",
+      name: "Port Prosper Signal Exchange",
+      eyebrow: "Port Prosper Harbor / Friday / 2:16 AM",
+      mapX: 88,
+      mapY: 31,
+      description:
+        "The city's emergency signal room after the 02:10 attack window: most systems survived, one relay burned, and Meridian left a message in the six minutes between.",
+      sceneClass: "scene-port-prosper-exchange",
+      sceneArt: "./assets/scenes/port-prosper-signal-exchange.webp",
+      hotspots: [
+        {
+          id: "port_prosper_status_wall",
+          label: "Municipal status wall",
+          x: 0,
+          y: 6,
+          width: 31,
+          height: 30,
+          title: "A catastrophe that did not happen",
+          text:
+            "The countermeasure packet isolated the planned grid, water, hospital, and emergency-channel failures before Aster House's trigger arrived.",
+          actionLabel: "Photograph the survival status",
+          toolId: "smartphone",
+          resultText:
+            "Every major system held. Harbor Relay 7 alone reports six minutes of unauthorized activity after the 02:10 trigger.",
+          effects: [
+            { type: "setFlag", key: "documentedPortProsperSurvival", value: true },
+            { type: "collectEvidence", id: "port_prosper_survival_status" },
+          ],
+          actionWhen: {
+            type: "flag",
+            key: "documentedPortProsperSurvival",
+            equals: false,
+          },
+        },
+        {
+          id: "port_prosper_ghost_relay",
+          label: "Amber relay trace",
+          x: 0,
+          y: 36,
+          width: 31,
+          height: 22,
+          title: "The contingency inside the contingency",
+          text:
+            "Aster's certificates were rejected at 02:09:58. Six seconds later, a second credential opened a hidden harbor mirror through Relay 7.",
+          actionLabel: "Copy the relay execution log",
+          toolId: "smartphone",
+          resultText:
+            "The ghost credential did not attack the city. It copied the breach path and opened a trace back toward Greyhaven.",
+          effects: [
+            { type: "setFlag", key: "foundGhostRelayLog", value: true },
+            { type: "collectEvidence", id: "ghost_relay_execution_log" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "documentedPortProsperSurvival" },
+              { type: "flag", key: "foundGhostRelayLog", equals: false },
+            ],
+          },
+        },
+        {
+          id: "port_prosper_secure_phone",
+          label: "Secure black telephone",
+          x: 47,
+          y: 62,
+          width: 13,
+          height: 17,
+          title: "The line is still open",
+          text:
+            "The handset carries a live encrypted call between a shaken relay operator and a voice you heard at the Calder Grand: Silas Wren.",
+          actionLabel: "Record the intercepted call",
+          toolId: "recorder",
+          resultText:
+            "Wren turns the failed attack into a containment exercise, orders the newsroom cipher traced, and invokes something called Archipelago Protocol.",
+          effects: [
+            { type: "setFlag", key: "recordedWrenRetaliation", value: true },
+            { type: "collectEvidence", id: "wren_retaliation_transcript" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "foundGhostRelayLog" },
+              { type: "flag", key: "recordedWrenRetaliation", equals: false },
+            ],
+          },
+        },
+        {
+          id: "port_prosper_burned_cabinet",
+          label: "Scorched relay cabinet",
+          x: 73,
+          y: 8,
+          width: 19,
+          height: 50,
+          title: "A familiar key in the wrong lock",
+          text:
+            "A forensic slip hangs inside the cabinet. The ghost credential carries the signature family of the Greyhaven Ledger's protected source desk.",
+          actionLabel: "Recover the cipher analysis",
+          resultText:
+            "The clone names Mara Venn's terminal. It was made before the First Circle vote was exposed, which means the newsroom was compromised before your choice.",
+          effects: [
+            { type: "setFlag", key: "foundNewsroomCipherClone", value: true },
+            { type: "collectEvidence", id: "newsroom_cipher_clone" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "recordedWrenRetaliation" },
+              { type: "flag", key: "foundNewsroomCipherClone", equals: false },
+            ],
+          },
+        },
+        {
+          id: "port_prosper_records_cart",
+          label: "Nautical records cart",
+          x: 82,
+          y: 60,
+          width: 18,
+          height: 36,
+          title: "Orpheus was never alone",
+          text:
+            "A rain-warped chart marks Orpheus beside six other private islands, each connected to a crisis region, service route, and continuity role.",
+          actionLabel: "Photograph the Sanctuary Chain",
+          toolId: "smartphone",
+          resultText:
+            "Orpheus is labeled Assembly. Vesper holds Forecasting. The others hold archives, clinics, communications, logistics, and protected residences.",
+          effects: [
+            { type: "setFlag", key: "photographedSanctuaryChain", value: true },
+            { type: "collectEvidence", id: "sanctuary_chain_chart" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "foundNewsroomCipherClone" },
+              { type: "flag", key: "photographedSanctuaryChain", equals: false },
+            ],
+          },
+        },
+        {
+          id: "port_prosper_transfer_folder",
+          label: "Countermeasure folders",
+          x: 32,
+          y: 58,
+          width: 14,
+          height: 21,
+          title: "The island network starts moving",
+          text:
+            "A Meridian transfer order was mixed into the municipal countermeasure packet during Relay 7's brief data mirror.",
+          actionLabel: "Recover the transfer order",
+          resultText:
+            "Archipelago Protocol is moving Shepherd's forecast archive from exposed Orpheus to Vesper Key. A courier dead drop crosses the eastern terminal at 05:30.",
+          effects: [
+            { type: "setFlag", key: "foundArchipelagoTransferOrder", value: true },
+            { type: "collectEvidence", id: "archipelago_transfer_order" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedSanctuaryChain" },
+              { type: "flag", key: "foundArchipelagoTransferOrder", equals: false },
+            ],
+          },
+        },
+        {
+          id: "port_prosper_rain_harbor",
+          label: "Rain-lit harbor",
+          x: 34,
+          y: 6,
+          width: 36,
+          height: 39,
+          title: "A city that gets to wake up",
+          text:
+            "Emergency vehicles cross the wet harbor roads. The hospitals have power. The taps are safe. Tonight, the evidence changed what happened.",
+        },
+        {
+          id: "port_prosper_quiet_warning_result",
+          label: "Sealed supervisor note",
+          x: 61,
+          y: 58,
+          width: 11,
+          height: 20,
+          title: "The warning nobody can credit",
+          text:
+            "Because you warned the city quietly, crews isolated every named system without alerting Meridian. The harbor relay is the only damage, and the First Circle still does not know who sent the packet.",
+          visibleWhen: { type: "flag", key: "warnedPortProsperQuietly" },
+        },
+        {
+          id: "port_prosper_publication_result",
+          label: "Public incident bulletin",
+          x: 61,
+          y: 58,
+          width: 11,
+          height: 20,
+          title: "Everyone knew before the lights went out",
+          text:
+            "Publication filled the harbor roads with cameras and emergency crews. The public warning made the larger attack impossible to disguise, but every protected source channel is now a target.",
+          visibleWhen: { type: "flag", key: "publishedFirstCircleEvidence" },
+        },
+        {
+          id: "port_prosper_deep_cover_result",
+          label: "Late countermeasure receipt",
+          x: 61,
+          y: 58,
+          width: 11,
+          height: 20,
+          title: "Six minutes bought with deeper proof",
+          text:
+            "Remaining undercover preserved the residential-wing evidence, but the packet arrived later. Relay 7 opened before crews reached the cabinet. The city survived; one waterfront district remembers the cost of the delay.",
+          visibleWhen: { type: "flag", key: "remainedUndercoverOnOrpheus" },
         },
       ],
     },

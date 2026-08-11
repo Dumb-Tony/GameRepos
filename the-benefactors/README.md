@@ -213,6 +213,25 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Added a dedicated responsive decision screen plus automated coverage for every branch and save round trip
 - Extended the full leak-to-First-Circle playthrough through the quiet-warning route
 
+**Milestone 22 - Aster House trigger cell (complete)**
+
+- Added three distinct aftermath sequences for the quiet warning, immediate publication, and deep-cover decisions
+- Converged every response on a preserved operations trace leading to Aster House on Aldermere Row
+- Added a finished painterly noir command-cell scene with four sequential, tool-driven discoveries
+- Added six substantive evidence artifacts covering the operations map, trigger schedule, purge order, payments, and countermeasures
+- Added a four-connection board deduction proving Aster House is the First Circle's local Port Prosper trigger cell
+- Extended casebook guidance, office and board progression, save migration, and the full automated playthrough through the countermeasure packet
+
+**Milestone 23 - The Archipelago Protocol (complete)**
+
+- Delivered the Aster House countermeasure packet to Port Prosper before the 02:10 trigger
+- Added a finished painterly municipal Signal Exchange overlooking the rain-dark harbor
+- Let all three earlier Port Prosper responses converge on a city that survives with one six-minute contingency breach
+- Exposed Silas Wren's retaliation order and a cloned Greyhaven Ledger source-desk cipher
+- Revealed Orpheus as one Assembly node inside Meridian's seven-island Sanctuary Chain
+- Added seven substantive evidence artifacts and a five-connection deduction tracing Shepherd's emergency transfer to Vesper Key
+- Extended casebook guidance, office and board progression, save migration, and the full automated playthrough through the Archipelago Protocol
+
 **Prologue content now playable**
 
 - Photograph the missing west wing

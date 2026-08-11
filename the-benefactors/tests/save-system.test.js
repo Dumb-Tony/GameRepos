@@ -490,3 +490,26 @@ test("reflows an overcrowded version 22 board back inside the corkboard", () => 
     positions.length,
   );
 });
+
+test("unlocks Port Prosper for completed Aster House saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const previous = createInitialState({ firstName: "Robin" });
+  previous.version = 24;
+  previous.progress.chapter = 9;
+  previous.flags.provedAsterHouseTriggerCell = true;
+  previous.progress.unlockedLocations =
+    previous.progress.unlockedLocations.filter(
+      (locationId) => locationId !== "port_prosper_signal_exchange",
+    );
+  storage.setItem(SAVE_KEY, JSON.stringify(previous));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(
+    migrated.progress.unlockedLocations.includes("port_prosper_signal_exchange"),
+    true,
+  );
+  assert.equal(migrated.progress.chapter, 10);
+});
