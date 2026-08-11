@@ -446,6 +446,7 @@
 
     _glitch(ctx, brainrot, t) {
       if (brainrot < 40) return;
+      if (BR.reduceMotion) return;   // accessibility: no flashing glitch bands
       const intensity = (brainrot - 40) / 60, v = this._view; ctx.save();
       for (let i = 0; i < Math.floor(intensity * 4); i++) {
         const y = (Math.sin(t * 2.3 + i * 11) * 0.5 + 0.5) * v.h;

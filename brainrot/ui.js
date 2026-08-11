@@ -260,6 +260,27 @@
       mute.checked = this.game.save.settings.muted; music.checked = this.game.save.settings.music;
       mute.addEventListener('change', () => { this.game.save.settings.muted = mute.checked; this.game.save.saveSettings(); this.game.audio && this.game.audio.setMuted(mute.checked); });
       music.addEventListener('change', () => { this.game.save.settings.music = music.checked; this.game.save.saveSettings(); this.game.audio && (this.game.audio.ensure(), this.game.audio.setMusic(music.checked)); });
+      const rm = $('setReduceMotion');
+      if (rm) {
+        // Honour the OS preference by default; the toggle can still override.
+        const osPref = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const on = this.game.save.settings.reduceMotion !== undefined ? !!this.game.save.settings.reduceMotion : osPref;
+        rm.checked = on; this._applyReduceMotion(on);
+        rm.addEventListener('change', () => {
+          this.game.save.settings.reduceMotion = rm.checked; this.game.save.saveSettings();
+          this._applyReduceMotion(rm.checked);
+        });
+      }
+      const bt = $('setBigText');
+      if (bt) {
+        bt.checked = !!this.game.save.settings.bigText;
+        document.body.classList.toggle('big-text', bt.checked);
+        bt.addEventListener('change', () => {
+          this.game.save.settings.bigText = bt.checked; this.game.save.saveSettings();
+          document.body.classList.toggle('big-text', bt.checked);
+          this._resize();   // canvas layout depends on HUD box sizes
+        });
+      }
       const cb = $('setCB');
       if (cb) {
         cb.checked = !!this.game.save.settings.colorblind;
@@ -573,6 +594,7 @@
       // just scroll the ticker above. A quick toast keeps them noticeable.
       if (e.major) this._queueNews(e);
       else if (this.game.phase === 'play') this.toast(e.emoji, e.msg, e.tone);
+      this._announce(e.msg);
     }
     // ---- pausing news popups (like the original's bulletins) ----------
     _queueNews(e) {
@@ -605,6 +627,14 @@
     // phone, changing tabs). Browsers throttle timers for hidden pages, so
     // without this the run either stalls unevenly or lurches on return — and
     // you'd lose ground to the Cure while taking a call.
+    // Reduced motion: kill screen shake and the map glitch bands, and let CSS
+    // shorten/stop the decorative animations. Gameplay is unaffected.
+    _applyReduceMotion(on) {
+      this.reduceMotion = !!on;
+      BR.reduceMotion = !!on;        // world.js reads this for the glitch bands
+      document.body.classList.toggle('reduce-motion', !!on);
+      if (this.game.fx) { this.game.fx.reduceMotion = !!on; if (on) { this.game.fx.shake = 0; this.game.fx._shakeT = 0; } }
+    }
     // Keep the intro's Continue button in sync with what's actually saved.
     _refreshContinue() {
       const cont = $('btnContinue'); if (!cont || !this._resumableSlot) return;
@@ -1178,6 +1208,12 @@
       const cap = phone ? 2 : 5;
       while (host.children.length > cap) host.removeChild(host.firstChild);
       setTimeout(() => { t.classList.add('leaving'); setTimeout(() => t.remove(), 320); }, phone ? 2400 : 3600);
+    }
+    // Mirror a message into the screen-reader live region. The map and news are
+    // visual/canvas, so without this a screen-reader user gets nothing.
+    _announce(msg) {
+      const el = $('srLive'); if (!el || !msg) return;
+      el.textContent = String(msg).replace(/<[^>]*>/g, '');
     }
     _flash(id) { const e = $(id); if (!e) return; e.classList.remove('flash'); void e.offsetWidth; e.classList.add('flash'); }
     _openModal(id) {

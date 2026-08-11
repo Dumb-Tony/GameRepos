@@ -17,6 +17,7 @@
     // amp = pixels of displacement. Decays over `dur`. Additive-ish: a bigger
     // incoming shake wins so a small tap can't cut a big one short.
     addShake(amp, dur) {
+      if (this.reduceMotion) return;             // accessibility: no camera shake
       amp = Math.min(amp || 6, 14);              // keep it tasteful, never nauseating
       if (amp <= this.shake) return;
       this.shake = amp; this._shakeMax = amp; this._shakeT = dur || 0.4;
