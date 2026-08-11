@@ -55,6 +55,9 @@
     U('smarttv','transmission','Smart-TV Autoplay','📺',18,'The rot now autoplays in the living room. Grandma cannot escape.',['boomer'], {inf:0.6, old:0.2, rich:0.15, sev:0.6}),
     U('qrgraffiti','transmission','QR-Code Graffiti','🔳',16,'Scannable rot sprayed on every wall. No feed required.',['offline'], {inf:0.4, offlineReach:0.4, sev:0.4}),
     U('satellite','transmission','Satellite Internet Drop','🛰️',28,'Beams the rot into the last disconnected holdouts on Earth.',['offline'], {inf:0.5, offlineReach:0.5, borderPierce:0.2, sev:0.4}),
+    U('voiceclone','transmission','Cloned Voice Notes','🎤',26,'AI clones of voices people trust. Crosses every language and every suspicion.',['aislop'], {inf:0.7, languagePierce:0.35, offlineReach:0.2, sev:0.7}),
+    U('kidstablet','transmission','Tablet-Raised Cohort','🧸',24,'An entire generation handed a screen at eighteen months. They were never not infected.',['mobilegame'], {inf:0.8, young:0.35, sev:0.5}),
+    U('dubbing','transmission','Auto-Dubbed Everything','🔊',30,'Every clip auto-dubs into every language. The last dialect walls fall.',['translate'], {inf:0.6, languagePierce:0.5, sev:0.5}),
 
     // =================== SYMPTOMS ===================
     U('postmemes','symptom','Posting Memes','🖼️',6,'Harmless-looking. The first behavioral tell.',[], {inf:0.2, sev:0.3, virality:0.05}, Object.assign({root:true, trend:'posting 🖼️'}, sym)),
@@ -66,6 +69,9 @@
     U('slang_sigma','symptom','Sigma','🧊',8,'The lone-wolf grindset. Cold. Aloof. Extremely online.',['postmemes'], {inf:0.35, sev:0.45}, Object.assign({trend:'sigma 🧊'}, sym)),
     U('slang_delulu','symptom','Delulu','🦄',8,'Delusion, but make it aspirational.',['postmemes'], {inf:0.3, sev:0.4, virality:0.05}, Object.assign({trend:'delulu 🦄'}, sym)),
     U('slang_mid','symptom','Mid','🫤',8,'The ultimate dismissal. Everything is now just… mid.',['postmemes'], {inf:0.3, sev:0.35}, Object.assign({trend:'mid 🫤'}, sym)),
+    U('slang_aura','symptom','Aura Points','🕶️',8,'Social credit, but vibes-based and constantly audited.',['postmemes'], {inf:0.35, sev:0.4, virality:0.05}, Object.assign({trend:'aura 🕶️'}, sym)),
+    U('slang_cooked','symptom','Cooked','🍳',8,'A universal status update. Everyone is, always.',['postmemes'], {inf:0.3, sev:0.45}, Object.assign({trend:'cooked 🍳'}, sym)),
+    U('combo_aura','symptom','Negative Aura Farming','🌑',22,'COMBO. Losing status on purpose becomes the highest status move.',['slang_aura','slang_sigma'], {inf:0.65, virality:0.15, sev:0.8}, Object.assign({combo:true}, sym)),
     U('reaction','symptom','Reaction-Image Speech','😲',10,'Words replaced by GIFs. Great engagement.',['postmemes'], {virality:0.15, sev:0.6}, sym),
     U('braindead','symptom','Braindead Takes','🧠',12,'Confidently wrong, endlessly shareable.',['reaction'], {virality:0.15, sev:0.7}, sym),
     U('combo_delulu','symptom','Delulu Sigma Grindset','🌈',22,'COMBO. Cope and grindset fuse into one unshakeable delusion.',['slang_sigma','slang_delulu'], {inf:0.6, virality:0.15, sev:0.8}, Object.assign({combo:true}, sym)),
@@ -104,6 +110,8 @@
     U('cryptogrift','ability','Crypto Grift Funding','🪙',22,'Rug-pull the believers to bankroll the rot. Passive income.',['trendsurf'], {virality:0.2, cureSlow:0.1}),
     U('griefarmy','ability','Comment Grief Army','💢',30,'Bury every fact-check under a landslide of replies. Lowers Severity.',['astroturf'], {cureSlow:0.25, sev:-0.3}),
     U('memoryhole','ability','Memory-Hole PR','🧽',32,'Yesterday\'s exposé? Never happened. The Cure forgets too.',['deepfake'], {cureSlow:0.3, sev:-0.3}),
+    U('shadowban','ability','Shadowban Immunity','👻',28,'Throttled, not stopped. The rot routes around suppression like damage.',['vpn'], {moderationResist:0.45, borderPierce:0.15}),
+    U('zeroday','ability','Recommender Zero-Day','🕳️',40,'An exploit in the ranking model itself. You are the algorithm now.',['firewall'], {borderPierce:0.35, moderationResist:0.3, heatGain:0.25}),
   ];
 
   BR.UPGRADE_BY_ID = {};
