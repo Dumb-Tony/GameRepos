@@ -1,5 +1,12 @@
 # The Benefactors
 
+**Milestone 26 — Cinematic chapter reels (complete)**
+
+- Added ten short, skippable illustrated interludes covering every chapter handoff from Northstar through the Archipelago Protocol
+- Added intercepted calls, transcript waveforms, noir montages, and choice-specific Port Prosper consequences
+- Added distinct cinematic ambience and radio/chapter audio cues with reduced-motion, subtitle-first, mobile, and high-contrast presentation
+- Added a persistent Story Reel archive in Case Files so every reached transition can be replayed
+
 ## Milestone 25 — Evidence-board reasoning workspace (complete)
 
 - Evidence cards now accept persistent player-written notes, display handwritten previews, and preserve annotations through autosaves and manual case files.

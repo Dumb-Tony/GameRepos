@@ -9,6 +9,7 @@ import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
 } from "../content/casebook-content.js?v=fieldwork-20260811a";
+import { CHAPTER_INTERLUDES } from "../content/cinematic-content.js?v=cinematic-20260811a";
 import { getInteractiveLocation } from "../content/exploration-content.js?v=fieldwork-20260811a";
 import {
   CUTSCENE_BEATS,
@@ -23,7 +24,7 @@ import {
 } from "../content/prologue-content.js?v=field-tools-20260731a";
 import { evaluateCondition } from "../engine/conditions.js?v=fieldwork-20260811a";
 import { applyEffects } from "../engine/events.js?v=visual-polish-20260730a";
-import { createInitialState } from "../engine/game-state.js?v=casewall-20260811b";
+import { createInitialState } from "../engine/game-state.js?v=cinematic-20260811a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
@@ -79,6 +80,12 @@ import {
   revealRecordingHint,
 } from "../systems/puzzles/recording-reconstruction.js?v=visual-polish-20260730a";
 import { TransientNotice } from "./transient-notice.js?v=visual-polish-20260730a";
+import {
+  advanceInterlude,
+  beginInterlude,
+  getPendingInterlude,
+  skipInterlude,
+} from "../systems/cinematics/chapter-interludes.js?v=cinematic-20260811a";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -143,6 +150,7 @@ export class GameApp {
     this.pendingDeleteSlot = null;
     this.evidenceViewerActionsBound = false;
     this.inventoryActionsBound = false;
+    this.lastCinematicCue = null;
   }
 
   start() {
@@ -243,7 +251,93 @@ export class GameApp {
     this.bindEvidenceViewerActions();
     this.bindInventoryActions();
     this.bindRecordingAudioActions();
+    this.renderChapterInterlude(route);
     this.root.querySelector("h1, h2, [data-autofocus]")?.focus?.();
+  }
+
+  renderChapterInterlude(route = this.router.current()) {
+    const permittedRoutes = new Set(["home", "location", "map", "board", "case-files", "notebook"]);
+    let state = this.store.getState();
+    let interlude = CHAPTER_INTERLUDES.find(
+      (entry) => entry.id === state.cinematics.activeId,
+    );
+    if (!interlude && permittedRoutes.has(route) && route !== "case-files") {
+      interlude = getPendingInterlude(state, CHAPTER_INTERLUDES);
+      if (
+        interlude &&
+        !state.dialogue.activeDialogueId &&
+        !this.activeEvidenceId &&
+        !this.activeDeductionId
+      ) {
+        state = beginInterlude(state, interlude.id);
+        this.store.replace(state, `begin-interlude-${interlude.id}`);
+        this.saves.save(state, `begin-interlude-${interlude.id}`);
+      } else if (interlude) {
+        return;
+      }
+    }
+    if (!interlude || state.cinematics.activeId !== interlude.id) return;
+
+    const step = Math.min(interlude.beats.length - 1, state.cinematics.step);
+    const beat = interlude.beats[step];
+    const text = beat.variants?.[state.progress.portProsperResponse] || beat.text;
+    const cue = `${interlude.id}:${step}`;
+    if (this.lastCinematicCue !== cue) {
+      this.lastCinematicCue = cue;
+      this.audio?.setScene("cinematic");
+      this.audio?.playEffect(beat.kind === "intercept" ? "radio" : "chapter");
+    }
+    this.root.insertAdjacentHTML(
+      "beforeend",
+      `
+        <div class="cinematic-scrim" data-cinematic-kind="${escapeHtml(beat.kind)}">
+          <section class="chapter-interlude" role="dialog" aria-modal="true" aria-labelledby="interlude-title" tabindex="-1">
+            <img class="interlude-image" src="${escapeHtml(beat.image)}" alt="" draggable="false" />
+            <div class="interlude-grain" aria-hidden="true"></div>
+            <header class="interlude-topline">
+              <span>${escapeHtml(interlude.chapter)}</span>
+              <button class="button button-ghost" data-skip-interlude>Skip scene</button>
+            </header>
+            <article class="interlude-copy">
+              <p class="kicker">${escapeHtml(beat.label)}</p>
+              <h1 id="interlude-title">${escapeHtml(beat.title)}</h1>
+              ${beat.speaker ? `<p class="interlude-speaker"><span aria-hidden="true"></span>${escapeHtml(beat.speaker)}</p>` : ""}
+              <p>${escapeHtml(text)}</p>
+              ${beat.kind === "intercept" ? '<div class="interlude-waveform" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>' : ""}
+            </article>
+            <footer class="interlude-footer">
+              <div class="interlude-progress" aria-label="Scene ${step + 1} of ${interlude.beats.length}">
+                ${interlude.beats.map((_, index) => `<span class="${index === step ? "is-active" : ""}"></span>`).join("")}
+              </div>
+              <button class="button button-primary" data-advance-interlude>
+                ${step === interlude.beats.length - 1 ? `Begin ${escapeHtml(interlude.title)}` : "Continue"}
+              </button>
+            </footer>
+          </section>
+        </div>
+      `,
+    );
+
+    const finish = (skip = false) => {
+      const next = skip
+        ? skipInterlude(this.store.getState(), CHAPTER_INTERLUDES)
+        : advanceInterlude(this.store.getState(), CHAPTER_INTERLUDES);
+      const stillActive = Boolean(next.cinematics.activeId);
+      this.store.replace(next, `${skip ? "skip" : "advance"}-interlude-${interlude.id}`);
+      this.saves.save(this.store.getState(), `${skip ? "skip" : "advance"}-interlude-${interlude.id}`);
+      if (!stillActive) this.lastCinematicCue = null;
+      this.render(route);
+    };
+    const dialog = this.root.querySelector(".chapter-interlude");
+    dialog?.querySelector("[data-advance-interlude]")?.addEventListener("click", () => finish(false));
+    dialog?.querySelector("[data-skip-interlude]")?.addEventListener("click", () => finish(true));
+    dialog?.addEventListener("keydown", (event) => {
+      if (["Enter", "ArrowRight", " "].includes(event.key)) {
+        event.preventDefault();
+        finish(false);
+      }
+    });
+    dialog?.focus();
   }
 
   renderTitle() {
@@ -3833,6 +3927,19 @@ export class GameApp {
           <p class="case-files-note">
             Saves remain in this browser. Clearing site data removes them.
           </p>
+          <section class="cinematic-archive" aria-labelledby="cinematic-archive-title">
+            <div>
+              <p class="kicker">Story reel</p>
+              <h2 id="cinematic-archive-title">Chapter interludes</h2>
+              <p>Replay any chapter transition you have already reached.</p>
+            </div>
+            <div class="cinematic-archive-grid">
+              ${CHAPTER_INTERLUDES.map((entry) => {
+                const unlocked = this.store.getState().cinematics.seen.includes(entry.id);
+                return `<button class="cinematic-reel ${unlocked ? "is-unlocked" : ""}" data-replay-interlude="${entry.id}" ${unlocked ? "" : "disabled"}><span>${escapeHtml(entry.chapter)}</span><strong>${unlocked ? escapeHtml(entry.title) : "Classified"}</strong></button>`;
+              }).join("")}
+            </div>
+          </section>
         </section>
         ${this.renderToast()}
       </main>
@@ -3886,6 +3993,15 @@ export class GameApp {
       this.pendingDeleteSlot = null;
       this.renderCaseFiles();
       this.root.querySelector(`[data-delete-slot="${slot}"]`)?.focus();
+    });
+    this.root.querySelectorAll("[data-replay-interlude]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const next = beginInterlude(this.store.getState(), button.dataset.replayInterlude);
+        this.store.replace(next, `replay-interlude-${button.dataset.replayInterlude}`);
+        this.saves.save(this.store.getState(), `replay-interlude-${button.dataset.replayInterlude}`);
+        this.renderCaseFiles();
+        this.renderChapterInterlude("case-files");
+      });
     });
   }
 
@@ -4580,6 +4696,7 @@ export class GameApp {
     this.activeInventoryToolId = null;
     this.inventoryMessage = "";
     this.pendingDeleteSlot = null;
+    this.lastCinematicCue = null;
   }
 
   applyPreferences(settings) {
