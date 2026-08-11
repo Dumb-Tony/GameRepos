@@ -1018,6 +1018,46 @@ img.spr { display: inline-block; vertical-align: middle; image-rendering: auto; 
   #evoModal #pathogenPanel{ height:92px; }
 }
 
+/* ===== FIRST-RUN COACH ==============================================
+ * A single low-profile strip above the bottom HUD. Never blocks input and
+ * never covers the map centre — it teaches in place, then goes away. */
+#coach{
+  position:fixed; left:50%; transform:translateX(-50%) translateY(14px);
+  bottom:calc(var(--hud-bottom) + 12px); z-index:355;
+  max-width:min(560px, 92vw); opacity:0; pointer-events:none;
+  transition:opacity .3s ease, transform .3s cubic-bezier(.2,1.3,.4,1);
+}
+#coach.on{ opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
+.coach-card{
+  display:flex; align-items:center; gap:12px;
+  background:linear-gradient(180deg,rgba(46,26,96,.97),rgba(26,14,58,.97));
+  border:1px solid #6bdcff; border-radius:13px; padding:10px 12px;
+  box-shadow:0 10px 34px rgba(20,0,40,.6), 0 0 22px rgba(107,220,255,.28);
+}
+.coach-msg{ font-size:13px; line-height:1.45; color:var(--txt); flex:1; }
+.coach-msg b{ color:#6bdcff; }
+.coach-x{
+  flex:0 0 auto; background:rgba(255,255,255,.07); border:1px solid var(--line2);
+  color:var(--dim); font-size:11px; font-weight:700; padding:6px 10px;
+  border-radius:16px; cursor:pointer; white-space:nowrap;
+}
+.coach-x:hover{ color:var(--txt); border-color:#6bdcff; }
+@media (orientation:portrait) and (max-width:600px){
+  #coach{ bottom:calc(var(--hud-bottom) + 8px); max-width:94vw; }
+  .coach-msg{ font-size:12px; }
+  .coach-card{ padding:8px 10px; gap:9px; }
+}
+/* Landscape phone: sit in the gap between the evolve button (left) and the
+   zoom controls (right) rather than centring across the whole width. */
+@media (orientation:landscape) and (max-height:600px){
+  #coach{ left:86px; right:246px; transform:translateY(14px);
+    max-width:none; width:auto; bottom:calc(var(--hud-bottom) + 8px); }
+  #coach.on{ transform:translateY(0); }
+  .coach-msg{ font-size:12px; }
+  .coach-card{ padding:8px 10px; gap:9px; }
+}
+body.reduce-motion #coach{ transition:opacity .2s linear; }
+
 /* ===== ACCESSIBILITY ================================================ */
 
 /* Visually hidden but readable by screen readers. */

@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Brainrot: Rise of the Meme</title>
 <!-- Installable / fullscreen (Add to Home Screen on iOS; fullscreen web app on Android) -->
-<link rel="manifest" href="manifest.webmanifest?v=52">
+<link rel="manifest" href="manifest.webmanifest?v=54">
 <meta name="theme-color" content="#0a0618">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Brainrot">
-<link rel="apple-touch-icon" href="icon-180.png?v=52">
-<link rel="icon" type="image/png" href="icon-192.png?v=52">
-<link rel="stylesheet" href="style.css?v=52">
+<link rel="apple-touch-icon" href="icon-180.png?v=54">
+<link rel="icon" type="image/png" href="icon-192.png?v=54">
+<link rel="stylesheet" href="style.css?v=54">
 </head>
 <body>
 
@@ -129,6 +129,14 @@ window.onerror = function (msg, src, line) {
 <!-- Screen-reader announcements: the map and news are canvas/visual, so mirror
      the important beats here as polite live-region text. -->
 <div id="srLive" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<!-- ===== FIRST-RUN COACH — one-time contextual nudges, not a text wall ===== -->
+<div id="coach" aria-live="polite">
+  <div class="coach-card">
+    <span class="coach-msg" id="coachMsg"></span>
+    <button class="coach-x" id="coachSkip" aria-label="Dismiss tips">skip tips</button>
+  </div>
+</div>
 
 <!-- ===== ROTATE-TO-LANDSCAPE GATE (phones in portrait only) ===== -->
 <div id="rotateGate">
@@ -273,18 +281,18 @@ window.onerror = function (msg, src, line) {
   <div class="start-btns"><button class="big-btn" id="btnAgain">▶ Rot Again</button></div>
 </div></div>
 
-<script src="config.js?v=52"></script>
-<script src="sprites.js?v=52"></script>
-<script src="audio.js?v=52"></script>
-<script src="animations.js?v=52"></script>
-<script src="countries.js?v=52"></script>
-<script src="worldmap.js?v=52"></script>
-<script src="upgrades.js?v=52"></script>
-<script src="events.js?v=52"></script>
-<script src="world.js?v=52"></script>
-<script src="save.js?v=52"></script>
-<script src="genes.js?v=52"></script>
-<script src="ui.js?v=52"></script>
-<script src="game.js?v=52"></script>
+<script src="config.js?v=54"></script>
+<script src="sprites.js?v=54"></script>
+<script src="audio.js?v=54"></script>
+<script src="animations.js?v=54"></script>
+<script src="countries.js?v=54"></script>
+<script src="worldmap.js?v=54"></script>
+<script src="upgrades.js?v=54"></script>
+<script src="events.js?v=54"></script>
+<script src="world.js?v=54"></script>
+<script src="save.js?v=54"></script>
+<script src="genes.js?v=54"></script>
+<script src="ui.js?v=54"></script>
+<script src="game.js?v=54"></script>
 </body>
 </html>
