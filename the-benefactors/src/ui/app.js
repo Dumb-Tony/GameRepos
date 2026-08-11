@@ -23,7 +23,7 @@ import {
 } from "../content/prologue-content.js?v=field-tools-20260731a";
 import { evaluateCondition } from "../engine/conditions.js?v=fieldwork-20260811a";
 import { applyEffects } from "../engine/events.js?v=visual-polish-20260730a";
-import { createInitialState } from "../engine/game-state.js?v=fieldwork-20260811a";
+import { createInitialState } from "../engine/game-state.js?v=casewall-20260811b";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
@@ -56,12 +56,14 @@ import {
 import {
   arrangeEvidence,
   connectEvidence,
+  evaluateConnectionFeedback,
   evaluateBoardDeductions,
   moveEvidence,
   pinEvidence,
   removeConnection,
+  saveEvidenceNote,
   unpinEvidence,
-} from "../systems/evidence-board/evidence-board.js?v=visual-polish-20260730a";
+} from "../systems/evidence-board/evidence-board.js?v=casewall-20260811b";
 import {
   getEvidencePresentation,
   renderEvidenceArtifact,
@@ -127,6 +129,9 @@ export class GameApp {
     this.boardScroll = { left: 0, top: 0 };
     this.boardConnectionPanelOpen = false;
     this.boardWasDragged = false;
+    this.boardLens = "all";
+    this.activeBoardNoteId = null;
+    this.activeDeductionId = null;
     this.tutorialHotspotFound = false;
     this.tutorialBoardCards = [];
     this.tutorialBoardConnected = false;
@@ -158,6 +163,16 @@ export class GameApp {
       if (event.target.closest?.("button")) this.audio?.playEffect("paper");
     });
     this.root.addEventListener("keydown", (event) => {
+      if (
+        event.key === "Escape" &&
+        (this.activeBoardNoteId || this.activeDeductionId)
+      ) {
+        event.preventDefault();
+        this.activeBoardNoteId = null;
+        this.activeDeductionId = null;
+        if (this.router.current() === "board") this.renderBoard();
+        return;
+      }
       if (event.target.matches?.("input, textarea, select")) return;
       this.audio?.unlock().catch?.(() => {});
       if (event.key.toLowerCase() === "m") {
@@ -2407,6 +2422,16 @@ export class GameApp {
 
   renderBoard() {
     const state = this.store.getState();
+    const boardView = {
+      density: "compact",
+      categoryFilter: "all",
+      lens: "all",
+      arrangement: "chronology",
+      ...(state.board.view || {}),
+    };
+    this.boardDensity = boardView.density;
+    this.boardCategoryFilter = boardView.categoryFilter;
+    this.boardLens = boardView.lens;
     const pinned = state.evidence.pinned
       .map((id) => EVIDENCE[id])
       .filter(Boolean);
@@ -2434,6 +2459,48 @@ export class GameApp {
         );
         return prerequisitesMet && hasStarted;
       }) || null;
+    const corroboratedEvidence = new Set(state.evidence.corroborated || []);
+    for (const deductionId of state.completedDeductions) {
+      for (const evidenceId of DEDUCTIONS[deductionId]?.requiredEvidence || []) {
+        corroboratedEvidence.add(evidenceId);
+      }
+    }
+    const connectedEvidence = new Set(
+      state.board.connections.flatMap((connection) => [connection.a, connection.b]),
+    );
+    const boardLensLabels = {
+      all: "Everything",
+      theory: "Active theory",
+      unconnected: "Unconnected",
+      annotated: "My notes",
+      corroborated: "Corroborated",
+    };
+    const matchesBoardLens = (item) => {
+      if (this.boardLens === "theory") {
+        return Boolean(activeTheory?.requiredEvidence.includes(item.id));
+      }
+      if (this.boardLens === "unconnected") return !connectedEvidence.has(item.id);
+      if (this.boardLens === "annotated") return Boolean(state.board.notes?.[item.id]);
+      if (this.boardLens === "corroborated") return corroboratedEvidence.has(item.id);
+      return true;
+    };
+    const boardLenses = Object.entries(boardLensLabels).map(([id, label]) => ({
+      id,
+      label,
+      count: pinned.filter((item) => {
+        if (id === "theory") return Boolean(activeTheory?.requiredEvidence.includes(item.id));
+        if (id === "unconnected") return !connectedEvidence.has(item.id);
+        if (id === "annotated") return Boolean(state.board.notes?.[item.id]);
+        if (id === "corroborated") return corroboratedEvidence.has(item.id);
+        return true;
+      }).length,
+    }));
+    if (
+      !boardLensLabels[this.boardLens] ||
+      (this.boardLens === "theory" && !activeTheory)
+    ) {
+      this.boardLens = "all";
+    }
     const activeTheoryConnections = (activeTheory?.requiredConnections || []).map(
       (required) => {
         const connection = state.board.connections.find(
@@ -2487,24 +2554,24 @@ export class GameApp {
         description: "Largest cards",
         canvasWidth: 1800,
         cardWidth: 12.5,
-        cardHeight: 206,
-        rowHeight: 250,
+        cardHeight: 230,
+        rowHeight: 275,
       },
       compact: {
         label: "Compact",
         description: "Best for casework",
         canvasWidth: 1500,
         cardWidth: 11.8,
-        cardHeight: 164,
-        rowHeight: 205,
+        cardHeight: 205,
+        rowHeight: 245,
       },
       overview: {
         label: "Overview",
         description: "See more at once",
         canvasWidth: 1250,
         cardWidth: 11.8,
-        cardHeight: 120,
-        rowHeight: 158,
+        cardHeight: 130,
+        rowHeight: 168,
       },
     };
     const boardDensity =
@@ -2723,6 +2790,14 @@ export class GameApp {
                 </div>
               </div>
               <p class="connection-status" role="status" aria-live="polite">${escapeHtml(connectionStatus)}</p>
+              ${
+                state.board.lastFeedback
+                  ? `<aside class="connection-feedback feedback-${escapeHtml(state.board.lastFeedback.kind)}">
+                      <strong>${escapeHtml(state.board.lastFeedback.title)}</strong>
+                      <p>${escapeHtml(state.board.lastFeedback.text)}</p>
+                    </aside>`
+                  : ""
+              }
               <p class="connection-step-label connection-final-step">3. Tie the yarn</p>
               <div class="connection-builder-actions">
                 <button
@@ -2767,10 +2842,13 @@ export class GameApp {
                   if (!a || !b) return "";
                   const aEvidence = EVIDENCE[connection.a];
                   const bEvidence = EVIDENCE[connection.b];
+                  const matchesFilters = (item) =>
+                    item &&
+                    (this.boardCategoryFilter === "all" ||
+                      item.category === this.boardCategoryFilter) &&
+                    matchesBoardLens(item);
                   const muted =
-                    this.boardCategoryFilter !== "all" &&
-                    aEvidence?.category !== this.boardCategoryFilter &&
-                    bEvidence?.category !== this.boardCategoryFilter;
+                    !matchesFilters(aEvidence) && !matchesFilters(bEvidence);
                   return `<line class="yarn yarn-${connection.type} ${muted ? "is-filter-muted" : ""}" x1="${a.x + yarnAnchorX}" y1="${a.y + yarnAnchorY}" x2="${b.x + yarnAnchorX}" y2="${b.y + yarnAnchorY}" />`;
                 })
                 .join("")}
@@ -2785,12 +2863,19 @@ export class GameApp {
                 ? pinned
                     .map((item) => {
                       const position = state.board.cards[item.id] || { x: 10, y: 10 };
-                      const filterClass =
-                        this.boardCategoryFilter === "all"
-                          ? ""
-                          : item.category === this.boardCategoryFilter
-                            ? "is-filter-match"
-                            : "is-filter-muted";
+                      const categoryMatch =
+                        this.boardCategoryFilter === "all" ||
+                        item.category === this.boardCategoryFilter;
+                      const lensMatch = matchesBoardLens(item);
+                      const filtersActive =
+                        this.boardCategoryFilter !== "all" || this.boardLens !== "all";
+                      const filterClass = !filtersActive
+                        ? ""
+                        : categoryMatch && lensMatch
+                          ? "is-filter-match"
+                          : "is-filter-muted";
+                      const evidenceNote = state.board.notes?.[item.id] || "";
+                      const corroborated = corroboratedEvidence.has(item.id);
                       const selectedIndex = this.selectedBoardCards.indexOf(item.id);
                       const selected = selectedIndex >= 0;
                       const selectionLabel = selected
@@ -2805,7 +2890,7 @@ export class GameApp {
                           : "Two clues selected";
                       return `
                         <article
-                          class="evidence-card evidence-card--${item.artifact?.type || "document"} evidence-category-${item.category} evidence-presentation-${getEvidencePresentation(item).motif} ${selected ? "is-selected" : ""} ${filterClass}"
+                          class="evidence-card evidence-card--${item.artifact?.type || "document"} evidence-category-${item.category} evidence-presentation-${getEvidencePresentation(item).motif} ${selected ? "is-selected" : ""} ${corroborated ? "is-corroborated" : ""} ${evidenceNote ? "has-note" : ""} ${filterClass}"
                           style="left:${position.x}%;top:${position.y}%"
                           data-evidence-card-shell="${item.id}"
                           data-category="${item.category}"
@@ -2828,12 +2913,17 @@ export class GameApp {
                             ><i></i><i></i><i></i></span>
                             <span class="evidence-type-stamp" aria-hidden="true">${escapeHtml(getEvidencePresentation(item).stamp)}</span>
                             <span class="evidence-category">${escapeHtml(getEvidencePresentation(item).label)}</span>
+                            ${corroborated ? '<span class="evidence-status-stamp">Corroborated</span>' : ""}
                             <strong>${escapeHtml(item.title)}</strong>
                             <small>${escapeHtml(item.summary)}</small>
+                            ${evidenceNote ? `<span class="evidence-note-preview">“${escapeHtml(evidenceNote)}”</span>` : ""}
                             <span class="evidence-select-prompt">${escapeHtml(selectionPrompt)}</span>
                           </button>
                           <button class="evidence-view-button" data-view-evidence="${item.id}">
                             View evidence
+                          </button>
+                          <button class="evidence-note-button" data-edit-evidence-note="${item.id}">
+                            ${evidenceNote ? "Edit my note" : "Add my note"}
                           </button>
                           <button
                             class="evidence-unpin-button"
@@ -2881,6 +2971,48 @@ export class GameApp {
                   .join("")}
               </div>
             </section>
+            <section class="board-arrangement-panel" aria-labelledby="board-arrangement-title">
+              <p class="kicker" id="board-arrangement-title">Arrange the wall</p>
+              <div class="board-arrangement-list">
+                ${[
+                  ["chronology", "Chronology", "Discovery order"],
+                  ["type", "Evidence type", "Documents, photos, audio"],
+                  ["theory", "Theory first", "Current proof at the top"],
+                ]
+                  .map(
+                    ([id, label, description]) => `
+                      <button
+                        class="board-arrangement-button ${boardView.arrangement === id ? "is-active" : ""}"
+                        data-board-arrange="${id}"
+                        aria-pressed="${boardView.arrangement === id}"
+                      >
+                        <strong>${escapeHtml(label)}</strong>
+                        <span>${escapeHtml(description)}</span>
+                      </button>
+                    `,
+                  )
+                  .join("")}
+              </div>
+            </section>
+            <section class="board-lens-panel" aria-labelledby="board-lens-title">
+              <p class="kicker" id="board-lens-title">Focus the investigation</p>
+              <div class="board-filter-list">
+                ${boardLenses
+                  .map(
+                    (lens) => `
+                      <button
+                        class="board-filter-button ${this.boardLens === lens.id ? "is-active" : ""}"
+                        data-board-lens="${lens.id}"
+                        aria-pressed="${this.boardLens === lens.id}"
+                      >
+                        <span>${escapeHtml(lens.label)}</span>
+                        <strong>${lens.count}</strong>
+                      </button>
+                    `,
+                  )
+                  .join("")}
+              </div>
+            </section>
             <section class="board-filter-panel" aria-labelledby="board-filter-title">
               <p class="kicker" id="board-filter-title">Highlight by type</p>
               <div class="board-filter-list">
@@ -2900,9 +3032,6 @@ export class GameApp {
                   .join("")}
               </div>
             </section>
-            <button class="button button-secondary board-tidy-button" data-action="tidy-board">
-              Arrange all pinned clues
-            </button>
             <section class="theory-desk" aria-labelledby="theory-desk-title">
               <div class="theory-desk-heading">
                 <div>
@@ -3013,10 +3142,12 @@ export class GameApp {
                   ? state.completedDeductions
                       .map(
                         (id) => `
-                          <article>
+                          <button class="deduction-report-button" data-view-deduction="${id}">
+                            <span>Verified conclusion</span>
                             <strong>${escapeHtml(DEDUCTIONS[id]?.title || id)}</strong>
-                            <p>${escapeHtml(DEDUCTIONS[id]?.journalText || "")}</p>
-                          </article>
+                            <span class="deduction-report-summary">${escapeHtml(DEDUCTIONS[id]?.journalText || "")}</span>
+                            <em>Open deduction report</em>
+                          </button>
                         `,
                       )
                       .join("")
@@ -3034,6 +3165,8 @@ export class GameApp {
             <button class="tool-button" data-action="save">Case files</button>
           </div>
         </footer>
+        ${this.renderBoardNoteEditor(state)}
+        ${this.renderDeductionViewer(state, relationshipById)}
         ${this.renderToast()}
       </main>
     `;
@@ -3080,6 +3213,10 @@ export class GameApp {
     this.root.querySelectorAll("[data-board-filter]").forEach((button) => {
       button.addEventListener("click", () => {
         this.boardCategoryFilter = button.dataset.boardFilter;
+        this.store.update((draft) => {
+          draft.board.view.categoryFilter = this.boardCategoryFilter;
+        }, "board-category-filter");
+        this.saves.save(this.store.getState(), "board-category-filter");
         this.renderBoard();
         this.root
           .querySelector(`[data-board-filter="${this.boardCategoryFilter}"]`)
@@ -3090,10 +3227,107 @@ export class GameApp {
     this.root.querySelectorAll("[data-board-density]").forEach((button) => {
       button.addEventListener("click", () => {
         this.boardDensity = button.dataset.boardDensity;
+        this.store.update((draft) => {
+          draft.board.view.density = this.boardDensity;
+        }, "board-density");
+        this.saves.save(this.store.getState(), "board-density");
         this.renderBoard();
         this.root
           .querySelector(`[data-board-density="${this.boardDensity}"]`)
           ?.focus();
+      });
+    });
+
+    this.root.querySelectorAll("[data-board-lens]").forEach((button) => {
+      button.addEventListener("click", () => {
+        this.boardLens = button.dataset.boardLens;
+        this.store.update((draft) => {
+          draft.board.view.lens = this.boardLens;
+        }, "board-lens");
+        this.saves.save(this.store.getState(), "board-lens");
+        this.renderBoard();
+        this.root.querySelector(`[data-board-lens="${this.boardLens}"]`)?.focus();
+      });
+    });
+
+    this.root.querySelectorAll("[data-board-arrange]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const mode = button.dataset.boardArrange;
+        const next = arrangeEvidence(this.store.getState(), {
+          mode,
+          evidence: EVIDENCE,
+          activeTheory,
+        });
+        this.store.replace(next, `arrange-board-${mode}`);
+        this.saves.save(this.store.getState(), `arrange-board-${mode}`);
+        this.selectedBoardCards = [];
+        this.notice.show(
+          mode === "theory"
+            ? "Current theory evidence moved to the top of the wall."
+            : mode === "type"
+              ? "Evidence grouped by type."
+              : "Evidence restored to discovery order.",
+        );
+        this.renderBoard();
+        this.root.querySelector(`[data-board-arrange="${mode}"]`)?.focus();
+      });
+    });
+
+    this.root.querySelectorAll("[data-edit-evidence-note]").forEach((button) => {
+      button.addEventListener("click", () => {
+        this.activeBoardNoteId = button.dataset.editEvidenceNote;
+        this.renderBoard();
+        this.root.querySelector("#evidence-note-text")?.focus();
+      });
+    });
+
+    this.root.querySelectorAll("[data-view-deduction]").forEach((button) => {
+      button.addEventListener("click", () => {
+        this.activeDeductionId = button.dataset.viewDeduction;
+        this.renderBoard();
+        this.root.querySelector(".deduction-viewer h1")?.focus();
+      });
+    });
+
+    this.root.querySelectorAll("[data-close-board-note]").forEach((button) => {
+      button.addEventListener("click", () => {
+        this.activeBoardNoteId = null;
+        this.renderBoard();
+      });
+    });
+    this.root.querySelector("#evidence-note-form")?.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const form = new FormData(event.currentTarget);
+      const evidenceId = this.activeBoardNoteId;
+      const next = saveEvidenceNote(
+        this.store.getState(),
+        evidenceId,
+        form.get("note"),
+      );
+      this.store.replace(next, `evidence-note-${evidenceId}`);
+      this.saves.save(this.store.getState(), `evidence-note-${evidenceId}`);
+      this.activeBoardNoteId = null;
+      this.notice.show("Evidence note saved to the case wall.");
+      this.renderBoard();
+      this.root.querySelector(`[data-edit-evidence-note="${evidenceId}"]`)?.focus();
+    });
+    this.root.querySelector("[data-remove-evidence-note]")?.addEventListener("click", () => {
+      const evidenceId = this.activeBoardNoteId;
+      const next = saveEvidenceNote(this.store.getState(), evidenceId, "");
+      this.store.replace(next, `remove-evidence-note-${evidenceId}`);
+      this.saves.save(this.store.getState(), `remove-evidence-note-${evidenceId}`);
+      this.activeBoardNoteId = null;
+      this.notice.show("Evidence note removed.");
+      this.renderBoard();
+      this.root.querySelector(`[data-edit-evidence-note="${evidenceId}"]`)?.focus();
+    });
+
+    this.root.querySelectorAll("[data-close-deduction]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const deductionId = this.activeDeductionId;
+        this.activeDeductionId = null;
+        this.renderBoard();
+        this.root.querySelector(`[data-view-deduction="${deductionId}"]`)?.focus();
       });
     });
 
@@ -3227,28 +3461,37 @@ export class GameApp {
           b,
           this.boardConnectionType,
         );
+        const feedback = evaluateConnectionFeedback(
+          next,
+          a,
+          b,
+          this.boardConnectionType,
+          DEDUCTIONS,
+        );
         const result = evaluateBoardDeductions(next, DEDUCTIONS);
         next = result.state;
+        next.board.lastFeedback = {
+          ...feedback,
+          a,
+          b,
+          type: this.boardConnectionType,
+        };
         this.store.replace(next, "connect-evidence");
         this.saves.save(this.store.getState(), "connect-evidence");
         const relationship =
           relationshipById.get(this.boardConnectionType) || activeRelationship;
         const connectionNotice = `${relationship.label} ${wasExisting ? "updated" : "connected"}: ${EVIDENCE[a]?.title || a} and ${EVIDENCE[b]?.title || b}.`;
-        const expectedTheoryLink = activeTheoryConnections.find(
-          (required) =>
-            (required.a === a && required.b === b) ||
-            (required.a === b && required.b === a),
-        );
-        const wrongYarnNotice =
-          expectedTheoryLink && expectedTheoryLink.type !== this.boardConnectionType
-            ? `This clue pair matters, but the active theory requires ${expectedTheoryLink.relationship.label} yarn.`
-            : null;
+        if (result.newlyCompleted.length) {
+          this.activeDeductionId = result.newlyCompleted[0].id;
+        }
         this.selectedBoardCards = [];
         this.notice.show(
           result.newlyCompleted.length
             ? result.newlyCompleted[0].notification ||
                 `Deduction: ${result.newlyCompleted[0].title}`
-            : wrongYarnNotice || connectionNotice,
+            : feedback.kind === "exploratory"
+              ? connectionNotice
+              : feedback.text,
         );
         this.renderBoard();
       },
@@ -3283,6 +3526,102 @@ export class GameApp {
       notebook: () => this.openNotebook("board"),
       save: () => this.openCaseFiles("board"),
     });
+  }
+
+  renderBoardNoteEditor(state) {
+    if (!this.activeBoardNoteId) return "";
+    const evidence = EVIDENCE[this.activeBoardNoteId];
+    if (!evidence || !state.evidence.collected.includes(evidence.id)) return "";
+    const note = state.board.notes?.[evidence.id] || "";
+    return `
+      <div class="board-modal-scrim">
+        <section class="board-note-editor" role="dialog" aria-modal="true" aria-labelledby="board-note-title">
+          <button class="dialogue-close" data-close-board-note aria-label="Close evidence note">Ã—</button>
+          <p class="kicker">Reporterâ€™s annotation</p>
+          <h1 id="board-note-title">${escapeHtml(evidence.title)}</h1>
+          <p>${escapeHtml(evidence.summary)}</p>
+          <form id="evidence-note-form">
+            <label for="evidence-note-text">What does this clue mean to you?</label>
+            <textarea id="evidence-note-text" name="note" maxlength="500" rows="7" placeholder="Record a suspicion, question, name, or connection to revisitâ€¦">${escapeHtml(note)}</textarea>
+            <div class="board-note-actions">
+              <button class="button button-primary" type="submit">Save note</button>
+              ${note ? '<button class="button button-ghost" type="button" data-remove-evidence-note>Remove note</button>' : ""}
+              <button class="button button-ghost" type="button" data-close-board-note>Cancel</button>
+            </div>
+          </form>
+        </section>
+      </div>
+    `;
+  }
+
+  renderDeductionViewer(state, relationshipById) {
+    if (!this.activeDeductionId) return "";
+    const deduction = DEDUCTIONS[this.activeDeductionId];
+    if (!deduction || !state.completedDeductions.includes(deduction.id)) return "";
+    const reportNumber = state.completedDeductions.indexOf(deduction.id) + 1;
+    const unlockedLocations = (deduction.effects || [])
+      .filter((effect) => effect.type === "unlockLocation")
+      .map((effect) => GAME_CONTENT.locations[effect.id]?.name || effect.id);
+    const rewardEvidence = (deduction.effects || [])
+      .filter((effect) => effect.type === "collectEvidence")
+      .map((effect) => EVIDENCE[effect.id]?.title || effect.id);
+    const annotatedCount = deduction.requiredEvidence.filter(
+      (id) => state.board.notes?.[id],
+    ).length;
+    return `
+      <div class="board-modal-scrim deduction-viewer-scrim">
+        <section class="deduction-viewer" role="dialog" aria-modal="true" aria-labelledby="deduction-viewer-title">
+          <button class="dialogue-close" data-close-deduction aria-label="Close deduction report">Ã—</button>
+          <header>
+            <p class="kicker">Verified deduction report Â· ${String(reportNumber).padStart(2, "0")}</p>
+            <h1 id="deduction-viewer-title" tabindex="-1">${escapeHtml(deduction.title)}</h1>
+            <p>${escapeHtml(deduction.journalText)}</p>
+          </header>
+          <div class="deduction-report-grid">
+            <section>
+              <p class="kicker">Corroborating file Â· ${deduction.requiredEvidence.length}</p>
+              <ol class="deduction-evidence-list">
+                ${deduction.requiredEvidence
+                  .map(
+                    (id) => `<li><span>Verified</span><strong>${escapeHtml(EVIDENCE[id]?.title || id)}</strong>${state.board.notes?.[id] ? `<small>My note: ${escapeHtml(state.board.notes[id])}</small>` : ""}</li>`,
+                  )
+                  .join("")}
+              </ol>
+            </section>
+            <section>
+              <p class="kicker">Reasoning chain Â· ${deduction.requiredConnections.length}</p>
+              <ol class="deduction-link-list">
+                ${deduction.requiredConnections
+                  .map(
+                    (connection) => `
+                      <li>
+                        <span>${escapeHtml(relationshipById.get(connection.type)?.label || connection.type)}</span>
+                        <strong>${escapeHtml(EVIDENCE[connection.a]?.title || connection.a)}</strong>
+                        <i aria-hidden="true">â†”</i>
+                        <strong>${escapeHtml(EVIDENCE[connection.b]?.title || connection.b)}</strong>
+                      </li>
+                    `,
+                  )
+                  .join("")}
+              </ol>
+              <aside class="deduction-impact">
+                <p class="kicker">Case impact</p>
+                <strong>${escapeHtml(
+                  deduction.notification ||
+                    "This conclusion is now part of the verified case chronology.",
+                )}</strong>
+                ${unlockedLocations.length ? `<p>Location opened: ${escapeHtml(unlockedLocations.join(", "))}</p>` : ""}
+                ${rewardEvidence.length ? `<p>New lead: ${escapeHtml(rewardEvidence.join(", "))}</p>` : ""}
+                ${annotatedCount ? `<p>${annotatedCount} personal evidence note${annotatedCount === 1 ? "" : "s"} preserved with this report.</p>` : ""}
+              </aside>
+            </section>
+          </div>
+          <footer>
+            <button class="button button-primary" data-close-deduction>Return to the case wall</button>
+          </footer>
+        </section>
+      </div>
+    `;
   }
 
   renderNotebook() {
@@ -4229,6 +4568,9 @@ export class GameApp {
     this.boardScroll = { left: 0, top: 0 };
     this.boardConnectionPanelOpen = false;
     this.boardWasDragged = false;
+    this.boardLens = "all";
+    this.activeBoardNoteId = null;
+    this.activeDeductionId = null;
     this.tutorialHotspotFound = false;
     this.tutorialBoardCards = [];
     this.tutorialBoardConnected = false;

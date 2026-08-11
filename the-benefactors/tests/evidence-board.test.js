@@ -6,9 +6,11 @@ import { createInitialState } from "../src/engine/game-state.js";
 import {
   arrangeEvidence,
   connectEvidence,
+  evaluateConnectionFeedback,
   evaluateBoardDeductions,
   moveEvidence,
   pinEvidence,
+  saveEvidenceNote,
   unpinEvidence,
 } from "../src/systems/evidence-board/evidence-board.js";
 
@@ -220,4 +222,125 @@ test("final distress-signal deduction waits for its prerequisite deduction", () 
     ),
     true,
   );
+});
+
+test("organizes evidence by type or current theory without changing pin history", () => {
+  const state = createInitialState();
+  state.evidence.collected.push(
+    "port_prosper_survival_status",
+    "invoice_northstar",
+    "crisis_investment_escrow",
+  );
+  state.evidence.pinned = [...state.evidence.collected];
+
+  const byType = arrangeEvidence(state, {
+    mode: "type",
+    evidence: EVIDENCE,
+  });
+  assert.deepEqual(byType.evidence.pinned, state.evidence.pinned);
+  assert.deepEqual(byType.board.cards.invoice_northstar, { x: 2, y: 7 });
+  assert.deepEqual(byType.board.cards.crisis_investment_escrow, { x: 16, y: 7 });
+  assert.deepEqual(byType.board.cards.port_prosper_survival_status, { x: 30, y: 7 });
+  assert.equal(byType.board.view.arrangement, "type");
+
+  const activeTheory = {
+    requiredEvidence: ["crisis_investment_escrow", "invoice_northstar"],
+  };
+  const byTheory = arrangeEvidence(state, {
+    mode: "theory",
+    evidence: EVIDENCE,
+    activeTheory,
+  });
+  assert.deepEqual(byTheory.board.cards.crisis_investment_escrow, { x: 2, y: 7 });
+  assert.deepEqual(byTheory.board.cards.invoice_northstar, { x: 16, y: 7 });
+});
+
+test("saves, trims, limits, and removes player-authored evidence notes", () => {
+  const state = createInitialState();
+  state.evidence.collected.push("invoice_northstar");
+  const noted = saveEvidenceNote(
+    state,
+    "invoice_northstar",
+    `  ${"paper trail ".repeat(80)}  `,
+  );
+
+  assert.equal(state.board.notes.invoice_northstar, undefined);
+  assert.equal(noted.board.notes.invoice_northstar.length, 500);
+  const cleared = saveEvidenceNote(noted, "invoice_northstar", "   ");
+  assert.equal(cleared.board.notes.invoice_northstar, undefined);
+  assert.throws(
+    () => saveEvidenceNote(state, "permit_summary", "Not collected"),
+    /Cannot annotate uncollected evidence/,
+  );
+});
+
+test("connection feedback distinguishes proof, wrong yarn, and exploration", () => {
+  let state = createInitialState();
+  state.evidence.collected.push("invoice_northstar", "permit_summary");
+  state = pinEvidence(state, "invoice_northstar");
+  state = pinEvidence(state, "permit_summary");
+
+  const wrong = evaluateConnectionFeedback(
+    state,
+    "invoice_northstar",
+    "permit_summary",
+    "suspicion",
+    DEDUCTIONS,
+  );
+  assert.equal(wrong.kind, "wrong-relationship");
+  assert.equal(wrong.expectedType, "financial");
+
+  state = connectEvidence(
+    state,
+    "invoice_northstar",
+    "permit_summary",
+    "financial",
+  );
+  const ready = evaluateConnectionFeedback(
+    state,
+    "invoice_northstar",
+    "permit_summary",
+    "financial",
+    DEDUCTIONS,
+  );
+  assert.equal(ready.kind, "theory-ready");
+
+  const exploratory = evaluateConnectionFeedback(
+    state,
+    "invoice_northstar",
+    "email_meridian",
+    "suspicion",
+    DEDUCTIONS,
+  );
+  assert.equal(exploratory.kind, "exploratory");
+});
+
+test("completed deductions mark their entire evidence file corroborated", () => {
+  let state = createInitialState();
+  state.evidence.collected.push("invoice_northstar", "permit_summary");
+  state = pinEvidence(state, "invoice_northstar");
+  state = pinEvidence(state, "permit_summary");
+  state = connectEvidence(
+    state,
+    "invoice_northstar",
+    "permit_summary",
+    "financial",
+  );
+
+  const result = evaluateBoardDeductions(state, DEDUCTIONS);
+  assert.deepEqual(
+    [...result.state.evidence.corroborated].sort(),
+    ["invoice_northstar", "permit_summary"],
+  );
+});
+
+test("every authored deduction has a reasoning chain and persistent case impact", () => {
+  assert.equal(Object.keys(DEDUCTIONS).length, 17);
+  for (const deduction of Object.values(DEDUCTIONS)) {
+    assert.ok(deduction.title, `${deduction.id} needs a conclusion`);
+    assert.ok(deduction.journalText, `${deduction.id} needs a written rationale`);
+    assert.ok(deduction.requiredEvidence.length >= 2, `${deduction.id} needs corroboration`);
+    assert.ok(deduction.requiredConnections.length >= 1, `${deduction.id} needs yarn logic`);
+    assert.ok(deduction.effects?.length >= 1, `${deduction.id} must change the case`);
+  }
 });

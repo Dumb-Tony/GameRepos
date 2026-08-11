@@ -24,9 +24,9 @@ function defaultPosition(index, totalCards = index + 1) {
   };
 }
 
-function reflowEvidence(next) {
-  const totalCards = next.evidence.pinned.length;
-  next.evidence.pinned.forEach((evidenceId, index) => {
+function reflowEvidence(next, orderedIds = next.evidence.pinned) {
+  const totalCards = orderedIds.length;
+  orderedIds.forEach((evidenceId, index) => {
     next.board.cards[evidenceId] = defaultPosition(index, totalCards);
   });
 }
@@ -89,9 +89,62 @@ export function moveEvidence(state, evidenceId, position) {
   return next;
 }
 
-export function arrangeEvidence(state) {
+export function arrangeEvidence(
+  state,
+  { mode = "chronology", evidence = {}, activeTheory = null } = {},
+) {
   const next = structuredClone(state);
-  reflowEvidence(next);
+  const categoryOrder = [
+    "document",
+    "financial",
+    "photograph",
+    "recording",
+    "location",
+    "event",
+  ];
+  const pinnedOrder = new Map(
+    next.evidence.pinned.map((evidenceId, index) => [evidenceId, index]),
+  );
+  const theoryOrder = new Map(
+    (activeTheory?.requiredEvidence || []).map((evidenceId, index) => [
+      evidenceId,
+      index,
+    ]),
+  );
+  const orderedIds = [...next.evidence.pinned].sort((a, b) => {
+    if (mode === "type") {
+      const categoryDifference =
+        categoryOrder.indexOf(evidence[a]?.category) -
+        categoryOrder.indexOf(evidence[b]?.category);
+      if (categoryDifference) return categoryDifference;
+      return (evidence[a]?.title || a).localeCompare(evidence[b]?.title || b);
+    }
+    if (mode === "theory") {
+      const aTheory = theoryOrder.has(a);
+      const bTheory = theoryOrder.has(b);
+      if (aTheory !== bTheory) return aTheory ? -1 : 1;
+      if (aTheory) return theoryOrder.get(a) - theoryOrder.get(b);
+      const aAnnotated = Boolean(next.board.notes?.[a]);
+      const bAnnotated = Boolean(next.board.notes?.[b]);
+      if (aAnnotated !== bAnnotated) return aAnnotated ? -1 : 1;
+    }
+    return pinnedOrder.get(a) - pinnedOrder.get(b);
+  });
+  reflowEvidence(next, orderedIds);
+  next.board.view ||= {};
+  next.board.view.arrangement = mode;
+  return next;
+}
+
+export function saveEvidenceNote(state, evidenceId, text) {
+  if (!state.evidence.collected.includes(evidenceId)) {
+    throw new Error(`Cannot annotate uncollected evidence: ${evidenceId}`);
+  }
+  const next = structuredClone(state);
+  next.board.notes ||= {};
+  const note = String(text || "").trim().slice(0, 500);
+  if (note) next.board.notes[evidenceId] = note;
+  else delete next.board.notes[evidenceId];
   return next;
 }
 
@@ -155,11 +208,85 @@ export function evaluateBoardDeductions(state, deductions) {
         { type: "completeDeduction", id: deduction.id },
         ...(deduction.effects || []),
       ]);
+      next.evidence.corroborated ||= [];
+      for (const evidenceId of deduction.requiredEvidence) {
+        if (!next.evidence.corroborated.includes(evidenceId)) {
+          next.evidence.corroborated.push(evidenceId);
+        }
+      }
       newlyCompleted.push(deduction);
     }
   }
 
   return { state: next, newlyCompleted };
+}
+
+export function evaluateConnectionFeedback(state, a, b, type, deductions) {
+  const candidates = Object.values(deductions).filter((deduction) => {
+    if (
+      !(deduction.requiredDeductions || []).every((id) =>
+        state.completedDeductions.includes(id),
+      )
+    ) {
+      return false;
+    }
+    return deduction.requiredConnections.some(
+      (connection) =>
+        (connection.a === a && connection.b === b) ||
+        (connection.a === b && connection.b === a),
+    );
+  });
+
+  if (!candidates.length) {
+    return {
+      kind: "exploratory",
+      title: "Exploratory connection",
+      text:
+        "The relationship is saved, but it does not currently support a testable theory. Add a note if this is a lead you want to revisit.",
+      deductionId: null,
+      expectedType: null,
+    };
+  }
+
+  const deduction = candidates[0];
+  const required = deduction.requiredConnections.find(
+    (connection) =>
+      (connection.a === a && connection.b === b) ||
+      (connection.a === b && connection.b === a),
+  );
+  if (required.type !== type) {
+    return {
+      kind: "wrong-relationship",
+      title: "Right clues, wrong claim",
+      text: `This pair matters to “${deduction.title},” but the evidence supports a ${required.type} relationship here.`,
+      deductionId: deduction.id,
+      expectedType: required.type,
+    };
+  }
+
+  const missingEvidence = deduction.requiredEvidence.filter(
+    (id) => !state.evidence.collected.includes(id),
+  );
+  const remainingLinks = deduction.requiredConnections.filter(
+    (connection) =>
+      !state.board.connections.some(
+        (candidate) =>
+          candidate.type === connection.type &&
+          ((candidate.a === connection.a && candidate.b === connection.b) ||
+            (candidate.a === connection.b && candidate.b === connection.a)),
+      ),
+  ).length;
+  return {
+    kind: missingEvidence.length || remainingLinks ? "supports-theory" : "theory-ready",
+    title: missingEvidence.length || remainingLinks ? "Theory strengthened" : "Theory proven",
+    text: missingEvidence.length
+      ? `This supports “${deduction.title}.” ${missingEvidence.length} required clue${missingEvidence.length === 1 ? " is" : "s are"} still missing.`
+      : remainingLinks
+        ? `This supports “${deduction.title}.” ${remainingLinks} required yarn link${remainingLinks === 1 ? " remains" : "s remain"}.`
+        : `Every required clue and relationship now supports “${deduction.title}.”`,
+    deductionId: deduction.id,
+    expectedType: required.type,
+  };
 }
 
 function clamp(value, min, max) {

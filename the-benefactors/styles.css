@@ -8034,3 +8034,379 @@ ol.recording-timeline,
     height: 66px;
   }
 }
+
+/* Evidence-board reasoning workspace */
+
+.board-arrangement-panel,
+.board-lens-panel {
+  margin: 0 0 12px;
+  border-top: 1px solid rgba(189, 156, 97, 0.24);
+  padding-top: 13px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.board-arrangement-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.board-arrangement-button {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+  border: 1px solid var(--line);
+  padding: 8px 6px;
+  color: var(--ink-dim);
+  text-align: left;
+  background: rgba(255, 255, 255, 0.025);
+  cursor: pointer;
+}
+
+.board-arrangement-button strong {
+  color: var(--ink);
+  font: 700 0.55rem/1.2 "IBM Plex Mono", "Courier New", monospace;
+}
+
+.board-arrangement-button span {
+  font-size: 0.46rem;
+  line-height: 1.25;
+}
+
+.board-arrangement-button.is-active {
+  border-color: var(--gold);
+  color: var(--paper);
+  background: rgba(190, 145, 66, 0.15);
+  box-shadow: inset 0 -2px var(--gold);
+}
+
+.connection-feedback {
+  margin-top: 10px;
+  border: 1px solid rgba(190, 157, 98, 0.24);
+  border-left: 4px solid #9b7847;
+  padding: 10px 12px;
+  background: rgba(190, 157, 98, 0.06);
+}
+
+.connection-feedback strong {
+  color: var(--paper);
+  font: 600 0.82rem Georgia, "Times New Roman", serif;
+}
+
+.connection-feedback p {
+  margin: 4px 0 0;
+  color: var(--ink-dim);
+  font-size: 0.58rem;
+  line-height: 1.45;
+}
+
+.connection-feedback.feedback-supports-theory,
+.connection-feedback.feedback-theory-ready {
+  border-left-color: #659377;
+  background: rgba(75, 132, 91, 0.09);
+}
+
+.connection-feedback.feedback-wrong-relationship {
+  border-left-color: #b9693d;
+  background: rgba(158, 83, 45, 0.1);
+}
+
+.evidence-note-button {
+  position: relative;
+  z-index: 2;
+  width: calc(100% - 18px);
+  margin: 0 9px 6px;
+  border: 1px dotted rgba(83, 54, 27, 0.48);
+  padding: 5px 7px;
+  color: #5f3b28;
+  background: rgba(233, 210, 140, 0.15);
+  font: 700 0.5rem "Courier New", monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.evidence-note-button:hover {
+  background: rgba(255, 255, 255, 0.38);
+}
+
+.evidence-category-recording .evidence-note-button {
+  border-color: rgba(241, 234, 215, 0.3);
+  color: #f1ead7;
+  background: rgba(7, 12, 12, 0.22);
+}
+
+.evidence-note-preview {
+  display: -webkit-box;
+  overflow: hidden;
+  margin-top: 4px;
+  border-left: 2px solid #9a4936;
+  padding: 4px 6px;
+  color: #62382a;
+  background: rgba(255, 237, 161, 0.28);
+  font: italic 0.52rem/1.3 Georgia, "Times New Roman", serif;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.evidence-status-stamp {
+  width: fit-content;
+  border: 1px solid rgba(52, 101, 70, 0.42);
+  padding: 2px 4px;
+  color: #315f42;
+  font: 800 0.41rem/1 "IBM Plex Mono", "Courier New", monospace;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.evidence-card.is-corroborated {
+  box-shadow:
+    0 15px 28px rgba(0, 0, 0, 0.58),
+    inset 0 -4px rgba(54, 104, 71, 0.26),
+    0 0 0 1px rgba(23, 19, 13, 0.38);
+}
+
+.board-density-overview .evidence-card {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.board-density-overview .evidence-note-button {
+  width: auto;
+  margin: 0 3px 5px;
+  padding: 4px 3px;
+  font-size: 0.42rem;
+}
+
+.board-density-overview .evidence-note-preview,
+.board-density-overview .evidence-status-stamp {
+  display: none;
+}
+
+.deduction-report-button {
+  display: grid;
+  width: 100%;
+  gap: 4px;
+  border: 1px solid rgba(190, 157, 98, 0.23);
+  padding: 10px;
+  color: var(--ink);
+  text-align: left;
+  background: rgba(190, 157, 98, 0.055);
+  cursor: pointer;
+}
+
+.deduction-report-button strong {
+  font: 600 0.82rem Georgia, "Times New Roman", serif;
+}
+
+.deduction-report-summary {
+  display: block;
+  margin: 5px 0 0;
+  color: var(--ink-dim);
+  font-size: 0.6rem;
+}
+
+.deduction-report-button > span,
+.deduction-report-button > em {
+  color: var(--gold);
+  font: 700 0.48rem/1.25 "IBM Plex Mono", "Courier New", monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.deduction-report-button > em {
+  margin-top: 3px;
+  font-style: normal;
+  opacity: 0.76;
+}
+
+.deduction-report-button:hover {
+  border-color: rgba(190, 157, 98, 0.55);
+  background: rgba(190, 157, 98, 0.11);
+}
+
+.board-modal-scrim {
+  position: fixed;
+  z-index: 140;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: 24px;
+  background: rgba(3, 5, 4, 0.84);
+  backdrop-filter: blur(8px);
+}
+
+.board-note-editor,
+.deduction-viewer {
+  position: relative;
+  width: min(680px, 100%);
+  border: 1px solid rgba(190, 157, 98, 0.46);
+  padding: clamp(28px, 5vw, 52px);
+  color: var(--ink);
+  background:
+    linear-gradient(145deg, rgba(190, 157, 98, 0.08), transparent 38%),
+    #101612;
+  box-shadow: 0 30px 110px rgba(0, 0, 0, 0.76);
+}
+
+.board-note-editor h1,
+.deduction-viewer h1 {
+  margin: 7px 0 13px;
+  color: var(--paper);
+  font: 500 clamp(2rem, 5vw, 3.6rem)/1.02 Georgia, "Times New Roman", serif;
+}
+
+.board-note-editor > p:not(.kicker),
+.deduction-viewer header > p:not(.kicker) {
+  color: var(--ink-dim);
+  line-height: 1.6;
+}
+
+.board-note-editor form {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.board-note-editor label {
+  color: var(--gold);
+  font: 700 0.62rem/1.3 "IBM Plex Mono", "Courier New", monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.board-note-editor textarea {
+  width: 100%;
+  resize: vertical;
+  border: 1px solid rgba(190, 157, 98, 0.32);
+  padding: 16px;
+  color: #29241d;
+  background:
+    repeating-linear-gradient(transparent 0 27px, rgba(55, 81, 91, 0.13) 28px),
+    #dfd2ad;
+  font: 400 1rem/1.75 Georgia, "Times New Roman", serif;
+}
+
+.board-note-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 7px;
+}
+
+.deduction-viewer {
+  width: min(1080px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+}
+
+.deduction-report-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 24px;
+  margin-top: 30px;
+}
+
+.deduction-evidence-list,
+.deduction-link-list {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.deduction-evidence-list li,
+.deduction-link-list li {
+  display: grid;
+  gap: 4px;
+  border-left: 3px solid #5e8d6e;
+  padding: 9px 11px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.deduction-evidence-list span,
+.deduction-link-list span {
+  color: #86b894;
+  font: 800 0.49rem/1.2 "IBM Plex Mono", "Courier New", monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.deduction-evidence-list strong,
+.deduction-link-list strong {
+  color: var(--paper);
+  font: 600 0.82rem/1.25 Georgia, "Times New Roman", serif;
+}
+
+.deduction-evidence-list small {
+  color: #d6bd84;
+  font: italic 0.68rem/1.35 Georgia, "Times New Roman", serif;
+}
+
+.deduction-link-list li {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  border-left-color: #9a4936;
+}
+
+.deduction-link-list li span {
+  grid-column: 1 / -1;
+  color: #d39a70;
+}
+
+.deduction-link-list i {
+  color: var(--gold);
+}
+
+.deduction-impact {
+  margin-top: 18px;
+  border: 1px solid rgba(190, 157, 98, 0.3);
+  border-left: 5px solid #a5422f;
+  padding: 16px 18px;
+  background: rgba(190, 157, 98, 0.07);
+}
+
+.deduction-impact > strong {
+  display: block;
+  color: var(--paper);
+  font: 600 1.05rem/1.4 Georgia, "Times New Roman", serif;
+}
+
+.deduction-impact p:not(.kicker) {
+  margin: 8px 0 0;
+  color: var(--ink-dim);
+  font-size: 0.72rem;
+}
+
+.deduction-viewer > footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 28px;
+}
+
+@media (max-width: 760px) {
+  .board-modal-scrim {
+    align-items: start;
+    padding: 12px;
+  }
+
+  .deduction-report-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .board-note-editor,
+  .deduction-viewer {
+    max-height: none;
+    padding: 48px 20px 24px;
+  }
+}
+
+[data-high-contrast="true"] .board-note-editor,
+[data-high-contrast="true"] .deduction-viewer,
+[data-high-contrast="true"] .connection-feedback {
+  border-color: #fff;
+  color: #fff;
+  background: #000;
+}

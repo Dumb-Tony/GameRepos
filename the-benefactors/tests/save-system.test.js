@@ -523,10 +523,33 @@ test("adds persistent exploration records to version 25 saves", () => {
   storage.setItem(SAVE_KEY, JSON.stringify(legacy));
 
   const migrated = saves.load();
-  assert.equal(migrated.version, 26);
+  assert.equal(migrated.version, 27);
   assert.deepEqual(migrated.exploration, {
     observedHotspots: [],
     completedInteractions: [],
     fieldNotes: [],
+  });
+});
+
+test("adds persistent board notes and organization preferences to version 26 saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const legacy = createInitialState();
+  legacy.version = 26;
+  legacy.board.layoutVersion = 3;
+  delete legacy.board.notes;
+  delete legacy.board.lastFeedback;
+  delete legacy.board.view;
+  storage.setItem(SAVE_KEY, JSON.stringify(legacy));
+
+  const migrated = saves.load();
+  assert.equal(migrated.version, 27);
+  assert.deepEqual(migrated.board.notes, {});
+  assert.equal(migrated.board.lastFeedback, null);
+  assert.deepEqual(migrated.board.view, {
+    density: "compact",
+    categoryFilter: "all",
+    lens: "all",
+    arrangement: "chronology",
   });
 });
