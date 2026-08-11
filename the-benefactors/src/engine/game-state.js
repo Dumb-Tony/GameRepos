@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 28;
+export const GAME_STATE_VERSION = 29;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -276,6 +276,8 @@ export function isGameState(value) {
       value.board &&
       value.board.notes &&
       value.board.view &&
+      value.characters &&
+      typeof value.characters === "object" &&
       value.exploration &&
       Array.isArray(value.exploration.observedHotspots) &&
       Array.isArray(value.exploration.completedInteractions) &&

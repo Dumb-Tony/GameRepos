@@ -1,5 +1,12 @@
 # The Benefactors
 
+**Milestone 27 — Persistent source relationships (complete)**
+
+- Added persistent trust, exposure, promises, and relationship histories for sixteen allies, sources, gatekeepers, and adversaries
+- Dialogue choices now preview their human consequences and evidence-backed conversations build credibility
+- Added a Source Network to the reporter's notebook with clear trust and safety states
+- Trusted contacts can provide real case assistance by revealing an investigation hint, while increasing their exposure
+
 **Milestone 26 — Cinematic chapter reels (complete)**
 
 - Added ten short, skippable illustrated interludes covering every chapter handoff from Northstar through the Archipelago Protocol

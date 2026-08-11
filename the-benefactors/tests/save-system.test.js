@@ -523,7 +523,7 @@ test("adds persistent exploration records to version 25 saves", () => {
   storage.setItem(SAVE_KEY, JSON.stringify(legacy));
 
   const migrated = saves.load();
-  assert.equal(migrated.version, 28);
+  assert.equal(migrated.version, 29);
   assert.deepEqual(migrated.exploration, {
     observedHotspots: [],
     completedInteractions: [],
@@ -543,7 +543,7 @@ test("adds persistent board notes and organization preferences to version 26 sav
   storage.setItem(SAVE_KEY, JSON.stringify(legacy));
 
   const migrated = saves.load();
-  assert.equal(migrated.version, 28);
+  assert.equal(migrated.version, 29);
   assert.deepEqual(migrated.board.notes, {});
   assert.equal(migrated.board.lastFeedback, null);
   assert.deepEqual(migrated.board.view, {
@@ -563,6 +563,27 @@ test("adds a persistent cinematic reel archive to version 27 saves", () => {
   storage.setItem(SAVE_KEY, JSON.stringify(legacy));
 
   const migrated = saves.load();
-  assert.equal(migrated.version, 28);
+  assert.equal(migrated.version, 29);
   assert.deepEqual(migrated.cinematics, { seen: [], activeId: null, step: 0 });
+});
+
+test("normalizes relationship records from version 28 saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const legacy = createInitialState();
+  legacy.version = 28;
+  legacy.characters.mina = { trust: 4, risk: 2, promises: ["Protect Mina", "Protect Mina"] };
+  storage.setItem(SAVE_KEY, JSON.stringify(legacy));
+
+  const migrated = saves.load();
+  assert.equal(migrated.version, 29);
+  assert.deepEqual(migrated.characters.mina, {
+    trust: 4,
+    risk: 2,
+    interactions: 0,
+    promises: ["Protect Mina"],
+    history: [],
+    events: [],
+    assistance: [],
+  });
 });

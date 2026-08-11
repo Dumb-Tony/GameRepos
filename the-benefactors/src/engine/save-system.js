@@ -3,7 +3,7 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js?v=cinematic-20260811a";
+} from "./game-state.js?v=relationships-20260811a";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
@@ -135,6 +135,20 @@ export class SaveSystem {
         },
       },
       flags: { ...fallback.flags, ...candidate.flags },
+      characters: Object.fromEntries(
+        Object.entries(candidate.characters || {}).map(([id, record]) => [
+          id,
+          {
+            trust: Number(record?.trust) || 0,
+            risk: Number(record?.risk) || 0,
+            interactions: Number(record?.interactions) || 0,
+            promises: [...new Set(record?.promises || [])],
+            history: [...new Set(record?.history || [])],
+            events: [...new Set(record?.events || [])],
+            assistance: [...new Set(record?.assistance || [])],
+          },
+        ]),
+      ),
       evidence: { ...fallback.evidence, ...candidate.evidence },
       board: {
         ...fallback.board,

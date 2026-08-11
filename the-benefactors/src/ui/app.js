@@ -10,6 +10,7 @@ import {
   CASEBOOK_STAGES,
 } from "../content/casebook-content.js?v=fieldwork-20260811a";
 import { CHAPTER_INTERLUDES } from "../content/cinematic-content.js?v=cinematic-20260811a";
+import { CHARACTER_PROFILES } from "../content/relationship-content.js?v=relationships-20260811a";
 import { getInteractiveLocation } from "../content/exploration-content.js?v=fieldwork-20260811a";
 import {
   CUTSCENE_BEATS,
@@ -24,7 +25,7 @@ import {
 } from "../content/prologue-content.js?v=field-tools-20260731a";
 import { evaluateCondition } from "../engine/conditions.js?v=fieldwork-20260811a";
 import { applyEffects } from "../engine/events.js?v=visual-polish-20260730a";
-import { createInitialState } from "../engine/game-state.js?v=cinematic-20260811a";
+import { createInitialState } from "../engine/game-state.js?v=relationships-20260811a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
@@ -86,6 +87,14 @@ import {
   getPendingInterlude,
   skipInterlude,
 } from "../systems/cinematics/chapter-interludes.js?v=cinematic-20260811a";
+import {
+  applyRelationshipMoment,
+  exposureStatus,
+  getRelationshipRecord,
+  previewRelationshipMoment,
+  relationshipStatus,
+  requestSourceHelp,
+} from "../systems/relationships/relationships.js?v=relationships-20260811a";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -3737,6 +3746,12 @@ export class GameApp {
     const completedCount = CASEBOOK_PROGRESS.filter((entry) =>
       evaluateCondition(entry.when, state),
     ).length;
+    const knownContacts = Object.values(CHARACTER_PROFILES)
+      .filter((profile) => Object.hasOwn(state.characters, profile.id))
+      .map((profile) => ({
+        profile,
+        record: getRelationshipRecord(state, profile),
+      }));
 
     this.root.innerHTML = `
       <main id="game-main" class="screen notebook-screen">
@@ -3833,6 +3848,32 @@ export class GameApp {
               }
             </div>
           </section>
+          <section class="source-network" aria-labelledby="source-network-title">
+            <header>
+              <div><p class="notebook-date">People remember</p><h2 id="source-network-title">Source network</h2></div>
+              <strong>${knownContacts.length}</strong>
+            </header>
+            <p class="source-network-intro">Evidence earns credibility. Protection earns trust. Asking a source to help may expose them further.</p>
+            <div class="source-network-grid">
+              ${knownContacts.length ? knownContacts.map(({ profile, record }) => {
+                const status = relationshipStatus(record);
+                const canHelp = record.trust >= 3 && !record.assistance.includes(stage.id) && revealed < 3;
+                return `
+                  <article class="source-card is-${status.className}">
+                    <div class="source-card-heading"><span>${escapeHtml(profile.name.split(" ").map((part) => part[0]).join(""))}</span><div><p>${escapeHtml(profile.role)}</p><h3>${escapeHtml(profile.name)}</h3></div></div>
+                    <div class="source-meters">
+                      <p><span>Relationship</span><strong>${escapeHtml(status.label)}</strong></p>
+                      <div class="trust-track" aria-label="Trust ${record.trust} out of 5"><i style="width:${Math.max(0, record.trust) * 20}%"></i></div>
+                      <p><span>Source safety</span><strong>${escapeHtml(exposureStatus(record))}</strong></p>
+                    </div>
+                    <p>${escapeHtml(profile.help)}</p>
+                    ${record.promises.length ? `<small>Promise: ${escapeHtml(record.promises.at(-1))}</small>` : ""}
+                    ${canHelp ? `<button class="button button-secondary" data-source-assist="${profile.id}">Ask for help <span>+ insight · + exposure</span></button>` : record.assistance.includes(stage.id) ? '<em>Already helped with this lead</em>' : ""}
+                  </article>
+                `;
+              }).join("") : '<p class="field-notes-empty">Sources and allies will appear here after you speak with them.</p>'}
+            </div>
+          </section>
         </section>
         ${this.renderToast()}
       </main>
@@ -3850,6 +3891,18 @@ export class GameApp {
         this.renderNotebook();
         this.root.querySelector("[data-action='reveal-case-hint']")?.focus();
       },
+    });
+    this.root.querySelectorAll("[data-source-assist]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const profile = Object.values(CHARACTER_PROFILES).find(
+          (entry) => entry.id === button.dataset.sourceAssist,
+        );
+        const next = requestSourceHelp(this.store.getState(), profile, stage.id);
+        this.store.replace(next, `source-help-${profile?.id || "unknown"}`);
+        this.saves.save(this.store.getState(), `source-help-${profile?.id || "unknown"}`);
+        this.notice.show(`${profile?.name || "A source"} offered a lead. Their exposure increased.`);
+        this.renderNotebook();
+      });
     });
   }
 
@@ -4301,6 +4354,9 @@ export class GameApp {
     const dialogue = DIALOGUES[dialogueId];
     const node = getDialogueNode(DIALOGUES, dialogueId, state.dialogue.activeNodeId);
     const choices = getAvailableChoices(node, state);
+    const profile = CHARACTER_PROFILES[dialogueId];
+    const relationship = profile ? getRelationshipRecord(state, profile) : null;
+    const status = relationship ? relationshipStatus(relationship) : null;
 
     return `
       <div class="dialogue-scrim">
@@ -4315,17 +4371,27 @@ export class GameApp {
             <span>${escapeHtml(dialogue.portrait)}</span>
           </div>
           <div class="dialogue-content">
+            ${profile ? `
+              <div class="dialogue-relationship is-${status.className}">
+                <span>${escapeHtml(profile.role)}</span>
+                <strong>${escapeHtml(status.label)}</strong>
+                <span>${escapeHtml(exposureStatus(relationship))}</span>
+              </div>
+            ` : ""}
             <p id="dialogue-speaker" class="speaker">${escapeHtml(node.speaker)}</p>
             <blockquote>${escapeHtml(node.text)}</blockquote>
             <div class="dialogue-choices">
               ${choices
                 .map(
-                  (choice) => `
+                  (choice) => {
+                    const impact = profile ? previewRelationshipMoment(profile, node.id, choice) : null;
+                    return `
                     <button class="dialogue-choice" data-dialogue-choice="${choice.id}">
                       ${choice.evidenceId ? `<span class="evidence-choice">Evidence</span>` : ""}
                       <span>${escapeHtml(choice.text)}</span>
+                      ${impact && (impact.trust || impact.risk || impact.promise) ? `<small class="relationship-preview">${impact.trust > 0 ? "Builds trust" : impact.trust < 0 ? "Strains trust" : ""}${impact.risk ? `${impact.trust ? " · " : ""}Raises exposure` : ""}${impact.promise ? `${impact.trust || impact.risk ? " · " : ""}Makes a promise` : ""}</small>` : ""}
                     </button>
-                  `,
+                  `},
                 )
                 .join("")}
             </div>
@@ -4367,6 +4433,13 @@ export class GameApp {
           );
           next = applyEffects(next, nextNode.onEnter || []);
         }
+
+        next = applyRelationshipMoment(
+          next,
+          CHARACTER_PROFILES[dialogueId],
+          node.id,
+          choice,
+        );
 
         this.store.replace(next, `dialogue-choice-${choice.id}`);
         this.saves.save(this.store.getState(), `dialogue-choice-${choice.id}`);
