@@ -7,6 +7,39 @@ function escapeHtml(value = "") {
     .replaceAll("'", "&#039;");
 }
 
+const EVIDENCE_PRESENTATIONS = {
+  document: { label: "Document", stamp: "DOC", motif: "document" },
+  photograph: { label: "Photographic record", stamp: "PHOTO", motif: "photograph" },
+  recording: { label: "Audio evidence", stamp: "REC", motif: "recording" },
+  financial: { label: "Account trace", stamp: "ACCT", motif: "financial" },
+  location: { label: "Site / route", stamp: "LOC", motif: "location" },
+  organization: { label: "Organization file", stamp: "ORG", motif: "organization" },
+  event: { label: "Event record", stamp: "EVENT", motif: "event" },
+  access: { label: "Access credential", stamp: "PASS", motif: "access" },
+  witness: { label: "Witness statement", stamp: "WIT", motif: "witness" },
+  lead: { label: "Active lead", stamp: "LEAD", motif: "lead" },
+};
+
+export function getEvidencePresentation(evidence) {
+  const category = evidence?.category || "document";
+  const presentation = EVIDENCE_PRESENTATIONS[category] || EVIDENCE_PRESENTATIONS.document;
+  return {
+    ...presentation,
+    fileNumber: String(evidence?.id || "unfiled").replaceAll("_", "-").toUpperCase(),
+  };
+}
+
+function renderFileRail(evidence) {
+  const presentation = getEvidencePresentation(evidence);
+  return `
+    <header class="evidence-file-rail">
+      <span>${escapeHtml(presentation.label)}</span>
+      <strong>${escapeHtml(presentation.fileNumber)}</strong>
+      <i aria-hidden="true">${escapeHtml(presentation.stamp)}</i>
+    </header>
+  `;
+}
+
 function renderEmail(artifact) {
   return `
     <article class="artifact artifact-email">
@@ -103,11 +136,20 @@ function renderPermit(artifact) {
   `;
 }
 
-function renderMemo(artifact) {
+function renderMemo(artifact, evidence) {
+  const presentation = getEvidencePresentation(evidence);
   return `
-    <article class="artifact artifact-paper artifact-memo">
-      <h2>${escapeHtml(artifact.heading)}</h2>
-      ${artifact.body.map((line) => `<p>${escapeHtml(line)}</p>`).join("")}
+    <article class="artifact artifact-paper artifact-memo artifact-memo--${presentation.motif}">
+      <header class="memo-heading">
+        <div>
+          <span>${escapeHtml(presentation.label)}</span>
+          <h2>${escapeHtml(artifact.heading)}</h2>
+        </div>
+        <strong>${escapeHtml(presentation.stamp)}</strong>
+      </header>
+      <div class="memo-body">
+        ${artifact.body.map((line, index) => `<p><b>${String(index + 1).padStart(2, "0")}</b>${escapeHtml(line)}</p>`).join("")}
+      </div>
       <p class="handwritten">${escapeHtml(artifact.handwritten)}</p>
     </article>
   `;
@@ -206,5 +248,12 @@ export function renderEvidenceArtifact(evidence) {
     recording: renderRecording,
   };
 
-  return (renderers[artifact.type] || renderers.memo)(artifact);
+  const presentation = getEvidencePresentation(evidence);
+  const artifactHtml = (renderers[artifact.type] || renderers.memo)(artifact, evidence);
+  return `
+    <div class="evidence-artifact evidence-presentation-${presentation.motif}">
+      ${renderFileRail(evidence)}
+      ${artifactHtml}
+    </div>
+  `;
 }

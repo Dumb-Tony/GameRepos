@@ -1,4 +1,5 @@
-import { evaluateCondition } from "../../engine/conditions.js";
+import { evaluateCondition } from "../../engine/conditions.js?v=fieldwork-20260811a";
+import { getInteractiveLocation } from "../../content/exploration-content.js?v=fieldwork-20260811a";
 
 const IDLE_HINTS = Object.freeze({
   press_credentials: "Useful when an official needs a reason to answer questions.",
@@ -26,7 +27,7 @@ export function getInventoryToolContext(state, itemId, locations) {
     };
   }
 
-  const location = locations[state.progress.currentLocation];
+  const location = getInteractiveLocation(locations[state.progress.currentLocation]);
   const matching = (location?.hotspots || []).filter(
     (hotspot) =>
       hotspot.toolId === itemId &&

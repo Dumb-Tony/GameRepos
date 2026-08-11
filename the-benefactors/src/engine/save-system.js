@@ -3,7 +3,7 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js?v=port-prosper-choice-20260806a";
+} from "./game-state.js?v=fieldwork-20260811a";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
@@ -138,6 +138,17 @@ export class SaveSystem {
       evidence: { ...fallback.evidence, ...candidate.evidence },
       board: { ...fallback.board, ...candidate.board },
       dialogue: { ...fallback.dialogue, ...candidate.dialogue },
+      exploration: {
+        ...fallback.exploration,
+        ...candidate.exploration,
+        observedHotspots: [
+          ...new Set(candidate.exploration?.observedHotspots || []),
+        ],
+        completedInteractions: [
+          ...new Set(candidate.exploration?.completedInteractions || []),
+        ],
+        fieldNotes: [...new Set(candidate.exploration?.fieldNotes || [])],
+      },
       journal: {
         ...fallback.journal,
         ...candidate.journal,
@@ -307,6 +318,15 @@ export class SaveSystem {
         };
       });
       migrated.board.layoutVersion = 3;
+    }
+
+    if (
+      legacyVersion < 25 &&
+      migrated.flags.provedAsterHouseTriggerCell &&
+      !migrated.progress.unlockedLocations.includes("port_prosper_signal_exchange")
+    ) {
+      migrated.progress.unlockedLocations.push("port_prosper_signal_exchange");
+      migrated.progress.chapter = Math.max(migrated.progress.chapter, 10);
     }
 
     return migrated;

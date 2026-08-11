@@ -5,7 +5,10 @@ import { DEDUCTIONS } from "../src/content/game-content.js";
 import { applyEffects } from "../src/engine/events.js";
 import { createInitialState } from "../src/engine/game-state.js";
 import { SaveSystem } from "../src/engine/save-system.js";
-import { applyPortProsperResponse } from "../src/systems/decisions/port-prosper-response.js";
+import {
+  advancePortProsperAftermath,
+  applyPortProsperResponse,
+} from "../src/systems/decisions/port-prosper-response.js";
 import {
   connectEvidence,
   evaluateBoardDeductions,
@@ -28,12 +31,14 @@ class MemoryStorage {
   }
 }
 
-test("the complete authored investigation can progress from the leak through the First Circle", () => {
+test("the complete authored investigation can progress from the leak through the Sanctuary Chain", () => {
   const deductionOrder = Object.keys(DEDUCTIONS);
   const saves = new SaveSystem(new MemoryStorage());
   let state = createInitialState({ firstName: "Alex" });
 
-  for (const deductionId of deductionOrder) {
+  for (const deductionId of deductionOrder.filter(
+    (id) => !["aster_house_trigger_cell", "sanctuary_chain_protocol"].includes(id),
+  )) {
     const deduction = DEDUCTIONS[deductionId];
 
     state = applyEffects(
@@ -71,6 +76,46 @@ test("the complete authored investigation can progress from the leak through the
   }
 
   state = applyPortProsperResponse(state, "warn");
+  for (let step = 0; step < 3; step += 1) {
+    state = advancePortProsperAftermath(state);
+  }
+
+  const asterDeduction = DEDUCTIONS.aster_house_trigger_cell;
+  state = applyEffects(
+    state,
+    asterDeduction.requiredEvidence.map((id) => ({ type: "collectEvidence", id })),
+  );
+  for (const evidenceId of asterDeduction.requiredEvidence) {
+    state = pinEvidence(state, evidenceId);
+  }
+  for (const connection of asterDeduction.requiredConnections) {
+    state = connectEvidence(
+      state,
+      connection.a,
+      connection.b,
+      connection.type,
+    );
+  }
+  state = evaluateBoardDeductions(state, DEDUCTIONS).state;
+
+  const sanctuaryDeduction = DEDUCTIONS.sanctuary_chain_protocol;
+  state = applyEffects(
+    state,
+    sanctuaryDeduction.requiredEvidence.map((id) => ({ type: "collectEvidence", id })),
+  );
+  for (const evidenceId of sanctuaryDeduction.requiredEvidence) {
+    state = pinEvidence(state, evidenceId);
+  }
+  for (const connection of sanctuaryDeduction.requiredConnections) {
+    state = connectEvidence(
+      state,
+      connection.a,
+      connection.b,
+      connection.type,
+    );
+  }
+  state = evaluateBoardDeductions(state, DEDUCTIONS).state;
+
   saves.save(state, "playthrough-port-prosper-response");
   state = saves.load();
 
@@ -81,9 +126,13 @@ test("the complete authored investigation can progress from the leak through the
   assert.equal(state.flags.provedOrpheusCommandCenter, true);
   assert.equal(state.flags.provedBenefactorsSelectCrises, true);
   assert.equal(state.flags.warnedPortProsperQuietly, true);
+  assert.equal(state.flags.identifiedAsterHouse, true);
+  assert.equal(state.flags.provedAsterHouseTriggerCell, true);
+  assert.equal(state.flags.provedSanctuaryChain, true);
   assert.equal(
     state.evidence.collected.includes("port_prosper_warning_receipt"),
     true,
   );
+  assert.equal(state.evidence.collected.includes("vesper_key_dead_drop"), true);
   assert.equal(state.board.connections.length >= 35, true);
 });

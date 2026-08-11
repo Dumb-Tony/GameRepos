@@ -4,11 +4,12 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=port-prosper-choice-20260806a";
+} from "../content/game-content.js?v=fieldwork-20260811a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=port-prosper-choice-20260806a";
+} from "../content/casebook-content.js?v=fieldwork-20260811a";
+import { getInteractiveLocation } from "../content/exploration-content.js?v=fieldwork-20260811a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
@@ -20,20 +21,31 @@ import {
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
 } from "../content/prologue-content.js?v=field-tools-20260731a";
-import { evaluateCondition } from "../engine/conditions.js?v=visual-polish-20260730a";
+import { evaluateCondition } from "../engine/conditions.js?v=fieldwork-20260811a";
 import { applyEffects } from "../engine/events.js?v=visual-polish-20260730a";
-import { createInitialState } from "../engine/game-state.js?v=port-prosper-choice-20260806a";
+import { createInitialState } from "../engine/game-state.js?v=fieldwork-20260811a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
 } from "../engine/player-language.js?v=visual-polish-20260730a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=port-prosper-choice-20260806a";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=field-tools-20260731a";
-import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=field-tools-20260731a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=fieldwork-20260811a";
+import {
+  getVisibleHotspots,
+  renderExplorationScene,
+} from "../systems/exploration/scene-renderer.js?v=fieldwork-20260811a";
+import {
+  completeInteraction,
+  getFieldNoteEntries,
+  getHotspotObservationText,
+  hasObservedHotspot,
+  inspectHotspot,
+} from "../systems/exploration/exploration-progress.js?v=fieldwork-20260811a";
+import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=fieldwork-20260811a";
 import {
   PORT_PROSPER_RESPONSES,
+  advancePortProsperAftermath,
   applyPortProsperResponse,
-} from "../systems/decisions/port-prosper-response.js?v=port-prosper-choice-20260806a";
+} from "../systems/decisions/port-prosper-response.js?v=archipelago-20260811a";
 import {
   advanceDialogue,
   closeDialogue,
@@ -50,7 +62,10 @@ import {
   removeConnection,
   unpinEvidence,
 } from "../systems/evidence-board/evidence-board.js?v=visual-polish-20260730a";
-import { renderEvidenceArtifact } from "../systems/evidence/evidence-renderer.js?v=first-circle-20260806a";
+import {
+  getEvidencePresentation,
+  renderEvidenceArtifact,
+} from "../systems/evidence/evidence-renderer.js?v=archipelago-20260811a";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
@@ -775,7 +790,55 @@ export class GameApp {
   renderHome() {
     const state = this.store.getState();
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
-    const caseUpdate = state.flags.warnedPortProsperQuietly
+    const caseUpdate = state.flags.provedSanctuaryChain
+      ? {
+          title: "Seven islands",
+          text:
+            "Port Prosper survived, but Meridian traced the breach, compromised the Ledger's source channel, and moved Shepherd's forecast archive from Orpheus into a seven-island sanctuary network. Vesper Key is next.",
+        }
+      : state.flags.foundArchipelagoTransferOrder
+        ? {
+            title: "The Archipelago Protocol",
+            text:
+              "The survival status, ghost relay, retaliation call, cloned newsroom cipher, island chart, and transfer order can prove what Meridian did after Aster House failed.",
+          }
+        : (state.locationVisits.port_prosper_signal_exchange || 0) > 0
+          ? {
+              title: "Six minutes of darkness",
+              text:
+                "Port Prosper's major systems held. Document the survival status, trace Relay 7, record the secure call, inspect the scorched cabinet, and recover the chart and transfer order.",
+            }
+          : state.progress.unlockedLocations.includes("port_prosper_signal_exchange")
+            ? {
+                title: "A city gets to wake up",
+                text:
+                  "The Aster countermeasure packet reached Port Prosper before 02:10. The Signal Exchange has preserved the one relay that still executed after the attack was stopped.",
+              }
+            : state.flags.provedAsterHouseTriggerCell
+      ? {
+          title: "Before 02:10",
+          text:
+            "Aster House's operators, credentials, timetable, and accounts are exposed. The countermeasure packet can stop Port Prosper from becoming the Benefactors' next case study.",
+        }
+      : state.flags.foundTriggerTeamDisbursementLedger
+        ? {
+            title: "The local hand",
+            text:
+              "Aster House's operations board, call sheet, purge order, and disbursement ledger can prove who will trigger the Port Prosper attack and who already paid them.",
+          }
+        : (state.locationVisits.aster_house || 0) > 0
+          ? {
+              title: "Aster House after midnight",
+              text:
+                "Document the illuminated operations board, copy the switchboard call sheet, search the open archive cabinet, and recover the disbursement ledger before the trigger team returns.",
+            }
+          : state.flags.identifiedAsterHouse
+            ? {
+                title: "The hand on the switch",
+                text:
+                  "The Port Prosper operation routes through Aster House, a Greyhaven crisis consultancy whose townhouse command cell is still active on Aldermere Row.",
+              }
+            : state.flags.warnedPortProsperQuietly
       ? {
           title: "The silent warning",
           text:
@@ -1188,7 +1251,10 @@ export class GameApp {
               state.flags.provedBenefactorsSelectCrises &&
               !state.flags.portProsperDecisionMade
                 ? '<button class="button button-primary" data-action="port-prosper-decision">Choose how to respond</button>'
-                : ""
+                : state.flags.portProsperDecisionMade &&
+                    !state.flags.portProsperFalloutSeen
+                  ? '<button class="button button-primary" data-action="port-prosper-decision">Follow the consequences</button>'
+                  : ""
             }
           </aside>
         </section>
@@ -1269,6 +1335,8 @@ export class GameApp {
     const selected = state.progress.portProsperResponse
       ? PORT_PROSPER_RESPONSES[state.progress.portProsperResponse]
       : null;
+    const aftermathStep = Number(state.progress.portProsperFalloutStep) || 0;
+    const aftermathBeat = selected?.aftermath[aftermathStep] || null;
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
 
     this.root.innerHTML = `
@@ -1293,7 +1361,25 @@ export class GameApp {
                   <p class="speaker">Decision recorded · ${playerName}</p>
                   <h2>${escapeHtml(selected.title)}</h2>
                   <p>${escapeHtml(selected.consequence)}</p>
-                  <button class="button button-primary" data-action="decision-home">Return to the evidence board</button>
+                  ${
+                    aftermathBeat
+                      ? `
+                        <div class="decision-aftermath">
+                          <p class="kicker">${escapeHtml(aftermathBeat.label)}</p>
+                          <h3>${escapeHtml(aftermathBeat.title)}</h3>
+                          <p>${escapeHtml(aftermathBeat.text)}</p>
+                        </div>
+                        <button class="button button-primary" data-action="decision-aftermath">Continue</button>
+                      `
+                      : `
+                        <div class="decision-aftermath is-complete">
+                          <p class="kicker">New lead Â· Greyhaven</p>
+                          <h3>Aster House</h3>
+                          <p>The local trigger cell is exposed before Port Prosper's clock runs out. Its townhouse command post is now marked on the city map.</p>
+                        </div>
+                        <button class="button button-primary" data-action="decision-home">Return to the evidence board</button>
+                      `
+                  }
                 </article>
               `
               : `
@@ -1332,6 +1418,12 @@ export class GameApp {
 
     this.bindActions({
       "decision-back": () => this.router.navigate("home"),
+      "decision-aftermath": () => {
+        const next = advancePortProsperAftermath(this.store.getState());
+        this.store.replace(next, "port-prosper-aftermath");
+        this.saves.save(this.store.getState(), "port-prosper-aftermath");
+        this.renderPortProsperDecision();
+      },
       "decision-home": () => {
         this.store.update((draft) => {
           draft.progress.currentScreen = "board";
@@ -1345,10 +1437,18 @@ export class GameApp {
 
   renderLocation() {
     const state = this.store.getState();
-    const location =
+    const location = getInteractiveLocation(
       GAME_CONTENT.locations[state.progress.currentLocation] ||
-      GAME_CONTENT.locations.ledger_newsroom;
+        GAME_CONTENT.locations.ledger_newsroom,
+    );
     const note = this.activeLocationNote;
+    const visibleHotspots = getVisibleHotspots(location, state);
+    const observedCount = visibleHotspots.filter((hotspot) =>
+      hasObservedHotspot(state, location.id, hotspot.id),
+    ).length;
+    const locationFieldNotes = (state.exploration?.fieldNotes || []).filter((key) =>
+      key.startsWith(`${location.id}:`),
+    ).length;
     const actionAvailable =
       note &&
       evaluateCondition(note.actionWhen, state) &&
@@ -1363,6 +1463,11 @@ export class GameApp {
             <p class="kicker">${escapeHtml(location.eyebrow)}</p>
             <h1 tabindex="-1">${escapeHtml(location.name)}</h1>
             <p>${escapeHtml(location.description)}</p>
+            <div class="scene-progress" aria-label="Scene investigation progress">
+              <span><strong>${observedCount}</strong> / ${visibleHotspots.length} details examined</span>
+              <span><strong>${locationFieldNotes}</strong> field notes</span>
+              <span>Visit <strong>${state.locationVisits[location.id] || 1}</strong></span>
+            </div>
             ${
               note
                 ? `
@@ -1372,6 +1477,11 @@ export class GameApp {
                     <p>${escapeHtml(
                       note.resultShown ? note.resultText || note.text : note.text,
                     )}</p>
+                    ${
+                      note.fieldNote
+                        ? `<p class="field-note-chip"><span>Field note</span>${escapeHtml(note.fieldNote)}</p>`
+                        : ""
+                    }
                     ${
                       note.toolId && INVENTORY_ITEMS[note.toolId]
                         ? `<p class="tool-use-chip"><span>${escapeHtml(INVENTORY_ITEMS[note.toolId].icon)}</span> Uses ${escapeHtml(INVENTORY_ITEMS[note.toolId].name)}</p>`
@@ -1412,9 +1522,25 @@ export class GameApp {
 
     this.root.querySelectorAll("[data-scene-hotspot]").forEach((button) => {
       button.addEventListener("click", () => {
-        this.activeLocationNote = location.hotspots.find(
+        const hotspot = location.hotspots.find(
           (hotspot) => hotspot.id === button.dataset.sceneHotspot,
         );
+        if (!hotspot) return;
+        const wasObserved = hasObservedHotspot(
+          this.store.getState(),
+          location.id,
+          hotspot.id,
+        );
+        this.activeLocationNote = {
+          ...hotspot,
+          text: getHotspotObservationText(this.store.getState(), location, hotspot),
+          wasObserved,
+        };
+        if (!wasObserved || (hotspot.fieldNote && !this.store.getState().exploration.fieldNotes.includes(`${location.id}:${hotspot.id}`))) {
+          const next = inspectHotspot(this.store.getState(), location, hotspot);
+          this.store.replace(next, `inspect-${hotspot.id}`);
+          this.saves.save(this.store.getState(), `inspect-${hotspot.id}`);
+        }
         if (this.activeLocationNote?.toolId !== this.activeInventoryToolId) {
           this.activeInventoryToolId = null;
         }
@@ -1449,11 +1575,20 @@ export class GameApp {
           this.renderLocation();
           return;
         }
-        const next = applyEffects(this.store.getState(), note.effects);
+        const evidenceBefore = new Set(this.store.getState().evidence.collected);
+        let next = applyEffects(this.store.getState(), note.effects);
+        next = completeInteraction(next, location.id, note.id);
+        const addedEvidence = next.evidence.collected.some(
+          (id) => !evidenceBefore.has(id),
+        );
         this.store.replace(next, `hotspot-${note.id}`);
         this.saves.save(this.store.getState(), `hotspot-${note.id}`);
         this.activeLocationNote = { ...note, effects: null, resultShown: true };
-        this.notice.show("New evidence added to the case file.");
+        this.notice.show(
+          addedEvidence
+            ? "New evidence added to the case file."
+            : "Field interaction recorded in your notebook.",
+        );
         this.renderLocation();
       },
       map: () => this.router.navigate("map"),
@@ -2381,7 +2516,43 @@ export class GameApp {
     );
     const yarnAnchorX = boardDensity.cardWidth / 2;
     const yarnAnchorY = (14 / corkboardHeight) * 100;
-    const boardCase = state.flags.portProsperDecisionMade
+    const boardCase = state.flags.provedSanctuaryChain
+      ? {
+          number: "15",
+          title: "SANCTUARY CHAIN / VESPER KEY",
+          phase: "Seven island nodes exposed / Intercept the 05:30 packet",
+        }
+      : state.flags.foundArchipelagoTransferOrder
+        ? {
+            number: "14",
+            title: "ARCHIPELAGO PROTOCOL / RETALIATION",
+            phase: "Connect the ghost relay, newsroom breach, and island transfer",
+          }
+        : (state.locationVisits.port_prosper_signal_exchange || 0) > 0
+          ? {
+              number: "14",
+              title: "PORT PROSPER / SIX-MINUTE BREACH",
+              phase: "Trace what escaped after the city survived",
+            }
+          : state.progress.unlockedLocations.includes("port_prosper_signal_exchange")
+            ? {
+                number: "14",
+                title: "PORT PROSPER / AFTERMATH",
+                phase: "Countermeasure delivered / Inspect Relay 7",
+              }
+            : state.flags.provedAsterHouseTriggerCell
+      ? {
+          number: "13",
+          title: "PORT PROSPER / COUNTERMEASURE",
+          phase: "Trigger cell exposed Â· Stop the 02:10 attack",
+        }
+      : state.flags.identifiedAsterHouse
+        ? {
+            number: "12",
+            title: "ASTER HOUSE / TRIGGER CELL",
+            phase: "Connect the local operators to the First Circle",
+          }
+        : state.flags.portProsperDecisionMade
       ? {
           number: "11",
           title: "PORT PROSPER / RESPONSE",
@@ -2474,14 +2645,6 @@ export class GameApp {
             title: "VALE / ACCESSIBILITY FUND",
             phase: "Follow the Northstar paper trail",
           };
-    const evidenceTypeStamps = {
-      document: "DOC",
-      photograph: "PHOTO",
-      recording: "REC",
-      financial: "$",
-      location: "MAP",
-      event: "DATE",
-    };
     const selectedConnection =
       this.selectedBoardCards.length === 2
         ? state.board.connections.find(
@@ -2642,7 +2805,7 @@ export class GameApp {
                           : "Two clues selected";
                       return `
                         <article
-                          class="evidence-card evidence-card--${item.artifact?.type || "document"} evidence-category-${item.category} ${selected ? "is-selected" : ""} ${filterClass}"
+                          class="evidence-card evidence-card--${item.artifact?.type || "document"} evidence-category-${item.category} evidence-presentation-${getEvidencePresentation(item).motif} ${selected ? "is-selected" : ""} ${filterClass}"
                           style="left:${position.x}%;top:${position.y}%"
                           data-evidence-card-shell="${item.id}"
                           data-category="${item.category}"
@@ -2662,9 +2825,9 @@ export class GameApp {
                               class="evidence-card-thumbnail"
                               aria-hidden="true"
                               ${item.artifact?.image ? `style="background-image:linear-gradient(rgba(12,18,16,.08),rgba(12,18,16,.2)),url('${item.artifact.image}')"` : ""}
-                            ></span>
-                            <span class="evidence-type-stamp" aria-hidden="true">${escapeHtml(evidenceTypeStamps[item.category] || "CLUE")}</span>
-                            <span class="evidence-category">${escapeHtml(item.category)}</span>
+                            ><i></i><i></i><i></i></span>
+                            <span class="evidence-type-stamp" aria-hidden="true">${escapeHtml(getEvidencePresentation(item).stamp)}</span>
+                            <span class="evidence-category">${escapeHtml(getEvidencePresentation(item).label)}</span>
                             <strong>${escapeHtml(item.title)}</strong>
                             <small>${escapeHtml(item.summary)}</small>
                             <span class="evidence-select-prompt">${escapeHtml(selectionPrompt)}</span>
@@ -3124,6 +3287,13 @@ export class GameApp {
 
   renderNotebook() {
     const state = this.store.getState();
+    const interactiveLocations = Object.fromEntries(
+      Object.entries(GAME_CONTENT.locations).map(([id, location]) => [
+        id,
+        getInteractiveLocation(location),
+      ]),
+    );
+    const fieldNotes = getFieldNoteEntries(state, interactiveLocations);
     const stage =
       CASEBOOK_STAGES.find((entry) => evaluateCondition(entry.activeWhen, state)) ||
       CASEBOOK_STAGES.at(-1);
@@ -3202,6 +3372,34 @@ export class GameApp {
               </footer>
             </article>
           </div>
+          <section class="field-notes-page" aria-labelledby="field-notes-title">
+            <header>
+              <div>
+                <p class="notebook-date">Optional observations</p>
+                <h2 id="field-notes-title">Field notes</h2>
+              </div>
+              <strong>${fieldNotes.length}</strong>
+            </header>
+            <div class="field-note-list">
+              ${
+                fieldNotes.length
+                  ? fieldNotes
+                      .slice()
+                      .reverse()
+                      .map(
+                        (entry) => `
+                          <article>
+                            <span>${escapeHtml(entry.locationName)}</span>
+                            <h3>${escapeHtml(entry.title)}</h3>
+                            <p>${escapeHtml(entry.text)}</p>
+                          </article>
+                        `,
+                      )
+                      .join("")
+                  : `<p class="field-notes-empty">Examine incidental details in locations to preserve observations here. Field notes add context without crowding the evidence board.</p>`
+              }
+            </div>
+          </section>
         </section>
         ${this.renderToast()}
       </main>
@@ -3502,6 +3700,20 @@ export class GameApp {
   }
 
   chapterLabel(state = this.store.getState()) {
+    if (
+      state.flags.provedAsterHouseTriggerCell ||
+      state.progress.unlockedLocations.includes("port_prosper_signal_exchange") ||
+      (state.locationVisits.port_prosper_signal_exchange || 0) > 0
+    ) {
+      return "Chapter 10 / The Archipelago Protocol";
+    }
+    if (
+      state.flags.identifiedAsterHouse ||
+      state.progress.unlockedLocations.includes("aster_house") ||
+      (state.locationVisits.aster_house || 0) > 0
+    ) {
+      return "Chapter 9 Â· The Trigger Cell";
+    }
     if (state.flags.portProsperDecisionMade) {
       return "Chapter 8 · Consequences";
     }
@@ -3788,13 +4000,14 @@ export class GameApp {
   renderEvidenceViewer() {
     const evidence = EVIDENCE[this.activeEvidenceId];
     if (!evidence) return "";
+    const presentation = getEvidencePresentation(evidence);
 
     return `
       <div class="evidence-viewer-scrim">
         <section class="evidence-viewer" role="dialog" aria-modal="true" aria-labelledby="evidence-viewer-title">
           <header class="evidence-viewer-header">
             <div>
-              <p class="kicker">${escapeHtml(evidence.category)}</p>
+              <p class="kicker">${escapeHtml(presentation.label)} <span aria-hidden="true">/</span> ${escapeHtml(presentation.fileNumber)}</p>
               <h1 id="evidence-viewer-title">${escapeHtml(evidence.title)}</h1>
             </div>
             <button data-close-evidence aria-label="Close evidence viewer">×</button>

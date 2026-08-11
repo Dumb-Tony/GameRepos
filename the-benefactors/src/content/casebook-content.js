@@ -750,7 +750,12 @@ export const CASEBOOK_STAGES = Object.freeze([
     id: "quiet_warning_consequence",
     title: "The silent warning",
     objective: "Help Port Prosper harden its systems while the First Circle still believes its plan is secret.",
-    activeWhen: { type: "flag", key: "warnedPortProsperQuietly" },
+    activeWhen: {
+      all: [
+        { type: "flag", key: "warnedPortProsperQuietly" },
+        { type: "flag", key: "identifiedAsterHouse", equals: false },
+      ],
+    },
     hints: [
       "Review the encrypted Port Prosper warning receipt.",
       "Utility crews are isolating the exact systems named in the conversion portfolio.",
@@ -761,7 +766,12 @@ export const CASEBOOK_STAGES = Object.freeze([
     id: "publication_consequence",
     title: "The story detonates",
     objective: "Track the exposed principals as Meridian destroys records and launches a global denial campaign.",
-    activeWhen: { type: "flag", key: "publishedFirstCircleEvidence" },
+    activeWhen: {
+      all: [
+        { type: "flag", key: "publishedFirstCircleEvidence" },
+        { type: "flag", key: "identifiedAsterHouse", equals: false },
+      ],
+    },
     hints: [
       "Review the First Circle publication record.",
       "The evidence is mirrored worldwide, but the network is evacuating and purging files.",
@@ -772,11 +782,107 @@ export const CASEBOOK_STAGES = Object.freeze([
     id: "deep_cover_consequence",
     title: "Upstairs among the owners",
     objective: "Use the residential service pass to recover the First Circle's personal leverage files before Port Prosper's clock expires.",
-    activeWhen: { type: "flag", key: "remainedUndercoverOnOrpheus" },
+    activeWhen: {
+      all: [
+        { type: "flag", key: "remainedUndercoverOnOrpheus" },
+        { type: "flag", key: "identifiedAsterHouse", equals: false },
+      ],
+    },
     hints: [
       "Review the Orpheus residential-wing service pass.",
       "The principals keep personal records above the assembly hall where staff access is lightly supervised before 07:00.",
       "The next move is the residential wing—but Port Prosper is still in danger.",
+    ],
+  },
+  {
+    id: "investigate_aster_house",
+    title: "The hand on the switch",
+    objective: "Enter Aster House and recover the local trigger cell's live Port Prosper operation.",
+    activeWhen: {
+      all: [
+        { type: "flag", key: "identifiedAsterHouse" },
+        { type: "flag", key: "foundTriggerTeamDisbursementLedger", equals: false },
+      ],
+    },
+    hints: [
+      "Aster House is now marked on the Greyhaven map at 11 Aldermere Row.",
+      "Photograph the illuminated operations board before searching the switchboard and archive cabinet.",
+      "The disbursement ledger lies beneath the maps on the operations table after the purge order is recovered.",
+    ],
+  },
+  {
+    id: "connect_aster_house",
+    title: "The trigger cell",
+    objective: "Use the evidence board to connect Aster House's operators, schedule, purge order, and money to the First Circle.",
+    activeWhen: {
+      all: [
+        { type: "flag", key: "foundTriggerTeamDisbursementLedger" },
+        { type: "flag", key: "provedAsterHouseTriggerCell", equals: false },
+      ],
+    },
+    hints: [
+      "Connect the Aster trace to the call sheet, the First Circle vote to the operations-board photo, and the portfolio to the purge order.",
+      "Use Red Â· Confirmed for trace / call sheet, vote / operations board, and portfolio / purge authorization.",
+      "Use Blue Â· Financial for crisis-investment escrow / trigger-team disbursement ledger.",
+    ],
+  },
+  {
+    id: "stop_port_prosper_trigger",
+    title: "Before 02:10",
+    objective: "Deliver the countermeasure packet before Aster House can trigger Port Prosper's collapse.",
+    activeWhen: {
+      all: [
+        { type: "flag", key: "provedAsterHouseTriggerCell" },
+        { not: { type: "visited", location: "port_prosper_signal_exchange" } },
+      ],
+    },
+    hints: [
+      "Review the Port Prosper countermeasure packet in the case file.",
+      "It identifies the operators, remote access paths, timetable, and accounts needed to stop the attack.",
+      "Travel to the Port Prosper Signal Exchange from the map before the 02:10 trigger.",
+    ],
+  },
+  {
+    id: "investigate_port_prosper_exchange",
+    title: "Six minutes of darkness",
+    objective: "Document what survived at Port Prosper and find what Meridian's contingency relay copied.",
+    activeWhen: {
+      all: [
+        { type: "visited", location: "port_prosper_signal_exchange" },
+        { type: "flag", key: "foundArchipelagoTransferOrder", equals: false },
+      ],
+    },
+    hints: [
+      "Begin with the municipal status wall and compare the isolated systems to the amber relay trace.",
+      "Copy Relay 7's exception log, then use the recorder on the secure black telephone.",
+      "Recover the cabinet's cipher analysis, photograph the nautical chart, and inspect the folders on the central table.",
+    ],
+  },
+  {
+    id: "connect_sanctuary_chain",
+    title: "The Archipelago Protocol",
+    objective: "Use the evidence board to prove how the failed attack exposed Meridian's distributed island network.",
+    activeWhen: {
+      all: [
+        { type: "flag", key: "foundArchipelagoTransferOrder" },
+        { type: "flag", key: "provedSanctuaryChain", equals: false },
+      ],
+    },
+    hints: [
+      "Connect the countermeasure packet to the survival status, and contrast Aster's call sheet with the ghost relay log.",
+      "Use Black / Cover-up for Wren's call and the cloned newsroom cipher. Use Red / Confirmed for the island chart connections.",
+      "Connect Orpheus service chart / Sanctuary Chain chart, then Sanctuary Chain chart / Archipelago transfer order.",
+    ],
+  },
+  {
+    id: "intercept_vesper_packet",
+    title: "Seven islands",
+    objective: "Intercept the Vesper Key courier packet at Port Prosper's eastern terminal before 05:30.",
+    activeWhen: { type: "flag", key: "provedSanctuaryChain" },
+    hints: [
+      "Review the Vesper Key dead-drop lead in the case file.",
+      "The courier uses a disaster-recovery auditor cover at the eastern packet terminal.",
+      "Locker 44 opens for seven minutes beginning at 05:30. The next chapter starts there.",
     ],
   },
 ]);
@@ -861,4 +967,18 @@ export const CASEBOOK_PROGRESS = Object.freeze([
   { label: "Port Prosper warned quietly", when: { type: "flag", key: "warnedPortProsperQuietly" } },
   { label: "First Circle evidence published", when: { type: "flag", key: "publishedFirstCircleEvidence" } },
   { label: "Orpheus deep cover maintained", when: { type: "flag", key: "remainedUndercoverOnOrpheus" } },
+  { label: "Aster House trigger trace recovered", when: { type: "flag", key: "identifiedAsterHouse" } },
+  { label: "Aster House operations board photographed", when: { type: "flag", key: "photographedAsterOperationsBoard" } },
+  { label: "Port Prosper trigger call sheet recovered", when: { type: "flag", key: "foundPortProsperTriggerCallSheet" } },
+  { label: "First Circle purge order recovered", when: { type: "flag", key: "foundAsterPurgeAuthorization" } },
+  { label: "Trigger-team disbursement ledger recovered", when: { type: "flag", key: "foundTriggerTeamDisbursementLedger" } },
+  { label: "Aster House trigger cell proven", when: { type: "flag", key: "provedAsterHouseTriggerCell" } },
+  { label: "Port Prosper Signal Exchange entered", when: { type: "visited", location: "port_prosper_signal_exchange" } },
+  { label: "Port Prosper survival status documented", when: { type: "flag", key: "documentedPortProsperSurvival" } },
+  { label: "Ghost relay execution log recovered", when: { type: "flag", key: "foundGhostRelayLog" } },
+  { label: "Wren retaliation call recorded", when: { type: "flag", key: "recordedWrenRetaliation" } },
+  { label: "Ledger newsroom cipher clone recovered", when: { type: "flag", key: "foundNewsroomCipherClone" } },
+  { label: "Sanctuary Chain chart photographed", when: { type: "flag", key: "photographedSanctuaryChain" } },
+  { label: "Archipelago transfer order recovered", when: { type: "flag", key: "foundArchipelagoTransferOrder" } },
+  { label: "Meridian sanctuary network proven", when: { type: "flag", key: "provedSanctuaryChain" } },
 ]);

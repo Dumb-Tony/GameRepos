@@ -20,7 +20,7 @@ test("every casebook stage has a three-level hint path", () => {
     assert.equal(stage.hints.length, 3, stage.id);
     assert.equal(stage.hints.every(Boolean), true, stage.id);
   }
-  assert.equal(CASEBOOK_PROGRESS.length, 79);
+  assert.equal(CASEBOOK_PROGRESS.length, 93);
 });
 
 test("casebook objective advances with investigation state", () => {
@@ -214,4 +214,22 @@ test("casebook objective advances with investigation state", () => {
   state.flags.portProsperDecisionMade = true;
   state.flags.warnedPortProsperQuietly = true;
   assert.equal(activeStage(state).id, "quiet_warning_consequence");
+
+  state.flags.identifiedAsterHouse = true;
+  assert.equal(activeStage(state).id, "investigate_aster_house");
+
+  state.flags.foundTriggerTeamDisbursementLedger = true;
+  assert.equal(activeStage(state).id, "connect_aster_house");
+
+  state.flags.provedAsterHouseTriggerCell = true;
+  assert.equal(activeStage(state).id, "stop_port_prosper_trigger");
+
+  state.locationVisits.port_prosper_signal_exchange = 1;
+  assert.equal(activeStage(state).id, "investigate_port_prosper_exchange");
+
+  state.flags.foundArchipelagoTransferOrder = true;
+  assert.equal(activeStage(state).id, "connect_sanctuary_chain");
+
+  state.flags.provedSanctuaryChain = true;
+  assert.equal(activeStage(state).id, "intercept_vesper_packet");
 });

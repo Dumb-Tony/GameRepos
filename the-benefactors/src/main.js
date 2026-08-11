@@ -1,8 +1,8 @@
-import { createInitialState, GameStore } from "./engine/game-state.js?v=port-prosper-choice-20260806a";
-import { ScreenRouter } from "./engine/router.js?v=port-prosper-choice-20260806a";
-import { SaveSystem } from "./engine/save-system.js?v=port-prosper-choice-20260806a";
+import { createInitialState, GameStore } from "./engine/game-state.js?v=fieldwork-20260811a";
+import { ScreenRouter } from "./engine/router.js?v=fieldwork-20260811a";
+import { SaveSystem } from "./engine/save-system.js?v=fieldwork-20260811a";
 import { AudioEngine } from "./systems/audio/audio-engine.js?v=visual-polish-20260730a";
-import { GameApp } from "./ui/app.js?v=port-prosper-choice-20260806a";
+import { GameApp } from "./ui/app.js?v=fieldwork-20260811a";
 
 const root = document.querySelector("#app");
 const saves = new SaveSystem();
