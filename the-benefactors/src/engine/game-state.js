@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 24;
+export const GAME_STATE_VERSION = 25;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -150,6 +150,13 @@ export function createInitialState(player = {}, settings = {}) {
       foundAsterPurgeAuthorization: false,
       foundTriggerTeamDisbursementLedger: false,
       provedAsterHouseTriggerCell: false,
+      documentedPortProsperSurvival: false,
+      foundGhostRelayLog: false,
+      recordedWrenRetaliation: false,
+      foundNewsroomCipherClone: false,
+      photographedSanctuaryChain: false,
+      foundArchipelagoTransferOrder: false,
+      provedSanctuaryChain: false,
     },
     inventory: ["press_credentials", "smartphone", "recorder", "notebook"],
     evidence: {
@@ -216,6 +223,7 @@ export function createInitialState(player = {}, settings = {}) {
       orpheus_sublevel_harbor: 0,
       orpheus_first_circle: 0,
       aster_house: 0,
+      port_prosper_signal_exchange: 0,
     },
     settings: {
       ...DEFAULT_SETTINGS,

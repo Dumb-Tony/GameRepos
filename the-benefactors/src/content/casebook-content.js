@@ -830,11 +830,59 @@ export const CASEBOOK_STAGES = Object.freeze([
     id: "stop_port_prosper_trigger",
     title: "Before 02:10",
     objective: "Deliver the countermeasure packet before Aster House can trigger Port Prosper's collapse.",
-    activeWhen: { type: "flag", key: "provedAsterHouseTriggerCell" },
+    activeWhen: {
+      all: [
+        { type: "flag", key: "provedAsterHouseTriggerCell" },
+        { not: { type: "visited", location: "port_prosper_signal_exchange" } },
+      ],
+    },
     hints: [
       "Review the Port Prosper countermeasure packet in the case file.",
       "It identifies the operators, remote access paths, timetable, and accounts needed to stop the attack.",
-      "The next chapter begins with the race to Port Prosper before the 02:10 trigger.",
+      "Travel to the Port Prosper Signal Exchange from the map before the 02:10 trigger.",
+    ],
+  },
+  {
+    id: "investigate_port_prosper_exchange",
+    title: "Six minutes of darkness",
+    objective: "Document what survived at Port Prosper and find what Meridian's contingency relay copied.",
+    activeWhen: {
+      all: [
+        { type: "visited", location: "port_prosper_signal_exchange" },
+        { type: "flag", key: "foundArchipelagoTransferOrder", equals: false },
+      ],
+    },
+    hints: [
+      "Begin with the municipal status wall and compare the isolated systems to the amber relay trace.",
+      "Copy Relay 7's exception log, then use the recorder on the secure black telephone.",
+      "Recover the cabinet's cipher analysis, photograph the nautical chart, and inspect the folders on the central table.",
+    ],
+  },
+  {
+    id: "connect_sanctuary_chain",
+    title: "The Archipelago Protocol",
+    objective: "Use the evidence board to prove how the failed attack exposed Meridian's distributed island network.",
+    activeWhen: {
+      all: [
+        { type: "flag", key: "foundArchipelagoTransferOrder" },
+        { type: "flag", key: "provedSanctuaryChain", equals: false },
+      ],
+    },
+    hints: [
+      "Connect the countermeasure packet to the survival status, and contrast Aster's call sheet with the ghost relay log.",
+      "Use Black / Cover-up for Wren's call and the cloned newsroom cipher. Use Red / Confirmed for the island chart connections.",
+      "Connect Orpheus service chart / Sanctuary Chain chart, then Sanctuary Chain chart / Archipelago transfer order.",
+    ],
+  },
+  {
+    id: "intercept_vesper_packet",
+    title: "Seven islands",
+    objective: "Intercept the Vesper Key courier packet at Port Prosper's eastern terminal before 05:30.",
+    activeWhen: { type: "flag", key: "provedSanctuaryChain" },
+    hints: [
+      "Review the Vesper Key dead-drop lead in the case file.",
+      "The courier uses a disaster-recovery auditor cover at the eastern packet terminal.",
+      "Locker 44 opens for seven minutes beginning at 05:30. The next chapter starts there.",
     ],
   },
 ]);
@@ -925,4 +973,12 @@ export const CASEBOOK_PROGRESS = Object.freeze([
   { label: "First Circle purge order recovered", when: { type: "flag", key: "foundAsterPurgeAuthorization" } },
   { label: "Trigger-team disbursement ledger recovered", when: { type: "flag", key: "foundTriggerTeamDisbursementLedger" } },
   { label: "Aster House trigger cell proven", when: { type: "flag", key: "provedAsterHouseTriggerCell" } },
+  { label: "Port Prosper Signal Exchange entered", when: { type: "visited", location: "port_prosper_signal_exchange" } },
+  { label: "Port Prosper survival status documented", when: { type: "flag", key: "documentedPortProsperSurvival" } },
+  { label: "Ghost relay execution log recovered", when: { type: "flag", key: "foundGhostRelayLog" } },
+  { label: "Wren retaliation call recorded", when: { type: "flag", key: "recordedWrenRetaliation" } },
+  { label: "Ledger newsroom cipher clone recovered", when: { type: "flag", key: "foundNewsroomCipherClone" } },
+  { label: "Sanctuary Chain chart photographed", when: { type: "flag", key: "photographedSanctuaryChain" } },
+  { label: "Archipelago transfer order recovered", when: { type: "flag", key: "foundArchipelagoTransferOrder" } },
+  { label: "Meridian sanctuary network proven", when: { type: "flag", key: "provedSanctuaryChain" } },
 ]);

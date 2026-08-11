@@ -222,6 +222,16 @@ This folder is intentionally isolated from the other games in `GameRepos`.
 - Added a four-connection board deduction proving Aster House is the First Circle's local Port Prosper trigger cell
 - Extended casebook guidance, office and board progression, save migration, and the full automated playthrough through the countermeasure packet
 
+**Milestone 23 - The Archipelago Protocol (complete)**
+
+- Delivered the Aster House countermeasure packet to Port Prosper before the 02:10 trigger
+- Added a finished painterly municipal Signal Exchange overlooking the rain-dark harbor
+- Let all three earlier Port Prosper responses converge on a city that survives with one six-minute contingency breach
+- Exposed Silas Wren's retaliation order and a cloned Greyhaven Ledger source-desk cipher
+- Revealed Orpheus as one Assembly node inside Meridian's seven-island Sanctuary Chain
+- Added seven substantive evidence artifacts and a five-connection deduction tracing Shepherd's emergency transfer to Vesper Key
+- Extended casebook guidance, office and board progression, save migration, and the full automated playthrough through the Archipelago Protocol
+
 **Prologue content now playable**
 
 - Photograph the missing west wing

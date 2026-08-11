@@ -31,13 +31,13 @@ class MemoryStorage {
   }
 }
 
-test("the complete authored investigation can progress from the leak through the First Circle", () => {
+test("the complete authored investigation can progress from the leak through the Sanctuary Chain", () => {
   const deductionOrder = Object.keys(DEDUCTIONS);
   const saves = new SaveSystem(new MemoryStorage());
   let state = createInitialState({ firstName: "Alex" });
 
   for (const deductionId of deductionOrder.filter(
-    (id) => id !== "aster_house_trigger_cell",
+    (id) => !["aster_house_trigger_cell", "sanctuary_chain_protocol"].includes(id),
   )) {
     const deduction = DEDUCTIONS[deductionId];
 
@@ -98,6 +98,24 @@ test("the complete authored investigation can progress from the leak through the
   }
   state = evaluateBoardDeductions(state, DEDUCTIONS).state;
 
+  const sanctuaryDeduction = DEDUCTIONS.sanctuary_chain_protocol;
+  state = applyEffects(
+    state,
+    sanctuaryDeduction.requiredEvidence.map((id) => ({ type: "collectEvidence", id })),
+  );
+  for (const evidenceId of sanctuaryDeduction.requiredEvidence) {
+    state = pinEvidence(state, evidenceId);
+  }
+  for (const connection of sanctuaryDeduction.requiredConnections) {
+    state = connectEvidence(
+      state,
+      connection.a,
+      connection.b,
+      connection.type,
+    );
+  }
+  state = evaluateBoardDeductions(state, DEDUCTIONS).state;
+
   saves.save(state, "playthrough-port-prosper-response");
   state = saves.load();
 
@@ -110,9 +128,11 @@ test("the complete authored investigation can progress from the leak through the
   assert.equal(state.flags.warnedPortProsperQuietly, true);
   assert.equal(state.flags.identifiedAsterHouse, true);
   assert.equal(state.flags.provedAsterHouseTriggerCell, true);
+  assert.equal(state.flags.provedSanctuaryChain, true);
   assert.equal(
     state.evidence.collected.includes("port_prosper_warning_receipt"),
     true,
   );
+  assert.equal(state.evidence.collected.includes("vesper_key_dead_drop"), true);
   assert.equal(state.board.connections.length >= 35, true);
 });

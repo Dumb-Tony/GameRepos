@@ -39,6 +39,7 @@ const imageAssetFiles = [
   "assets/scenes/orpheus-sublevel-harbor.webp",
   "assets/scenes/orpheus-first-circle.webp",
   "assets/scenes/aster-house.webp",
+  "assets/scenes/port-prosper-signal-exchange.webp",
   "assets/social/benefactors-social.webp",
   "assets/evidence/gala-photograph-v2.webp",
   "assets/evidence/photo-west-wall.webp",

@@ -61,4 +61,9 @@ test("Aster House evidence exposes the local Port Prosper trigger cell", () => {
     true,
   );
   assert.equal(result.state.progress.officeState, 17);
+  assert.equal(result.state.progress.chapter, 10);
+  assert.equal(
+    result.state.progress.unlockedLocations.includes("port_prosper_signal_exchange"),
+    true,
+  );
 });

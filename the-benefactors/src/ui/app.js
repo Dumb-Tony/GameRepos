@@ -4,11 +4,11 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=aster-house-20260809a";
+} from "../content/game-content.js?v=archipelago-20260811a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=aster-house-20260809a";
+} from "../content/casebook-content.js?v=archipelago-20260811a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
@@ -22,19 +22,19 @@ import {
 } from "../content/prologue-content.js?v=field-tools-20260731a";
 import { evaluateCondition } from "../engine/conditions.js?v=visual-polish-20260730a";
 import { applyEffects } from "../engine/events.js?v=visual-polish-20260730a";
-import { createInitialState } from "../engine/game-state.js?v=aster-house-20260809a";
+import { createInitialState } from "../engine/game-state.js?v=archipelago-20260811a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
 } from "../engine/player-language.js?v=visual-polish-20260730a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=aster-house-20260809a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=archipelago-20260811a";
 import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=field-tools-20260731a";
 import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=field-tools-20260731a";
 import {
   PORT_PROSPER_RESPONSES,
   advancePortProsperAftermath,
   applyPortProsperResponse,
-} from "../systems/decisions/port-prosper-response.js?v=aster-house-20260809a";
+} from "../systems/decisions/port-prosper-response.js?v=archipelago-20260811a";
 import {
   advanceDialogue,
   closeDialogue,
@@ -54,7 +54,7 @@ import {
 import {
   getEvidencePresentation,
   renderEvidenceArtifact,
-} from "../systems/evidence/evidence-renderer.js?v=casefile-20260809a";
+} from "../systems/evidence/evidence-renderer.js?v=archipelago-20260811a";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
@@ -779,7 +779,31 @@ export class GameApp {
   renderHome() {
     const state = this.store.getState();
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
-    const caseUpdate = state.flags.provedAsterHouseTriggerCell
+    const caseUpdate = state.flags.provedSanctuaryChain
+      ? {
+          title: "Seven islands",
+          text:
+            "Port Prosper survived, but Meridian traced the breach, compromised the Ledger's source channel, and moved Shepherd's forecast archive from Orpheus into a seven-island sanctuary network. Vesper Key is next.",
+        }
+      : state.flags.foundArchipelagoTransferOrder
+        ? {
+            title: "The Archipelago Protocol",
+            text:
+              "The survival status, ghost relay, retaliation call, cloned newsroom cipher, island chart, and transfer order can prove what Meridian did after Aster House failed.",
+          }
+        : (state.locationVisits.port_prosper_signal_exchange || 0) > 0
+          ? {
+              title: "Six minutes of darkness",
+              text:
+                "Port Prosper's major systems held. Document the survival status, trace Relay 7, record the secure call, inspect the scorched cabinet, and recover the chart and transfer order.",
+            }
+          : state.progress.unlockedLocations.includes("port_prosper_signal_exchange")
+            ? {
+                title: "A city gets to wake up",
+                text:
+                  "The Aster countermeasure packet reached Port Prosper before 02:10. The Signal Exchange has preserved the one relay that still executed after the attack was stopped.",
+              }
+            : state.flags.provedAsterHouseTriggerCell
       ? {
           title: "Before 02:10",
           text:
@@ -2438,7 +2462,31 @@ export class GameApp {
     );
     const yarnAnchorX = boardDensity.cardWidth / 2;
     const yarnAnchorY = (14 / corkboardHeight) * 100;
-    const boardCase = state.flags.provedAsterHouseTriggerCell
+    const boardCase = state.flags.provedSanctuaryChain
+      ? {
+          number: "15",
+          title: "SANCTUARY CHAIN / VESPER KEY",
+          phase: "Seven island nodes exposed / Intercept the 05:30 packet",
+        }
+      : state.flags.foundArchipelagoTransferOrder
+        ? {
+            number: "14",
+            title: "ARCHIPELAGO PROTOCOL / RETALIATION",
+            phase: "Connect the ghost relay, newsroom breach, and island transfer",
+          }
+        : (state.locationVisits.port_prosper_signal_exchange || 0) > 0
+          ? {
+              number: "14",
+              title: "PORT PROSPER / SIX-MINUTE BREACH",
+              phase: "Trace what escaped after the city survived",
+            }
+          : state.progress.unlockedLocations.includes("port_prosper_signal_exchange")
+            ? {
+                number: "14",
+                title: "PORT PROSPER / AFTERMATH",
+                phase: "Countermeasure delivered / Inspect Relay 7",
+              }
+            : state.flags.provedAsterHouseTriggerCell
       ? {
           number: "13",
           title: "PORT PROSPER / COUNTERMEASURE",
@@ -3563,6 +3611,13 @@ export class GameApp {
   }
 
   chapterLabel(state = this.store.getState()) {
+    if (
+      state.flags.provedAsterHouseTriggerCell ||
+      state.progress.unlockedLocations.includes("port_prosper_signal_exchange") ||
+      (state.locationVisits.port_prosper_signal_exchange || 0) > 0
+    ) {
+      return "Chapter 10 / The Archipelago Protocol";
+    }
     if (
       state.flags.identifiedAsterHouse ||
       state.progress.unlockedLocations.includes("aster_house") ||

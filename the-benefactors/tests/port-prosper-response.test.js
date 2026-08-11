@@ -1,6 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
+import { GAME_CONTENT } from "../src/content/game-content.js";
+import { evaluateCondition } from "../src/engine/conditions.js";
 import { createInitialState } from "../src/engine/game-state.js";
 import {
   PORT_PROSPER_RESPONSES,
@@ -67,4 +69,24 @@ test("aftermath cannot begin before the player chooses a response", () => {
     () => advancePortProsperAftermath(createInitialState()),
     /must be chosen/,
   );
+});
+
+test("the Signal Exchange remembers each Port Prosper response", () => {
+  const exchange = GAME_CONTENT.locations.port_prosper_signal_exchange;
+  const consequenceHotspots = exchange.hotspots.filter((hotspot) =>
+    hotspot.id.endsWith("_result"),
+  );
+
+  assert.equal(consequenceHotspots.length, 3);
+  for (const response of Object.values(PORT_PROSPER_RESPONSES)) {
+    let state = createInitialState();
+    state.flags.provedBenefactorsSelectCrises = true;
+    state = applyPortProsperResponse(state, response.id);
+    const visible = consequenceHotspots.filter((hotspot) =>
+      evaluateCondition(hotspot.visibleWhen, state),
+    );
+
+    assert.equal(visible.length, 1, response.id);
+    assert.match(visible[0].text, /city|attack|Relay 7/i, response.id);
+  }
 });
