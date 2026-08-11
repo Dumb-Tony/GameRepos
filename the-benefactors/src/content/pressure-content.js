@@ -10,6 +10,7 @@ export const PRESSURE_EVENTS = Object.freeze([
   { id: "first-circle-clock", title: "Port Prosper: forty-eight hours", text: "The First Circle vote starts a real operational clock. How you use the evidence now will have consequences.", heat: 12, deadline: "The planned conversion begins in forty-eight hours.", eligibleWhen: { type: "flag", key: "provedBenefactorsSelectCrises" } },
   { id: "aster-countdown", title: "The local trigger cell is active", text: "Aster House keeps the attack live even after the First Circle is exposed.", heat: 10, deadline: "Relay Seven opens at 02:10.", eligibleWhen: { type: "flag", key: "identifiedAsterHouse" } },
   { id: "newsroom-compromised", title: "The newsroom cipher was copied", text: "The failed Port Prosper attack reveals that Meridian cloned a protected Ledger source channel.", heat: 12, deadline: "Vesper's courier locker opens at 05:30.", eligibleWhen: { type: "flag", key: "foundNewsroomCipherClone" } },
+  { id: "vesper-courier", title: "The courier knows the packet is late", text: "A disaster-recovery auditor remains outside the terminal after the dead drop, watching every departing ferry instead of boarding one.", heat: 8, deadline: "Locker 44 relocks at 05:37.", eligibleWhen: { type: "flag", key: "photographedVesperCourier" } },
 ]);
 
 export const COUNTERMEASURES = Object.freeze([

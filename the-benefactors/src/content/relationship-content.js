@@ -72,4 +72,8 @@ export const CHARACTER_PROFILES = Object.freeze({
     alignment: "ally",
     nodeEffects: { relay: { trust: 2, risk: 1, note: "Shared Relay Seven's surviving trace" }, destination: { trust: 1, note: "Pointed to the nautical time source" } },
   }),
+  terminal_dispatcher: source("aya", "Aya Sorn", "Eastern-terminal dispatcher", "Ferry schedules, locker custody, and the habits of false auditors", {
+    nodeEffects: { courier: { trust: 2, risk: 2, note: "Identified the Vesper courier's cover routine" }, warning: { trust: 1, note: "Kept the terminal camera loop open" } },
+    choiceEffects: { protect: { trust: 1, promise: "Keep Aya out of the terminal account", note: "Promised to protect the dispatcher" } },
+  }),
 });

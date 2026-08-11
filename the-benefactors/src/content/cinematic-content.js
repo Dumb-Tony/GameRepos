@@ -119,4 +119,16 @@ export const CHAPTER_INTERLUDES = Object.freeze([
       { kind: "chapter", label: "05:30 · Eastern terminal", title: "Seven islands", image: "./assets/scenes/port-prosper-signal-exchange.webp", text: "The secret island was never the secret. It was one node in a chain—and a courier is carrying the map to the next one." },
     ],
   },
+  {
+    id: "forecast-island",
+    order: 11,
+    chapter: "Chapter 12",
+    title: "Forecast Island",
+    eligibleWhen: { type: "flag", key: "provedVesperTransferRoute" },
+    beats: [
+      { kind: "transition", label: "Locker 44 · 05:36", title: "The courier leaves empty-handed", image: "./assets/scenes/port-prosper-eastern-terminal.webp", text: "The packet is copied, resealed, and returned before the terminal clock reaches the end of its seven-minute window." },
+      { kind: "intercept", label: "Packet cipher · Partial decode", title: "Vesper predicts the crisis", image: "./assets/scenes/port-prosper-eastern-terminal.webp", speaker: "Shepherd archive header", text: "Forecast confidence: eighty-seven percent. Intervention value: conditional. Civilian disclosure remains unauthorized." },
+      { kind: "chapter", label: "Outbound ferry · Pier 6", title: "An island that sees disasters coming", image: "./assets/scenes/port-prosper-eastern-terminal.webp", text: "Orpheus chose the targets. Vesper tells the Benefactors which cities will break—and which crises deserve help." },
+    ],
+  },
 ]);

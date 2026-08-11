@@ -878,11 +878,59 @@ export const CASEBOOK_STAGES = Object.freeze([
     id: "intercept_vesper_packet",
     title: "Seven islands",
     objective: "Intercept the Vesper Key courier packet at Port Prosper's eastern terminal before 05:30.",
-    activeWhen: { type: "flag", key: "provedSanctuaryChain" },
+    activeWhen: {
+      all: [
+        { type: "flag", key: "provedSanctuaryChain" },
+        { not: { type: "visited", location: "port_prosper_eastern_terminal" } },
+      ],
+    },
     hints: [
       "Review the Vesper Key dead-drop lead in the case file.",
       "The courier uses a disaster-recovery auditor cover at the eastern packet terminal.",
-      "Locker 44 opens for seven minutes beginning at 05:30. The next chapter starts there.",
+      "Locker 44 opens for seven minutes beginning at 05:30. Travel from the map before the packet launch departs.",
+    ],
+  },
+  {
+    id: "search_locker_44",
+    title: "The false auditor",
+    objective: "Identify the Vesper courier and open locker 44 without exposing the investigation.",
+    activeWhen: {
+      all: [
+        { type: "visited", location: "port_prosper_eastern_terminal" },
+        { type: "flag", key: "foundShepherdForecastIndex", equals: false },
+      ],
+    },
+    hints: [
+      "Copy the altered departure log, then ask night dispatcher Aya Sorn about the phantom launch.",
+      "Compare Aya's account to the tag beside the parcel scale and use the security mirror to photograph the courier.",
+      "Open locker 44, decode the tide card, and copy the Shepherd archive index before the 05:42 packet leaves.",
+    ],
+  },
+  {
+    id: "connect_vesper_transfer",
+    title: "The Shepherd archive",
+    objective: "Use the evidence board to prove that Vesper Key controls Meridian's disaster-forecasting archive.",
+    activeWhen: {
+      all: [
+        { type: "flag", key: "foundShepherdForecastIndex" },
+        { type: "flag", key: "provedVesperTransferRoute", equals: false },
+      ],
+    },
+    hints: [
+      "Connect the dead-drop lead to Aya's statement and the departure log to the false auditor tag.",
+      "Use Red / Confirmed for the courier photograph and locker packet, then for the Sanctuary Chain chart and tide cipher.",
+      "Connect the Archipelago transfer order to the Shepherd forecast index to expose Vesper's purpose.",
+    ],
+  },
+  {
+    id: "reach_forecast_island",
+    title: "Forecast Island",
+    objective: "Prepare an approach to Vesper Key before Meridian realizes the Shepherd index was copied.",
+    activeWhen: { type: "flag", key: "provedVesperTransferRoute" },
+    hints: [
+      "Review the Vesper approach file and the Shepherd forecast index in the case file.",
+      "The service inlet opens on a rotating tide window; the courier packet supplies a valid continuity cover.",
+      "Vesper Key is now marked as the next destination. The investigation has reached the people who choose tomorrow's disasters.",
     ],
   },
 ]);
@@ -981,4 +1029,13 @@ export const CASEBOOK_PROGRESS = Object.freeze([
   { label: "Sanctuary Chain chart photographed", when: { type: "flag", key: "photographedSanctuaryChain" } },
   { label: "Archipelago transfer order recovered", when: { type: "flag", key: "foundArchipelagoTransferOrder" } },
   { label: "Meridian sanctuary network proven", when: { type: "flag", key: "provedSanctuaryChain" } },
+  { label: "Port Prosper Eastern Terminal entered", when: { type: "visited", location: "port_prosper_eastern_terminal" } },
+  { label: "Eastern-terminal departure log copied", when: { type: "flag", key: "copiedEasternTerminalLog" } },
+  { label: "Aya Sorn interviewed", when: { type: "flag", key: "questionedAyaSorn" } },
+  { label: "False disaster-auditor tag recovered", when: { type: "flag", key: "foundDisasterAuditorBagTag" } },
+  { label: "Vesper courier photographed", when: { type: "flag", key: "photographedVesperCourier" } },
+  { label: "Locker 44 opened", when: { type: "flag", key: "openedLocker44" } },
+  { label: "Vesper tide route decoded", when: { type: "flag", key: "foundVesperTideCipher" } },
+  { label: "Shepherd forecast index copied", when: { type: "flag", key: "foundShepherdForecastIndex" } },
+  { label: "Vesper forecast transfer proven", when: { type: "flag", key: "provedVesperTransferRoute" } },
 ]);

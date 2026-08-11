@@ -1855,6 +1855,150 @@ export const EVIDENCE = Object.freeze({
       handwritten: "Seven minutes to intercept the map they never meant anyone to see.",
     },
   },
+  eastern_terminal_departure_log: {
+    id: "eastern_terminal_departure_log",
+    title: "Eastern terminal departure log",
+    category: "document",
+    summary:
+      "The disaster-recovery auditor never booked passage, despite entering the terminal under an outbound-ferry credential.",
+    artifact: {
+      type: "memo",
+      heading: "PORT PROSPER EASTERN TERMINAL · PIER 6",
+      body: [
+        "05:18 / AUDITOR CREDENTIAL ACCEPTED",
+        "05:22 / LOCKER CONCOURSE ENTRY",
+        "05:30 / PACKET WINDOW OPEN",
+        "PASSENGER MANIFEST / NO MATCHING BOARDING RECORD",
+      ],
+      handwritten: "The ferry is the alibi. The locker is the destination.",
+    },
+  },
+  aya_sorn_statement: {
+    id: "aya_sorn_statement",
+    title: "Aya Sorn's courier statement",
+    category: "witness",
+    summary:
+      "The terminal dispatcher identifies the false auditor's repeated locker routine and confirms that no inspection was scheduled.",
+    artifact: {
+      type: "transcript",
+      heading: "FIELD INTERVIEW · EASTERN TERMINAL DISPATCH",
+      timestamp: "05:27 / AYA SORN",
+      lines: [
+        ["SORN", "Real auditors arrive with work orders and complain about the coffee."],
+        ["SORN", "This one checks locker 44, watches the mirror, and leaves before the Vesper ferry boards."],
+        ["REPORTER", "How many times?"],
+        ["SORN", "Three disaster exercises. Three packets. No inspections."],
+      ],
+    },
+  },
+  disaster_auditor_bag_tag: {
+    id: "disaster_auditor_bag_tag",
+    title: "False auditor bag tag",
+    category: "access",
+    summary:
+      "A weighted courier bag carries Vesper's tide cipher and the rotating exchange code for locker 44.",
+    artifact: {
+      type: "memo",
+      heading: "DISASTER RECOVERY AUDIT · CUSTODY TAG",
+      body: [
+        "ROUTE: EASTERN TERMINAL / VESPER SERVICE",
+        "LOCKER: 44 / EXCHANGE CODE: TIDE-6",
+        "DECLARED CONTENTS: EMPTY FORMS / 0.2 KG",
+        "MEASURED WEIGHT: 3.8 KG",
+      ],
+      handwritten: "An empty bag heavy enough to carry an archive.",
+    },
+  },
+  vesper_courier_mirror_photo: {
+    id: "vesper_courier_mirror_photo",
+    title: "Vesper courier mirror photograph",
+    category: "photo",
+    summary:
+      "The terminal's convex mirror catches the false auditor exchanging a weighted bag beside locker 44.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/port-prosper-eastern-terminal.webp",
+      alt: "A rain-dark ferry terminal with a convex security mirror reflecting the locker concourse and an auditor silhouette",
+      caption: "EASTERN TERMINAL · SECURITY MIRROR · 05:29",
+      annotations: [
+        "Auditor silhouette remains outside the boarding queue",
+        "Weighted bag is placed below locker 44",
+        "Convex mirror reveals a second watcher near the ferry doors",
+      ],
+    },
+  },
+  locker_44_courier_packet: {
+    id: "locker_44_courier_packet",
+    title: "Locker 44 courier packet",
+    category: "document",
+    summary:
+      "The intercepted packet contains the Vesper approach route, a forecast-archive custody receipt, and instructions for the next courier.",
+    artifact: {
+      type: "memo",
+      heading: "ARCHIPELAGO COURIER PACKET · NODE VESPER",
+      body: [
+        "CHAIN OF CUSTODY: ORPHEUS / RELAY 7 / EASTERN TERMINAL",
+        "RECEIVING NODE: VESPER KEY / FORECASTING",
+        "CONTENTS: SHEPHERD ARCHIVE / REVISION 31",
+        "APPROACH: PIER 6 / TIDE CIPHER REQUIRED",
+      ],
+      handwritten: "Copy it, reseal it, and let Meridian believe the route is still clean.",
+    },
+  },
+  vesper_tide_cipher: {
+    id: "vesper_tide_cipher",
+    title: "Vesper tide cipher",
+    category: "location",
+    summary:
+      "A rotating tide table converts public ferry times into the concealed approach windows for Vesper Key.",
+    artifact: {
+      type: "memo",
+      heading: "VESPER SERVICE APPROACH · TIDE-6",
+      body: [
+        "PUBLIC ROUTE: PIER 6 / NORTH SOUND FERRY",
+        "DIVERSION MARKER: BELL BUOY 19 / MINUS 07 MINUTES",
+        "WEATHER COVER: VISIBILITY BELOW 2 NM",
+        "LANDING: WEST CISTERN / FORECAST NODE",
+      ],
+      handwritten: "The public ferry crosses close enough to hide a second boat in its wake.",
+    },
+  },
+  shepherd_forecast_index: {
+    id: "shepherd_forecast_index",
+    title: "Shepherd forecast index",
+    category: "lead",
+    summary:
+      "The transferred archive ranks cities by failure probability, intervention value, and the political cost of warning them.",
+    artifact: {
+      type: "memo",
+      heading: "SHEPHERD / ACTIVE FORECAST INDEX / REVISION 31",
+      body: [
+        "PORT PROSPER: OPERATION COMPROMISED / MODEL RETAINED",
+        "GREYHAVEN: SOURCE NETWORK ACTIVE / CONTAINMENT PENDING",
+        "CALIGO: FAILURE CONFIDENCE 87% / DISCLOSURE WITHHELD",
+        "FORECAST AUTHORITY: VESPER KEY / NODE 02",
+      ],
+      handwritten: "They do not merely predict disaster. They decide whether anyone gets warned.",
+    },
+  },
+  vesper_approach_file: {
+    id: "vesper_approach_file",
+    title: "Vesper Key approach file",
+    category: "lead",
+    summary:
+      "The courier evidence identifies the ferry shadow route, landing point, and forecast archive now operating from Vesper Key.",
+    artifact: {
+      type: "memo",
+      heading: "NEXT INVESTIGATION · VESPER KEY",
+      body: [
+        "COVER ROUTE: NORTH SOUND FERRY / PIER 6",
+        "TRANSFER POINT: BELL BUOY 19",
+        "LANDING: WEST CISTERN",
+        "TARGET: SHEPHERD FORECAST ARCHIVE",
+      ],
+      handwritten: "The next island knows which city will need saving before the city does.",
+    },
+  },
 });
 
 export const INVENTORY_ITEMS = Object.freeze({
@@ -2999,6 +3143,83 @@ export const DIALOGUES = Object.freeze({
       },
     },
   },
+  terminal_dispatcher: {
+    id: "terminal_dispatcher",
+    character: "Aya Sorn",
+    portrait: "AS",
+    start: "intro",
+    nodes: {
+      intro: {
+        id: "intro",
+        speaker: "Aya Sorn",
+        text:
+          "First ferry boards in eleven minutes. If you are here about the signal outage, the official explanation is weather and the unofficial explanation has stopped answering its phone.",
+        choices: [
+          {
+            id: "show-dead-drop",
+            text: "A disaster-recovery auditor is using locker 44.",
+            evidenceId: "vesper_key_dead_drop",
+            requires: { type: "hasEvidence", id: "vesper_key_dead_drop" },
+            next: "auditor",
+          },
+          { id: "ask-ferry", text: "Who boarded the Vesper service ferry?", next: "manifest" },
+          { id: "leave", text: "Keep the window open.", end: true },
+        ],
+      },
+      manifest: {
+        id: "manifest",
+        speaker: "Aya Sorn",
+        text:
+          "Nobody boards a Vesper ferry. North Sound is the public route. Vesper is a weather buoy, a maintenance code, or whatever answer keeps the harbor authority employed.",
+        choices: [
+          {
+            id: "show-dead-drop",
+            text: "Then explain this Vesper courier instruction.",
+            evidenceId: "vesper_key_dead_drop",
+            requires: { type: "hasEvidence", id: "vesper_key_dead_drop" },
+            next: "auditor",
+          },
+          { id: "back", text: "Let me ask another way.", next: "intro" },
+        ],
+      },
+      auditor: {
+        id: "auditor",
+        speaker: "Aya Sorn",
+        text:
+          "That one never inspects anything. Checks the scale, watches locker 44 in the convex mirror, and leaves before boarding. Same routine after every disaster exercise.",
+        choices: [
+          { id: "ask-routine", text: "What changes at 05:30?", next: "courier" },
+          { id: "ask-camera", text: "Can you keep the security feed from cycling?", next: "warning" },
+        ],
+      },
+      courier: {
+        id: "courier",
+        speaker: "Aya Sorn",
+        text:
+          "A weighted bag goes under the scale. The auditor walks to the doors. Seven minutes later, the bag is light and locker 44 is empty. Today the bag is already waiting.",
+        onEnter: [
+          { type: "setFlag", key: "questionedAyaSorn", value: true },
+          { type: "collectEvidence", id: "aya_sorn_statement" },
+        ],
+        choices: [
+          { id: "protect", text: "Your name stays out of my terminal notes.", next: "warning" },
+        ],
+      },
+      warning: {
+        id: "warning",
+        speaker: "Aya Sorn",
+        text:
+          "I can hold the camera loop for nine minutes. After that, whoever copied the newsroom cipher will see exactly who stood at the lockers.",
+        onEnter: [
+          { type: "setFlag", key: "questionedAyaSorn", value: true },
+          { type: "collectEvidence", id: "aya_sorn_statement" },
+        ],
+        choices: [
+          { id: "finish", text: "Nine minutes is enough.", end: true },
+        ],
+      },
+    },
+  },
 });
 
 export const DEDUCTIONS = Object.freeze({
@@ -3659,6 +3880,62 @@ export const DEDUCTIONS = Object.freeze({
       { type: "setFlag", key: "provedSanctuaryChain", value: true },
       { type: "collectEvidence", id: "vesper_key_dead_drop" },
       { type: "setPath", path: "progress.officeState", value: 18 },
+      { type: "setPath", path: "progress.chapter", value: 11 },
+      { type: "unlockLocation", id: "port_prosper_eastern_terminal" },
+    ],
+  },
+  vesper_forecast_transfer: {
+    id: "vesper_forecast_transfer",
+    title: "Vesper Key controls the Shepherd forecast archive",
+    journalText:
+      "The disaster-recovery auditor used Port Prosper's eastern terminal as a blind exchange for Vesper Key. The locker packet, tide cipher, courier photograph, and Shepherd index identify the concealed ferry-shadow route and prove Vesper decides which predicted disasters remain secret.",
+    notification:
+      "The next island is no longer an abstract point on the chart. Vesper's western cistern can be reached in the wake of the North Sound ferry.",
+    requiredDeductions: ["sanctuary_chain_protocol"],
+    requiredEvidence: [
+      "vesper_key_dead_drop",
+      "eastern_terminal_departure_log",
+      "aya_sorn_statement",
+      "disaster_auditor_bag_tag",
+      "vesper_courier_mirror_photo",
+      "locker_44_courier_packet",
+      "sanctuary_chain_chart",
+      "vesper_tide_cipher",
+      "archipelago_transfer_order",
+      "shepherd_forecast_index",
+    ],
+    requiredConnections: [
+      {
+        a: "vesper_key_dead_drop",
+        b: "aya_sorn_statement",
+        type: "confirmed",
+      },
+      {
+        a: "eastern_terminal_departure_log",
+        b: "disaster_auditor_bag_tag",
+        type: "contradiction",
+      },
+      {
+        a: "vesper_courier_mirror_photo",
+        b: "locker_44_courier_packet",
+        type: "confirmed",
+      },
+      {
+        a: "sanctuary_chain_chart",
+        b: "vesper_tide_cipher",
+        type: "confirmed",
+      },
+      {
+        a: "archipelago_transfer_order",
+        b: "shepherd_forecast_index",
+        type: "confirmed",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "provedVesperTransferRoute", value: true },
+      { type: "collectEvidence", id: "vesper_approach_file" },
+      { type: "setPath", path: "progress.chapter", value: 12 },
+      { type: "setPath", path: "progress.officeState", value: 19 },
     ],
   },
 });
@@ -6207,6 +6484,192 @@ export const GAME_CONTENT = Object.freeze({
           text:
             "Remaining undercover preserved the residential-wing evidence, but the packet arrived later. Relay 7 opened before crews reached the cabinet. The city survived; one waterfront district remembers the cost of the delay.",
           visibleWhen: { type: "flag", key: "remainedUndercoverOnOrpheus" },
+        },
+      ],
+    },
+    port_prosper_eastern_terminal: {
+      id: "port_prosper_eastern_terminal",
+      name: "Port Prosper Eastern Terminal",
+      eyebrow: "Port Prosper Harbor / Friday / 5:25 AM",
+      mapX: 92,
+      mapY: 38,
+      description:
+        "A predawn packet terminal of brass lockers, wet glass, and borrowed identities. Locker 44 opens at 05:30, and Meridian's Vesper courier is already inside.",
+      sceneClass: "scene-port-prosper-eastern-terminal",
+      sceneArt: "./assets/scenes/port-prosper-eastern-terminal.webp",
+      hotspots: [
+        {
+          id: "eastern_terminal_departure_board",
+          label: "Altered departure board",
+          x: 3,
+          y: 5,
+          width: 27,
+          height: 24,
+          title: "One ferry that does not exist",
+          text:
+            "The public board lists three municipal packets. A carbon sheet beneath it adds a 05:42 disaster-audit launch with no vessel number.",
+          actionLabel: "Copy the hidden departure log",
+          toolId: "smartphone",
+          resultText:
+            "The phantom launch was entered with a Meridian continuity code and a destination abbreviated VSP-FCST.",
+          effects: [
+            { type: "setFlag", key: "copiedEasternTerminalLog", value: true },
+            { type: "collectEvidence", id: "eastern_terminal_departure_log" },
+          ],
+          actionWhen: {
+            type: "flag",
+            key: "copiedEasternTerminalLog",
+            equals: false,
+          },
+        },
+        {
+          id: "terminal_dispatcher",
+          label: "Aya Sorn, night dispatcher",
+          x: 29,
+          y: 24,
+          width: 20,
+          height: 31,
+          title: "The last honest person on shift",
+          text:
+            "Aya keeps glancing from the clock to a sealed locker key that no passenger has signed for.",
+          dialogueId: "terminal_dispatcher",
+        },
+        {
+          id: "eastern_terminal_bag_tag",
+          label: "Discarded auditor tag",
+          x: 38,
+          y: 56,
+          width: 14,
+          height: 18,
+          title: "A cover identity shed too early",
+          text:
+            "A black luggage tag beside the parcel scale names a disaster auditor who, according to Aya, arrived without luggage.",
+          actionLabel: "Recover the bag tag",
+          resultText:
+            "Its embossed number matches the phantom departure entry, but the emergency-agency seal was printed backward.",
+          effects: [
+            { type: "setFlag", key: "foundDisasterAuditorBagTag", value: true },
+            { type: "collectEvidence", id: "disaster_auditor_bag_tag" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "questionedAyaSorn" },
+              { type: "flag", key: "foundDisasterAuditorBagTag", equals: false },
+            ],
+          },
+        },
+        {
+          id: "eastern_terminal_security_mirror",
+          label: "Convex security mirror",
+          x: 72,
+          y: 3,
+          width: 16,
+          height: 20,
+          title: "The courier never faces a camera",
+          text:
+            "The rain-dark figure near the harbor doors avoids every direct sightline. The old security mirror catches the face anyway.",
+          actionLabel: "Photograph the reflection",
+          toolId: "smartphone",
+          resultText:
+            "The reflected courier carries the false auditor credential and watches locker 44 through the glass rather than approaching it.",
+          effects: [
+            { type: "setFlag", key: "photographedVesperCourier", value: true },
+            { type: "collectEvidence", id: "vesper_courier_mirror_photo" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "foundDisasterAuditorBagTag" },
+              { type: "flag", key: "photographedVesperCourier", equals: false },
+            ],
+          },
+        },
+        {
+          id: "eastern_terminal_locker_44",
+          label: "Locker 44",
+          x: 77,
+          y: 24,
+          width: 19,
+          height: 46,
+          title: "Seven minutes on the brass clock",
+          text:
+            "The Vesper dead-drop key fits the locker. Waiting until the courier turns toward the ferry gives you one clean opening.",
+          actionLabel: "Open locker 44 with the Vesper key",
+          resultText:
+            "Inside: a courier packet, an encoded tide card, and a Shepherd archive index wrapped in oilskin.",
+          effects: [
+            { type: "setFlag", key: "openedLocker44", value: true },
+            { type: "collectEvidence", id: "locker_44_courier_packet" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedVesperCourier" },
+              { type: "flag", key: "openedLocker44", equals: false },
+            ],
+          },
+        },
+        {
+          id: "eastern_terminal_tide_card",
+          label: "Encoded tide card",
+          x: 65,
+          y: 61,
+          width: 11,
+          height: 17,
+          title: "Vesper is a moving destination",
+          text:
+            "The card overlays tide heights with six rotating coordinates. Only one channel remains navigable at the 05:42 departure window.",
+          actionLabel: "Decode the tide route",
+          resultText:
+            "The route resolves to Vesper Key's service inlet and confirms the Sanctuary Chain chart's Forecasting node.",
+          effects: [
+            { type: "setFlag", key: "foundVesperTideCipher", value: true },
+            { type: "collectEvidence", id: "vesper_tide_cipher" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "openedLocker44" },
+              { type: "flag", key: "foundVesperTideCipher", equals: false },
+            ],
+          },
+        },
+        {
+          id: "eastern_terminal_shepherd_index",
+          label: "Shepherd archive index",
+          x: 53,
+          y: 58,
+          width: 12,
+          height: 20,
+          title: "Forecasts written as instructions",
+          text:
+            "Shepherd does not predict disasters. Its index ranks vulnerable cities, likely public reactions, acquisition targets, and acceptable casualty bands.",
+          actionLabel: "Copy the forecast index",
+          toolId: "smartphone",
+          resultText:
+            "Port Prosper is only Forecast 31. Greyhaven appears twice: first as a recruitment environment, then as a newsroom-containment trial.",
+          effects: [
+            { type: "setFlag", key: "foundShepherdForecastIndex", value: true },
+            { type: "collectEvidence", id: "shepherd_forecast_index" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "foundVesperTideCipher" },
+              { type: "flag", key: "foundShepherdForecastIndex", equals: false },
+            ],
+          },
+        },
+        {
+          id: "eastern_terminal_harbor_doors",
+          label: "Rain-streaked harbor doors",
+          x: 50,
+          y: 5,
+          width: 22,
+          height: 45,
+          title: "The 05:42 packet",
+          text:
+            "Beyond the glass, a launch idles without running lights. The courier is not taking the archive to Vesper. The courier is waiting to see who follows it.",
+          revisitText:
+            "The launch is gone. Its clean berth and severed mooring seal suggest the crew expected to abandon this route after a single exchange.",
+          fieldNote:
+            "The unlit 05:42 launch holds position in the public ferry's wake, using its radar shadow as cover.",
         },
       ],
     },
