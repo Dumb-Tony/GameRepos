@@ -1,8 +1,8 @@
-import { createInitialState, GameStore } from "./engine/game-state.js?v=cinematic-20260811a";
+import { createInitialState, GameStore } from "./engine/game-state.js?v=relationships-20260811a";
 import { ScreenRouter } from "./engine/router.js?v=cinematic-20260811a";
-import { SaveSystem } from "./engine/save-system.js?v=cinematic-20260811a";
+import { SaveSystem } from "./engine/save-system.js?v=relationships-20260811a";
 import { AudioEngine } from "./systems/audio/audio-engine.js?v=cinematic-20260811a";
-import { GameApp } from "./ui/app.js?v=cinematic-20260811a";
+import { GameApp } from "./ui/app.js?v=relationships-20260811a";
 
 const root = document.querySelector("#app");
 const saves = new SaveSystem();

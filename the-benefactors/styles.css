@@ -8626,3 +8626,104 @@ ol.recording-timeline,
 [data-high-contrast="true"] .chapter-interlude { border-color: #fff; }
 [data-high-contrast="true"] .chapter-interlude::before { background: rgba(0,0,0,0.88); }
 [data-high-contrast="true"] .interlude-copy > p:last-of-type { color: #fff; }
+
+/* Source relationships */
+.dialogue-relationship {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0 0 0.8rem;
+  color: var(--ink-muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.dialogue-relationship strong {
+  padding: 0.24rem 0.5rem;
+  color: #111;
+  background: #bda266;
+}
+
+.dialogue-relationship.is-hostile strong { color: #fff; background: #9a342d; }
+.dialogue-relationship.is-trusted strong,
+.dialogue-relationship.is-committed strong { background: #7eae8c; }
+.dialogue-relationship span:last-child { margin-left: auto; color: #c98272; }
+
+.dialogue-choice .relationship-preview {
+  display: block;
+  width: 100%;
+  margin-top: 0.28rem;
+  color: #ae9663;
+  font-size: 0.66rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.source-network {
+  margin-top: 1.5rem;
+  padding: clamp(1.1rem, 3vw, 2rem);
+  color: #302b22;
+  background:
+    linear-gradient(rgba(115, 79, 42, 0.06) 1px, transparent 1px) 0 0 / 100% 1.75rem,
+    #d9ceb2;
+  border: 1px solid #aa976f;
+  box-shadow: 0 0.8rem 2rem rgba(0,0,0,0.24);
+}
+
+.source-network > header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba(69, 55, 36, 0.28);
+}
+
+.source-network > header h2 { margin: 0.1rem 0 0; font-family: Georgia, serif; }
+.source-network > header > strong { font: 500 2.3rem/1 Georgia, serif; }
+.source-network-intro { max-width: 64ch; color: #5e5547; }
+.source-network-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(225px, 1fr)); gap: 0.9rem; }
+
+.source-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 260px;
+  padding: 1rem;
+  background: rgba(247, 240, 221, 0.78);
+  border: 1px solid rgba(75, 59, 38, 0.28);
+  box-shadow: 0 0.3rem 0.8rem rgba(70, 49, 25, 0.12);
+}
+
+.source-card::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: #8a7d65; }
+.source-card.is-trusted::before, .source-card.is-committed::before { background: #4f8060; }
+.source-card.is-hostile::before { background: #9d3d33; }
+.source-card-heading { display: flex; align-items: center; gap: 0.75rem; }
+.source-card-heading > span { display: grid; flex: 0 0 2.45rem; width: 2.45rem; height: 2.45rem; place-items: center; color: #f4ead2; background: #3d403a; border-radius: 50%; font: 700 0.7rem/1 ui-monospace, monospace; }
+.source-card-heading p, .source-card-heading h3 { margin: 0; }
+.source-card-heading p { color: #756a59; font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.source-card-heading h3 { font: 600 1.13rem/1.25 Georgia, serif; }
+.source-card > p { margin: 0; color: #5e5547; font-size: 0.88rem; line-height: 1.45; }
+.source-card > small { padding: 0.55rem; color: #584b34; background: rgba(188, 156, 92, 0.14); font-family: Georgia, serif; font-style: italic; }
+.source-card > em { margin-top: auto; color: #677265; font-size: 0.74rem; }
+.source-card .button { margin-top: auto; }
+.source-card .button span { display: block; font-size: 0.62rem; opacity: 0.72; }
+
+.source-meters p { display: flex; justify-content: space-between; gap: 0.5rem; margin: 0.35rem 0; color: #665c4d; font-size: 0.7rem; }
+.source-meters strong { color: #302b22; }
+.trust-track { height: 4px; overflow: hidden; background: rgba(60, 50, 38, 0.16); }
+.trust-track i { display: block; height: 100%; background: #557c5f; }
+
+@media (max-width: 650px) {
+  .dialogue-relationship { flex-wrap: wrap; }
+  .dialogue-relationship span:last-child { width: 100%; margin-left: 0; }
+  .source-network-grid { grid-template-columns: 1fr; }
+}
+
+[data-high-contrast="true"] .dialogue-relationship strong { color: #000; background: #fff; }
+[data-high-contrast="true"] .source-network { color: #000; background: #fff; border-color: #000; }
+[data-high-contrast="true"] .source-card { color: #000; background: #fff; border-color: #000; }
