@@ -9,3 +9,7 @@ scratchpad/
 # playwright test screenshots (suites sometimes run with cwd at repo/game root)
 *.png
 !tidebound/art/*.png
+
+# Generated single-file bundles (produced by brainrot/build.js on demand)
+brainrot/brainrot.html
+brainrot/brainrot.artifact.html

@@ -112,6 +112,10 @@
 
     // --- Mutation (symptoms self-evolve, uncontrolled) ----------------
     MUTATE_MIN: 30, MUTATE_MAX: 60,     // seconds between random mutations
+    // On chaos difficulties a mutation can backfire instead of gifting a free
+    // symptom. Scaled by (difficulty.chaos - 1), so Normal never backfires and
+    // Chaos (2.4) lands near 42% — genuinely a gamble, not free upgrades.
+    BACKFIRE_CHANCE: 0.30,
 
     // --- Win / lose ----------------------------------------------------
     WIN_NECROSIS: 0.995,    // fraction of world fully terminal to win
@@ -130,7 +134,7 @@
     { id: 'brutal',  name: 'Brutal',  emoji: '😰', cure: 1.55, susc: 0.85, lockdown: 1.5, skeptic: 1.15, chaos: 1.0,
       blurb: 'Fact-checkers are caffeinated. Borders slam shut. Good luck.' },
     { id: 'chaos',   name: 'Chaos',   emoji: '🎲', cure: 1.10, susc: 1.05, lockdown: 1.0, skeptic: 1.00, chaos: 2.4,
-      blurb: 'Reality has left the chat. Events & mutations fire nonstop. Anything can happen.' },
+      blurb: 'Reality has left the chat. Mutations fire nonstop — and sometimes backfire. Fast, wild, unsafe.' },
   ];
   BR.difficultyById = (id) => BR.DIFFICULTIES.find((d) => d.id === id) || BR.DIFFICULTIES[1];
 

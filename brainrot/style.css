@@ -1018,6 +1018,88 @@ img.spr { display: inline-block; vertical-align: middle; image-rendering: auto; 
   #evoModal #pathogenPanel{ height:92px; }
 }
 
+/* ===== FIRST-RUN COACH ==============================================
+ * A single low-profile strip above the bottom HUD. Never blocks input and
+ * never covers the map centre — it teaches in place, then goes away. */
+#coach{
+  position:fixed; left:50%; transform:translateX(-50%) translateY(14px);
+  bottom:calc(var(--hud-bottom) + 12px); z-index:355;
+  max-width:min(560px, 92vw); opacity:0; pointer-events:none;
+  transition:opacity .3s ease, transform .3s cubic-bezier(.2,1.3,.4,1);
+}
+#coach.on{ opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
+.coach-card{
+  display:flex; align-items:center; gap:12px;
+  background:linear-gradient(180deg,rgba(46,26,96,.97),rgba(26,14,58,.97));
+  border:1px solid #6bdcff; border-radius:13px; padding:10px 12px;
+  box-shadow:0 10px 34px rgba(20,0,40,.6), 0 0 22px rgba(107,220,255,.28);
+}
+.coach-msg{ font-size:13px; line-height:1.45; color:var(--txt); flex:1; }
+.coach-msg b{ color:#6bdcff; }
+.coach-x{
+  flex:0 0 auto; background:rgba(255,255,255,.07); border:1px solid var(--line2);
+  color:var(--dim); font-size:11px; font-weight:700; padding:6px 10px;
+  border-radius:16px; cursor:pointer; white-space:nowrap;
+}
+.coach-x:hover{ color:var(--txt); border-color:#6bdcff; }
+@media (orientation:portrait) and (max-width:600px){
+  #coach{ bottom:calc(var(--hud-bottom) + 8px); max-width:94vw; }
+  .coach-msg{ font-size:12px; }
+  .coach-card{ padding:8px 10px; gap:9px; }
+}
+/* Landscape phone: sit in the gap between the evolve button (left) and the
+   zoom controls (right) rather than centring across the whole width. */
+@media (orientation:landscape) and (max-height:600px){
+  #coach{ left:86px; right:246px; transform:translateY(14px);
+    max-width:none; width:auto; bottom:calc(var(--hud-bottom) + 8px); }
+  #coach.on{ transform:translateY(0); }
+  .coach-msg{ font-size:12px; }
+  .coach-card{ padding:8px 10px; gap:9px; }
+}
+body.reduce-motion #coach{ transition:opacity .2s linear; }
+
+/* ===== ACCESSIBILITY ================================================ */
+
+/* Visually hidden but readable by screen readers. */
+.sr-only{ position:absolute; width:1px; height:1px; margin:-1px; padding:0;
+  overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; border:0; }
+
+/* Visible keyboard focus. Only for keyboard users (:focus-visible), so mouse
+   and touch don't get rings on every tap. */
+:where(button, input, [tabindex]):focus-visible{
+  outline:3px solid #6bdcff; outline-offset:2px; border-radius:6px;
+}
+.tnode:focus-visible{ outline:3px solid #6bdcff; outline-offset:3px; z-index:5; }
+
+/* Reduced motion: stop the decorative loops and flashing. Gameplay unaffected —
+   the sim, spread and bubbles all still run normally. */
+body.reduce-motion .vw-spark,
+body.reduce-motion .evo-btn-ring,
+body.reduce-motion .cure-fill::after,
+body.reduce-motion .rg-phone{ animation:none !important; }
+body.reduce-motion #curebar.danger,
+body.reduce-motion #curebar.endgame,
+body.reduce-motion #btnEvolve.can-evolve,
+body.reduce-motion .m-heat.hot .meter-fill,
+body.reduce-motion #endgameBanner{ animation:none !important; }
+body.reduce-motion.win-flash::after{ animation:none !important; opacity:0 !important; }
+body.reduce-motion .toast{ animation:none !important; }
+body.reduce-motion .vw-grid{ opacity:.28; }
+@media (prefers-reduced-motion: reduce){
+  .vw-spark, .evo-btn-ring, .cure-fill::after{ animation:none !important; }
+}
+
+/* Bigger text: scales the type-heavy readouts without breaking the canvas HUD. */
+body.big-text{ font-size:112%; }
+body.big-text .chip-val{ font-size:15px; }
+body.big-text .help-step, body.big-text .help-sec p{ font-size:14px; }
+body.big-text .cpop-read{ font-size:11.5px; }
+body.big-text .re, body.big-text .tl{ font-size:12px; }
+body.big-text .toast{ font-size:13px; }
+body.big-text .ach-name{ font-size:14px; } body.big-text .ach-desc{ font-size:12px; }
+body.big-text .node-name, body.big-text .nd-name{ font-size:14px; }
+body.big-text .setting span{ font-size:13px; }
+
 /* ===== COLOUR-BLIND PALETTE =========================================
  * Okabe-Ito hues: distinguishable under every common colour-vision
  * deficiency, and they vary in lightness so they read in greyscale too.

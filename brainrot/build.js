@@ -4,13 +4,22 @@
  * Run: node brainrot/build.js */
 const fs = require('fs'), path = require('path');
 const DIR = __dirname;
-const FILES = ['config.js','audio.js','animations.js','countries.js','worldmap.js','upgrades.js','events.js','world.js','save.js','ui.js','game.js'];
+// Keep this in the SAME ORDER as the <script> tags in index.html. The build
+// asserts every tag is inlined (see the leftover check below), so adding a
+// module to index.html without adding it here fails the build loudly.
+const FILES = ['config.js','sprites.js','audio.js','animations.js','countries.js','worldmap.js','upgrades.js','events.js','world.js','save.js','genes.js','ui.js','game.js'];
 
 let html = fs.readFileSync(path.join(DIR, 'index.html'), 'utf8');
 const css = fs.readFileSync(path.join(DIR, 'style.css'), 'utf8');
 
 // Strip cache-busting ?v=N query strings so the inliner anchors match.
 html = html.replace(/(\b(?:src|href)="[^"?]+)\?v=\d+"/g, '$1"');
+
+// Drop the PWA/install links: a single-file bundle has no sibling manifest or
+// icon files to point at, and leaving them would trip the external-ref check.
+html = html.replace(/\s*<link rel="manifest"[^>]*>/g, '')
+           .replace(/\s*<link rel="apple-touch-icon"[^>]*>/g, '')
+           .replace(/\s*<link rel="icon"[^>]*>/g, '');
 
 if (!html.includes('<link rel="stylesheet" href="style.css">')) throw new Error('CSS link anchor not found');
 html = html.replace('<link rel="stylesheet" href="style.css">', '<style>\n' + css + '\n</style>');
@@ -23,8 +32,11 @@ for (const f of FILES) {
   html = html.replace(anchor, '<script>\n/* ===== ' + f + ' ===== */\n' + js + '\n</script>');
 }
 
-// Sanity: nothing external should remain referenced.
-const leftover = html.match(/(src|href)="(?!https?:|data:)[^"]+"/g);
+// Sanity: nothing external should remain referenced. Check the MARKUP only —
+// inlined JS legitimately contains strings like src="${...}" (sprites.js builds
+// <img> tags at runtime), which would otherwise trip this.
+const markup = html.replace(/<script>[\s\S]*?<\/script>/g, '');
+const leftover = markup.match(/(src|href)="(?!https?:|data:|#)[^"]+"/g);
 if (leftover) throw new Error('unexpected external ref(s): ' + leftover.join(', '));
 
 fs.writeFileSync(path.join(DIR, 'brainrot.html'), html);

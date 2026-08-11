@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Brainrot: Rise of the Meme</title>
 <!-- Installable / fullscreen (Add to Home Screen on iOS; fullscreen web app on Android) -->
-<link rel="manifest" href="manifest.webmanifest?v=50">
+<link rel="manifest" href="manifest.webmanifest?v=54">
 <meta name="theme-color" content="#0a0618">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Brainrot">
-<link rel="apple-touch-icon" href="icon-180.png?v=50">
-<link rel="icon" type="image/png" href="icon-192.png?v=50">
-<link rel="stylesheet" href="style.css?v=50">
+<link rel="apple-touch-icon" href="icon-180.png?v=54">
+<link rel="icon" type="image/png" href="icon-192.png?v=54">
+<link rel="stylesheet" href="style.css?v=54">
 </head>
 <body>
 
@@ -27,8 +27,8 @@ window.onerror = function (msg, src, line) {
 
 <!-- ===== FULL-SCREEN WORLD MAP (base layer, Plague-Inc style) ===== -->
 <div id="mapWrap">
-  <canvas id="mapCanvas"></canvas>
-  <canvas id="fxCanvas"></canvas>
+  <canvas id="mapCanvas" role="application" aria-label="World map. Tap a country for details, or tap a bubble to collect Virality."></canvas>
+  <canvas id="fxCanvas" aria-hidden="true"></canvas>
   <div id="selectBanner">☣️ Choose where patient-zero begins — click a country</div>
   <div id="mapHint">Click a country · scroll to zoom · drag to pan · grab bubbles</div>
   <div id="countryPopup"></div>
@@ -61,12 +61,12 @@ window.onerror = function (msg, src, line) {
   </div>
   <div class="topctrl">
     <div class="speeds" id="speeds">
-      <button data-sp="0" title="Pause" data-spr="hud:pause" data-sprsize="13"></button>
-      <button data-sp="1" class="on" title="Normal" data-spr="hud:play" data-sprsize="13"></button>
-      <button data-sp="2" title="Fast" data-spr="hud:ff" data-sprsize="13"></button>
-      <button data-sp="3" title="Ludicrous" data-spr="hud:ff2" data-sprsize="13"></button>
+      <button data-sp="0" title="Pause" aria-label="Pause" data-spr="hud:pause" data-sprsize="13"></button>
+      <button data-sp="1" class="on" title="Normal" aria-label="Normal speed" data-spr="hud:play" data-sprsize="13"></button>
+      <button data-sp="2" title="Fast" aria-label="Fast speed" data-spr="hud:ff" data-sprsize="13"></button>
+      <button data-sp="3" title="Ludicrous" aria-label="Ludicrous speed" data-spr="hud:ff2" data-sprsize="13"></button>
     </div>
-    <button class="menu-btn" id="menuBtn" title="Menu" data-spr="hud:menu" data-sprsize="16"></button>
+    <button class="menu-btn" id="menuBtn" title="Menu" aria-label="Menu" data-spr="hud:menu" data-sprsize="16"></button>
   </div>
 </header>
 
@@ -83,7 +83,7 @@ window.onerror = function (msg, src, line) {
 
 <!-- ===== LEFT: DISEASE VITALS (floating card) ===== -->
 <aside id="left" class="hud-card" data-title="☣ Pathogen.exe">
-  <div id="brainWrap"><canvas id="brainCanvas"></canvas><div id="brainLabel"><b id="brainPct">0%</b><span>global brainrot</span></div></div>
+  <div id="brainWrap"><canvas id="brainCanvas" aria-hidden="true"></canvas><div id="brainLabel"><b id="brainPct">0%</b><span>global brainrot</span></div></div>
   <div id="meters"></div>
 </aside>
 
@@ -103,7 +103,7 @@ window.onerror = function (msg, src, line) {
 </div>
 
 <!-- ===== BIG ROUND BIOHAZARD "EVOLVE" BUTTON (bottom-left, Plague-Inc style) ===== -->
-<button id="btnEvolve" title="Evolve your brainrot (E)">
+<button id="btnEvolve" title="Evolve your brainrot (E)" aria-label="Evolve your brainrot">
   <span class="evo-btn-ring"></span><span class="evo-btn-ico" data-spr="hud:dna" data-sprsize="26" data-sprcolor="#0a0e1a"></span><span class="evo-btn-lbl">EVOLVE</span>
 </button>
 
@@ -117,15 +117,26 @@ window.onerror = function (msg, src, line) {
   <div class="worldbar" title="World population: healthy / infected / terminal"><span class="wb-inf" id="wbInf"></span><span class="wb-nec" id="wbNec"></span></div>
   <div class="sb-time"><span data-spr="hud:clock" data-sprsize="13"></span> <b id="sbTime">0:00</b></div>
   <div class="sb-btns">
-    <button class="round-btn mob-only" id="btnSheetPath" title="Pathogen vitals" data-spr="hud:brain" data-sprsize="16" data-sprcolor="#ff6bd6"></button>
-    <button class="round-btn mob-only" id="btnSheetWorld" title="World &amp; news" data-spr="hud:global" data-sprsize="16" data-sprcolor="#5ffbe0"></button>
-    <button class="round-btn" id="btnStats" title="Statistics" data-spr="hud:stats" data-sprsize="16"></button>
-    <button class="round-btn" id="btnAwards" title="Achievements" data-spr="hud:awards" data-sprsize="16"></button>
+    <button class="round-btn mob-only" id="btnSheetPath" title="Pathogen vitals" aria-label="Pathogen vitals" data-spr="hud:brain" data-sprsize="16" data-sprcolor="#ff6bd6"></button>
+    <button class="round-btn mob-only" id="btnSheetWorld" title="World &amp; news" aria-label="World and news" data-spr="hud:global" data-sprsize="16" data-sprcolor="#5ffbe0"></button>
+    <button class="round-btn" id="btnStats" title="Statistics" aria-label="Statistics" data-spr="hud:stats" data-sprsize="16"></button>
+    <button class="round-btn" id="btnAwards" title="Achievements" aria-label="Achievements" data-spr="hud:awards" data-sprsize="16"></button>
   </div>
 </div>
 <div id="sheetScrim"></div>
 <footer id="logbar"><span class="log-tag"><span data-spr="hud:news" data-sprsize="13"></span> WORLD NEWS</span><div id="eventLog"></div></footer>
 <div id="toasts"></div>
+<!-- Screen-reader announcements: the map and news are canvas/visual, so mirror
+     the important beats here as polite live-region text. -->
+<div id="srLive" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<!-- ===== FIRST-RUN COACH — one-time contextual nudges, not a text wall ===== -->
+<div id="coach" aria-live="polite">
+  <div class="coach-card">
+    <span class="coach-msg" id="coachMsg"></span>
+    <button class="coach-x" id="coachSkip" aria-label="Dismiss tips">skip tips</button>
+  </div>
+</div>
 
 <!-- ===== ROTATE-TO-LANDSCAPE GATE (phones in portrait only) ===== -->
 <div id="rotateGate">
@@ -211,7 +222,7 @@ window.onerror = function (msg, src, line) {
 <!-- ===== MENU ===== -->
 <div class="modal" id="menuModal">
   <div class="modal-card">
-    <div class="modal-head"><h3>Menu</h3><button class="x" data-close="menuModal">✕</button></div>
+    <div class="modal-head"><h3>Menu</h3><button aria-label="Close" class="x" data-close="menuModal">✕</button></div>
     <div class="menu-grid">
       <div class="menu-col"><div class="section-h">💾 Save / Load</div><div id="saveSlots"></div></div>
       <div class="menu-col"><div class="section-h">⚙️ Settings</div>
@@ -219,6 +230,8 @@ window.onerror = function (msg, src, line) {
         <label class="setting"><span>🎵 Background music</span><input type="checkbox" id="setMusic" checked></label>
         <label class="setting"><span>📳 Vibration</span><input type="checkbox" id="setHaptics" checked></label>
         <label class="setting"><span>👁️ Colour-blind palette <small>(clearer infection colours)</small></span><input type="checkbox" id="setCB"></label>
+        <label class="setting"><span>🎞️ Reduce motion <small>(less shake, glitch &amp; flashing)</small></span><input type="checkbox" id="setReduceMotion"></label>
+        <label class="setting"><span>🔠 Bigger text</span><input type="checkbox" id="setBigText"></label>
         <div class="section-h" style="margin-top:14px">🎮 Game</div>
         <button class="ghost-btn full" id="btnFullscreen">⛶ Fullscreen</button>
         <div class="fs-hint" id="fsHint">On iPhone: tap <b>Share</b> → <b>Add to Home Screen</b> to play fullscreen.</div>
@@ -230,16 +243,16 @@ window.onerror = function (msg, src, line) {
 </div>
 
 <div class="modal" id="statsModal"><div class="modal-card">
-  <div class="modal-head"><h3>📊 Statistics</h3><button class="x" data-close="statsModal">✕</button></div>
+  <div class="modal-head"><h3>📊 Statistics</h3><button aria-label="Close" class="x" data-close="statsModal">✕</button></div>
   <div id="statsBody"></div></div></div>
 
 <div class="modal" id="awardsModal"><div class="modal-card">
-  <div class="modal-head"><h3>🏆 Achievements</h3><button class="x" data-close="awardsModal">✕</button></div>
+  <div class="modal-head"><h3>🏆 Achievements</h3><button aria-label="Close" class="x" data-close="awardsModal">✕</button></div>
   <div id="awardsBody"></div></div></div>
 
 <!-- ===== HOW TO PLAY (available mid-game, unlike the intro) ===== -->
 <div class="modal" id="helpModal"><div class="modal-card">
-  <div class="modal-head"><h3>❓ How to Play</h3><button class="x" data-close="helpModal">✕</button></div>
+  <div class="modal-head"><h3>❓ How to Play</h3><button aria-label="Close" class="x" data-close="helpModal">✕</button></div>
   <div class="help-body">
     <div class="help-sec"><div class="help-h">🎯 The goal</div>
       <p>Rot every brain on Earth before <b>🧪 The Cure</b> reaches 100%. It's a race — the louder you are, the faster they cure you.</p></div>
@@ -268,18 +281,18 @@ window.onerror = function (msg, src, line) {
   <div class="start-btns"><button class="big-btn" id="btnAgain">▶ Rot Again</button></div>
 </div></div>
 
-<script src="config.js?v=50"></script>
-<script src="sprites.js?v=50"></script>
-<script src="audio.js?v=50"></script>
-<script src="animations.js?v=50"></script>
-<script src="countries.js?v=50"></script>
-<script src="worldmap.js?v=50"></script>
-<script src="upgrades.js?v=50"></script>
-<script src="events.js?v=50"></script>
-<script src="world.js?v=50"></script>
-<script src="save.js?v=50"></script>
-<script src="genes.js?v=50"></script>
-<script src="ui.js?v=50"></script>
-<script src="game.js?v=50"></script>
+<script src="config.js?v=54"></script>
+<script src="sprites.js?v=54"></script>
+<script src="audio.js?v=54"></script>
+<script src="animations.js?v=54"></script>
+<script src="countries.js?v=54"></script>
+<script src="worldmap.js?v=54"></script>
+<script src="upgrades.js?v=54"></script>
+<script src="events.js?v=54"></script>
+<script src="world.js?v=54"></script>
+<script src="save.js?v=54"></script>
+<script src="genes.js?v=54"></script>
+<script src="ui.js?v=54"></script>
+<script src="game.js?v=54"></script>
 </body>
 </html>
