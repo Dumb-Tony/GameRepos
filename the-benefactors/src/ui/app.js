@@ -4,58 +4,58 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=vesper-20260811a";
+} from "../content/game-content.js?v=vesper-20260811b";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=vesper-20260811a";
-import { CHAPTER_INTERLUDES } from "../content/cinematic-content.js?v=vesper-20260811a";
-import { CHARACTER_PROFILES } from "../content/relationship-content.js?v=vesper-20260811a";
-import { COUNTERMEASURES, PRESSURE_EVENTS } from "../content/pressure-content.js?v=vesper-20260811a";
-import { getInteractiveLocation } from "../content/exploration-content.js?v=vesper-20260811a";
+} from "../content/casebook-content.js?v=vesper-20260811b";
+import { CHAPTER_INTERLUDES } from "../content/cinematic-content.js?v=vesper-20260811b";
+import { CHARACTER_PROFILES } from "../content/relationship-content.js?v=vesper-20260811b";
+import { COUNTERMEASURES, PRESSURE_EVENTS } from "../content/pressure-content.js?v=vesper-20260811b";
+import { getInteractiveLocation } from "../content/exploration-content.js?v=vesper-20260811b";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=vesper-20260811a";
+} from "../content/onboarding-content.js?v=vesper-20260811b";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=vesper-20260811a";
-import { evaluateCondition } from "../engine/conditions.js?v=vesper-20260811a";
-import { applyEffects } from "../engine/events.js?v=vesper-20260811a";
-import { createInitialState } from "../engine/game-state.js?v=vesper-20260811a";
+} from "../content/prologue-content.js?v=vesper-20260811b";
+import { evaluateCondition } from "../engine/conditions.js?v=vesper-20260811b";
+import { applyEffects } from "../engine/events.js?v=vesper-20260811b";
+import { createInitialState } from "../engine/game-state.js?v=vesper-20260811b";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=vesper-20260811a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=vesper-20260811a";
+} from "../engine/player-language.js?v=vesper-20260811b";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=vesper-20260811b";
 import {
   getVisibleHotspots,
   renderExplorationScene,
-} from "../systems/exploration/scene-renderer.js?v=vesper-20260811a";
+} from "../systems/exploration/scene-renderer.js?v=vesper-20260811b";
 import {
   completeInteraction,
   getFieldNoteEntries,
   getHotspotObservationText,
   hasObservedHotspot,
   inspectHotspot,
-} from "../systems/exploration/exploration-progress.js?v=vesper-20260811a";
-import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=vesper-20260811a";
+} from "../systems/exploration/exploration-progress.js?v=vesper-20260811b";
+import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=vesper-20260811b";
 import {
   PORT_PROSPER_RESPONSES,
   advancePortProsperAftermath,
   applyPortProsperResponse,
-} from "../systems/decisions/port-prosper-response.js?v=vesper-20260811a";
+} from "../systems/decisions/port-prosper-response.js?v=vesper-20260811b";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=vesper-20260811a";
+} from "../systems/dialogue/dialogue-engine.js?v=vesper-20260811b";
 import {
   arrangeEvidence,
   connectEvidence,
@@ -66,28 +66,28 @@ import {
   removeConnection,
   saveEvidenceNote,
   unpinEvidence,
-} from "../systems/evidence-board/evidence-board.js?v=vesper-20260811a";
+} from "../systems/evidence-board/evidence-board.js?v=vesper-20260811b";
 import {
   getEvidencePresentation,
   renderEvidenceArtifact,
-} from "../systems/evidence/evidence-renderer.js?v=vesper-20260811a";
+} from "../systems/evidence/evidence-renderer.js?v=vesper-20260811b";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=vesper-20260811a";
+} from "../systems/puzzles/plan-alignment.js?v=vesper-20260811b";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=vesper-20260811a";
-import { TransientNotice } from "./transient-notice.js?v=vesper-20260811a";
+} from "../systems/puzzles/recording-reconstruction.js?v=vesper-20260811b";
+import { TransientNotice } from "./transient-notice.js?v=vesper-20260811b";
 import {
   advanceInterlude,
   beginInterlude,
   getPendingInterlude,
   skipInterlude,
-} from "../systems/cinematics/chapter-interludes.js?v=vesper-20260811a";
+} from "../systems/cinematics/chapter-interludes.js?v=vesper-20260811b";
 import {
   applyRelationshipMoment,
   exposureStatus,
@@ -95,13 +95,13 @@ import {
   previewRelationshipMoment,
   relationshipStatus,
   requestSourceHelp,
-} from "../systems/relationships/relationships.js?v=vesper-20260811a";
+} from "../systems/relationships/relationships.js?v=vesper-20260811b";
 import {
   applyCountermeasure,
   availableCountermeasures,
   pressureStatus,
   syncPressure,
-} from "../systems/pressure/investigative-pressure.js?v=vesper-20260811a";
+} from "../systems/pressure/investigative-pressure.js?v=vesper-20260811b";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },

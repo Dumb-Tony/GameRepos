@@ -3,7 +3,7 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js?v=vesper-20260811a";
+} from "./game-state.js?v=vesper-20260811b";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
@@ -357,6 +357,15 @@ export class SaveSystem {
     ) {
       migrated.progress.unlockedLocations.push("port_prosper_signal_exchange");
       migrated.progress.chapter = Math.max(migrated.progress.chapter, 10);
+    }
+
+    if (
+      legacyVersion < 31 &&
+      migrated.flags.provedSanctuaryChain &&
+      !migrated.progress.unlockedLocations.includes("port_prosper_eastern_terminal")
+    ) {
+      migrated.progress.unlockedLocations.push("port_prosper_eastern_terminal");
+      migrated.progress.chapter = Math.max(migrated.progress.chapter, 11);
     }
 
     return migrated;

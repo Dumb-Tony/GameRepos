@@ -1,5 +1,5 @@
-import { evaluateCondition } from "../../engine/conditions.js?v=vesper-20260811a";
-import { getInteractiveLocation } from "../../content/exploration-content.js?v=vesper-20260811a";
+import { evaluateCondition } from "../../engine/conditions.js?v=vesper-20260811b";
+import { getInteractiveLocation } from "../../content/exploration-content.js?v=vesper-20260811b";
 
 const IDLE_HINTS = Object.freeze({
   press_credentials: "Useful when an official needs a reason to answer questions.",

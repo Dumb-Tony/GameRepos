@@ -190,7 +190,7 @@ await writeFile(
     {
       name: "The Benefactors",
       milestone: "vesper-courier",
-      release: "vesper-20260811a",
+      release: "vesper-20260811b",
       builtAt: new Date().toISOString(),
     },
     null,
