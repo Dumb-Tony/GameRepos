@@ -1,5 +1,12 @@
 # The Benefactors
 
+**Milestone 29 — Complete-game polish (complete)**
+
+- Removed the remaining broken typography and normalized punctuation across every late-game evidence file, objective, and interface label
+- Added modal focus priority, keyboard focus containment, Escape support for conversations and evidence, and broader visible-focus styling
+- Corrected late-game save descriptions, refreshed the content notice and credits, and unified the final release cache
+- Expanded production validation to cover every cinematic, relationship, and pressure module plus browser-import and text-integrity checks
+
 **Milestone 28 — Investigative pressure (complete)**
 
 - Added an eleven-beat threat arc that escalates from a parked surveillance car to a compromised newsroom cipher

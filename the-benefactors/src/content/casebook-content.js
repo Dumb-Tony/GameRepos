@@ -378,8 +378,8 @@ export const CASEBOOK_STAGES = Object.freeze([
     },
     hints: [
       "Connect the public story to freight that arrived before it, Deepwell's advance to its service log, and Rina's account to the field sample.",
-      "Use White Â· Contradiction for crisis clipping â†” relief-crate photo and Blue Â· Financial for program index â†” pump-service log.",
-      "Use Red Â· Confirmed for Rina's timeline â†” Bellwether tap-field sample.",
+      "Use White · Contradiction for crisis clipping ↔ relief-crate photo and Blue · Financial for program index ↔ pump-service log.",
+      "Use Red · Confirmed for Rina's timeline ↔ Bellwether tap-field sample.",
     ],
   },
   {
@@ -429,8 +429,8 @@ export const CASEBOOK_STAGES = Object.freeze([
     },
     hints: [
       "Prove the field sample matches the duplicate, the university was silenced, and VA-9 traveled from Verdant to Deepwell.",
-      "Use Red Â· Confirmed for Bellwether sample â†” duplicate analysis and Black Â· Cover-up for rejection â†” funding voicemail.",
-      "Use Red Â· Confirmed for watershed injection map â†” Verdant sample-transfer log.",
+      "Use Red · Confirmed for Bellwether sample ↔ duplicate analysis and Black · Cover-up for rejection ↔ funding voicemail.",
+      "Use Red · Confirmed for watershed injection map ↔ Verdant sample-transfer log.",
     ],
   },
   {
@@ -822,8 +822,8 @@ export const CASEBOOK_STAGES = Object.freeze([
     },
     hints: [
       "Connect the Aster trace to the call sheet, the First Circle vote to the operations-board photo, and the portfolio to the purge order.",
-      "Use Red Â· Confirmed for trace / call sheet, vote / operations board, and portfolio / purge authorization.",
-      "Use Blue Â· Financial for crisis-investment escrow / trigger-team disbursement ledger.",
+      "Use Red · Confirmed for trace / call sheet, vote / operations board, and portfolio / purge authorization.",
+      "Use Blue · Financial for crisis-investment escrow / trigger-team disbursement ledger.",
     ],
   },
   {

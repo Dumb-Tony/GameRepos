@@ -1,4 +1,4 @@
-import { cloneState } from "../../engine/game-state.js?v=fieldwork-20260811a";
+import { cloneState } from "../../engine/game-state.js?v=complete-20260811a";
 
 export function hotspotKey(locationId, hotspotId) {
   return `${locationId}:${hotspotId}`;

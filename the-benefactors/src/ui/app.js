@@ -4,58 +4,58 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=fieldwork-20260811a";
+} from "../content/game-content.js?v=complete-20260811a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=fieldwork-20260811a";
-import { CHAPTER_INTERLUDES } from "../content/cinematic-content.js?v=cinematic-20260811a";
-import { CHARACTER_PROFILES } from "../content/relationship-content.js?v=relationships-20260811a";
-import { COUNTERMEASURES, PRESSURE_EVENTS } from "../content/pressure-content.js?v=pressure-20260811a";
-import { getInteractiveLocation } from "../content/exploration-content.js?v=fieldwork-20260811a";
+} from "../content/casebook-content.js?v=complete-20260811a";
+import { CHAPTER_INTERLUDES } from "../content/cinematic-content.js?v=complete-20260811a";
+import { CHARACTER_PROFILES } from "../content/relationship-content.js?v=complete-20260811a";
+import { COUNTERMEASURES, PRESSURE_EVENTS } from "../content/pressure-content.js?v=complete-20260811a";
+import { getInteractiveLocation } from "../content/exploration-content.js?v=complete-20260811a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=visual-polish-20260730a";
+} from "../content/onboarding-content.js?v=complete-20260811a";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=field-tools-20260731a";
-import { evaluateCondition } from "../engine/conditions.js?v=fieldwork-20260811a";
-import { applyEffects } from "../engine/events.js?v=visual-polish-20260730a";
-import { createInitialState } from "../engine/game-state.js?v=pressure-20260811a";
+} from "../content/prologue-content.js?v=complete-20260811a";
+import { evaluateCondition } from "../engine/conditions.js?v=complete-20260811a";
+import { applyEffects } from "../engine/events.js?v=complete-20260811a";
+import { createInitialState } from "../engine/game-state.js?v=complete-20260811a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=visual-polish-20260730a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=fieldwork-20260811a";
+} from "../engine/player-language.js?v=complete-20260811a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=complete-20260811a";
 import {
   getVisibleHotspots,
   renderExplorationScene,
-} from "../systems/exploration/scene-renderer.js?v=fieldwork-20260811a";
+} from "../systems/exploration/scene-renderer.js?v=complete-20260811a";
 import {
   completeInteraction,
   getFieldNoteEntries,
   getHotspotObservationText,
   hasObservedHotspot,
   inspectHotspot,
-} from "../systems/exploration/exploration-progress.js?v=fieldwork-20260811a";
-import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=fieldwork-20260811a";
+} from "../systems/exploration/exploration-progress.js?v=complete-20260811a";
+import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=complete-20260811a";
 import {
   PORT_PROSPER_RESPONSES,
   advancePortProsperAftermath,
   applyPortProsperResponse,
-} from "../systems/decisions/port-prosper-response.js?v=archipelago-20260811a";
+} from "../systems/decisions/port-prosper-response.js?v=complete-20260811a";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=visual-polish-20260730a";
+} from "../systems/dialogue/dialogue-engine.js?v=complete-20260811a";
 import {
   arrangeEvidence,
   connectEvidence,
@@ -66,28 +66,28 @@ import {
   removeConnection,
   saveEvidenceNote,
   unpinEvidence,
-} from "../systems/evidence-board/evidence-board.js?v=casewall-20260811b";
+} from "../systems/evidence-board/evidence-board.js?v=complete-20260811a";
 import {
   getEvidencePresentation,
   renderEvidenceArtifact,
-} from "../systems/evidence/evidence-renderer.js?v=archipelago-20260811a";
+} from "../systems/evidence/evidence-renderer.js?v=complete-20260811a";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=visual-polish-20260730a";
+} from "../systems/puzzles/plan-alignment.js?v=complete-20260811a";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=visual-polish-20260730a";
-import { TransientNotice } from "./transient-notice.js?v=visual-polish-20260730a";
+} from "../systems/puzzles/recording-reconstruction.js?v=complete-20260811a";
+import { TransientNotice } from "./transient-notice.js?v=complete-20260811a";
 import {
   advanceInterlude,
   beginInterlude,
   getPendingInterlude,
   skipInterlude,
-} from "../systems/cinematics/chapter-interludes.js?v=cinematic-20260811a";
+} from "../systems/cinematics/chapter-interludes.js?v=complete-20260811a";
 import {
   applyRelationshipMoment,
   exposureStatus,
@@ -95,13 +95,13 @@ import {
   previewRelationshipMoment,
   relationshipStatus,
   requestSourceHelp,
-} from "../systems/relationships/relationships.js?v=relationships-20260811a";
+} from "../systems/relationships/relationships.js?v=complete-20260811a";
 import {
   applyCountermeasure,
   availableCountermeasures,
   pressureStatus,
   syncPressure,
-} from "../systems/pressure/investigative-pressure.js?v=pressure-20260811a";
+} from "../systems/pressure/investigative-pressure.js?v=complete-20260811a";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -200,6 +200,25 @@ export class GameApp {
       if (event.target.closest?.("button")) this.audio?.playEffect("paper");
     });
     this.root.addEventListener("keydown", (event) => {
+      if (event.key === "Tab") {
+        const modal = this.root.querySelector('[aria-modal="true"]');
+        if (modal) {
+          const focusable = [...modal.querySelectorAll('button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), audio[controls], [tabindex="0"], [tabindex="-1"]')]
+            .filter((element) => !element.hidden && element.getAttribute("aria-hidden") !== "true");
+          const first = focusable[0];
+          const last = focusable.at(-1);
+          if (focusable.length && event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+            return;
+          }
+          if (focusable.length && !event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+            return;
+          }
+        }
+      }
       if (
         event.key === "Escape" &&
         (this.activeBoardNoteId || this.activeDeductionId)
@@ -208,6 +227,22 @@ export class GameApp {
         this.activeBoardNoteId = null;
         this.activeDeductionId = null;
         if (this.router.current() === "board") this.renderBoard();
+        return;
+      }
+      if (event.key === "Escape" && this.activeEvidenceId) {
+        event.preventDefault();
+        this.activeEvidenceId = null;
+        this.render(this.router.current());
+        return;
+      }
+      if (
+        event.key === "Escape" &&
+        this.store.getState().dialogue.activeDialogueId
+      ) {
+        event.preventDefault();
+        this.store.replace(closeDialogue(this.store.getState()), "close-dialogue-keyboard");
+        this.saves.save(this.store.getState(), "close-dialogue-keyboard");
+        this.renderLocation();
         return;
       }
       if (event.target.matches?.("input, textarea, select")) return;
@@ -281,7 +316,11 @@ export class GameApp {
     this.bindInventoryActions();
     this.bindRecordingAudioActions();
     this.renderChapterInterlude(route);
-    this.root.querySelector("h1, h2, [data-autofocus]")?.focus?.();
+    const modal = this.root.querySelector('[aria-modal="true"]');
+    const focusTarget = modal
+      ? modal.querySelector("[data-autofocus], h1[tabindex], h2[tabindex]") || modal
+      : this.root.querySelector("h1, h2, [data-autofocus]");
+    focusTarget?.focus?.();
   }
 
   renderChapterInterlude(route = this.router.current()) {
@@ -1554,7 +1593,7 @@ export class GameApp {
                       `
                       : `
                         <div class="decision-aftermath is-complete">
-                          <p class="kicker">New lead Â· Greyhaven</p>
+                          <p class="kicker">New lead · Greyhaven</p>
                           <h3>Aster House</h3>
                           <p>The local trigger cell is exposed before Port Prosper's clock runs out. Its townhouse command post is now marked on the city map.</p>
                         </div>
@@ -2777,7 +2816,7 @@ export class GameApp {
       ? {
           number: "13",
           title: "PORT PROSPER / COUNTERMEASURE",
-          phase: "Trigger cell exposed Â· Stop the 02:10 attack",
+          phase: "Trigger cell exposed · Stop the 02:10 attack",
         }
       : state.flags.identifiedAsterHouse
         ? {
@@ -3701,14 +3740,14 @@ export class GameApp {
     const note = state.board.notes?.[evidence.id] || "";
     return `
       <div class="board-modal-scrim">
-        <section class="board-note-editor" role="dialog" aria-modal="true" aria-labelledby="board-note-title">
-          <button class="dialogue-close" data-close-board-note aria-label="Close evidence note">Ã—</button>
-          <p class="kicker">Reporterâ€™s annotation</p>
+        <section class="board-note-editor" role="dialog" aria-modal="true" aria-labelledby="board-note-title" tabindex="-1">
+          <button class="dialogue-close" data-close-board-note aria-label="Close evidence note">×</button>
+          <p class="kicker">Reporter’s annotation</p>
           <h1 id="board-note-title">${escapeHtml(evidence.title)}</h1>
           <p>${escapeHtml(evidence.summary)}</p>
           <form id="evidence-note-form">
             <label for="evidence-note-text">What does this clue mean to you?</label>
-            <textarea id="evidence-note-text" name="note" maxlength="500" rows="7" placeholder="Record a suspicion, question, name, or connection to revisitâ€¦">${escapeHtml(note)}</textarea>
+            <textarea id="evidence-note-text" name="note" maxlength="500" rows="7" placeholder="Record a suspicion, question, name, or connection to revisit…">${escapeHtml(note)}</textarea>
             <div class="board-note-actions">
               <button class="button button-primary" type="submit">Save note</button>
               ${note ? '<button class="button button-ghost" type="button" data-remove-evidence-note>Remove note</button>' : ""}
@@ -3736,16 +3775,16 @@ export class GameApp {
     ).length;
     return `
       <div class="board-modal-scrim deduction-viewer-scrim">
-        <section class="deduction-viewer" role="dialog" aria-modal="true" aria-labelledby="deduction-viewer-title">
-          <button class="dialogue-close" data-close-deduction aria-label="Close deduction report">Ã—</button>
+        <section class="deduction-viewer" role="dialog" aria-modal="true" aria-labelledby="deduction-viewer-title" tabindex="-1">
+          <button class="dialogue-close" data-close-deduction aria-label="Close deduction report">×</button>
           <header>
-            <p class="kicker">Verified deduction report Â· ${String(reportNumber).padStart(2, "0")}</p>
+            <p class="kicker">Verified deduction report · ${String(reportNumber).padStart(2, "0")}</p>
             <h1 id="deduction-viewer-title" tabindex="-1">${escapeHtml(deduction.title)}</h1>
             <p>${escapeHtml(deduction.journalText)}</p>
           </header>
           <div class="deduction-report-grid">
             <section>
-              <p class="kicker">Corroborating file Â· ${deduction.requiredEvidence.length}</p>
+              <p class="kicker">Corroborating file · ${deduction.requiredEvidence.length}</p>
               <ol class="deduction-evidence-list">
                 ${deduction.requiredEvidence
                   .map(
@@ -3755,7 +3794,7 @@ export class GameApp {
               </ol>
             </section>
             <section>
-              <p class="kicker">Reasoning chain Â· ${deduction.requiredConnections.length}</p>
+              <p class="kicker">Reasoning chain · ${deduction.requiredConnections.length}</p>
               <ol class="deduction-link-list">
                 ${deduction.requiredConnections
                   .map(
@@ -3763,7 +3802,7 @@ export class GameApp {
                       <li>
                         <span>${escapeHtml(relationshipById.get(connection.type)?.label || connection.type)}</span>
                         <strong>${escapeHtml(EVIDENCE[connection.a]?.title || connection.a)}</strong>
-                        <i aria-hidden="true">â†”</i>
+                        <i aria-hidden="true">↔</i>
                         <strong>${escapeHtml(EVIDENCE[connection.b]?.title || connection.b)}</strong>
                       </li>
                     `,
@@ -4135,8 +4174,9 @@ export class GameApp {
           <section>
             <h2>Story content</h2>
             <p>
-              The prologue contains corruption, intimidation, disappearance,
-              abuse of public funds, and implied danger. It avoids graphic violence.
+              The story contains corruption, intimidation, disappearance,
+              manufactured disasters, abuse of public funds, and implied danger.
+              It avoids graphic violence.
             </p>
           </section>
           <section>
@@ -4151,7 +4191,8 @@ export class GameApp {
             <p>
               Subtitles, text scaling, high contrast, reduced motion, hotspot
               assistance, and separate audio levels are available in Settings.
-              Press M to mute and H to toggle hotspot assistance.
+              Press M to mute, H to toggle hotspot assistance, and Escape to close
+              conversations or evidence viewers.
             </p>
           </section>
           <button class="button button-primary" data-action="back">Return to title</button>
@@ -4181,6 +4222,10 @@ export class GameApp {
             <section>
               <span>Technology</span>
               <strong>HTML · CSS · JavaScript · Web Audio</strong>
+            </section>
+            <section>
+              <span>Release</span>
+              <strong>Complete Investigation · August 2026</strong>
             </section>
           </div>
           <p class="credits-fiction">
@@ -4276,14 +4321,14 @@ export class GameApp {
       state.progress.unlockedLocations.includes("port_prosper_signal_exchange") ||
       (state.locationVisits.port_prosper_signal_exchange || 0) > 0
     ) {
-      return "Chapter 10 / The Archipelago Protocol";
+      return "Chapter 10 · The Archipelago Protocol";
     }
     if (
       state.flags.identifiedAsterHouse ||
       state.progress.unlockedLocations.includes("aster_house") ||
       (state.locationVisits.aster_house || 0) > 0
     ) {
-      return "Chapter 9 Â· The Trigger Cell";
+      return "Chapter 9 · The Trigger Cell";
     }
     if (state.flags.portProsperDecisionMade) {
       return "Chapter 8 · Consequences";
@@ -4426,12 +4471,12 @@ export class GameApp {
 
     return `
       <div class="dialogue-scrim">
-        <section class="dialogue-panel" role="dialog" aria-modal="true" aria-labelledby="dialogue-speaker">
+        <section class="dialogue-panel" role="dialog" aria-modal="true" aria-labelledby="dialogue-speaker" tabindex="-1">
           <button class="dialogue-close" data-action="close-dialogue" aria-label="End conversation">×</button>
           <div class="character-portrait" aria-hidden="true">
             ${
               dialogue.portraitAsset
-                ? `<img src="${dialogue.portraitAsset}" alt="" draggable="false" onerror="this.hidden=true" />`
+                ? `<img src="${dialogue.portraitAsset}" alt="" draggable="false" decoding="async" onerror="this.hidden=true" />`
                 : ""
             }
             <span>${escapeHtml(dialogue.portrait)}</span>
@@ -4598,7 +4643,7 @@ export class GameApp {
 
     return `
       <div class="evidence-viewer-scrim">
-        <section class="evidence-viewer" role="dialog" aria-modal="true" aria-labelledby="evidence-viewer-title">
+        <section class="evidence-viewer" role="dialog" aria-modal="true" aria-labelledby="evidence-viewer-title" tabindex="-1">
           <header class="evidence-viewer-header">
             <div>
               <p class="kicker">${escapeHtml(presentation.label)} <span aria-hidden="true">/</span> ${escapeHtml(presentation.fileNumber)}</p>
@@ -4763,7 +4808,17 @@ export class GameApp {
   }
 
   describeProgress(state) {
-    if (state.progress.prologueComplete) return "Prologue complete";
+    if (state.flags.provedSanctuaryChain) return "Chapter 10 · The Archipelago Protocol";
+    if (state.flags.provedAsterHouseTriggerCell) return "Chapter 10 · Port Prosper survives";
+    if (state.flags.identifiedAsterHouse) return "Chapter 9 · The Trigger Cell";
+    if (state.flags.portProsperDecisionMade) return "Chapter 8 · Consequences";
+    if (state.flags.provedBenefactorsSelectCrises) return "Chapter 7 · The First Circle";
+    if (state.flags.provedOrpheusCommandCenter) return "Chapter 6 · The Island";
+    if (state.flags.provedOrpheusSupplyRoute) return "Chapter 5 · Orpheus";
+    if (state.flags.provedRedoubtEvacuation) return "Chapter 4 · Redoubt";
+    if (state.flags.mappedContinuitySiteNetwork) return "Chapter 3 · The Pattern";
+    if (state.flags.northstarRoutesToBrighterHorizon) return "Chapter 2 · The Foundation";
+    if (state.progress.prologueComplete) return "Chapter 1 · Follow Northstar";
     if (state.flags.prologueEndingReady) return "Final deduction ready";
     if (state.flags.recordingReconstructed) return "Vale’s message restored";
     if (state.flags.foundWallCavity) return "Hidden room discovered";
