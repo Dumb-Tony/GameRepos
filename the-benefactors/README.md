@@ -1,5 +1,15 @@
 # The Benefactors
 
+## Milestone 25 — Evidence-board reasoning workspace (complete)
+
+- Evidence cards now accept persistent player-written notes, display handwritten previews, and preserve annotations through autosaves and manual case files.
+- The wall can be arranged by discovery chronology, evidence type, or the current theory; card size, category highlighting, investigative lens, and arrangement now persist.
+- New board lenses isolate active-theory clues, unconnected evidence, annotated cards, and corroborated evidence without destroying the player’s layout.
+- Every yarn connection now receives durable feedback distinguishing a useful claim, the wrong relationship, a strengthened theory, and an exploratory lead.
+- Completing a deduction marks its full evidence file as corroborated and opens a detailed report showing the reasoning chain, player notes, unlocked locations, and new leads.
+- All seventeen authored deductions retain their gameplay consequences, while their results are now visible and reviewable from the case wall.
+- Version 26 saves migrate into the expanded board model without losing cards, yarn, or existing investigation progress.
+
 ## Milestone 24 — Fieldwork interaction pass (complete)
 
 - Every playable location now contains an optional persistent field-note discovery and a changed observation on return visits.

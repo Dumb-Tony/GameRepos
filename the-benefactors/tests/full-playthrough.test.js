@@ -13,6 +13,7 @@ import {
   connectEvidence,
   evaluateBoardDeductions,
   pinEvidence,
+  saveEvidenceNote,
 } from "../src/systems/evidence-board/evidence-board.js";
 
 class MemoryStorage {
@@ -75,6 +76,12 @@ test("the complete authored investigation can progress from the leak through the
     );
   }
 
+  state = saveEvidenceNote(
+    state,
+    "invoice_northstar",
+    "The first false invoice remains the spine of the whole case.",
+  );
+
   state = applyPortProsperResponse(state, "warn");
   for (let step = 0; step < 3; step += 1) {
     state = advancePortProsperAftermath(state);
@@ -135,4 +142,16 @@ test("the complete authored investigation can progress from the leak through the
   );
   assert.equal(state.evidence.collected.includes("vesper_key_dead_drop"), true);
   assert.equal(state.board.connections.length >= 35, true);
+  const requiredEvidence = new Set(
+    Object.values(DEDUCTIONS).flatMap((deduction) => deduction.requiredEvidence),
+  );
+  assert.equal(
+    [...requiredEvidence].every((id) => state.evidence.corroborated.includes(id)),
+    true,
+    "every clue used in a completed deduction should be corroborated",
+  );
+  assert.equal(
+    state.board.notes.invoice_northstar,
+    "The first false invoice remains the spine of the whole case.",
+  );
 });

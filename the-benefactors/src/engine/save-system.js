@@ -3,7 +3,7 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js?v=fieldwork-20260811a";
+} from "./game-state.js?v=casewall-20260811b";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
@@ -136,7 +136,12 @@ export class SaveSystem {
       },
       flags: { ...fallback.flags, ...candidate.flags },
       evidence: { ...fallback.evidence, ...candidate.evidence },
-      board: { ...fallback.board, ...candidate.board },
+      board: {
+        ...fallback.board,
+        ...candidate.board,
+        notes: { ...fallback.board.notes, ...candidate.board?.notes },
+        view: { ...fallback.board.view, ...candidate.board?.view },
+      },
       dialogue: { ...fallback.dialogue, ...candidate.dialogue },
       exploration: {
         ...fallback.exploration,

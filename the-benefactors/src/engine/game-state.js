@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 26;
+export const GAME_STATE_VERSION = 27;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -168,9 +168,17 @@ export function createInitialState(player = {}, settings = {}) {
       discredited: [],
     },
     board: {
-      layoutVersion: 3,
+      layoutVersion: 4,
       cards: {},
       connections: [],
+      notes: {},
+      lastFeedback: null,
+      view: {
+        density: "compact",
+        categoryFilter: "all",
+        lens: "all",
+        arrangement: "chronology",
+      },
       zoom: 1,
       offset: { x: 0, y: 0 },
     },
@@ -261,6 +269,8 @@ export function isGameState(value) {
       value.flags &&
       value.evidence &&
       value.board &&
+      value.board.notes &&
+      value.board.view &&
       value.exploration &&
       Array.isArray(value.exploration.observedHotspots) &&
       Array.isArray(value.exploration.completedInteractions) &&
