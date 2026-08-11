@@ -35,6 +35,7 @@
       this._newsQueue = []; this._newsOpen = false; this._evoOpen = false;
       this._buildMeters(); this._buildTrees(); this._buildDiffs(); this._buildGenes(); this._initBrainImgs();
       this._wireTabs(); this._wireControls(); this._wireMap(); this._wireVisibility();
+      this._initCoach();
       this._paintStaticIcons();
       this.mounted = true; this.onNewGame(); this._resize(); this._renderOverview(); this.tickHud();
     }
@@ -260,6 +261,27 @@
       mute.checked = this.game.save.settings.muted; music.checked = this.game.save.settings.music;
       mute.addEventListener('change', () => { this.game.save.settings.muted = mute.checked; this.game.save.saveSettings(); this.game.audio && this.game.audio.setMuted(mute.checked); });
       music.addEventListener('change', () => { this.game.save.settings.music = music.checked; this.game.save.saveSettings(); this.game.audio && (this.game.audio.ensure(), this.game.audio.setMusic(music.checked)); });
+      const rm = $('setReduceMotion');
+      if (rm) {
+        // Honour the OS preference by default; the toggle can still override.
+        const osPref = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const on = this.game.save.settings.reduceMotion !== undefined ? !!this.game.save.settings.reduceMotion : osPref;
+        rm.checked = on; this._applyReduceMotion(on);
+        rm.addEventListener('change', () => {
+          this.game.save.settings.reduceMotion = rm.checked; this.game.save.saveSettings();
+          this._applyReduceMotion(rm.checked);
+        });
+      }
+      const bt = $('setBigText');
+      if (bt) {
+        bt.checked = !!this.game.save.settings.bigText;
+        document.body.classList.toggle('big-text', bt.checked);
+        bt.addEventListener('change', () => {
+          this.game.save.settings.bigText = bt.checked; this.game.save.saveSettings();
+          document.body.classList.toggle('big-text', bt.checked);
+          this._resize();   // canvas layout depends on HUD box sizes
+        });
+      }
       const cb = $('setCB');
       if (cb) {
         cb.checked = !!this.game.save.settings.colorblind;
@@ -445,6 +467,7 @@
       this._newsQueue = []; this._newsOpen = false; this._evoOpen = false; this._updatePause();
       // cancel a pending end-screen / celebration from the previous run
       clearTimeout(this._endT); if (this.game.fx) this.game.fx.stopCelebrate();
+      clearTimeout(this._coachT); this._hideCoach(); this._initCoach();
       document.body.classList.remove('win-flash');
       this._closeModal('evoModal'); this._closeModal('newsModal'); this.selectedNode = null; this._renderNodeDetail(); this._renderOverview();
       $('selectBanner').style.display = this.game.phase === 'select' ? 'block' : 'none';
@@ -494,15 +517,8 @@
       $('selectBanner').style.display = 'none'; document.body.classList.remove('sh-select');
       this._pushTimeline(this.game.elapsed, `Patient zero: <b>${this.game.patientZero ? this.game.patientZero.name : '?'}</b>`);
       this.selectCountry(null);
-      // One-time controls hint on touch devices (pinch-zoom / bubble-tapping
-      // aren't obvious). Shown a beat after release so it isn't lost in the intro.
-      try {
-        const s = this.game.save.settings, coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-        if (coarse && !s.seenTouchHint) {
-          s.seenTouchHint = true; this.game.save.saveSettings();
-          setTimeout(() => this.toast('👆', 'Tap the 🧠 bubbles for Virality · pinch or ＋ / － to zoom · drag to pan', 'info'), 900);
-        }
-      } catch (e) {}
+      // Touch gestures are taught by the first-run coach (see _coachSteps) so
+      // the two don't fire competing hints at the same moment.
     }
     // Best-effort: ask the browser to lock landscape (Android/fullscreen only;
     // iOS Safari has no such API, so we also show the rotate gate in CSS).
@@ -573,6 +589,7 @@
       // just scroll the ticker above. A quick toast keeps them noticeable.
       if (e.major) this._queueNews(e);
       else if (this.game.phase === 'play') this.toast(e.emoji, e.msg, e.tone);
+      this._announce(e.msg);
     }
     // ---- pausing news popups (like the original's bulletins) ----------
     _queueNews(e) {
@@ -605,6 +622,78 @@
     // phone, changing tabs). Browsers throttle timers for hidden pages, so
     // without this the run either stalls unevenly or lurches on return — and
     // you'd lose ground to the Cure while taking a call.
+    /* ---- first-run coach ------------------------------------------------
+     * Contextual, one-time nudges that fire off real game state rather than a
+     * scripted timer, so each tip lands exactly when it's relevant and is
+     * never shown twice (progress persists across runs). Skippable outright.
+     * Steps are checked in order; each fires once its cond() is true. */
+    _coachSteps() {
+      const g = this.game;
+      return [
+        // Paced so the opening doesn't fire a tip at t=0: give the player a
+        // few seconds to watch the world before the first nudge.
+        { id: 'evolve', cond: () => g.elapsed > 5 && g.virality >= 32 && g.purchased.size === 0,
+          msg: 'You can already afford an upgrade. Hit <b>EVOLVE</b> (bottom-left) and start in <b>Transmission</b>.' },
+        { id: 'bubble', cond: () => g.viralBubbles.length > 0,
+          msg: 'Tap the glowing 🧠 bubble — that\'s <b>Virality</b>, the currency you evolve with.' },
+        { id: 'gestures', touchOnly: true, cond: () => g.elapsed > 25,
+          msg: 'Pinch or use <b>＋ / －</b> to zoom the map, and drag to pan around.' },
+        { id: 'country', cond: () => g.world.countries.filter((c) => c.total() > 0.01).length >= 3,
+          msg: 'Tap any country to see how far the rot has spread — and <b>why it\'s resisting</b>.' },
+        { id: 'cure', cond: () => g.cure >= 8,
+          msg: 'The world noticed. <b>🧪 The Cure</b> is now racing you — tap blue cure bubbles to knock it back.' },
+        { id: 'severity', cond: () => g.severity() >= 4 && g.globalBrainrot() < 55,
+          msg: 'High <b>Severity</b> speeds the Cure up. Spread wide first, then turn it up.' },
+        { id: 'finish', cond: () => g.globalBrainrot() >= 70 && g.lethality() < 1,
+          msg: 'The world is nearly yours. Evolve <b>Terminal Brainrot</b> to finish everyone off.' },
+      ];
+    }
+    _coachTick() {
+      if (!this._coachOn || this.game.phase !== 'play' || this.game.ended) return;
+      if (this._coachVisible) return;                       // one at a time
+      const done = this._coachDone || (this._coachDone = {});
+      for (const st of this._coachSteps()) {
+        if (done[st.id]) continue;
+        if (st.touchOnly && !(window.matchMedia && window.matchMedia('(pointer: coarse)').matches)) { done[st.id] = true; continue; }
+        if (!st.cond()) continue;
+        done[st.id] = true;
+        this._saveCoach();
+        this._showCoach(st.msg);
+        return;
+      }
+    }
+    _showCoach(msg) {
+      const box = $('coach'), m = $('coachMsg'); if (!box || !m) return;
+      m.innerHTML = msg; box.classList.add('on'); this._coachVisible = true;
+      this._announce(String(msg).replace(/<[^>]*>/g, ''));
+      clearTimeout(this._coachT);
+      this._coachT = setTimeout(() => this._hideCoach(), 7000);
+    }
+    _hideCoach() { const box = $('coach'); if (box) box.classList.remove('on'); this._coachVisible = false; }
+    _saveCoach() {
+      try { this.game.save.settings.coach = this._coachDone; this.game.save.saveSettings(); } catch (e) {}
+    }
+    _skipCoach() {
+      this._coachOn = false; this._hideCoach();
+      try { this.game.save.settings.coachSkipped = true; this.game.save.saveSettings(); } catch (e) {}
+    }
+    _initCoach() {
+      const s = this.game.save.settings;
+      this._coachDone = Object.assign({}, s.coach || {});
+      // Off once skipped, or once every step has been seen.
+      const allSeen = this._coachSteps().every((st) => this._coachDone[st.id]);
+      this._coachOn = !s.coachSkipped && !allSeen;
+      const sk = $('coachSkip');
+      if (sk && !sk._wired) { sk._wired = true; sk.addEventListener('click', () => this._skipCoach()); }
+    }
+    // Reduced motion: kill screen shake and the map glitch bands, and let CSS
+    // shorten/stop the decorative animations. Gameplay is unaffected.
+    _applyReduceMotion(on) {
+      this.reduceMotion = !!on;
+      BR.reduceMotion = !!on;        // world.js reads this for the glitch bands
+      document.body.classList.toggle('reduce-motion', !!on);
+      if (this.game.fx) { this.game.fx.reduceMotion = !!on; if (on) { this.game.fx.shake = 0; this.game.fx._shakeT = 0; } }
+    }
     // Keep the intro's Continue button in sync with what's actually saved.
     _refreshContinue() {
       const cont = $('btnContinue'); if (!cont || !this._resumableSlot) return;
@@ -777,6 +866,7 @@
     // ---- per-tick HUD -------------------------------------------------
     tickHud() {
       if (!this.mounted) return; const g = this.game;
+      this._coachTick();
       // Self-heal: if the sim is paused for a news/evolve overlay but neither
       // overlay is actually on-screen, the pause flags desynced from the DOM.
       // Recover instead of freezing forever ("game just stops, no progress").
@@ -1178,6 +1268,12 @@
       const cap = phone ? 2 : 5;
       while (host.children.length > cap) host.removeChild(host.firstChild);
       setTimeout(() => { t.classList.add('leaving'); setTimeout(() => t.remove(), 320); }, phone ? 2400 : 3600);
+    }
+    // Mirror a message into the screen-reader live region. The map and news are
+    // visual/canvas, so without this a screen-reader user gets nothing.
+    _announce(msg) {
+      const el = $('srLive'); if (!el || !msg) return;
+      el.textContent = String(msg).replace(/<[^>]*>/g, '');
     }
     _flash(id) { const e = $(id); if (!e) return; e.classList.remove('flash'); void e.offsetWidth; e.classList.add('flash'); }
     _openModal(id) {

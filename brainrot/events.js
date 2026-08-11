@@ -73,6 +73,74 @@
       run(g) { const c = g.spreadTarget(); if (c) g.boostCountry(c, 0.06 + g.rnd() * 0.06); return { msg: 'The rogue intern gets fired, instantly becomes a folk hero, and starts a movement. It spreads.' }; } },
     { id: 'aislopflood', emoji: '🤖', weight: 6, tone: 'chaos', cond: (g) => g.globalBrainrot() > 25,
       run(g) { g.world.countries.forEach((c) => { if (c.infected > 0.02) g.boostCountry(c, 0.04); }); g.addCure(1); return { msg: 'Overnight, every platform is 90% AI slop. Nobody can tell what\'s real. Nobody tries.' }; } },
+
+    /* ===== v9 batch ==================================================
+     * Phase-gated so a run's news feels like it's escalating rather than
+     * shuffling the same deck: EARLY events only fire before the world
+     * notices, LATE ones only once the rot is everywhere. ============ */
+
+    // ---- EARLY (pre-detection flavour; quiet, cheap, funny) ----
+    { id: 'nichecommunity', emoji: '🕳️', weight: 7, tone: 'good', cond: (g) => g.globalBrainrot() < 12,
+      run(g) { const c = g.spreadTarget(); const v = 10 + g.rnd() * 20; g.addVirality(v); if (c) g.boostCountry(c, 0.04);
+        return { msg: `A tiny niche community${c ? ' in ' + c.name : ''} adopts the rot ironically. It will not stay ironic.` }; } },
+    { id: 'copypasta', emoji: '📋', weight: 7, tone: 'good', cond: (g) => g.globalBrainrot() < 20,
+      run(g) { const v = 14 + g.rnd() * 22; g.addVirality(v); g.addHeat(6);
+        return { msg: `A copypasta mutates in every retelling until nobody knows the original. +${BR.fmt(v)} virality.` }; } },
+    { id: 'algotest', emoji: '🧪', weight: 6, tone: 'chaos', cond: (g) => g.globalBrainrot() < 25,
+      run(g) { const c = g.spreadTarget(); if (c) g.boostCountry(c, 0.05 + g.rnd() * 0.05); g.addHeat(8);
+        return { msg: `A platform quietly A/B tests a worse feed${c ? ' in ' + c.name : ''}. Engagement soars. They keep it.` }; } },
+
+    // ---- MID (the world starts reacting) ----
+    { id: 'brainrotdictionary', emoji: '📖', weight: 6, tone: 'good', cond: (g) => g.globalBrainrot() > 18,
+      run(g) { const v = 25 + g.rnd() * 35; g.addVirality(v); g.addHeat(10);
+        return { msg: `A dictionary adds this year's slang. Lexicographers are visibly unwell. +${BR.fmt(v)} virality.` }; } },
+    { id: 'schoolban', emoji: '🎒', weight: 6, tone: 'bad', cond: (g) => g.awareness > 0.18,
+      run(g) { g.addCure(2.5 / (1 + g.ev.cureSlow * 2)); g.queueEvent('schoolbackfire', 5 + g.rnd() * 5);
+        return { msg: 'Schools ban phones at lunch. Teachers describe the silence as "eerie".' }; } },
+    { id: 'schoolbackfire', emoji: '🚻', weight: 0, tone: 'good',
+      run(g) { const c = g.spreadTarget(); if (c) g.boostCountry(c, 0.06); const v = 20 + g.rnd() * 25; g.addVirality(v);
+        return { msg: 'The phone ban simply relocates the brainrot to the bathrooms. Attendance in stalls is up 400%.' }; } },
+    { id: 'sponsorpanic', emoji: '💸', weight: 6, tone: 'bad', cond: (g) => g.globalBrainrot() > 30,
+      run(g) { g.addCure(3 / (1 + g.ev.cureSlow * 2));
+        return { msg: 'Advertisers panic about "brand safety" and pull budgets. Platforms suddenly care about moderation.' }; } },
+    { id: 'brainrotolympics', emoji: '🏅', weight: 5, tone: 'chaos', cond: (g) => g.globalBrainrot() > 35,
+      run(g) { g.world.countries.forEach((c) => { if (c.infected > 0.03) g.boostCountry(c, 0.035); }); g.addHeat(14); g.addCure(0.8);
+        return { msg: 'Nations compete to post the most unhinged official account. It is somehow a diplomatic incident.' }; } },
+    { id: 'churchdiscovers', emoji: '⛪', weight: 5, tone: 'good', cond: (g) => g.globalBrainrot() > 25,
+      run(g) { g.world.countries.forEach((c) => { if (c.age >= 38 && c.infected > 0.01) g.boostCountry(c, 0.05); });
+        return { msg: 'A sermon goes viral for using the slang correctly. The congregation is cooked.' }; } },
+
+    // ---- LATE (the world is mostly gone; absurdist) ----
+    { id: 'govtaccount', emoji: '🏛️', weight: 6, tone: 'chaos', cond: (g) => g.globalBrainrot() > 55,
+      run(g) { const v = 45 + g.rnd() * 45; g.addVirality(v); g.reduceCure(2);
+        return { msg: `A national emergency broadcast is posted as a lowercase shitpost. Nobody questions it. +${BR.fmt(v)} virality.` }; } },
+    { id: 'lastlibrary', emoji: '📚', weight: 5, tone: 'bad', cond: (g) => g.globalBrainrot() > 60,
+      run(g) { g.addCure(3.5 / (1 + g.ev.cureSlow * 2));
+        return { msg: 'The last people who finish books form a resistance cell. They are annoyingly well-rested.' }; } },
+    { id: 'attentionmarket', emoji: '📉', weight: 5, tone: 'chaos', cond: (g) => g.globalBrainrot() > 65,
+      run(g) { const v = 50 + g.rnd() * 60; g.addVirality(v); g.addCure(1.5);
+        return { msg: `Global markets crash because no trader can focus for a full minute. Somehow, +${BR.fmt(v)} virality.` }; } },
+    { id: 'terminalwedding', emoji: '💍', weight: 4, tone: 'good', cond: (g) => g.globalBrainrot() > 70,
+      run(g) { g.world.countries.forEach((c) => { if (c.infected > 0.05) g.boostCountry(c, 0.05); });
+        return { msg: 'A wedding is officiated entirely in slang. The vows are two syllables. Everyone weeps.' }; } },
+    { id: 'holdoutdoc', emoji: '🎬', weight: 5, tone: 'good', cond: (g) => g.globalBrainrot() > 75,
+      run(g) { const c = g.spreadTarget(); if (c) g.boostCountry(c, 0.08); g.reduceCure(2 + g.rnd() * 3);
+        return { msg: 'A documentary about the last unrotted region becomes the most-watched thing ever. It rots them.' }; } },
+    { id: 'silentcities', emoji: '🌃', weight: 4, tone: 'chaos', cond: (g) => g.globalBrainrot() > 80,
+      run(g) { g.addHeat(18); const v = 40 + g.rnd() * 40; g.addVirality(v);
+        return { msg: 'Cities fall silent. Not peace — everyone is just scrolling. The hum is constant.' }; } },
+
+    // ---- CURE-ENDGAME pressure (only once they're genuinely close) ----
+    { id: 'curetrial', emoji: '💉', weight: 7, tone: 'bad', cond: (g) => g.cure > 45,
+      run(g) { g.addCure(4 / (1 + g.ev.cureSlow * 2)); g.queueEvent('trialsetback', 6 + g.rnd() * 5);
+        return { msg: 'The Touch-Grass Campaign enters human trials. Volunteers report "boredom, but the good kind".' }; } },
+    { id: 'trialsetback', emoji: '🥱', weight: 0, tone: 'good',
+      run(g) { g.reduceCure(4 + g.rnd() * 4); const v = 25 + g.rnd() * 30; g.addVirality(v);
+        return { msg: 'Trial participants relapse within a week. The control group had already relapsed. The Cure stalls.' }; } },
+    { id: 'internationalpact', emoji: '🤝', weight: 5, tone: 'bad', cond: (g) => g.cure > 55,
+      run(g) { g.addCure(3 / (1 + g.ev.cureSlow * 2)); const cs = g.world.countries.filter((c) => c.detected && c.airOpen);
+        if (cs.length) { const h = cs[(g.rnd() * cs.length) | 0]; g.closeLinks(h); }
+        return { msg: 'Nations sign an emergency anti-brainrot pact. It is announced in a 90-second vertical video.' }; } },
   ];
 
   class EventSystem {
