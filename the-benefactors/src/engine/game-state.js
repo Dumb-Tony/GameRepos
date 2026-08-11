@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 30;
+export const GAME_STATE_VERSION = 31;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,

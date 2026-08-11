@@ -523,7 +523,7 @@ test("adds persistent exploration records to version 25 saves", () => {
   storage.setItem(SAVE_KEY, JSON.stringify(legacy));
 
   const migrated = saves.load();
-  assert.equal(migrated.version, 30);
+  assert.equal(migrated.version, GAME_STATE_VERSION);
   assert.deepEqual(migrated.exploration, {
     observedHotspots: [],
     completedInteractions: [],
@@ -543,7 +543,7 @@ test("adds persistent board notes and organization preferences to version 26 sav
   storage.setItem(SAVE_KEY, JSON.stringify(legacy));
 
   const migrated = saves.load();
-  assert.equal(migrated.version, 30);
+  assert.equal(migrated.version, GAME_STATE_VERSION);
   assert.deepEqual(migrated.board.notes, {});
   assert.equal(migrated.board.lastFeedback, null);
   assert.deepEqual(migrated.board.view, {
@@ -563,7 +563,7 @@ test("adds a persistent cinematic reel archive to version 27 saves", () => {
   storage.setItem(SAVE_KEY, JSON.stringify(legacy));
 
   const migrated = saves.load();
-  assert.equal(migrated.version, 30);
+  assert.equal(migrated.version, GAME_STATE_VERSION);
   assert.deepEqual(migrated.cinematics, { seen: [], activeId: null, step: 0 });
 });
 
@@ -576,7 +576,7 @@ test("normalizes relationship records from version 28 saves", () => {
   storage.setItem(SAVE_KEY, JSON.stringify(legacy));
 
   const migrated = saves.load();
-  assert.equal(migrated.version, 30);
+  assert.equal(migrated.version, GAME_STATE_VERSION);
   assert.deepEqual(migrated.characters.mina, {
     trust: 4,
     risk: 2,
@@ -597,7 +597,7 @@ test("adds soft investigative pressure records to version 29 saves", () => {
   storage.setItem(SAVE_KEY, JSON.stringify(legacy));
 
   const migrated = saves.load();
-  assert.equal(migrated.version, 30);
+  assert.equal(migrated.version, GAME_STATE_VERSION);
   assert.deepEqual(migrated.pressure, {
     heat: 0,
     events: [],
@@ -606,4 +606,25 @@ test("adds soft investigative pressure records to version 29 saves", () => {
     lastEvent: null,
     lastCountermeasure: null,
   });
+});
+
+test("unlocks the eastern terminal for completed Sanctuary Chain saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const legacy = createInitialState();
+  legacy.version = 30;
+  legacy.progress.chapter = 10;
+  legacy.flags.provedSanctuaryChain = true;
+  legacy.progress.unlockedLocations = legacy.progress.unlockedLocations.filter(
+    (locationId) => locationId !== "port_prosper_eastern_terminal",
+  );
+  storage.setItem(SAVE_KEY, JSON.stringify(legacy));
+
+  const migrated = saves.load();
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(
+    migrated.progress.unlockedLocations.includes("port_prosper_eastern_terminal"),
+    true,
+  );
+  assert.equal(migrated.progress.chapter, 11);
 });
