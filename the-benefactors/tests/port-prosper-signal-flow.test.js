@@ -56,4 +56,8 @@ test("Port Prosper survives and exposes Meridian's Sanctuary Chain", () => {
     true,
   );
   assert.equal(result.state.progress.officeState, 18);
+  assert.equal(
+    result.state.progress.unlockedLocations.includes("port_prosper_eastern_terminal"),
+    true,
+  );
 });

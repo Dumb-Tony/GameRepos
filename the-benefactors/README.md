@@ -1,5 +1,12 @@
 # The Benefactors
 
+**Milestone 30 — The Vesper courier (complete)**
+
+- Added the fully illustrated Port Prosper Eastern Terminal and a predawn surveillance sequence built around a phantom ferry, false disaster auditor, and locker 44
+- Added eight viewable evidence files, an interview with night dispatcher Aya Sorn, a new pressure event, and a five-connection evidence-board deduction
+- Extended the casebook, chapter display, home-office update, board dossier, and cinematic Story Reel through Chapter 12: Forecast Island
+- Added a dedicated courier-flow test and extended the full authored playthrough through the Shepherd forecast archive
+
 **Milestone 29 — Complete-game polish (complete)**
 
 - Removed the remaining broken typography and normalized punctuation across every late-game evidence file, objective, and interface label

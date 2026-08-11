@@ -4,58 +4,58 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=complete-20260811a";
+} from "../content/game-content.js?v=vesper-20260811a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=complete-20260811a";
-import { CHAPTER_INTERLUDES } from "../content/cinematic-content.js?v=complete-20260811a";
-import { CHARACTER_PROFILES } from "../content/relationship-content.js?v=complete-20260811a";
-import { COUNTERMEASURES, PRESSURE_EVENTS } from "../content/pressure-content.js?v=complete-20260811a";
-import { getInteractiveLocation } from "../content/exploration-content.js?v=complete-20260811a";
+} from "../content/casebook-content.js?v=vesper-20260811a";
+import { CHAPTER_INTERLUDES } from "../content/cinematic-content.js?v=vesper-20260811a";
+import { CHARACTER_PROFILES } from "../content/relationship-content.js?v=vesper-20260811a";
+import { COUNTERMEASURES, PRESSURE_EVENTS } from "../content/pressure-content.js?v=vesper-20260811a";
+import { getInteractiveLocation } from "../content/exploration-content.js?v=vesper-20260811a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=complete-20260811a";
+} from "../content/onboarding-content.js?v=vesper-20260811a";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=complete-20260811a";
-import { evaluateCondition } from "../engine/conditions.js?v=complete-20260811a";
-import { applyEffects } from "../engine/events.js?v=complete-20260811a";
-import { createInitialState } from "../engine/game-state.js?v=complete-20260811a";
+} from "../content/prologue-content.js?v=vesper-20260811a";
+import { evaluateCondition } from "../engine/conditions.js?v=vesper-20260811a";
+import { applyEffects } from "../engine/events.js?v=vesper-20260811a";
+import { createInitialState } from "../engine/game-state.js?v=vesper-20260811a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=complete-20260811a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=complete-20260811a";
+} from "../engine/player-language.js?v=vesper-20260811a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=vesper-20260811a";
 import {
   getVisibleHotspots,
   renderExplorationScene,
-} from "../systems/exploration/scene-renderer.js?v=complete-20260811a";
+} from "../systems/exploration/scene-renderer.js?v=vesper-20260811a";
 import {
   completeInteraction,
   getFieldNoteEntries,
   getHotspotObservationText,
   hasObservedHotspot,
   inspectHotspot,
-} from "../systems/exploration/exploration-progress.js?v=complete-20260811a";
-import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=complete-20260811a";
+} from "../systems/exploration/exploration-progress.js?v=vesper-20260811a";
+import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=vesper-20260811a";
 import {
   PORT_PROSPER_RESPONSES,
   advancePortProsperAftermath,
   applyPortProsperResponse,
-} from "../systems/decisions/port-prosper-response.js?v=complete-20260811a";
+} from "../systems/decisions/port-prosper-response.js?v=vesper-20260811a";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=complete-20260811a";
+} from "../systems/dialogue/dialogue-engine.js?v=vesper-20260811a";
 import {
   arrangeEvidence,
   connectEvidence,
@@ -66,28 +66,28 @@ import {
   removeConnection,
   saveEvidenceNote,
   unpinEvidence,
-} from "../systems/evidence-board/evidence-board.js?v=complete-20260811a";
+} from "../systems/evidence-board/evidence-board.js?v=vesper-20260811a";
 import {
   getEvidencePresentation,
   renderEvidenceArtifact,
-} from "../systems/evidence/evidence-renderer.js?v=complete-20260811a";
+} from "../systems/evidence/evidence-renderer.js?v=vesper-20260811a";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=complete-20260811a";
+} from "../systems/puzzles/plan-alignment.js?v=vesper-20260811a";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=complete-20260811a";
-import { TransientNotice } from "./transient-notice.js?v=complete-20260811a";
+} from "../systems/puzzles/recording-reconstruction.js?v=vesper-20260811a";
+import { TransientNotice } from "./transient-notice.js?v=vesper-20260811a";
 import {
   advanceInterlude,
   beginInterlude,
   getPendingInterlude,
   skipInterlude,
-} from "../systems/cinematics/chapter-interludes.js?v=complete-20260811a";
+} from "../systems/cinematics/chapter-interludes.js?v=vesper-20260811a";
 import {
   applyRelationshipMoment,
   exposureStatus,
@@ -95,13 +95,13 @@ import {
   previewRelationshipMoment,
   relationshipStatus,
   requestSourceHelp,
-} from "../systems/relationships/relationships.js?v=complete-20260811a";
+} from "../systems/relationships/relationships.js?v=vesper-20260811a";
 import {
   applyCountermeasure,
   availableCountermeasures,
   pressureStatus,
   syncPressure,
-} from "../systems/pressure/investigative-pressure.js?v=complete-20260811a";
+} from "../systems/pressure/investigative-pressure.js?v=vesper-20260811a";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -967,7 +967,25 @@ export class GameApp {
   renderHome() {
     const state = this.store.getState();
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
-    const caseUpdate = state.flags.provedSanctuaryChain
+    const caseUpdate = state.flags.provedVesperTransferRoute
+      ? {
+          title: "Forecast Island",
+          text:
+            "The Shepherd index proves Vesper Key does not predict catastrophe; it selects exploitable cities and writes their suffering into acquisition plans. The courier packet and tide route provide a way onto the island.",
+        }
+      : state.flags.foundShepherdForecastIndex
+        ? {
+            title: "The Shepherd archive",
+            text:
+              "Locker 44 held the false auditor packet, Vesper tide cipher, and Shepherd forecast index. Connect the courier trail to the Archipelago transfer order on the evidence board.",
+          }
+        : (state.locationVisits.port_prosper_eastern_terminal || 0) > 0
+          ? {
+              title: "Locker 44",
+              text:
+                "The Vesper courier is inside the eastern terminal. Copy the altered departure log, question Aya Sorn, identify the false auditor, and reach locker 44 without being made.",
+            }
+          : state.flags.provedSanctuaryChain
       ? {
           title: "Seven islands",
           text:
@@ -2788,7 +2806,25 @@ export class GameApp {
     );
     const yarnAnchorX = boardDensity.cardWidth / 2;
     const yarnAnchorY = (14 / corkboardHeight) * 100;
-    const boardCase = state.flags.provedSanctuaryChain
+    const boardCase = state.flags.provedVesperTransferRoute
+      ? {
+          number: "16",
+          title: "VESPER KEY / FORECAST ISLAND",
+          phase: "Shepherd archive exposed / Plan the island approach",
+        }
+      : state.flags.foundShepherdForecastIndex
+        ? {
+            number: "16",
+            title: "VESPER KEY / SHEPHERD ARCHIVE",
+            phase: "Connect the courier packet to Meridian's forecast transfer",
+          }
+        : (state.locationVisits.port_prosper_eastern_terminal || 0) > 0
+          ? {
+              number: "16",
+              title: "EASTERN TERMINAL / LOCKER 44",
+              phase: "Identify the courier / Intercept the Vesper packet",
+            }
+          : state.flags.provedSanctuaryChain
       ? {
           number: "15",
           title: "SANCTUARY CHAIN / VESPER KEY",
@@ -4316,6 +4352,15 @@ export class GameApp {
   }
 
   chapterLabel(state = this.store.getState()) {
+    if (state.flags.provedVesperTransferRoute) {
+      return "Chapter 12 · Forecast Island";
+    }
+    if (
+      state.progress.unlockedLocations.includes("port_prosper_eastern_terminal") ||
+      (state.locationVisits.port_prosper_eastern_terminal || 0) > 0
+    ) {
+      return "Chapter 11 · Locker 44";
+    }
     if (
       state.flags.provedAsterHouseTriggerCell ||
       state.progress.unlockedLocations.includes("port_prosper_signal_exchange") ||
@@ -4808,6 +4853,11 @@ export class GameApp {
   }
 
   describeProgress(state) {
+    if (state.flags.provedVesperTransferRoute) return "Chapter 12 · Forecast Island";
+    if (
+      state.progress.unlockedLocations.includes("port_prosper_eastern_terminal") ||
+      (state.locationVisits.port_prosper_eastern_terminal || 0) > 0
+    ) return "Chapter 11 · Locker 44";
     if (state.flags.provedSanctuaryChain) return "Chapter 10 · The Archipelago Protocol";
     if (state.flags.provedAsterHouseTriggerCell) return "Chapter 10 · Port Prosper survives";
     if (state.flags.identifiedAsterHouse) return "Chapter 9 · The Trigger Cell";

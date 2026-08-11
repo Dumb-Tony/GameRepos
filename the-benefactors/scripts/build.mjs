@@ -40,6 +40,7 @@ const imageAssetFiles = [
   "assets/scenes/orpheus-first-circle.webp",
   "assets/scenes/aster-house.webp",
   "assets/scenes/port-prosper-signal-exchange.webp",
+  "assets/scenes/port-prosper-eastern-terminal.webp",
   "assets/social/benefactors-social.webp",
   "assets/evidence/gala-photograph-v2.webp",
   "assets/evidence/photo-west-wall.webp",
@@ -188,8 +189,8 @@ await writeFile(
   JSON.stringify(
     {
       name: "The Benefactors",
-      milestone: "final-polish",
-      release: "complete-20260811a",
+      milestone: "vesper-courier",
+      release: "vesper-20260811a",
       builtAt: new Date().toISOString(),
     },
     null,

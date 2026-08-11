@@ -14,8 +14,8 @@ import {
 } from "../src/systems/cinematics/chapter-interludes.js";
 
 test("every chapter interlude is a complete three-beat illustrated story reel", () => {
-  assert.equal(CHAPTER_INTERLUDES.length, 10);
-  assert.deepEqual(CHAPTER_INTERLUDES.map((entry) => entry.order), [1,2,3,4,5,6,7,8,9,10]);
+  assert.equal(CHAPTER_INTERLUDES.length, 11);
+  assert.deepEqual(CHAPTER_INTERLUDES.map((entry) => entry.order), [1,2,3,4,5,6,7,8,9,10,11]);
   for (const interlude of CHAPTER_INTERLUDES) {
     assert.equal(interlude.beats.length, 3, interlude.id);
     assert.ok(interlude.title);

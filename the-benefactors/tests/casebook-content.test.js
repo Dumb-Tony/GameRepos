@@ -20,7 +20,7 @@ test("every casebook stage has a three-level hint path", () => {
     assert.equal(stage.hints.length, 3, stage.id);
     assert.equal(stage.hints.every(Boolean), true, stage.id);
   }
-  assert.equal(CASEBOOK_PROGRESS.length, 93);
+  assert.equal(CASEBOOK_PROGRESS.length, 102);
 });
 
 test("casebook objective advances with investigation state", () => {
@@ -232,4 +232,13 @@ test("casebook objective advances with investigation state", () => {
 
   state.flags.provedSanctuaryChain = true;
   assert.equal(activeStage(state).id, "intercept_vesper_packet");
+
+  state.locationVisits.port_prosper_eastern_terminal = 1;
+  assert.equal(activeStage(state).id, "search_locker_44");
+
+  state.flags.foundShepherdForecastIndex = true;
+  assert.equal(activeStage(state).id, "connect_vesper_transfer");
+
+  state.flags.provedVesperTransferRoute = true;
+  assert.equal(activeStage(state).id, "reach_forecast_island");
 });
