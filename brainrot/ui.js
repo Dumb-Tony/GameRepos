@@ -325,7 +325,7 @@
       if (e.key === 'e' || e.key === 'E') this._openEvo();
       else if (e.key === ' ') { e.preventDefault(); g.setSpeed(g.speed > 0 ? 0 : 1); }
       else if (e.key >= '1' && e.key <= '3') g.setSpeed(+e.key);
-      else if (e.key === 'Escape') ['menuModal', 'statsModal', 'awardsModal'].forEach((m) => this._closeModal(m));
+      else if (e.key === 'Escape') ['menuModal', 'statsModal', 'awardsModal', 'helpModal'].forEach((m) => this._closeModal(m));
     }
 
     // Insets for the map projection so the whole world sits between the floating
