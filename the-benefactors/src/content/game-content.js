@@ -2883,6 +2883,122 @@ export const DIALOGUES = Object.freeze({
       },
     },
   },
+  mara_field_editor: {
+    id: "mara_field_editor",
+    character: "Mara Venn",
+    portrait: "MV",
+    start: "check-in",
+    nodes: {
+      "check-in": {
+        id: "check-in",
+        speaker: "Mara Venn",
+        text:
+          "You keep coming back with a larger story and less sleep. Tell me what is solid, not what is frightening.",
+        choices: [
+          {
+            id: "ask-deadline",
+            text: "How much time do I have before you kill the story?",
+            next: "deadline",
+          },
+          {
+            id: "show-sanctuary",
+            text: "Orpheus is one node in a seven-island chain.",
+            evidenceId: "sanctuary_chain_chart",
+            requires: { type: "hasEvidence", id: "sanctuary_chain_chart" },
+            next: "islands",
+          },
+          {
+            id: "ask-support",
+            text: "Are you still backing me?",
+            next: "support",
+          },
+          { id: "leave", text: "I need to get back into the field.", end: true },
+        ],
+      },
+      deadline: {
+        id: "deadline",
+        speaker: "Mara Venn",
+        text:
+          "For a mayor stealing accessibility money? Tonight. For an organization selecting disasters? Until they shut us down or you prove it. Preferably proof first.",
+        choices: [
+          { id: "ask-support", text: "And if they threaten the paper?", next: "support" },
+          { id: "back", text: "Let me start again.", next: "check-in" },
+        ],
+      },
+      support: {
+        id: "support",
+        speaker: "Mara Venn",
+        text:
+          "I am backing the work. That means I will challenge every leap, make copies of everything, and lie badly if anyone asks where you went.",
+        onEnter: [{ type: "setFlag", key: "checkedInWithMara", value: true }],
+        choices: [
+          { id: "thanks", text: "That is almost encouraging.", end: true },
+          { id: "back", text: "One more thing.", next: "check-in" },
+        ],
+      },
+      islands: {
+        id: "islands",
+        speaker: "Mara Venn",
+        text:
+          "Then stop calling it an island story. It is infrastructure: ports, clinics, archives, airfields. Find the connection they cannot dismiss as geography.",
+        onEnter: [{ type: "setFlag", key: "checkedInWithMara", value: true }],
+        choices: [
+          { id: "vesper", text: "The next transfer goes through Vesper Key.", end: true },
+          { id: "back", text: "Let me show you the rest.", next: "check-in" },
+        ],
+      },
+    },
+  },
+  port_prosper_engineer: {
+    id: "port_prosper_engineer",
+    character: "Imani Cross",
+    portrait: "IC",
+    start: "radio",
+    nodes: {
+      radio: {
+        id: "radio",
+        speaker: "Imani Cross",
+        text:
+          "Signal Exchange duty engineer. If you are the reporter who sent the isolation packet, you bought us six minutes and spent five of them already.",
+        choices: [
+          { id: "ask-saved", text: "What did the countermeasure save?", next: "saved" },
+          { id: "ask-relay", text: "What stayed online?", next: "relay" },
+          { id: "leave", text: "Keep the channel open.", end: true },
+        ],
+      },
+      saved: {
+        id: "saved",
+        speaker: "Imani Cross",
+        text:
+          "Hospital power, floodgates, emergency dispatch. The city gets to wake up annoyed instead of underwater. I would call that a result.",
+        choices: [
+          { id: "ask-relay", text: "And the six-minute breach?", next: "relay" },
+          { id: "finish", text: "Document every surviving system.", end: true },
+        ],
+      },
+      relay: {
+        id: "relay",
+        speaker: "Imani Cross",
+        text:
+          "Relay Seven ignored our isolation command. It spoke to something offshore, copied a newsroom cipher, then burned its own cabinet. That is not a malfunction. That is an exit route.",
+        onEnter: [{ type: "setFlag", key: "questionedImaniCross", value: true }],
+        choices: [
+          {
+            id: "ask-destination",
+            text: "Can you recover the offshore destination?",
+            next: "destination",
+          },
+        ],
+      },
+      destination: {
+        id: "destination",
+        speaker: "Imani Cross",
+        text:
+          "Not from here. But the relay requested a nautical time source before it died. Check anything in this room that still remembers tides.",
+        choices: [{ id: "finish", text: "The chart cart. Understood.", end: true }],
+      },
+    },
+  },
 });
 
 export const DEDUCTIONS = Object.freeze({

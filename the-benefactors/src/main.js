@@ -1,8 +1,8 @@
-import { createInitialState, GameStore } from "./engine/game-state.js?v=archipelago-20260811a";
-import { ScreenRouter } from "./engine/router.js?v=archipelago-20260811a";
-import { SaveSystem } from "./engine/save-system.js?v=archipelago-20260811a";
+import { createInitialState, GameStore } from "./engine/game-state.js?v=fieldwork-20260811a";
+import { ScreenRouter } from "./engine/router.js?v=fieldwork-20260811a";
+import { SaveSystem } from "./engine/save-system.js?v=fieldwork-20260811a";
 import { AudioEngine } from "./systems/audio/audio-engine.js?v=visual-polish-20260730a";
-import { GameApp } from "./ui/app.js?v=archipelago-20260811a";
+import { GameApp } from "./ui/app.js?v=fieldwork-20260811a";
 
 const root = document.querySelector("#app");
 const saves = new SaveSystem();

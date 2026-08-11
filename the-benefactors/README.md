@@ -1,5 +1,14 @@
 # The Benefactors
 
+## Milestone 24 — Fieldwork interaction pass (complete)
+
+- Every playable location now contains an optional persistent field-note discovery and a changed observation on return visits.
+- Sparse early scenes have richer hotspot coverage, including new uses for press credentials, the smartphone, and the audio recorder.
+- Examined hotspots receive a clear visual marker, while each location reports details examined, field notes found, and visit count.
+- Optional discoveries are preserved in a dedicated notebook section without overcrowding the evidence board.
+- Mara Venn can now be consulted in the newsroom, and Port Prosper duty engineer Imani Cross can be questioned about the six-minute breach.
+- Existing saves migrate to the new exploration record without losing story, evidence, board, or dialogue progress.
+
 An investigative noir point-and-click adventure about a local corruption story that opens into a global conspiracy.
 
 This folder is intentionally isolated from the other games in `GameRepos`.

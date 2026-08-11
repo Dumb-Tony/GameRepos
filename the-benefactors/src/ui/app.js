@@ -4,11 +4,12 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=archipelago-20260811a";
+} from "../content/game-content.js?v=fieldwork-20260811a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=archipelago-20260811a";
+} from "../content/casebook-content.js?v=fieldwork-20260811a";
+import { getInteractiveLocation } from "../content/exploration-content.js?v=fieldwork-20260811a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
@@ -20,16 +21,26 @@ import {
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
 } from "../content/prologue-content.js?v=field-tools-20260731a";
-import { evaluateCondition } from "../engine/conditions.js?v=visual-polish-20260730a";
+import { evaluateCondition } from "../engine/conditions.js?v=fieldwork-20260811a";
 import { applyEffects } from "../engine/events.js?v=visual-polish-20260730a";
-import { createInitialState } from "../engine/game-state.js?v=archipelago-20260811a";
+import { createInitialState } from "../engine/game-state.js?v=fieldwork-20260811a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
 } from "../engine/player-language.js?v=visual-polish-20260730a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=archipelago-20260811a";
-import { renderExplorationScene } from "../systems/exploration/scene-renderer.js?v=field-tools-20260731a";
-import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=field-tools-20260731a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=fieldwork-20260811a";
+import {
+  getVisibleHotspots,
+  renderExplorationScene,
+} from "../systems/exploration/scene-renderer.js?v=fieldwork-20260811a";
+import {
+  completeInteraction,
+  getFieldNoteEntries,
+  getHotspotObservationText,
+  hasObservedHotspot,
+  inspectHotspot,
+} from "../systems/exploration/exploration-progress.js?v=fieldwork-20260811a";
+import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=fieldwork-20260811a";
 import {
   PORT_PROSPER_RESPONSES,
   advancePortProsperAftermath,
@@ -1426,10 +1437,18 @@ export class GameApp {
 
   renderLocation() {
     const state = this.store.getState();
-    const location =
+    const location = getInteractiveLocation(
       GAME_CONTENT.locations[state.progress.currentLocation] ||
-      GAME_CONTENT.locations.ledger_newsroom;
+        GAME_CONTENT.locations.ledger_newsroom,
+    );
     const note = this.activeLocationNote;
+    const visibleHotspots = getVisibleHotspots(location, state);
+    const observedCount = visibleHotspots.filter((hotspot) =>
+      hasObservedHotspot(state, location.id, hotspot.id),
+    ).length;
+    const locationFieldNotes = (state.exploration?.fieldNotes || []).filter((key) =>
+      key.startsWith(`${location.id}:`),
+    ).length;
     const actionAvailable =
       note &&
       evaluateCondition(note.actionWhen, state) &&
@@ -1444,6 +1463,11 @@ export class GameApp {
             <p class="kicker">${escapeHtml(location.eyebrow)}</p>
             <h1 tabindex="-1">${escapeHtml(location.name)}</h1>
             <p>${escapeHtml(location.description)}</p>
+            <div class="scene-progress" aria-label="Scene investigation progress">
+              <span><strong>${observedCount}</strong> / ${visibleHotspots.length} details examined</span>
+              <span><strong>${locationFieldNotes}</strong> field notes</span>
+              <span>Visit <strong>${state.locationVisits[location.id] || 1}</strong></span>
+            </div>
             ${
               note
                 ? `
@@ -1453,6 +1477,11 @@ export class GameApp {
                     <p>${escapeHtml(
                       note.resultShown ? note.resultText || note.text : note.text,
                     )}</p>
+                    ${
+                      note.fieldNote
+                        ? `<p class="field-note-chip"><span>Field note</span>${escapeHtml(note.fieldNote)}</p>`
+                        : ""
+                    }
                     ${
                       note.toolId && INVENTORY_ITEMS[note.toolId]
                         ? `<p class="tool-use-chip"><span>${escapeHtml(INVENTORY_ITEMS[note.toolId].icon)}</span> Uses ${escapeHtml(INVENTORY_ITEMS[note.toolId].name)}</p>`
@@ -1493,9 +1522,25 @@ export class GameApp {
 
     this.root.querySelectorAll("[data-scene-hotspot]").forEach((button) => {
       button.addEventListener("click", () => {
-        this.activeLocationNote = location.hotspots.find(
+        const hotspot = location.hotspots.find(
           (hotspot) => hotspot.id === button.dataset.sceneHotspot,
         );
+        if (!hotspot) return;
+        const wasObserved = hasObservedHotspot(
+          this.store.getState(),
+          location.id,
+          hotspot.id,
+        );
+        this.activeLocationNote = {
+          ...hotspot,
+          text: getHotspotObservationText(this.store.getState(), location, hotspot),
+          wasObserved,
+        };
+        if (!wasObserved || (hotspot.fieldNote && !this.store.getState().exploration.fieldNotes.includes(`${location.id}:${hotspot.id}`))) {
+          const next = inspectHotspot(this.store.getState(), location, hotspot);
+          this.store.replace(next, `inspect-${hotspot.id}`);
+          this.saves.save(this.store.getState(), `inspect-${hotspot.id}`);
+        }
         if (this.activeLocationNote?.toolId !== this.activeInventoryToolId) {
           this.activeInventoryToolId = null;
         }
@@ -1530,11 +1575,20 @@ export class GameApp {
           this.renderLocation();
           return;
         }
-        const next = applyEffects(this.store.getState(), note.effects);
+        const evidenceBefore = new Set(this.store.getState().evidence.collected);
+        let next = applyEffects(this.store.getState(), note.effects);
+        next = completeInteraction(next, location.id, note.id);
+        const addedEvidence = next.evidence.collected.some(
+          (id) => !evidenceBefore.has(id),
+        );
         this.store.replace(next, `hotspot-${note.id}`);
         this.saves.save(this.store.getState(), `hotspot-${note.id}`);
         this.activeLocationNote = { ...note, effects: null, resultShown: true };
-        this.notice.show("New evidence added to the case file.");
+        this.notice.show(
+          addedEvidence
+            ? "New evidence added to the case file."
+            : "Field interaction recorded in your notebook.",
+        );
         this.renderLocation();
       },
       map: () => this.router.navigate("map"),
@@ -3233,6 +3287,13 @@ export class GameApp {
 
   renderNotebook() {
     const state = this.store.getState();
+    const interactiveLocations = Object.fromEntries(
+      Object.entries(GAME_CONTENT.locations).map(([id, location]) => [
+        id,
+        getInteractiveLocation(location),
+      ]),
+    );
+    const fieldNotes = getFieldNoteEntries(state, interactiveLocations);
     const stage =
       CASEBOOK_STAGES.find((entry) => evaluateCondition(entry.activeWhen, state)) ||
       CASEBOOK_STAGES.at(-1);
@@ -3311,6 +3372,34 @@ export class GameApp {
               </footer>
             </article>
           </div>
+          <section class="field-notes-page" aria-labelledby="field-notes-title">
+            <header>
+              <div>
+                <p class="notebook-date">Optional observations</p>
+                <h2 id="field-notes-title">Field notes</h2>
+              </div>
+              <strong>${fieldNotes.length}</strong>
+            </header>
+            <div class="field-note-list">
+              ${
+                fieldNotes.length
+                  ? fieldNotes
+                      .slice()
+                      .reverse()
+                      .map(
+                        (entry) => `
+                          <article>
+                            <span>${escapeHtml(entry.locationName)}</span>
+                            <h3>${escapeHtml(entry.title)}</h3>
+                            <p>${escapeHtml(entry.text)}</p>
+                          </article>
+                        `,
+                      )
+                      .join("")
+                  : `<p class="field-notes-empty">Examine incidental details in locations to preserve observations here. Field notes add context without crowding the evidence board.</p>`
+              }
+            </div>
+          </section>
         </section>
         ${this.renderToast()}
       </main>

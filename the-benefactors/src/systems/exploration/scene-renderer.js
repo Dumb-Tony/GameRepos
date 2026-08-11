@@ -1,4 +1,5 @@
-import { evaluateCondition } from "../../engine/conditions.js";
+import { evaluateCondition } from "../../engine/conditions.js?v=fieldwork-20260811a";
+import { hasObservedHotspot } from "./exploration-progress.js?v=fieldwork-20260811a";
 
 export function getVisibleHotspots(location, state) {
   return (location.hotspots || []).filter((hotspot) =>
@@ -22,11 +23,11 @@ export function renderExplorationScene(location, state, activeToolId = null) {
         .map(
           (hotspot) => `
             <button
-              class="scene-hotspot authored-hotspot ${activeToolId && hotspot.toolId === activeToolId ? "is-tool-target" : ""}"
+              class="scene-hotspot authored-hotspot ${hasObservedHotspot(state, location.id, hotspot.id) ? "is-observed" : ""} ${activeToolId && hotspot.toolId === activeToolId ? "is-tool-target" : ""}"
               style="left:${hotspot.x}%;top:${hotspot.y}%;width:${hotspot.width}%;height:${hotspot.height}%"
               data-scene-hotspot="${hotspot.id}"
-              aria-label="Examine ${hotspot.label}"
-            ><span>${hotspot.label}</span></button>
+              aria-label="${hasObservedHotspot(state, location.id, hotspot.id) ? "Re-examine" : "Examine"} ${hotspot.label}"
+            ><span>${hasObservedHotspot(state, location.id, hotspot.id) ? "✓ " : ""}${hotspot.label}</span></button>
           `,
         )
         .join("")}

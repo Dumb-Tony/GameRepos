@@ -513,3 +513,20 @@ test("unlocks Port Prosper for completed Aster House saves", () => {
   );
   assert.equal(migrated.progress.chapter, 10);
 });
+
+test("adds persistent exploration records to version 25 saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const legacy = createInitialState();
+  legacy.version = 25;
+  delete legacy.exploration;
+  storage.setItem(SAVE_KEY, JSON.stringify(legacy));
+
+  const migrated = saves.load();
+  assert.equal(migrated.version, 26);
+  assert.deepEqual(migrated.exploration, {
+    observedHotspots: [],
+    completedInteractions: [],
+    fieldNotes: [],
+  });
+});

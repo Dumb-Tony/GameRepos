@@ -34,6 +34,18 @@ export function evaluateCondition(condition, state) {
       return state.inventory.includes(condition.id);
     case "visited":
       return (state.locationVisits[condition.location] || 0) >= (condition.atLeast || 1);
+    case "hotspotObserved":
+      return (state.exploration?.observedHotspots || []).some((key) =>
+        condition.location
+          ? key === `${condition.location}:${condition.id}`
+          : key.endsWith(`:${condition.id}`),
+      );
+    case "interactionComplete":
+      return (state.exploration?.completedInteractions || []).some((key) =>
+        condition.location
+          ? key === `${condition.location}:${condition.id}`
+          : key.endsWith(`:${condition.id}`),
+      );
     default:
       throw new Error(`Unknown condition type: ${condition.type}`);
   }
@@ -42,4 +54,3 @@ export function evaluateCondition(condition, state) {
 export function filterAvailable(items, state) {
   return items.filter((item) => evaluateCondition(item.visibleWhen, state));
 }
-

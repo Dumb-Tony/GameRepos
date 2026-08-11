@@ -3,7 +3,7 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js?v=archipelago-20260811a";
+} from "./game-state.js?v=fieldwork-20260811a";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
@@ -138,6 +138,17 @@ export class SaveSystem {
       evidence: { ...fallback.evidence, ...candidate.evidence },
       board: { ...fallback.board, ...candidate.board },
       dialogue: { ...fallback.dialogue, ...candidate.dialogue },
+      exploration: {
+        ...fallback.exploration,
+        ...candidate.exploration,
+        observedHotspots: [
+          ...new Set(candidate.exploration?.observedHotspots || []),
+        ],
+        completedInteractions: [
+          ...new Set(candidate.exploration?.completedInteractions || []),
+        ],
+        fieldNotes: [...new Set(candidate.exploration?.fieldNotes || [])],
+      },
       journal: {
         ...fallback.journal,
         ...candidate.journal,

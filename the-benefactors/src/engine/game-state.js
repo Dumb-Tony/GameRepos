@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 25;
+export const GAME_STATE_VERSION = 26;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -157,6 +157,8 @@ export function createInitialState(player = {}, settings = {}) {
       photographedSanctuaryChain: false,
       foundArchipelagoTransferOrder: false,
       provedSanctuaryChain: false,
+      checkedInWithMara: false,
+      questionedImaniCross: false,
     },
     inventory: ["press_credentials", "smartphone", "recorder", "notebook"],
     evidence: {
@@ -178,6 +180,11 @@ export function createInitialState(player = {}, settings = {}) {
       activeNodeId: null,
       visitedNodes: [],
       completedDialogues: [],
+    },
+    exploration: {
+      observedHotspots: [],
+      completedInteractions: [],
+      fieldNotes: [],
     },
     journal: {
       revealedHints: {},
@@ -254,6 +261,10 @@ export function isGameState(value) {
       value.flags &&
       value.evidence &&
       value.board &&
+      value.exploration &&
+      Array.isArray(value.exploration.observedHotspots) &&
+      Array.isArray(value.exploration.completedInteractions) &&
+      Array.isArray(value.exploration.fieldNotes) &&
       value.journal &&
       value.journal.revealedHints &&
       value.puzzles &&
