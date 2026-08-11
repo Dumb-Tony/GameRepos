@@ -259,12 +259,51 @@
     }
 
     _mutate() {
+      // On high-chaos difficulties the world mutates AGAINST you too. Without
+      // this, "Chaos" was purely generous — mutations hand out free symptoms, so
+      // cranking their rate made the hardest-sounding mode the fastest and
+      // easiest. Now the extra volatility cuts both ways: more happens, and not
+      // all of it is good.
+      const chaos = this.difficulty.chaos || 1;
+      if (chaos > 1 && this.rnd() < C.BACKFIRE_CHANCE * (chaos - 1)) { this._backfire(); return; }
       const cands = BR.UPGRADE_TREE.filter((u) => u.tree === 'symptom' && !this.purchased.has(u.id) && this.isUnlockable(u));
       if (!cands.length) return;
       const u = cands[(this.rnd() * cands.length) | 0];
       this.purchased.add(u.id); this.recomputeEv();
       this.onEvent('🧬', `Mutation! "${u.name}" evolved on its own. (De-evolve it if it's raising the alarm.)`, 'chaos');
       if (this.ui) this.ui.onBuy(u);
+    }
+    // A chaos setback — the coin-flip other side of a free mutation.
+    _backfire() {
+      const roll = this.rnd();
+      // 1) a symptom decays on its own (no refund) — only ones nothing depends on
+      if (roll < 0.4) {
+        const owned = BR.UPGRADE_TREE.filter((u) => u.deEvolvable && this.purchased.has(u.id) && !this.dependentsOwned(u.id));
+        if (owned.length) {
+          const u = owned[(this.rnd() * owned.length) | 0];
+          this.purchased.delete(u.id); this.recomputeEv();
+          this.onEvent('🧟', `Regression! "${u.name}" decayed out of the strain. The rot forgot how to do that.`, 'bad');
+          if (this.ui) { this.ui.onDeEvolve(u); }
+          if (this.audio) this.audio.haptic([60, 40, 60]);
+          return;
+        }
+      }
+      // 2) the labs get a breakthrough
+      if (roll < 0.75) {
+        const amt = 3 + this.rnd() * 5;
+        this.addCure(amt);
+        this.onEvent('🧪', `Chaotic breakthrough — researchers stumble onto something. The Cure jumps ${amt.toFixed(1)}%.`, 'bad');
+        if (this.fx) this.fx.addShake(7, 0.4);
+        return;
+      }
+      // 3) a panicked region slams every door at once
+      const open = this.world.countries.filter((c) => c.detected && (c.airOpen || c.seaOpen || c.landOpen));
+      if (open.length) {
+        const c = open[(this.rnd() * open.length) | 0];
+        this.closeLinks(c); c.landOpen = false;
+        this.onEvent('🚨', `${c.name} panics and shuts everything — air, sea and land — overnight.`, 'bad');
+        if (!this.headless && this.world && c.px !== undefined) this.world.addBurst(c.px, c.py, '#ff5c8a', true);
+      }
     }
 
     // ---- bubbles ------------------------------------------------------
