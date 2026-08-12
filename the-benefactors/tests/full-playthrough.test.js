@@ -37,13 +37,13 @@ class MemoryStorage {
   }
 }
 
-test("the complete authored investigation can progress from the leak through Vesper's Shepherd archive", () => {
+test("the complete authored investigation can progress from the leak through Vesper's suppressed warnings", () => {
   const deductionOrder = Object.keys(DEDUCTIONS);
   const saves = new SaveSystem(new MemoryStorage());
   let state = createInitialState({ firstName: "Alex" });
 
   for (const deductionId of deductionOrder.filter(
-    (id) => !["aster_house_trigger_cell", "sanctuary_chain_protocol", "vesper_forecast_transfer"].includes(id),
+    (id) => !["aster_house_trigger_cell", "sanctuary_chain_protocol", "vesper_forecast_transfer", "vesper_disclosure_control"].includes(id),
   )) {
     const deduction = DEDUCTIONS[deductionId];
 
@@ -101,6 +101,24 @@ test("the complete authored investigation can progress from the leak through Ves
     state = pinEvidence(state, evidenceId);
   }
   for (const connection of asterDeduction.requiredConnections) {
+    state = connectEvidence(
+      state,
+      connection.a,
+      connection.b,
+      connection.type,
+    );
+  }
+  state = evaluateBoardDeductions(state, DEDUCTIONS).state;
+
+  const disclosureDeduction = DEDUCTIONS.vesper_disclosure_control;
+  state = applyEffects(
+    state,
+    disclosureDeduction.requiredEvidence.map((id) => ({ type: "collectEvidence", id })),
+  );
+  for (const evidenceId of disclosureDeduction.requiredEvidence) {
+    state = pinEvidence(state, evidenceId);
+  }
+  for (const connection of disclosureDeduction.requiredConnections) {
     state = connectEvidence(
       state,
       connection.a,
@@ -169,6 +187,7 @@ test("the complete authored investigation can progress from the leak through Ves
   assert.equal(state.flags.provedAsterHouseTriggerCell, true);
   assert.equal(state.flags.provedSanctuaryChain, true);
   assert.equal(state.flags.provedVesperTransferRoute, true);
+  assert.equal(state.flags.provedVesperWithholdsWarnings, true);
   assert.deepEqual(
     state.cinematics.seen,
     CHAPTER_INTERLUDES.map((entry) => entry.id),
@@ -179,6 +198,7 @@ test("the complete authored investigation can progress from the leak through Ves
   );
   assert.equal(state.evidence.collected.includes("vesper_key_dead_drop"), true);
   assert.equal(state.evidence.collected.includes("vesper_approach_file"), true);
+  assert.equal(state.evidence.collected.includes("forecast_hall_access_plan"), true);
   assert.equal(state.board.connections.length >= 35, true);
   const requiredEvidence = new Set(
     Object.values(DEDUCTIONS).flatMap((deduction) => deduction.requiredEvidence),

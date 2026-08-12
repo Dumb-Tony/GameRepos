@@ -1,5 +1,12 @@
 # The Benefactors
 
+**Milestone 31 — The western cistern (complete)**
+
+- Added an illustrated Vesper Key landing reached covertly inside the North Sound ferry's radar wake
+- Added a chained field investigation using the camera, recorder, intercepted courier packet, and temporary auditor cover
+- Added Noor Aven, seven viewable evidence files, a source watchlist pressure event, and a six-connection disclosure-control deduction
+- Extended the casebook, home office, evidence-board dossier, cinematic archive, save migration, and complete playthrough through Chapter 14
+
 **Milestone 30 — The Vesper courier (complete)**
 
 - Added the fully illustrated Port Prosper Eastern Terminal and a predawn surveillance sequence built around a phantom ferry, false disaster auditor, and locker 44

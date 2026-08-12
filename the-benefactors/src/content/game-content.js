@@ -1999,6 +1999,132 @@ export const EVIDENCE = Object.freeze({
       handwritten: "The next island knows which city will need saving before the city does.",
     },
   },
+  vesper_cistern_arrival_sheet: {
+    id: "vesper_cistern_arrival_sheet",
+    title: "Vesper cistern arrival sheet",
+    category: "document",
+    summary:
+      "The western landing records disaster auditors as cargo and lists no return passage for personnel assigned to forecast review.",
+    artifact: {
+      type: "memo",
+      heading: "VESPER WESTERN CISTERN · SERVICE CUSTODY",
+      body: [
+        "ARRIVAL CLASS: CONTINUITY AUDIT / TIDE-6",
+        "PERSONNEL: ONE / RECORDED AS CONTROLLED CARGO",
+        "DESTINATION: SHEPHERD REVIEW / UPPER HALL",
+        "RETURN PASSAGE: PENDING DISCLOSURE CLEARANCE",
+      ],
+      handwritten: "On Vesper, people enter the ledger as property.",
+    },
+  },
+  north_sound_wake_photo: {
+    id: "north_sound_wake_photo",
+    title: "North Sound wake-route photograph",
+    category: "photo",
+    summary:
+      "The service skiff reached Vesper inside the public ferry's radar wake, confirming the concealed approach described by the tide cipher.",
+    artifact: {
+      type: "photo",
+      image: "./assets/scenes/vesper-western-cistern.webp",
+      alt: "A rain-dark service skiff at a volcanic island landing with a public ferry receding offshore",
+      caption: "VESPER KEY · WESTERN CISTERN · 06:19",
+      annotations: [
+        "Service skiff carries no running identification",
+        "Public ferry wake masks the final approach",
+        "Cliff camera faces arrivals rather than the open sea",
+      ],
+    },
+  },
+  vesper_auditor_badge_clone: {
+    id: "vesper_auditor_badge_clone",
+    title: "Vesper auditor badge clone",
+    category: "access",
+    summary:
+      "The cistern reader converts the intercepted courier packet into an internal Shepherd-review credential valid for one ascent.",
+    artifact: {
+      type: "memo",
+      heading: "TEMPORARY REVIEW CREDENTIAL · VESPER NODE 02",
+      body: [
+        "ROLE: DISCLOSURE COMPLIANCE AUDITOR",
+        "ACCESS: WEST CISTERN / SHEPHERD REVIEW HALL",
+        "ESCORT: REMOTE ARCHIVE CONTROL",
+        "EXPIRY: FIRST BELL + 24 MINUTES",
+      ],
+      handwritten: "The packet was not merely cargo. It was an invitation upstairs.",
+    },
+  },
+  noor_aven_statement: {
+    id: "noor_aven_statement",
+    title: "Noor Aven's disclosure statement",
+    category: "witness",
+    summary:
+      "A frightened archive controller confirms that Shepherd warnings are held until the Benefactors approve who may profit from intervention.",
+    artifact: {
+      type: "transcript",
+      heading: "CISTERN INTERCOM · REMOTE ARCHIVE CONTROL",
+      timestamp: "06:23 / NOOR AVEN",
+      lines: [
+        ["AVEN", "The model warned Caligo eleven days ago."],
+        ["REPORTER", "Why was no public alert issued?"],
+        ["AVEN", "A forecast is sealed until intervention rights are assigned."],
+        ["AVEN", "They call silence fiduciary discipline."],
+      ],
+    },
+  },
+  shepherd_disclosure_suppression_log: {
+    id: "shepherd_disclosure_suppression_log",
+    title: "Shepherd suppression log",
+    category: "recording",
+    summary:
+      "A recovered intercom buffer records accurate disaster warnings being deliberately withheld while Meridian acquires distressed assets.",
+    artifact: {
+      type: "transcript",
+      heading: "SHEPHERD DISCLOSURE BUFFER · AUTOMATED REVIEW",
+      timestamp: "ACTIVE QUEUE / REVISION 31",
+      lines: [
+        ["SYSTEM", "Caligo flood warning: confidence eighty-seven percent."],
+        ["REVIEW", "Public disclosure deferred."],
+        ["SYSTEM", "Reason code requested."],
+        ["REVIEW", "Intervention portfolio incomplete."],
+      ],
+    },
+  },
+  vesper_watchlist_extract: {
+    id: "vesper_watchlist_extract",
+    title: "Vesper source watchlist",
+    category: "lead",
+    summary:
+      "The cliff surveillance system links the cloned Ledger cipher to a live watchlist of the reporter and every protected source in the case.",
+    artifact: {
+      type: "memo",
+      heading: "NODE 02 · CONTAINMENT OBSERVATION LIST",
+      body: [
+        "PRIMARY: GREYHAVEN LEDGER INVESTIGATOR",
+        "CHANNEL: CLONED SOURCE-DESK CIPHER",
+        "ASSOCIATES: ACTIVE INTERVIEW NETWORK / SEVENTEEN",
+        "ACTION: HOLD UNTIL SHEPHERD REVIEW CONCLUDES",
+      ],
+      handwritten: "The island has been forecasting us, too.",
+    },
+  },
+  forecast_hall_access_plan: {
+    id: "forecast_hall_access_plan",
+    title: "Forecast Hall access plan",
+    category: "lead",
+    summary:
+      "The western cistern evidence reveals a twenty-four-minute credential window into the Shepherd review hall above Vesper's cliffs.",
+    artifact: {
+      type: "memo",
+      heading: "NEXT INVESTIGATION · SHEPHERD REVIEW HALL",
+      body: [
+        "ENTRY: WESTERN CISTERN / TEMPORARY AUDITOR BADGE",
+        "WINDOW: FIRST BELL + 24 MINUTES",
+        "TARGET: DISCLOSURE AUTHORITY LEDGER",
+        "RISK: SOURCE WATCHLIST IS ACTIVE",
+      ],
+      handwritten: "Upstairs is the room where warnings become investments.",
+    },
+  },
 });
 
 export const INVENTORY_ITEMS = Object.freeze({
@@ -3220,6 +3346,84 @@ export const DIALOGUES = Object.freeze({
       },
     },
   },
+  vesper_archive_controller: {
+    id: "vesper_archive_controller",
+    character: "Noor Aven",
+    portrait: "NA",
+    start: "intro",
+    nodes: {
+      intro: {
+        id: "intro",
+        speaker: "Noor Aven",
+        text:
+          "Western Cistern control. Your credential says disclosure compliance, but no auditor has used the sea entrance since Caligo entered the active queue.",
+        choices: [
+          {
+            id: "show-badge",
+            text: "The courier packet issued this temporary review badge.",
+            evidenceId: "vesper_auditor_badge_clone",
+            requires: { type: "hasEvidence", id: "vesper_auditor_badge_clone" },
+            next: "credential",
+          },
+          { id: "ask-caligo", text: "What happened in Caligo?", next: "caligo" },
+          { id: "leave", text: "Wrong channel. Closing the line.", end: true },
+        ],
+      },
+      caligo: {
+        id: "caligo",
+        speaker: "Noor Aven",
+        text:
+          "Nothing yet. That is the point. Shepherd sees the flood before the city does. The First Circle decides whether anyone outside Vesper deserves to know.",
+        choices: [
+          {
+            id: "show-index",
+            text: "The Shepherd index marks disclosure withheld.",
+            evidenceId: "shepherd_forecast_index",
+            requires: { type: "hasEvidence", id: "shepherd_forecast_index" },
+            next: "truth",
+          },
+          { id: "back", text: "Let me verify the credential first.", next: "intro" },
+        ],
+      },
+      credential: {
+        id: "credential",
+        speaker: "Noor Aven",
+        text:
+          "It is valid for twenty-four minutes. Long enough to review the suppressed warning queue. Not long enough to leave the island if upper security learns who carried it.",
+        choices: [
+          {
+            id: "show-index",
+            text: "Tell me why this archive withholds public warnings.",
+            evidenceId: "shepherd_forecast_index",
+            requires: { type: "hasEvidence", id: "shepherd_forecast_index" },
+            next: "truth",
+          },
+          { id: "leave", text: "Keep the line open.", end: true },
+        ],
+      },
+      truth: {
+        id: "truth",
+        speaker: "Noor Aven",
+        text:
+          "Forecasts are sealed until intervention rights are assigned. Water, hospitals, housing, debt—whoever owns the rescue owns what remains. Caligo was accurate eleven days ago. They are still buying.",
+        onEnter: [
+          { type: "setFlag", key: "questionedNoorAven", value: true },
+          { type: "collectEvidence", id: "noor_aven_statement" },
+        ],
+        choices: [
+          { id: "protect", text: "Help me copy the queue. I will keep your name sealed.", next: "access" },
+          { id: "challenge", text: "You helped them keep eleven days of silence.", next: "access" },
+        ],
+      },
+      access: {
+        id: "access",
+        speaker: "Noor Aven",
+        text:
+          "The lower intercom buffers every review order. Record the disclosure channel, then inspect the cliff camera before you climb. It is not watching the sea. It is watching your sources.",
+        choices: [{ id: "finish", text: "Open the buffer and look away from the screen.", end: true }],
+      },
+    },
+  },
 });
 
 export const DEDUCTIONS = Object.freeze({
@@ -3936,6 +4140,67 @@ export const DEDUCTIONS = Object.freeze({
       { type: "collectEvidence", id: "vesper_approach_file" },
       { type: "setPath", path: "progress.chapter", value: 12 },
       { type: "setPath", path: "progress.officeState", value: 19 },
+      { type: "unlockLocation", id: "vesper_western_cistern" },
+    ],
+  },
+  vesper_disclosure_control: {
+    id: "vesper_disclosure_control",
+    title: "Vesper turns disaster warnings into private leverage",
+    journalText:
+      "The western cistern records, wake route, temporary badge, Noor Aven's testimony, suppression log, and source watchlist prove Vesper controls both sides of Shepherd: it withholds accurate public warnings until the Benefactors secure intervention rights, then targets anyone capable of exposing the delay.",
+    notification:
+      "The temporary auditor credential opens the Shepherd review hall for twenty-four minutes. The disclosure authority ledger is upstairs.",
+    requiredDeductions: ["vesper_forecast_transfer"],
+    requiredEvidence: [
+      "vesper_approach_file",
+      "vesper_cistern_arrival_sheet",
+      "vesper_tide_cipher",
+      "north_sound_wake_photo",
+      "locker_44_courier_packet",
+      "vesper_auditor_badge_clone",
+      "shepherd_forecast_index",
+      "noor_aven_statement",
+      "shepherd_disclosure_suppression_log",
+      "newsroom_cipher_clone",
+      "vesper_watchlist_extract",
+    ],
+    requiredConnections: [
+      {
+        a: "vesper_approach_file",
+        b: "vesper_cistern_arrival_sheet",
+        type: "confirmed",
+      },
+      {
+        a: "vesper_tide_cipher",
+        b: "north_sound_wake_photo",
+        type: "confirmed",
+      },
+      {
+        a: "locker_44_courier_packet",
+        b: "vesper_auditor_badge_clone",
+        type: "confirmed",
+      },
+      {
+        a: "shepherd_forecast_index",
+        b: "noor_aven_statement",
+        type: "confirmed",
+      },
+      {
+        a: "shepherd_forecast_index",
+        b: "shepherd_disclosure_suppression_log",
+        type: "coverup",
+      },
+      {
+        a: "newsroom_cipher_clone",
+        b: "vesper_watchlist_extract",
+        type: "confirmed",
+      },
+    ],
+    effects: [
+      { type: "setFlag", key: "provedVesperWithholdsWarnings", value: true },
+      { type: "collectEvidence", id: "forecast_hall_access_plan" },
+      { type: "setPath", path: "progress.chapter", value: 14 },
+      { type: "setPath", path: "progress.officeState", value: 20 },
     ],
   },
 });
@@ -6670,6 +6935,170 @@ export const GAME_CONTENT = Object.freeze({
             "The launch is gone. Its clean berth and severed mooring seal suggest the crew expected to abandon this route after a single exchange.",
           fieldNote:
             "The unlit 05:42 launch holds position in the public ferry's wake, using its radar shadow as cover.",
+        },
+      ],
+    },
+    vesper_western_cistern: {
+      id: "vesper_western_cistern",
+      name: "Vesper Key · Western Cistern",
+      eyebrow: "North Sound / Friday / 6:19 AM",
+      mapX: 96,
+      mapY: 17,
+      description:
+        "A basalt landing beneath Vesper's forecast compound. The public ferry is already receding, the temporary auditor credential is counting down, and every camera points inland.",
+      sceneClass: "scene-vesper-western-cistern",
+      sceneArt: "./assets/scenes/vesper-western-cistern.webp",
+      hotspots: [
+        {
+          id: "vesper_manifest_case",
+          label: "Salt-stained manifest case",
+          x: 14,
+          y: 66,
+          width: 23,
+          height: 22,
+          title: "Arrivals recorded as cargo",
+          text:
+            "A waterproof custody sheet lies beneath the service tarp. It lists one continuity auditor, but no passenger and no return passage.",
+          actionLabel: "Copy the arrival sheet",
+          toolId: "smartphone",
+          resultText:
+            "The island routes incoming personnel directly to Shepherd review and classifies them as controlled cargo until disclosure clearance.",
+          effects: [
+            { type: "setFlag", key: "copiedVesperArrivalSheet", value: true },
+            { type: "collectEvidence", id: "vesper_cistern_arrival_sheet" },
+          ],
+          actionWhen: {
+            type: "flag",
+            key: "copiedVesperArrivalSheet",
+            equals: false,
+          },
+        },
+        {
+          id: "vesper_service_skiff",
+          label: "Unmarked service skiff",
+          x: 0,
+          y: 50,
+          width: 23,
+          height: 25,
+          title: "Hidden in another ship's wake",
+          text:
+            "The skiff carries no registration. Its wet navigation plate preserves the exact radar shadow used to cross from Bell Buoy 19.",
+          actionLabel: "Photograph the wake route",
+          toolId: "smartphone",
+          resultText:
+            "The North Sound ferry masked the final approach exactly as the Vesper tide cipher predicted.",
+          effects: [
+            { type: "setFlag", key: "photographedFerryWakeRoute", value: true },
+            { type: "collectEvidence", id: "north_sound_wake_photo" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "copiedVesperArrivalSheet" },
+              { type: "flag", key: "photographedFerryWakeRoute", equals: false },
+            ],
+          },
+        },
+        {
+          id: "vesper_cistern_reader",
+          label: "Cistern access reader",
+          x: 62,
+          y: 43,
+          width: 11,
+          height: 24,
+          title: "The courier packet becomes a badge",
+          text:
+            "The reader expects the intercepted packet's custody seal, then asks which Shepherd queue the auditor has come to review.",
+          actionLabel: "Clone the temporary auditor badge",
+          resultText:
+            "The door accepts the packet and issues twenty-four minutes of access to the Shepherd review hall above the cliff.",
+          effects: [
+            { type: "setFlag", key: "clonedVesperAuditorBadge", value: true },
+            { type: "collectEvidence", id: "vesper_auditor_badge_clone" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "photographedFerryWakeRoute" },
+              { type: "flag", key: "clonedVesperAuditorBadge", equals: false },
+            ],
+          },
+        },
+        {
+          id: "vesper_intercom",
+          label: "Archive-control intercom",
+          x: 47,
+          y: 36,
+          width: 14,
+          height: 22,
+          title: "A voice behind the stone",
+          text:
+            "The temporary badge opens a live channel to Noor Aven, the archive controller assigned to Shepherd's suppressed warning queue.",
+          dialogueId: "vesper_archive_controller",
+          visibleWhen: { type: "flag", key: "clonedVesperAuditorBadge" },
+        },
+        {
+          id: "vesper_disclosure_buffer",
+          label: "Disclosure-channel buffer",
+          x: 43,
+          y: 58,
+          width: 17,
+          height: 17,
+          title: "Eleven days of deliberate silence",
+          text:
+            "Noor has left the lower review buffer open. Caligo's flood warning repeats beside a deferment order and an incomplete acquisition portfolio.",
+          actionLabel: "Record the suppression order",
+          toolId: "recorder",
+          resultText:
+            "The recovered exchange proves Vesper had an accurate forecast and withheld it because the Benefactors had not finished buying the rescue.",
+          effects: [
+            { type: "setFlag", key: "recordedDisclosureSuppression", value: true },
+            { type: "collectEvidence", id: "shepherd_disclosure_suppression_log" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "questionedNoorAven" },
+              { type: "flag", key: "recordedDisclosureSuppression", equals: false },
+            ],
+          },
+        },
+        {
+          id: "vesper_cliff_camera",
+          label: "Cliff surveillance lens",
+          x: 88,
+          y: 3,
+          width: 10,
+          height: 18,
+          title: "The camera is watching home",
+          text:
+            "The cliff lens faces arrivals, but its maintenance display shows a familiar identifier: the cloned Greyhaven Ledger source cipher.",
+          actionLabel: "Copy the source watchlist",
+          toolId: "smartphone",
+          resultText:
+            "Seventeen names sit beneath yours. Vesper is using Shepherd's prediction system to model the investigation and target its sources.",
+          effects: [
+            { type: "setFlag", key: "foundVesperWatchlist", value: true },
+            { type: "collectEvidence", id: "vesper_watchlist_extract" },
+          ],
+          actionWhen: {
+            all: [
+              { type: "flag", key: "recordedDisclosureSuppression" },
+              { type: "flag", key: "foundVesperWatchlist", equals: false },
+            ],
+          },
+        },
+        {
+          id: "vesper_cliff_stair",
+          label: "Cliff stair to Forecast Hall",
+          x: 70,
+          y: 19,
+          width: 25,
+          height: 66,
+          title: "Twenty-four minutes uphill",
+          text:
+            "The stair climbs toward the glass review hall where disclosure authority is assigned. The badge clock is running, but the evidence still needs a defensible chain.",
+          revisitText:
+            "A second security patrol now crosses the upper glass. The temporary badge remains valid, but the quiet route is closing.",
+          fieldNote:
+            "Vesper's cameras protect the path from the landing to the Forecast Hall, not the island from anyone approaching by sea.",
         },
       ],
     },

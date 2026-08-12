@@ -131,4 +131,16 @@ export const CHAPTER_INTERLUDES = Object.freeze([
       { kind: "chapter", label: "Outbound ferry · Pier 6", title: "An island that sees disasters coming", image: "./assets/scenes/port-prosper-eastern-terminal.webp", text: "Orpheus chose the targets. Vesper tells the Benefactors which cities will break—and which crises deserve help." },
     ],
   },
+  {
+    id: "eleven-days-silence",
+    order: 12,
+    chapter: "Chapter 14",
+    title: "Eleven Days of Silence",
+    eligibleWhen: { type: "flag", key: "provedVesperWithholdsWarnings" },
+    beats: [
+      { kind: "transition", label: "Western cistern · 06:31", title: "The island counted you as cargo", image: "./assets/scenes/vesper-western-cistern.webp", text: "The service sheet, borrowed badge, and public ferry wake establish a route Meridian believed only its auditors could use." },
+      { kind: "intercept", label: "Shepherd disclosure buffer", title: "The warning was accurate", image: "./assets/scenes/vesper-western-cistern.webp", speaker: "Automated review", text: "Caligo flood confidence: eighty-seven percent. Public disclosure deferred. Intervention portfolio incomplete." },
+      { kind: "chapter", label: "Twenty-four minutes · Upper stair", title: "The room where warnings become investments", image: "./assets/scenes/vesper-western-cistern.webp", text: "Above the cistern, Shepherd's review hall contains the ledger that names who chose silence—and what the Benefactors bought while a city waited." },
+    ],
+  },
 ]);

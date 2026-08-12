@@ -4,58 +4,58 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=vesper-20260811b";
+} from "../content/game-content.js?v=vesper-cistern-20260812a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=vesper-20260811b";
-import { CHAPTER_INTERLUDES } from "../content/cinematic-content.js?v=vesper-20260811b";
-import { CHARACTER_PROFILES } from "../content/relationship-content.js?v=vesper-20260811b";
-import { COUNTERMEASURES, PRESSURE_EVENTS } from "../content/pressure-content.js?v=vesper-20260811b";
-import { getInteractiveLocation } from "../content/exploration-content.js?v=vesper-20260811b";
+} from "../content/casebook-content.js?v=vesper-cistern-20260812a";
+import { CHAPTER_INTERLUDES } from "../content/cinematic-content.js?v=vesper-cistern-20260812a";
+import { CHARACTER_PROFILES } from "../content/relationship-content.js?v=vesper-cistern-20260812a";
+import { COUNTERMEASURES, PRESSURE_EVENTS } from "../content/pressure-content.js?v=vesper-cistern-20260812a";
+import { getInteractiveLocation } from "../content/exploration-content.js?v=vesper-cistern-20260812a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=vesper-20260811b";
+} from "../content/onboarding-content.js?v=vesper-cistern-20260812a";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=vesper-20260811b";
-import { evaluateCondition } from "../engine/conditions.js?v=vesper-20260811b";
-import { applyEffects } from "../engine/events.js?v=vesper-20260811b";
-import { createInitialState } from "../engine/game-state.js?v=vesper-20260811b";
+} from "../content/prologue-content.js?v=vesper-cistern-20260812a";
+import { evaluateCondition } from "../engine/conditions.js?v=vesper-cistern-20260812a";
+import { applyEffects } from "../engine/events.js?v=vesper-cistern-20260812a";
+import { createInitialState } from "../engine/game-state.js?v=vesper-cistern-20260812a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=vesper-20260811b";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=vesper-20260811b";
+} from "../engine/player-language.js?v=vesper-cistern-20260812a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=vesper-cistern-20260812a";
 import {
   getVisibleHotspots,
   renderExplorationScene,
-} from "../systems/exploration/scene-renderer.js?v=vesper-20260811b";
+} from "../systems/exploration/scene-renderer.js?v=vesper-cistern-20260812a";
 import {
   completeInteraction,
   getFieldNoteEntries,
   getHotspotObservationText,
   hasObservedHotspot,
   inspectHotspot,
-} from "../systems/exploration/exploration-progress.js?v=vesper-20260811b";
-import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=vesper-20260811b";
+} from "../systems/exploration/exploration-progress.js?v=vesper-cistern-20260812a";
+import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=vesper-cistern-20260812a";
 import {
   PORT_PROSPER_RESPONSES,
   advancePortProsperAftermath,
   applyPortProsperResponse,
-} from "../systems/decisions/port-prosper-response.js?v=vesper-20260811b";
+} from "../systems/decisions/port-prosper-response.js?v=vesper-cistern-20260812a";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=vesper-20260811b";
+} from "../systems/dialogue/dialogue-engine.js?v=vesper-cistern-20260812a";
 import {
   arrangeEvidence,
   connectEvidence,
@@ -66,28 +66,28 @@ import {
   removeConnection,
   saveEvidenceNote,
   unpinEvidence,
-} from "../systems/evidence-board/evidence-board.js?v=vesper-20260811b";
+} from "../systems/evidence-board/evidence-board.js?v=vesper-cistern-20260812a";
 import {
   getEvidencePresentation,
   renderEvidenceArtifact,
-} from "../systems/evidence/evidence-renderer.js?v=vesper-20260811b";
+} from "../systems/evidence/evidence-renderer.js?v=vesper-cistern-20260812a";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=vesper-20260811b";
+} from "../systems/puzzles/plan-alignment.js?v=vesper-cistern-20260812a";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=vesper-20260811b";
-import { TransientNotice } from "./transient-notice.js?v=vesper-20260811b";
+} from "../systems/puzzles/recording-reconstruction.js?v=vesper-cistern-20260812a";
+import { TransientNotice } from "./transient-notice.js?v=vesper-cistern-20260812a";
 import {
   advanceInterlude,
   beginInterlude,
   getPendingInterlude,
   skipInterlude,
-} from "../systems/cinematics/chapter-interludes.js?v=vesper-20260811b";
+} from "../systems/cinematics/chapter-interludes.js?v=vesper-cistern-20260812a";
 import {
   applyRelationshipMoment,
   exposureStatus,
@@ -95,13 +95,13 @@ import {
   previewRelationshipMoment,
   relationshipStatus,
   requestSourceHelp,
-} from "../systems/relationships/relationships.js?v=vesper-20260811b";
+} from "../systems/relationships/relationships.js?v=vesper-cistern-20260812a";
 import {
   applyCountermeasure,
   availableCountermeasures,
   pressureStatus,
   syncPressure,
-} from "../systems/pressure/investigative-pressure.js?v=vesper-20260811b";
+} from "../systems/pressure/investigative-pressure.js?v=vesper-cistern-20260812a";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -967,7 +967,25 @@ export class GameApp {
   renderHome() {
     const state = this.store.getState();
     const playerName = `${escapeHtml(state.player.firstName)} ${escapeHtml(state.player.lastName)}`;
-    const caseUpdate = state.flags.provedVesperTransferRoute
+    const caseUpdate = state.flags.provedVesperWithholdsWarnings
+      ? {
+          title: "Eleven days of silence",
+          text:
+            "Vesper had an accurate Caligo flood forecast and buried it while the Benefactors assembled an intervention portfolio. The temporary auditor badge now opens the review hall where that decision was authorized.",
+        }
+      : state.flags.foundVesperWatchlist
+        ? {
+            title: "Shepherd is watching back",
+            text:
+              "The cistern evidence proves the hidden approach, suppressed warning queue, and active watchlist. Bring it to the case wall before climbing toward the Forecast Hall.",
+          }
+        : (state.locationVisits.vesper_western_cistern || 0) > 0
+          ? {
+              title: "The western cistern",
+              text:
+                "You reached Vesper inside the North Sound ferry's wake. Document the landing, clone the auditor badge, speak with archive controller Noor Aven, and inspect what the island's cameras are watching.",
+            }
+          : state.flags.provedVesperTransferRoute
       ? {
           title: "Forecast Island",
           text:
@@ -2806,7 +2824,25 @@ export class GameApp {
     );
     const yarnAnchorX = boardDensity.cardWidth / 2;
     const yarnAnchorY = (14 / corkboardHeight) * 100;
-    const boardCase = state.flags.provedVesperTransferRoute
+    const boardCase = state.flags.provedVesperWithholdsWarnings
+      ? {
+          number: "17",
+          title: "VESPER KEY / DISCLOSURE CONTROL",
+          phase: "Suppression proven / Reach the Shepherd review hall",
+        }
+      : state.flags.foundVesperWatchlist
+        ? {
+            number: "17",
+            title: "VESPER KEY / ELEVEN DAYS OF SILENCE",
+            phase: "Connect the forecast, suppression order, and source watchlist",
+          }
+        : (state.locationVisits.vesper_western_cistern || 0) > 0
+          ? {
+              number: "17",
+              title: "VESPER KEY / WESTERN CISTERN",
+              phase: "Borrowed auditor cover / Twenty-four minutes remain",
+            }
+          : state.flags.provedVesperTransferRoute
       ? {
           number: "16",
           title: "VESPER KEY / FORECAST ISLAND",
@@ -4352,6 +4388,15 @@ export class GameApp {
   }
 
   chapterLabel(state = this.store.getState()) {
+    if (state.flags.provedVesperWithholdsWarnings) {
+      return "Chapter 14 · Eleven Days of Silence";
+    }
+    if (
+      state.progress.unlockedLocations.includes("vesper_western_cistern") ||
+      (state.locationVisits.vesper_western_cistern || 0) > 0
+    ) {
+      return "Chapter 13 · The Western Cistern";
+    }
     if (state.flags.provedVesperTransferRoute) {
       return "Chapter 12 · Forecast Island";
     }
@@ -4853,6 +4898,11 @@ export class GameApp {
   }
 
   describeProgress(state) {
+    if (state.flags.provedVesperWithholdsWarnings) return "Chapter 14 · Eleven Days of Silence";
+    if (
+      state.progress.unlockedLocations.includes("vesper_western_cistern") ||
+      (state.locationVisits.vesper_western_cistern || 0) > 0
+    ) return "Chapter 13 · The Western Cistern";
     if (state.flags.provedVesperTransferRoute) return "Chapter 12 · Forecast Island";
     if (
       state.progress.unlockedLocations.includes("port_prosper_eastern_terminal") ||

@@ -1,4 +1,4 @@
-export const GAME_STATE_VERSION = 31;
+export const GAME_STATE_VERSION = 32;
 
 export const DEFAULT_SETTINGS = Object.freeze({
   textScale: 1,
@@ -165,6 +165,13 @@ export function createInitialState(player = {}, settings = {}) {
       foundVesperTideCipher: false,
       foundShepherdForecastIndex: false,
       provedVesperTransferRoute: false,
+      copiedVesperArrivalSheet: false,
+      photographedFerryWakeRoute: false,
+      clonedVesperAuditorBadge: false,
+      questionedNoorAven: false,
+      recordedDisclosureSuppression: false,
+      foundVesperWatchlist: false,
+      provedVesperWithholdsWarnings: false,
       checkedInWithMara: false,
       questionedImaniCross: false,
     },
@@ -261,6 +268,7 @@ export function createInitialState(player = {}, settings = {}) {
       aster_house: 0,
       port_prosper_signal_exchange: 0,
       port_prosper_eastern_terminal: 0,
+      vesper_western_cistern: 0,
     },
     settings: {
       ...DEFAULT_SETTINGS,

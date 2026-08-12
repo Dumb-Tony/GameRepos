@@ -335,7 +335,7 @@ test("completed deductions mark their entire evidence file corroborated", () => 
 });
 
 test("every authored deduction has a reasoning chain and persistent case impact", () => {
-  assert.equal(Object.keys(DEDUCTIONS).length, 18);
+  assert.equal(Object.keys(DEDUCTIONS).length, 19);
   for (const deduction of Object.values(DEDUCTIONS)) {
     assert.ok(deduction.title, `${deduction.id} needs a conclusion`);
     assert.ok(deduction.journalText, `${deduction.id} needs a written rationale`);
