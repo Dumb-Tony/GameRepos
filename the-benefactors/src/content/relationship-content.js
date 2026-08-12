@@ -76,4 +76,11 @@ export const CHARACTER_PROFILES = Object.freeze({
     nodeEffects: { courier: { trust: 2, risk: 2, note: "Identified the Vesper courier's cover routine" }, warning: { trust: 1, note: "Kept the terminal camera loop open" } },
     choiceEffects: { protect: { trust: 1, promise: "Keep Aya out of the terminal account", note: "Promised to protect the dispatcher" } },
   }),
+  vesper_archive_controller: source("noor", "Noor Aven", "Vesper archive controller", "Suppressed warnings, disclosure controls, and remote access to Shepherd", {
+    nodeEffects: { truth: { trust: 2, risk: 3, note: "Confirmed that Vesper withholds public warnings" }, access: { trust: 1, risk: 1, note: "Opened the lower disclosure buffer" } },
+    choiceEffects: {
+      protect: { trust: 2, promise: "Seal Noor's identity in the Vesper file", note: "Promised source protection on the island" },
+      challenge: { trust: -2, risk: 1, note: "Held Noor responsible for Shepherd's silence" },
+    },
+  }),
 });

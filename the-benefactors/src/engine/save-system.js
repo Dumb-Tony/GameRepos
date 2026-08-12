@@ -3,7 +3,7 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js?v=vesper-20260811b";
+} from "./game-state.js?v=vesper-cistern-20260812a";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
@@ -366,6 +366,15 @@ export class SaveSystem {
     ) {
       migrated.progress.unlockedLocations.push("port_prosper_eastern_terminal");
       migrated.progress.chapter = Math.max(migrated.progress.chapter, 11);
+    }
+
+    if (
+      legacyVersion < 32 &&
+      migrated.flags.provedVesperTransferRoute &&
+      !migrated.progress.unlockedLocations.includes("vesper_western_cistern")
+    ) {
+      migrated.progress.unlockedLocations.push("vesper_western_cistern");
+      migrated.progress.chapter = Math.max(migrated.progress.chapter, 13);
     }
 
     return migrated;

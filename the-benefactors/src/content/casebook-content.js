@@ -926,11 +926,59 @@ export const CASEBOOK_STAGES = Object.freeze([
     id: "reach_forecast_island",
     title: "Forecast Island",
     objective: "Prepare an approach to Vesper Key before Meridian realizes the Shepherd index was copied.",
-    activeWhen: { type: "flag", key: "provedVesperTransferRoute" },
+    activeWhen: {
+      all: [
+        { type: "flag", key: "provedVesperTransferRoute" },
+        { not: { type: "visited", location: "vesper_western_cistern" } },
+      ],
+    },
     hints: [
       "Review the Vesper approach file and the Shepherd forecast index in the case file.",
       "The service inlet opens on a rotating tide window; the courier packet supplies a valid continuity cover.",
       "Vesper Key is now marked as the next destination. The investigation has reached the people who choose tomorrow's disasters.",
+    ],
+  },
+  {
+    id: "investigate_vesper_cistern",
+    title: "The western cistern",
+    objective: "Use the borrowed auditor cover to enter Vesper and expose what Shepherd does with its warnings.",
+    activeWhen: {
+      all: [
+        { type: "visited", location: "vesper_western_cistern" },
+        { type: "flag", key: "foundVesperWatchlist", equals: false },
+      ],
+    },
+    hints: [
+      "Begin with the manifest case and service skiff to document how the concealed approach works.",
+      "Use the courier packet at the cistern reader, then question Noor Aven over the archive-control intercom.",
+      "Record the disclosure buffer and inspect the cliff camera before approaching the upper stair.",
+    ],
+  },
+  {
+    id: "connect_vesper_suppression",
+    title: "Eleven days of silence",
+    objective: "Use the evidence board to prove Vesper withholds accurate warnings until the Benefactors own the intervention.",
+    activeWhen: {
+      all: [
+        { type: "flag", key: "foundVesperWatchlist" },
+        { type: "flag", key: "provedVesperWithholdsWarnings", equals: false },
+      ],
+    },
+    hints: [
+      "Confirm the approach file with the arrival sheet, the tide cipher with the wake photograph, and the courier packet with the temporary badge.",
+      "Connect the Shepherd index to Noor Aven's statement with Red / Confirmed.",
+      "Use Black / Cover-up for the Shepherd index and suppression log, then confirm the cloned newsroom cipher against Vesper's source watchlist.",
+    ],
+  },
+  {
+    id: "enter_forecast_hall",
+    title: "The room where warnings become investments",
+    objective: "Reach Shepherd's review hall before the temporary auditor badge expires.",
+    activeWhen: { type: "flag", key: "provedVesperWithholdsWarnings" },
+    hints: [
+      "Review the Forecast Hall access plan in the case file.",
+      "The western stair reaches the upper review hall inside the temporary badge's twenty-four-minute window.",
+      "The next target is the disclosure authority ledger: the record of who chose silence, and what they bought while cities waited.",
     ],
   },
 ]);
@@ -1038,4 +1086,12 @@ export const CASEBOOK_PROGRESS = Object.freeze([
   { label: "Vesper tide route decoded", when: { type: "flag", key: "foundVesperTideCipher" } },
   { label: "Shepherd forecast index copied", when: { type: "flag", key: "foundShepherdForecastIndex" } },
   { label: "Vesper forecast transfer proven", when: { type: "flag", key: "provedVesperTransferRoute" } },
+  { label: "Vesper western cistern entered", when: { type: "visited", location: "vesper_western_cistern" } },
+  { label: "Vesper arrival sheet copied", when: { type: "flag", key: "copiedVesperArrivalSheet" } },
+  { label: "North Sound wake route photographed", when: { type: "flag", key: "photographedFerryWakeRoute" } },
+  { label: "Vesper auditor badge cloned", when: { type: "flag", key: "clonedVesperAuditorBadge" } },
+  { label: "Noor Aven interviewed", when: { type: "flag", key: "questionedNoorAven" } },
+  { label: "Shepherd suppression order recorded", when: { type: "flag", key: "recordedDisclosureSuppression" } },
+  { label: "Vesper source watchlist recovered", when: { type: "flag", key: "foundVesperWatchlist" } },
+  { label: "Vesper warning suppression proven", when: { type: "flag", key: "provedVesperWithholdsWarnings" } },
 ]);

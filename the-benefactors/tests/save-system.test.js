@@ -628,3 +628,24 @@ test("unlocks the eastern terminal for completed Sanctuary Chain saves", () => {
   );
   assert.equal(migrated.progress.chapter, 11);
 });
+
+test("unlocks Vesper for completed courier-route saves", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const legacy = createInitialState();
+  legacy.version = 31;
+  legacy.progress.chapter = 12;
+  legacy.flags.provedVesperTransferRoute = true;
+  legacy.progress.unlockedLocations = legacy.progress.unlockedLocations.filter(
+    (locationId) => locationId !== "vesper_western_cistern",
+  );
+  storage.setItem(SAVE_KEY, JSON.stringify(legacy));
+
+  const migrated = saves.load();
+  assert.equal(migrated.version, GAME_STATE_VERSION);
+  assert.equal(
+    migrated.progress.unlockedLocations.includes("vesper_western_cistern"),
+    true,
+  );
+  assert.equal(migrated.progress.chapter, 13);
+});
