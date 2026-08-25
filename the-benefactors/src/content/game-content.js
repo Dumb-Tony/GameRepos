@@ -4419,6 +4419,8 @@ export const GAME_CONTENT = Object.freeze({
           ],
           resultText:
             "Three voice fragments survive, but their timestamps are gone. A proper recovery console may be able to rebuild the sequence.",
+          nextStep:
+            "Repair lead: keep the recorder with you. The old floorplan points to unused space behind the western bookcase, where Vale may have hidden the equipment needed to recover it.",
         },
         {
           id: "western-bookcase",
@@ -4471,10 +4473,12 @@ export const GAME_CONTENT = Object.freeze({
           title: "Audio recovery console",
           text:
             "One monitor wakes when Vale’s recorder is connected. Its queue holds three voice fragments with no timestamps.",
-          actionLabel: "Reconstruct the recording",
+          actionLabel: "Connect recorder and reconstruct it",
           toolId: "recorder",
           actionWhen: { type: "hasEvidence", id: "vale_damaged_recording" },
           route: "recording",
+          nextStep:
+            "Repair action: connect Vale’s damaged recorder here, arrange the three surviving fragments, and test the sequence. No additional replacement part is required.",
         },
         {
           id: "guest-list-printer",

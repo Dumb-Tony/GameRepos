@@ -1,5 +1,12 @@
 # The Benefactors
 
+**Milestone 33 — Recorder recovery guidance (complete)**
+
+- Added an explicit repair lead after collecting Vale's damaged recorder, pointing players toward the western-bookcase passage and hidden-room recovery console
+- Added a clear next-step panel at the dark monitors explaining that the recorder is repaired by reconstructing its three fragments and needs no additional replacement part
+- Expanded the notebook objective with the exact repair location and interaction
+- Added automatic repair for older saves that remember the recorder or hidden passage but lost the corresponding evidence or location unlock
+
 **Milestone 32 — Large-screen responsive layout (complete)**
 
 - Removed the 1500-pixel desktop ceiling from the main game chrome, office, locations, map, tutorials, and puzzle workspaces
