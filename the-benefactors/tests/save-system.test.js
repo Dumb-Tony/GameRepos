@@ -649,3 +649,40 @@ test("unlocks Vesper for completed courier-route saves", () => {
   );
   assert.equal(migrated.progress.chapter, 13);
 });
+
+test("repairs a recorder save whose interaction flag outlived its evidence", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const incomplete = createInitialState({ firstName: "Jamie" });
+  incomplete.flags.foundValeRecording = true;
+  incomplete.flags.foundWallCavity = true;
+  incomplete.evidence.collected = incomplete.evidence.collected.filter(
+    (id) => id !== "vale_damaged_recording",
+  );
+  incomplete.progress.unlockedLocations = incomplete.progress.unlockedLocations.filter(
+    (id) => id !== "hidden_room",
+  );
+  storage.setItem(SAVE_KEY, JSON.stringify(incomplete));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.evidence.collected.includes("vale_damaged_recording"), true);
+  assert.equal(migrated.progress.unlockedLocations.includes("hidden_room"), true);
+  assert.equal(migrated.puzzles.study_plan_alignment.completed, true);
+  assert.equal(migrated.puzzles.study_plan_alignment.rotation, 270);
+});
+
+test("repairs a reconstructed recorder save missing the finished message", () => {
+  const storage = new MemoryStorage();
+  const saves = new SaveSystem(storage);
+  const incomplete = createInitialState({ firstName: "Jamie" });
+  incomplete.flags.recordingReconstructed = true;
+  incomplete.evidence.collected = incomplete.evidence.collected.filter(
+    (id) => id !== "vale_reconstructed_message",
+  );
+  storage.setItem(SAVE_KEY, JSON.stringify(incomplete));
+
+  const migrated = saves.load();
+
+  assert.equal(migrated.evidence.collected.includes("vale_reconstructed_message"), true);
+});

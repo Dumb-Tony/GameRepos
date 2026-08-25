@@ -2146,6 +2146,27 @@ input[type="range"] {
   color: var(--paper);
 }
 
+.repair-lead-chip {
+  display: grid;
+  gap: 6px;
+  margin: 14px 0 0;
+  border: 1px solid rgba(190, 157, 98, 0.34);
+  border-left: 3px solid var(--gold);
+  padding: 12px 14px;
+  color: var(--ink-dim);
+  background:
+    linear-gradient(90deg, rgba(190, 157, 98, 0.11), rgba(190, 157, 98, 0.025)),
+    rgba(6, 10, 9, 0.42);
+  font: 500 0.72rem/1.55 Inter, system-ui, sans-serif;
+}
+
+.repair-lead-chip span {
+  color: var(--gold-light);
+  font: 800 0.55rem/1.2 "IBM Plex Mono", "Courier New", monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
 .scene-hotspot.is-tool-target {
   border-color: #e0b461;
   background: rgba(214, 164, 78, 0.17);

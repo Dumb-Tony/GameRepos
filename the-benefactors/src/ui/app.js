@@ -4,58 +4,58 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=fullscreen-20260825a";
+} from "../content/game-content.js?v=recorder-recovery-20260825a";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=fullscreen-20260825a";
-import { CHAPTER_INTERLUDES } from "../content/cinematic-content.js?v=fullscreen-20260825a";
-import { CHARACTER_PROFILES } from "../content/relationship-content.js?v=fullscreen-20260825a";
-import { COUNTERMEASURES, PRESSURE_EVENTS } from "../content/pressure-content.js?v=fullscreen-20260825a";
-import { getInteractiveLocation } from "../content/exploration-content.js?v=fullscreen-20260825a";
+} from "../content/casebook-content.js?v=recorder-recovery-20260825a";
+import { CHAPTER_INTERLUDES } from "../content/cinematic-content.js?v=recorder-recovery-20260825a";
+import { CHARACTER_PROFILES } from "../content/relationship-content.js?v=recorder-recovery-20260825a";
+import { COUNTERMEASURES, PRESSURE_EVENTS } from "../content/pressure-content.js?v=recorder-recovery-20260825a";
+import { getInteractiveLocation } from "../content/exploration-content.js?v=recorder-recovery-20260825a";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=fullscreen-20260825a";
+} from "../content/onboarding-content.js?v=recorder-recovery-20260825a";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=fullscreen-20260825a";
-import { evaluateCondition } from "../engine/conditions.js?v=fullscreen-20260825a";
-import { applyEffects } from "../engine/events.js?v=fullscreen-20260825a";
-import { createInitialState } from "../engine/game-state.js?v=fullscreen-20260825a";
+} from "../content/prologue-content.js?v=recorder-recovery-20260825a";
+import { evaluateCondition } from "../engine/conditions.js?v=recorder-recovery-20260825a";
+import { applyEffects } from "../engine/events.js?v=recorder-recovery-20260825a";
+import { createInitialState } from "../engine/game-state.js?v=recorder-recovery-20260825a";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=fullscreen-20260825a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=fullscreen-20260825a";
+} from "../engine/player-language.js?v=recorder-recovery-20260825a";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=recorder-recovery-20260825a";
 import {
   getVisibleHotspots,
   renderExplorationScene,
-} from "../systems/exploration/scene-renderer.js?v=fullscreen-20260825a";
+} from "../systems/exploration/scene-renderer.js?v=recorder-recovery-20260825a";
 import {
   completeInteraction,
   getFieldNoteEntries,
   getHotspotObservationText,
   hasObservedHotspot,
   inspectHotspot,
-} from "../systems/exploration/exploration-progress.js?v=fullscreen-20260825a";
-import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=fullscreen-20260825a";
+} from "../systems/exploration/exploration-progress.js?v=recorder-recovery-20260825a";
+import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=recorder-recovery-20260825a";
 import {
   PORT_PROSPER_RESPONSES,
   advancePortProsperAftermath,
   applyPortProsperResponse,
-} from "../systems/decisions/port-prosper-response.js?v=fullscreen-20260825a";
+} from "../systems/decisions/port-prosper-response.js?v=recorder-recovery-20260825a";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=fullscreen-20260825a";
+} from "../systems/dialogue/dialogue-engine.js?v=recorder-recovery-20260825a";
 import {
   arrangeEvidence,
   connectEvidence,
@@ -66,28 +66,28 @@ import {
   removeConnection,
   saveEvidenceNote,
   unpinEvidence,
-} from "../systems/evidence-board/evidence-board.js?v=fullscreen-20260825a";
+} from "../systems/evidence-board/evidence-board.js?v=recorder-recovery-20260825a";
 import {
   getEvidencePresentation,
   renderEvidenceArtifact,
-} from "../systems/evidence/evidence-renderer.js?v=fullscreen-20260825a";
+} from "../systems/evidence/evidence-renderer.js?v=recorder-recovery-20260825a";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=fullscreen-20260825a";
+} from "../systems/puzzles/plan-alignment.js?v=recorder-recovery-20260825a";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=fullscreen-20260825a";
-import { TransientNotice } from "./transient-notice.js?v=fullscreen-20260825a";
+} from "../systems/puzzles/recording-reconstruction.js?v=recorder-recovery-20260825a";
+import { TransientNotice } from "./transient-notice.js?v=recorder-recovery-20260825a";
 import {
   advanceInterlude,
   beginInterlude,
   getPendingInterlude,
   skipInterlude,
-} from "../systems/cinematics/chapter-interludes.js?v=fullscreen-20260825a";
+} from "../systems/cinematics/chapter-interludes.js?v=recorder-recovery-20260825a";
 import {
   applyRelationshipMoment,
   exposureStatus,
@@ -95,13 +95,13 @@ import {
   previewRelationshipMoment,
   relationshipStatus,
   requestSourceHelp,
-} from "../systems/relationships/relationships.js?v=fullscreen-20260825a";
+} from "../systems/relationships/relationships.js?v=recorder-recovery-20260825a";
 import {
   applyCountermeasure,
   availableCountermeasures,
   pressureStatus,
   syncPressure,
-} from "../systems/pressure/investigative-pressure.js?v=fullscreen-20260825a";
+} from "../systems/pressure/investigative-pressure.js?v=recorder-recovery-20260825a";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -1741,6 +1741,11 @@ export class GameApp {
                     ${
                       note.toolId && INVENTORY_ITEMS[note.toolId]
                         ? `<p class="tool-use-chip"><span>${escapeHtml(INVENTORY_ITEMS[note.toolId].icon)}</span> Uses ${escapeHtml(INVENTORY_ITEMS[note.toolId].name)}</p>`
+                        : ""
+                    }
+                    ${
+                      note.nextStep
+                        ? `<p class="repair-lead-chip"><span>Next step</span>${escapeHtml(note.nextStep)}</p>`
                         : ""
                     }
                     ${

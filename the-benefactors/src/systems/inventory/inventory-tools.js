@@ -1,5 +1,5 @@
-import { evaluateCondition } from "../../engine/conditions.js?v=fullscreen-20260825a";
-import { getInteractiveLocation } from "../../content/exploration-content.js?v=fullscreen-20260825a";
+import { evaluateCondition } from "../../engine/conditions.js?v=recorder-recovery-20260825a";
+import { getInteractiveLocation } from "../../content/exploration-content.js?v=recorder-recovery-20260825a";
 
 const IDLE_HINTS = Object.freeze({
   press_credentials: "Useful when an official needs a reason to answer questions.",

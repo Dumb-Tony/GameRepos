@@ -62,10 +62,10 @@ export const CASEBOOK_STAGES = Object.freeze([
   {
     id: "restore_recording",
     title: "Restore Vale’s warning",
-    objective: "Reconstruct the damaged recording found in the hidden room.",
+    objective: "Carry Vale’s damaged recorder to the dark-monitor recovery console in the hidden room and reconstruct its three fragments.",
     activeWhen: { type: "flag", key: "recordingReconstructed", equals: false },
     hints: [
-      "The fragment timestamps are gone, but the background sounds survived.",
+      "Expose the passage behind the western bookcase, enter the hidden room, and inspect its dark monitors with the damaged recorder in your case file.",
       "Follow the continuous sounds: the clock leads into the freight train, then the rain.",
       "Arrange the fragments Clock → Freight → Rain, then test the reconstruction.",
     ],

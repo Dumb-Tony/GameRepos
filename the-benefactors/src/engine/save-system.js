@@ -3,12 +3,43 @@ import {
   GAME_STATE_VERSION,
   createInitialState,
   isGameState,
-} from "./game-state.js?v=fullscreen-20260825a";
+} from "./game-state.js?v=recorder-recovery-20260825a";
 
 export const SAVE_KEY = "the-benefactors.save.v1";
 export const SETTINGS_KEY = "the-benefactors.settings.v1";
 export const MANUAL_SAVE_PREFIX = "the-benefactors.manual.v1";
 export const MANUAL_SAVE_SLOTS = 3;
+
+function repairRecorderProgress(source) {
+  const state = structuredClone(source);
+
+  if (
+    state.flags.foundValeRecording &&
+    !state.evidence.collected.includes("vale_damaged_recording")
+  ) {
+    state.evidence.collected.push("vale_damaged_recording");
+  }
+
+  if (state.flags.foundWallCavity) {
+    state.puzzles.study_plan_alignment = {
+      ...state.puzzles.study_plan_alignment,
+      rotation: 270,
+      completed: true,
+    };
+    if (!state.progress.unlockedLocations.includes("hidden_room")) {
+      state.progress.unlockedLocations.push("hidden_room");
+    }
+  }
+
+  if (
+    state.flags.recordingReconstructed &&
+    !state.evidence.collected.includes("vale_reconstructed_message")
+  ) {
+    state.evidence.collected.push("vale_reconstructed_message");
+  }
+
+  return state;
+}
 
 export class SaveSystem {
   constructor(storage = globalThis.localStorage) {
@@ -115,7 +146,7 @@ export class SaveSystem {
     if (candidate.version > GAME_STATE_VERSION) return null;
 
     if (candidate.version === GAME_STATE_VERSION && isGameState(candidate)) {
-      return candidate;
+      return repairRecorderProgress(candidate);
     }
 
     const legacyVersion = Number(candidate.version) || 0;
@@ -377,6 +408,10 @@ export class SaveSystem {
       migrated.progress.chapter = Math.max(migrated.progress.chapter, 13);
     }
 
-    return migrated;
+    // Repair early-prologue saves that retained interaction flags but lost the
+    // evidence records those interactions originally awarded. Without this,
+    // the hidden-room recovery console cannot open even though the player has
+    // already picked up Vale's damaged recorder.
+    return repairRecorderProgress(migrated);
   }
 }
