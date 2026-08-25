@@ -4410,8 +4410,9 @@ export const GAME_CONTENT = Object.freeze({
           width: 18,
           height: 19,
           title: "A damaged dictation recorder",
-          text: "The casing is cracked. Three fragments remain on its internal memory.",
-          actionLabel: "Add it to the case file",
+          text:
+            "The casing is cracked. Three fragments remain on its internal memory. Examining it is not enough—you need to pick it up using the button below.",
+          actionLabel: "Pick up the damaged recorder",
           actionWhen: { not: { type: "flag", key: "foundValeRecording" } },
           effects: [
             { type: "setFlag", key: "foundValeRecording", value: true },
@@ -4478,7 +4479,7 @@ export const GAME_CONTENT = Object.freeze({
           actionWhen: { type: "hasEvidence", id: "vale_damaged_recording" },
           route: "recording",
           nextStep:
-            "Repair action: connect Vale’s damaged recorder here, arrange the three surviving fragments, and test the sequence. No additional replacement part is required.",
+            "Repair action: connect Vale’s damaged recorder here, arrange the three surviving fragments, and test the sequence. No replacement part is required. If the connect button is missing below, return to Mayor Vale’s Study, examine the dictation recorder, and choose Pick up the damaged recorder.",
         },
         {
           id: "guest-list-printer",

@@ -191,7 +191,7 @@ await writeFile(
     {
       name: "The Benefactors",
       milestone: "recorder-recovery-guidance",
-      release: "recorder-recovery-20260825a",
+      release: "recorder-recovery-20260825b",
       builtAt: new Date().toISOString(),
     },
     null,
