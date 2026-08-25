@@ -1,5 +1,5 @@
-import { evaluateCondition } from "../../engine/conditions.js?v=recorder-recovery-20260825a";
-import { hasObservedHotspot } from "./exploration-progress.js?v=recorder-recovery-20260825a";
+import { evaluateCondition } from "../../engine/conditions.js?v=recorder-recovery-20260825b";
+import { hasObservedHotspot } from "./exploration-progress.js?v=recorder-recovery-20260825b";
 
 export function getVisibleHotspots(location, state) {
   return (location.hotspots || []).filter((hotspot) =>

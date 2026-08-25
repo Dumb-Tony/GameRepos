@@ -4,58 +4,58 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=recorder-recovery-20260825a";
+} from "../content/game-content.js?v=recorder-recovery-20260825b";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=recorder-recovery-20260825a";
-import { CHAPTER_INTERLUDES } from "../content/cinematic-content.js?v=recorder-recovery-20260825a";
-import { CHARACTER_PROFILES } from "../content/relationship-content.js?v=recorder-recovery-20260825a";
-import { COUNTERMEASURES, PRESSURE_EVENTS } from "../content/pressure-content.js?v=recorder-recovery-20260825a";
-import { getInteractiveLocation } from "../content/exploration-content.js?v=recorder-recovery-20260825a";
+} from "../content/casebook-content.js?v=recorder-recovery-20260825b";
+import { CHAPTER_INTERLUDES } from "../content/cinematic-content.js?v=recorder-recovery-20260825b";
+import { CHARACTER_PROFILES } from "../content/relationship-content.js?v=recorder-recovery-20260825b";
+import { COUNTERMEASURES, PRESSURE_EVENTS } from "../content/pressure-content.js?v=recorder-recovery-20260825b";
+import { getInteractiveLocation } from "../content/exploration-content.js?v=recorder-recovery-20260825b";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=recorder-recovery-20260825a";
+} from "../content/onboarding-content.js?v=recorder-recovery-20260825b";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=recorder-recovery-20260825a";
-import { evaluateCondition } from "../engine/conditions.js?v=recorder-recovery-20260825a";
-import { applyEffects } from "../engine/events.js?v=recorder-recovery-20260825a";
-import { createInitialState } from "../engine/game-state.js?v=recorder-recovery-20260825a";
+} from "../content/prologue-content.js?v=recorder-recovery-20260825b";
+import { evaluateCondition } from "../engine/conditions.js?v=recorder-recovery-20260825b";
+import { applyEffects } from "../engine/events.js?v=recorder-recovery-20260825b";
+import { createInitialState } from "../engine/game-state.js?v=recorder-recovery-20260825b";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=recorder-recovery-20260825a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=recorder-recovery-20260825a";
+} from "../engine/player-language.js?v=recorder-recovery-20260825b";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=recorder-recovery-20260825b";
 import {
   getVisibleHotspots,
   renderExplorationScene,
-} from "../systems/exploration/scene-renderer.js?v=recorder-recovery-20260825a";
+} from "../systems/exploration/scene-renderer.js?v=recorder-recovery-20260825b";
 import {
   completeInteraction,
   getFieldNoteEntries,
   getHotspotObservationText,
   hasObservedHotspot,
   inspectHotspot,
-} from "../systems/exploration/exploration-progress.js?v=recorder-recovery-20260825a";
-import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=recorder-recovery-20260825a";
+} from "../systems/exploration/exploration-progress.js?v=recorder-recovery-20260825b";
+import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=recorder-recovery-20260825b";
 import {
   PORT_PROSPER_RESPONSES,
   advancePortProsperAftermath,
   applyPortProsperResponse,
-} from "../systems/decisions/port-prosper-response.js?v=recorder-recovery-20260825a";
+} from "../systems/decisions/port-prosper-response.js?v=recorder-recovery-20260825b";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=recorder-recovery-20260825a";
+} from "../systems/dialogue/dialogue-engine.js?v=recorder-recovery-20260825b";
 import {
   arrangeEvidence,
   connectEvidence,
@@ -66,28 +66,28 @@ import {
   removeConnection,
   saveEvidenceNote,
   unpinEvidence,
-} from "../systems/evidence-board/evidence-board.js?v=recorder-recovery-20260825a";
+} from "../systems/evidence-board/evidence-board.js?v=recorder-recovery-20260825b";
 import {
   getEvidencePresentation,
   renderEvidenceArtifact,
-} from "../systems/evidence/evidence-renderer.js?v=recorder-recovery-20260825a";
+} from "../systems/evidence/evidence-renderer.js?v=recorder-recovery-20260825b";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=recorder-recovery-20260825a";
+} from "../systems/puzzles/plan-alignment.js?v=recorder-recovery-20260825b";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=recorder-recovery-20260825a";
-import { TransientNotice } from "./transient-notice.js?v=recorder-recovery-20260825a";
+} from "../systems/puzzles/recording-reconstruction.js?v=recorder-recovery-20260825b";
+import { TransientNotice } from "./transient-notice.js?v=recorder-recovery-20260825b";
 import {
   advanceInterlude,
   beginInterlude,
   getPendingInterlude,
   skipInterlude,
-} from "../systems/cinematics/chapter-interludes.js?v=recorder-recovery-20260825a";
+} from "../systems/cinematics/chapter-interludes.js?v=recorder-recovery-20260825b";
 import {
   applyRelationshipMoment,
   exposureStatus,
@@ -95,13 +95,13 @@ import {
   previewRelationshipMoment,
   relationshipStatus,
   requestSourceHelp,
-} from "../systems/relationships/relationships.js?v=recorder-recovery-20260825a";
+} from "../systems/relationships/relationships.js?v=recorder-recovery-20260825b";
 import {
   applyCountermeasure,
   availableCountermeasures,
   pressureStatus,
   syncPressure,
-} from "../systems/pressure/investigative-pressure.js?v=recorder-recovery-20260825a";
+} from "../systems/pressure/investigative-pressure.js?v=recorder-recovery-20260825b";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
