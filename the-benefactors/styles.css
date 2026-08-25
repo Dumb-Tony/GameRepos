@@ -8802,6 +8802,80 @@ ol.recording-timeline,
   .countermeasure-list button em { grid-column: 1; grid-row: auto; }
 }
 
+/* Large and ultrawide displays
+   Keep the playable canvas tied to the viewport instead of leaving the game
+   inside the former 1500px desktop frame. Authored 16:9 scenes retain their
+   geometry so image hotspots stay aligned while the case panel uses the
+   additional horizontal space. */
+@media (min-width: 1501px) {
+  .game-screen,
+  .puzzle-screen,
+  .tutorial-screen {
+    padding-inline: clamp(28px, 2vw, 72px);
+  }
+
+  .game-header,
+  .game-toolbar,
+  .scene-frame,
+  .location-stage,
+  .map-stage,
+  .tutorial-header,
+  .cutscene-header,
+  .puzzle-shell {
+    width: 100%;
+    max-width: none;
+  }
+
+  .scene-frame {
+    min-height: max(640px, calc(100dvh - 180px));
+  }
+
+  .location-stage {
+    display: flex;
+    height: max(640px, calc(100dvh - 180px));
+    align-items: stretch;
+  }
+
+  .location-stage .authored-scene {
+    width: min(calc((100dvh - 180px) * 16 / 9), calc(100% - 380px));
+    height: auto;
+    flex: 0 1 auto;
+    align-self: center;
+    aspect-ratio: 16 / 9;
+  }
+
+  .location-stage .location-copy {
+    min-width: 380px;
+    flex: 1 1 380px;
+    contain: none;
+    padding: clamp(36px, 3vw, 84px);
+  }
+
+  .map-stage {
+    min-height: max(640px, calc(100dvh - 180px));
+    grid-template-columns: minmax(0, 1.7fr) minmax(380px, 0.55fr);
+  }
+
+  .puzzle-shell {
+    min-height: max(680px, calc(100dvh - 70px));
+  }
+
+  .tutorial-shell {
+    width: min(1680px, 100%);
+    grid-template-columns: minmax(280px, 0.28fr) minmax(0, 1fr);
+  }
+
+  .laptop-shell,
+  .decision-shell,
+  .notebook-shell,
+  .case-files-panel,
+  .reading-panel,
+  .interlude-shell,
+  .prologue-ending-shell {
+    width: min(1800px, calc(100% - 2rem));
+  }
+}
+
 [data-reduced-motion="true"] .header-pressure b { transition: none; }
 [data-high-contrast="true"] .pressure-desk { color: #fff; background: #000; border-color: #fff; }
 [data-high-contrast="true"] .pressure-deadline { color: #fff; }

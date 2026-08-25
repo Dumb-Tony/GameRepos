@@ -1,8 +1,8 @@
-import { createInitialState, GameStore } from "./engine/game-state.js?v=vesper-cistern-20260812a";
-import { ScreenRouter } from "./engine/router.js?v=vesper-cistern-20260812a";
-import { SaveSystem } from "./engine/save-system.js?v=vesper-cistern-20260812a";
-import { AudioEngine } from "./systems/audio/audio-engine.js?v=vesper-cistern-20260812a";
-import { GameApp } from "./ui/app.js?v=vesper-cistern-20260812a";
+import { createInitialState, GameStore } from "./engine/game-state.js?v=fullscreen-20260825a";
+import { ScreenRouter } from "./engine/router.js?v=fullscreen-20260825a";
+import { SaveSystem } from "./engine/save-system.js?v=fullscreen-20260825a";
+import { AudioEngine } from "./systems/audio/audio-engine.js?v=fullscreen-20260825a";
+import { GameApp } from "./ui/app.js?v=fullscreen-20260825a";
 
 const root = document.querySelector("#app");
 const saves = new SaveSystem();

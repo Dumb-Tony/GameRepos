@@ -1,5 +1,5 @@
-import { evaluateCondition } from "../../engine/conditions.js?v=vesper-cistern-20260812a";
-import { hasObservedHotspot } from "./exploration-progress.js?v=vesper-cistern-20260812a";
+import { evaluateCondition } from "../../engine/conditions.js?v=fullscreen-20260825a";
+import { hasObservedHotspot } from "./exploration-progress.js?v=fullscreen-20260825a";
 
 export function getVisibleHotspots(location, state) {
   return (location.hotspots || []).filter((hotspot) =>
