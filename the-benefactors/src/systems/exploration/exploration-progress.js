@@ -1,4 +1,4 @@
-import { cloneState } from "../../engine/game-state.js?v=vesper-cistern-20260812a";
+import { cloneState } from "../../engine/game-state.js?v=fullscreen-20260825a";
 
 export function hotspotKey(locationId, hotspotId) {
   return `${locationId}:${hotspotId}`;

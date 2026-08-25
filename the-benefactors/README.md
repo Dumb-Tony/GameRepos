@@ -1,5 +1,12 @@
 # The Benefactors
 
+**Milestone 32 — Large-screen responsive layout (complete)**
+
+- Removed the 1500-pixel desktop ceiling from the main game chrome, office, locations, map, tutorials, and puzzle workspaces
+- Added viewport-height scaling for large and ultrawide monitors so playable scenes use the available screen instead of sitting inside a small centered frame
+- Preserved the authored 16:9 scene geometry on wide displays so evidence hotspots remain aligned with illustrated objects
+- Expanded secondary reading, notebook, decision, and case-file surfaces while retaining readable line lengths and existing tablet/mobile layouts
+
 **Milestone 31 — The western cistern (complete)**
 
 - Added an illustrated Vesper Key landing reached covertly inside the North Sound ferry's radar wake
