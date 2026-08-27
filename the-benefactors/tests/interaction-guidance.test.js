@@ -32,5 +32,5 @@ test("every actionable scene hotspot has a player-facing action label", () => {
 test("scene observations announce and focus newly revealed actions", () => {
   assert.match(appSource, /Action available/);
   assert.match(appSource, /scene-action-button/);
-  assert.match(appSource, /querySelector\("\[data-action='hotspot-action'\]"\)[\s\S]*focus\(\{ preventScroll: true \}\)/);
+  assert.match(appSource, /querySelector\("\[data-action='hotspot-action'\]"\)[\s\S]*focus\(\)/);
 });

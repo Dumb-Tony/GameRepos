@@ -1,5 +1,5 @@
-import { evaluateCondition } from "../../engine/conditions.js?v=interaction-clarity-20260827a";
-import { getInteractiveLocation } from "../../content/exploration-content.js?v=interaction-clarity-20260827a";
+import { evaluateCondition } from "../../engine/conditions.js?v=interaction-clarity-20260827b";
+import { getInteractiveLocation } from "../../content/exploration-content.js?v=interaction-clarity-20260827b";
 
 const IDLE_HINTS = Object.freeze({
   press_credentials: "Useful when an official needs a reason to answer questions.",
