@@ -1,4 +1,4 @@
-import { cloneState } from "../../engine/game-state.js?v=interaction-clarity-20260827a";
+import { cloneState } from "../../engine/game-state.js?v=interaction-clarity-20260827b";
 
 export function hotspotKey(locationId, hotspotId) {
   return `${locationId}:${hotspotId}`;

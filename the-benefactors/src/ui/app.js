@@ -4,58 +4,58 @@ import {
   DEDUCTIONS,
   GAME_CONTENT,
   INVENTORY_ITEMS,
-} from "../content/game-content.js?v=interaction-clarity-20260827a";
+} from "../content/game-content.js?v=interaction-clarity-20260827b";
 import {
   CASEBOOK_PROGRESS,
   CASEBOOK_STAGES,
-} from "../content/casebook-content.js?v=interaction-clarity-20260827a";
-import { CHAPTER_INTERLUDES } from "../content/cinematic-content.js?v=interaction-clarity-20260827a";
-import { CHARACTER_PROFILES } from "../content/relationship-content.js?v=interaction-clarity-20260827a";
-import { COUNTERMEASURES, PRESSURE_EVENTS } from "../content/pressure-content.js?v=interaction-clarity-20260827a";
-import { getInteractiveLocation } from "../content/exploration-content.js?v=interaction-clarity-20260827a";
+} from "../content/casebook-content.js?v=interaction-clarity-20260827b";
+import { CHAPTER_INTERLUDES } from "../content/cinematic-content.js?v=interaction-clarity-20260827b";
+import { CHARACTER_PROFILES } from "../content/relationship-content.js?v=interaction-clarity-20260827b";
+import { COUNTERMEASURES, PRESSURE_EVENTS } from "../content/pressure-content.js?v=interaction-clarity-20260827b";
+import { getInteractiveLocation } from "../content/exploration-content.js?v=interaction-clarity-20260827b";
 import {
   CUTSCENE_BEATS,
   OPENING_MESSAGE,
   TUTORIAL_STEPS,
   YARN_RELATIONSHIPS,
-} from "../content/onboarding-content.js?v=interaction-clarity-20260827a";
+} from "../content/onboarding-content.js?v=interaction-clarity-20260827b";
 import {
   PROLOGUE_ENDING_BEATS,
   RECORDING_PUZZLE,
   STUDY_ALIGNMENT_PUZZLE,
-} from "../content/prologue-content.js?v=interaction-clarity-20260827a";
-import { evaluateCondition } from "../engine/conditions.js?v=interaction-clarity-20260827a";
-import { applyEffects } from "../engine/events.js?v=interaction-clarity-20260827a";
-import { createInitialState } from "../engine/game-state.js?v=interaction-clarity-20260827a";
+} from "../content/prologue-content.js?v=interaction-clarity-20260827b";
+import { evaluateCondition } from "../engine/conditions.js?v=interaction-clarity-20260827b";
+import { applyEffects } from "../engine/events.js?v=interaction-clarity-20260827b";
+import { createInitialState } from "../engine/game-state.js?v=interaction-clarity-20260827b";
 import {
   getPlayerLanguage,
   interpolatePlayerText,
-} from "../engine/player-language.js?v=interaction-clarity-20260827a";
-import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=interaction-clarity-20260827a";
+} from "../engine/player-language.js?v=interaction-clarity-20260827b";
+import { PERSISTENT_GAME_ROUTES } from "../engine/router.js?v=interaction-clarity-20260827b";
 import {
   getVisibleHotspots,
   renderExplorationScene,
-} from "../systems/exploration/scene-renderer.js?v=interaction-clarity-20260827a";
+} from "../systems/exploration/scene-renderer.js?v=interaction-clarity-20260827b";
 import {
   completeInteraction,
   getFieldNoteEntries,
   getHotspotObservationText,
   hasObservedHotspot,
   inspectHotspot,
-} from "../systems/exploration/exploration-progress.js?v=interaction-clarity-20260827a";
-import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=interaction-clarity-20260827a";
+} from "../systems/exploration/exploration-progress.js?v=interaction-clarity-20260827b";
+import { getInventoryToolContext } from "../systems/inventory/inventory-tools.js?v=interaction-clarity-20260827b";
 import {
   PORT_PROSPER_RESPONSES,
   advancePortProsperAftermath,
   applyPortProsperResponse,
-} from "../systems/decisions/port-prosper-response.js?v=interaction-clarity-20260827a";
+} from "../systems/decisions/port-prosper-response.js?v=interaction-clarity-20260827b";
 import {
   advanceDialogue,
   closeDialogue,
   getAvailableChoices,
   getDialogueNode,
   startDialogue,
-} from "../systems/dialogue/dialogue-engine.js?v=interaction-clarity-20260827a";
+} from "../systems/dialogue/dialogue-engine.js?v=interaction-clarity-20260827b";
 import {
   arrangeEvidence,
   connectEvidence,
@@ -66,28 +66,28 @@ import {
   removeConnection,
   saveEvidenceNote,
   unpinEvidence,
-} from "../systems/evidence-board/evidence-board.js?v=interaction-clarity-20260827a";
+} from "../systems/evidence-board/evidence-board.js?v=interaction-clarity-20260827b";
 import {
   getEvidencePresentation,
   renderEvidenceArtifact,
-} from "../systems/evidence/evidence-renderer.js?v=interaction-clarity-20260827a";
+} from "../systems/evidence/evidence-renderer.js?v=interaction-clarity-20260827b";
 import {
   evaluateStudyAlignment,
   revealPuzzleHint,
   rotateStudyPlan,
-} from "../systems/puzzles/plan-alignment.js?v=interaction-clarity-20260827a";
+} from "../systems/puzzles/plan-alignment.js?v=interaction-clarity-20260827b";
 import {
   evaluateRecordingSequence,
   moveRecordingFragment,
   revealRecordingHint,
-} from "../systems/puzzles/recording-reconstruction.js?v=interaction-clarity-20260827a";
-import { TransientNotice } from "./transient-notice.js?v=interaction-clarity-20260827a";
+} from "../systems/puzzles/recording-reconstruction.js?v=interaction-clarity-20260827b";
+import { TransientNotice } from "./transient-notice.js?v=interaction-clarity-20260827b";
 import {
   advanceInterlude,
   beginInterlude,
   getPendingInterlude,
   skipInterlude,
-} from "../systems/cinematics/chapter-interludes.js?v=interaction-clarity-20260827a";
+} from "../systems/cinematics/chapter-interludes.js?v=interaction-clarity-20260827b";
 import {
   applyRelationshipMoment,
   exposureStatus,
@@ -95,13 +95,13 @@ import {
   previewRelationshipMoment,
   relationshipStatus,
   requestSourceHelp,
-} from "../systems/relationships/relationships.js?v=interaction-clarity-20260827a";
+} from "../systems/relationships/relationships.js?v=interaction-clarity-20260827b";
 import {
   applyCountermeasure,
   availableCountermeasures,
   pressureStatus,
   syncPressure,
-} from "../systems/pressure/investigative-pressure.js?v=interaction-clarity-20260827a";
+} from "../systems/pressure/investigative-pressure.js?v=interaction-clarity-20260827b";
 
 const PORTRAITS = [
   { id: "portrait-1", label: "Portrait one", initials: "AR" },
@@ -1813,7 +1813,7 @@ export class GameApp {
         this.renderLocation();
         this.root
           .querySelector("[data-action='hotspot-action']")
-          ?.focus({ preventScroll: true });
+          ?.focus();
       });
     });
 

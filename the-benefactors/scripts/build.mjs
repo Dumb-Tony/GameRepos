@@ -191,7 +191,7 @@ await writeFile(
     {
       name: "The Benefactors",
       milestone: "interaction-clarity",
-      release: "interaction-clarity-20260827a",
+      release: "interaction-clarity-20260827b",
       builtAt: new Date().toISOString(),
     },
     null,

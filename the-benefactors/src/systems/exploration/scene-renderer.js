@@ -1,5 +1,5 @@
-import { evaluateCondition } from "../../engine/conditions.js?v=interaction-clarity-20260827a";
-import { hasObservedHotspot } from "./exploration-progress.js?v=interaction-clarity-20260827a";
+import { evaluateCondition } from "../../engine/conditions.js?v=interaction-clarity-20260827b";
+import { hasObservedHotspot } from "./exploration-progress.js?v=interaction-clarity-20260827b";
 
 export function getVisibleHotspots(location, state) {
   return (location.hotspots || []).filter((hotspot) =>

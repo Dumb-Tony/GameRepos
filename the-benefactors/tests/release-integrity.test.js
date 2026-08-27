@@ -33,11 +33,11 @@ test("every browser module import resolves and the final cache token is consiste
     for (const match of source.matchAll(/from\s+["'](\.[^"']+)["']/g)) {
       const [path] = match[1].split("?");
       assert.equal(existsSync(resolve(dirname(file), path)), true, `${file}: ${match[1]}`);
-      if (match[1].includes("?v=")) assert.match(match[1], /\?v=interaction-clarity-20260827a$/);
+      if (match[1].includes("?v=")) assert.match(match[1], /\?v=interaction-clarity-20260827b$/);
     }
   }
   const index = readFileSync(resolve(projectRoot, "index.html"), "utf8");
-  assert.equal((index.match(/interaction-clarity-20260827a/g) || []).length, 2);
+  assert.equal((index.match(/interaction-clarity-20260827b/g) || []).length, 2);
 });
 
 test("the production build explicitly verifies every milestone system", () => {
@@ -52,5 +52,5 @@ test("the production build explicitly verifies every milestone system", () => {
   ]) {
     assert.match(build, new RegExp(path.replaceAll("/", "\\/")));
   }
-  assert.match(build, /release: "interaction-clarity-20260827a"/);
+  assert.match(build, /release: "interaction-clarity-20260827b"/);
 });
