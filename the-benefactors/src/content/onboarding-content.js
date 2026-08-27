@@ -55,7 +55,7 @@ export const TUTORIAL_STEPS = Object.freeze(
       id: "point-and-click",
       trigger: "office-entered",
       title: "Look around",
-      text: "Move across a scene to reveal interactive people and objects. Select one to inspect it.",
+      text: "Move across a scene to reveal interactive people and objects. Selecting one inspects it. Some observations reveal a separate highlighted action—choose that action to pick up evidence, talk, use a tool, or continue.",
       keyboardHint: "Use Tab to move between targets and Enter to select.",
     },
     {

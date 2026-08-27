@@ -1,4 +1,4 @@
-import { cloneState } from "../../engine/game-state.js?v=recorder-recovery-20260825b";
+import { cloneState } from "../../engine/game-state.js?v=interaction-clarity-20260827a";
 
 export function hotspotKey(locationId, hotspotId) {
   return `${locationId}:${hotspotId}`;
