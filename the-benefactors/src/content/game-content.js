@@ -5239,6 +5239,7 @@ export const GAME_CONTENT = Object.freeze({
           title: "The organizer who stayed",
           text:
             "Rina watches the foundation volunteers pack their cameras before they pack the bottled water.",
+          actionLabel: "Speak with Rina Mercer",
           dialogueId: "rina_mercer",
         },
         {
@@ -5374,6 +5375,7 @@ export const GAME_CONTENT = Object.freeze({
           title: "The scientist who kept a copy",
           text:
             "Voss watches the floodgate reflection instead of the door. He has been expecting company, but not help.",
+          actionLabel: "Question Dr. Voss",
           dialogueId: "elian_voss",
         },
         {
@@ -5527,6 +5529,7 @@ export const GAME_CONTENT = Object.freeze({
           title: "The ecologist Meridian erased",
           text:
             "A field ecologist waits beneath the office awning with a radio that has not stopped hissing.",
+          actionLabel: "Speak with Tess Arlen",
           dialogueId: "tess_arlen",
         },
         {
@@ -5687,6 +5690,7 @@ export const GAME_CONTENT = Object.freeze({
           title: "The overnight systems operator",
           text:
             "One operator remains at the raised console, watching Bellwether's history replay beside three unnamed cities.",
+          actionLabel: "Question Nia Kade",
           dialogueId: "nia_kade",
         },
         {
@@ -5879,6 +5883,7 @@ export const GAME_CONTENT = Object.freeze({
           title: "The dispatcher who has watched too many departures",
           text:
             "A lone dispatcher sits behind rain-streaked glass, pretending not to recognize the Redoubt credential in your hand.",
+          actionLabel: "Speak with Ellis Ward",
           dialogueId: "ellis_ward",
         },
         {
@@ -6025,6 +6030,7 @@ export const GAME_CONTENT = Object.freeze({
           title: "The mechanic who keeps the false tender running",
           text:
             "A harbor mechanic watches the service launch from behind salt-streaked glass, one hand resting beside a hidden ledger.",
+          actionLabel: "Question Tamsin Pike",
           dialogueId: "tamsin_pike",
         },
         {
@@ -6171,6 +6177,7 @@ export const GAME_CONTENT = Object.freeze({
           title: "The steward who knows what the island protects",
           text:
             "A gray-haired logistics steward watches your maintenance badge from a glass booth built to survive both storms and questions.",
+          actionLabel: "Speak with Adrian Moss",
           dialogueId: "adrian_moss",
         },
         {
@@ -6802,6 +6809,7 @@ export const GAME_CONTENT = Object.freeze({
           title: "The last honest person on shift",
           text:
             "Aya keeps glancing from the clock to a sealed locker key that no passenger has signed for.",
+          actionLabel: "Question Aya Sorn",
           dialogueId: "terminal_dispatcher",
         },
         {
@@ -7037,6 +7045,7 @@ export const GAME_CONTENT = Object.freeze({
           title: "A voice behind the stone",
           text:
             "The temporary badge opens a live channel to Noor Aven, the archive controller assigned to Shepherd's suppressed warning queue.",
+          actionLabel: "Answer Noor Aven's channel",
           dialogueId: "vesper_archive_controller",
           visibleWhen: { type: "flag", key: "clonedVesperAuditorBadge" },
         },

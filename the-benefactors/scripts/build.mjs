@@ -190,8 +190,8 @@ await writeFile(
   JSON.stringify(
     {
       name: "The Benefactors",
-      milestone: "recorder-recovery-guidance",
-      release: "recorder-recovery-20260825b",
+      milestone: "interaction-clarity",
+      release: "interaction-clarity-20260827a",
       builtAt: new Date().toISOString(),
     },
     null,

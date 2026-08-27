@@ -1,5 +1,12 @@
 # The Benefactors
 
+**Milestone 34 — Critical interaction clarity (complete)**
+
+- Updated the opening tutorial to explain the difference between inspecting a hotspot and choosing the follow-up action it reveals
+- Added a prominent Action available callout and gold action treatment to every actionable scene observation
+- Automatically moves keyboard focus to a newly revealed action so players do not lose the next step after a scene redraw
+- Added regression coverage for the tutorial language, action presentation, and every authored actionable hotspot
+
 **Milestone 33 — Recorder recovery guidance (complete)**
 
 - Added an explicit repair lead after collecting Vale's damaged recorder, pointing players toward the western-bookcase passage and hidden-room recovery console
