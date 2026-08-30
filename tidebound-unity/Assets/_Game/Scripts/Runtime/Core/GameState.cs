@@ -52,16 +52,32 @@ namespace Tidebound
         // ---- camp & survival -------------------------------------------
         [JsonProperty("site")] public string Site;
         [JsonProperty("fire")] public int Fire;
+        /// <summary>
+        /// Segments of fuel left in the fire. Unity-only key (the 3D fire
+        /// burns down in real time; the VN's fire is a tier). Absent in VN
+        /// saves — defaults to 0 and the campfire re-grants a margin on load.
+        /// </summary>
+        [JsonProperty("fireFuel")] public float FireFuel;
         [JsonProperty("shelter")] public int Shelter;
         [JsonProperty("food")] public int Food;
         [JsonProperty("injury")] public string Injury;
         [JsonProperty("disease")] public string Disease;
         [JsonProperty("pools")] public int TidePoolVisits;
+        /// <summary>Day of the last defeated E-wing attempt (a beaten door doesn't re-ask until tomorrow).</summary>
+        [JsonProperty("ewingTry")] public int EwingTry = -1;
+        /// <summary>The monsoon season's master plan: "sea" | "home" | "deep" — or null before chapter 5 commits.</summary>
+        [JsonProperty("plan")] public string Plan;
         [JsonProperty("deathCause")] public string DeathCause;
+        /// <summary>Core ending id (scenes-chapter7.js CORES key), or null.</summary>
+        [JsonProperty("endingId")] public string EndingId;
 
         // ---- NG+ ---------------------------------------------------------
         /// <summary>Run modifier: "hard" | "silent" | "kind" | "chaos" — or null.</summary>
         [JsonProperty("mod")] public string RunModifier;
+
+        /// <summary>How many lives the island remembers before this one
+        /// (stamped by DriftwoodLoops.ApplyNew, for the crossing's prose).</summary>
+        [JsonProperty("lives")] public int LoopsLived;
 
         /// <summary>Save-format version (VN calendar v2 = the 100-day calendar).</summary>
         [JsonProperty("_cal")] public int CalendarVersion = 2;

@@ -44,9 +44,33 @@ namespace Tidebound.EditorTools
             PlayerSettings.companyName = "GameRepos";
             PlayerSettings.productName = "Tidebound";
 
+            bool inputChanged = EnsureLegacyInputBackend();
+
             AssetDatabase.SaveAssets();
             Debug.Log("[Tidebound] Project configured: URP pipeline assigned (default + quality), " +
-                      "linear color space, product name set. Assets in " + SettingsDir);
+                      "linear color space, product name set. Assets in " + SettingsDir +
+                      (inputChanged ? " — Active Input Handling set to Input Manager; RESTART the editor once for it to apply." : ""));
+        }
+
+        /// <summary>
+        /// The project ships without the Input System package (its registry
+        /// download proved unreliable on the owner's network) and GameInput
+        /// carries a full classic-input path, so the legacy backend (0) is
+        /// the correct setting — anything else would define
+        /// ENABLE_INPUT_SYSTEM with no package to back it. There's no public
+        /// API — this pokes the serialized PlayerSettings, the standard
+        /// workaround. Takes effect after an editor restart.
+        /// </summary>
+        static bool EnsureLegacyInputBackend()
+        {
+            var assets = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/ProjectSettings.asset");
+            if (assets == null || assets.Length == 0) return false;
+            var so = new SerializedObject(assets[0]);
+            var prop = so.FindProperty("activeInputHandler");
+            if (prop == null || prop.intValue == 0) return false;
+            prop.intValue = 0;
+            so.ApplyModifiedProperties();
+            return true;
         }
     }
 }
